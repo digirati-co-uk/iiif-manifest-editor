@@ -9,9 +9,9 @@ Each guide below is a separate unit of work with prerequisites, concrete surface
 | Order | Module or task | State | Namespace ownership |
 | --- | --- | --- | --- |
 | 00 | [Language catalog foundation](modules/00-languages.md) | Implemented foundation; seed coverage only | all built-in namespaces |
-| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Implemented; independent review pending | runtime contract; no messages owned |
-| 02 | [Editor API display metadata](modules/02-editor-api.md) | Pending | editor-api |
-| 03 | [Creator API message contracts](modules/03-creator-api.md) | Pending | creator-api |
+| 01 | [Public i18n runtime and workspace bootstrap](modules/01-public-runtime.md) | Implemented; review fixes under verification | runtime contract; no messages owned |
+| 02 | [Editor API display metadata](modules/02-editor-api.md) | Implemented contracts and English/Dutch catalogs; consumer migration pending | editor-api |
+| 03 | [Creator API message contracts](modules/03-creator-api.md) | Implemented contracts; form consumers pending | creator-api |
 | 04 | [Shared component messages and accessibility](modules/04-components.md) | Pending | components and common |
 | 05 | [UI package and duplicate widget audit](modules/05-ui.md) | Pending | ui and common |
 | 06 | [Shell configuration and definition integration](modules/06-shell.md) | Pending | shell and common |

@@ -169,4 +169,142 @@ describe("isolated i18next runtime", () => {
       "empty intersection"
     );
   });
+
+  it("rejects numeric markup before it can reach the rich renderer", () => {
+    for (const title of ['<0 href="https://evil.example">Hello</0>', "<0>Hello</0>"]) {
+      expect(() =>
+        createEditorI18n({
+          catalogs: { "en-GB": { plain: { title: "Hello" } } },
+          host: { "en-GB": { plain: { title } } },
+        })
+      ).toThrow();
+    }
+  });
+
+  it("rejects namespace takeovers without poisoning later selection", async () => {
+    const runtime = createEditorI18n(options);
+    await expect(
+      runtime.register({
+        owner: "other",
+        namespace: "common",
+        sourceLocale: "en-GB",
+        contract: createCatalogContract({ unrelated: "Other" }),
+        loaders: { "en-GB": async () => ({ unrelated: "Other" }) },
+      })
+    ).rejects.toThrow("owned by the editor");
+    await runtime.setProfile("plain");
+    expect(runtime.translate("common")("actions.save")).toBe("Save");
+    expect(runtime.getSnapshot().error).toBeNull();
+  });
+
+  it("failed registrations roll back completely and can be corrected under the same namespace", async () => {
+    const runtime = createEditorI18n(options);
+    const source = { title: "Hello {{name}}" };
+    const registration = {
+      owner: "plugin",
+      namespace: "plugin-correctable",
+      sourceLocale: "en-GB",
+      contract: createCatalogContract(source),
+    };
+    await expect(
+      runtime.register({ ...registration, loaders: { "en-GB": async () => ({ title: "Wrong placeholders" }) } })
+    ).rejects.toThrow("placeholders");
+    await runtime.setProfile("plain");
+    expect(runtime.getSnapshot().coverage.missing.some((key) => key.startsWith("plugin-correctable:"))).toBe(false);
+    await runtime.register({ ...registration, loaders: { "en-GB": async () => source } });
+    expect(runtime.translate("plugin-correctable")("title", { name: "Ada" })).toBe("Hello Ada");
+  });
+
+  it("serialises registrations, follows concurrent locale selection and keeps successful loader caches", async () => {
+    let release!: (source: { title: string }) => void;
+    let sourceLoads = 0;
+    const source = { title: "English A" };
+    const runtime = createEditorI18n(options);
+    const first = runtime.register({
+      owner: "a",
+      namespace: "plugin-a",
+      sourceLocale: "en-GB",
+      contract: createCatalogContract(source),
+      loaders: {
+        "en-GB": () => {
+          sourceLoads++;
+          return new Promise((resolve) => {
+            release = resolve;
+          });
+        },
+        fr: async () => ({ title: "Français A" }),
+      },
+    });
+    const second = runtime.register({
+      owner: "b",
+      namespace: "plugin-b",
+      sourceLocale: "en-GB",
+      contract: createCatalogContract(source),
+      loaders: { "en-GB": async () => ({ title: "English B" }), fr: async () => ({ title: "Français B" }) },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await runtime.setLocale("fr");
+    release(source);
+    await Promise.all([first, second]);
+    expect(runtime.getSnapshot().locale).toBe("fr");
+    expect(runtime.translate("plugin-a")("title")).toBe("Français A");
+    expect(runtime.translate("plugin-b")("title")).toBe("Français B");
+    await runtime.setLocale("en-GB");
+    expect(sourceLoads).toBe(1);
+  });
+
+  it("can preload a plugin namespace for SSR and still validate its lazy registration", async () => {
+    const source = { title: "Preloaded" };
+    const runtime = createEditorI18n({
+      catalogs: { "en-GB": { "plugin-preloaded": source } },
+      registrations: [
+        {
+          owner: "preloaded",
+          namespace: "plugin-preloaded",
+          sourceLocale: "en-GB",
+          contract: createCatalogContract(source),
+          loaders: { "en-GB": async () => source },
+        },
+      ],
+    });
+    expect(runtime.translate("plugin-preloaded")("title")).toBe("Preloaded");
+    await runtime.loadNamespaces(["plugin-preloaded"]);
+    expect(runtime.translate("plugin-preloaded")("title")).toBe("Preloaded");
+  });
+
+  it("allows the official owner to register its existing first-party plugin namespace", async () => {
+    const source = (await import("@manifest-editor/languages/locales/en-GB/plugin-annotations")).catalog;
+    const runtime = createEditorI18n();
+    await expect(
+      runtime.register({
+        owner: "unrelated-plugin",
+        namespace: "plugin-annotations",
+        sourceLocale: "en-GB",
+        contract: createCatalogContract(source),
+        loaders: { "en-GB": async () => source },
+      })
+    ).rejects.toThrow("owned by the editor");
+    await runtime.register({
+      owner: "@manifest-editor/annotations",
+      namespace: "plugin-annotations",
+      sourceLocale: "en-GB",
+      contract: createCatalogContract(source),
+      loaders: { "en-GB": async () => source },
+    });
+    expect(runtime.translate("plugin-annotations")("metadata.label")).toBe("Annotations");
+  });
+
+  it("unsubscribes runtime listeners before subsequent state changes", async () => {
+    const runtime = createEditorI18n(options);
+    let changes = 0;
+    const unsubscribe = runtime.subscribe(() => {
+      changes++;
+    });
+    await runtime.setProfile("plain");
+    expect(changes).toBeGreaterThan(0);
+    unsubscribe();
+    const previous = changes;
+    await runtime.setLocale("fr");
+    expect(changes).toBe(previous);
+  });
 });

@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, useSyncExterna
 import type { ReactElement, ReactNode } from "react";
 import { I18nextProvider, Trans, useTranslation } from "react-i18next";
 import { createEditorI18n, engineFor } from "./runtime";
+import { createCatalogContract, createMessageReference } from "./messages";
 import type { EditorI18n, EditorI18nOptions, EditorI18nSnapshot, MessageReference, Translate } from "./types";
 
 const Context = createContext<{ runtime: EditorI18n; actions: EditorI18n } | null>(null);
@@ -28,20 +29,23 @@ export function EditorI18nProvider(props: EditorI18nProviderProps): ReactElement
       })
       .catch((error: Error) => onError?.(error));
   }, [runtime, locale, profile, onError]);
-  const value = useMemo<EditorI18n>(
-    () => ({
+  const value = useMemo<EditorI18n>(() => {
+    const select: EditorI18n["select"] = async (request) => {
+      if (request.locale !== undefined) onLocaleChange?.(request.locale);
+      if (request.profile !== undefined) onProfileChange?.(request.profile);
+      const uncontrolled = {
+        ...(locale === undefined && request.locale !== undefined ? { locale: request.locale } : {}),
+        ...(profile === undefined && request.profile !== undefined ? { profile: request.profile } : {}),
+      };
+      if (Object.keys(uncontrolled).length) await runtime.select(uncontrolled);
+    };
+    return {
       ...runtime,
-      setLocale: async (requestedLocale) => {
-        onLocaleChange?.(requestedLocale);
-        if (locale === undefined) await runtime.setLocale(requestedLocale);
-      },
-      setProfile: async (requestedProfile) => {
-        onProfileChange?.(requestedProfile);
-        if (profile === undefined) await runtime.setProfile(requestedProfile);
-      },
-    }),
-    [runtime, locale, profile, onLocaleChange, onProfileChange]
-  );
+      select,
+      setLocale: (requestedLocale) => select({ locale: requestedLocale }),
+      setProfile: (requestedProfile) => select({ profile: requestedProfile }),
+    };
+  }, [runtime, locale, profile, onLocaleChange, onProfileChange]);
   return (
     <Context.Provider value={{ runtime, actions: value }}>
       <I18nextProvider i18n={engineFor(runtime)}>
@@ -59,6 +63,10 @@ function useRuntime(): EditorI18n {
   return inherited?.runtime || standalone!;
 }
 export type EditorI18nContext = EditorI18nSnapshot & EditorI18n;
+/** Integration boundaries can inherit an actual provider without creating a standalone fallback. */
+export function useOptionalEditorI18nInstance(): EditorI18n | undefined {
+  return useContext(Context)?.runtime;
+}
 export function useEditorI18n(): EditorI18nContext {
   const runtime = useRuntime();
   const inherited = useContext(Context);
@@ -81,15 +89,35 @@ export interface EditorTransProps {
 export function EditorTrans({ reference, fallback, components }: EditorTransProps): ReactElement {
   const runtime = useRuntime();
   useTranslations(reference.namespace);
+  const safeReference = createMessageReference(reference.namespace, reference.key, {
+    ...(reference.values ? { values: reference.values } : {}),
+    ...(reference.defaultValue !== undefined ? { defaultValue: reference.defaultValue } : {}),
+  });
+  const defaults = safeReference.defaultValue ?? fallback;
+  if (defaults !== undefined)
+    createCatalogContract({ message: defaults }, { richText: ["message"], allowEmpty: ["message"] });
+  const richComponents: Record<string, ReactElement> = {};
+  for (const [tag, component] of Object.entries(components || {})) {
+    if (!/^[A-Za-z][A-Za-z0-9]*$/.test(tag) || tag.toLowerCase().startsWith("i18nvalue"))
+      throw new TypeError("Rich components must use non-reserved named tags");
+    richComponents[tag] = component;
+  }
+  const replacements: Record<string, string> = {};
+  for (const [name, value] of Object.entries(safeReference.values || {})) {
+    const tag = `i18nvalue${Object.keys(replacements).length}`;
+    replacements[name] = `<${tag}/>`;
+    // Only trusted marker tags enter Trans's parser. User values are React text nodes.
+    richComponents[tag] = <>{value === null ? "" : String(value)}</>;
+  }
   return (
     <Trans
-      i18nKey={reference.key}
-      ns={reference.namespace}
+      i18nKey={safeReference.key}
+      ns={safeReference.namespace}
       i18n={engineFor(runtime)}
-      defaults={reference.defaultValue ?? fallback}
-      values={reference.values}
-      count={typeof reference.values?.count === "number" ? reference.values.count : undefined}
-      components={components}
+      defaults={defaults}
+      count={typeof safeReference.values?.count === "number" ? safeReference.values.count : undefined}
+      tOptions={{ replace: replacements, interpolation: { escapeValue: false, skipOnVariables: true } }}
+      components={richComponents}
     />
   );
 }

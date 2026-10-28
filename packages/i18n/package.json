@@ -7,6 +7,7 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./core": "./src/core.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -26,6 +27,16 @@
         "require": {
           "types": "./dist/index.d.cts",
           "default": "./dist/index.cjs"
+        }
+      },
+      "./core": {
+        "import": {
+          "types": "./dist/core.d.ts",
+          "default": "./dist/core.js"
+        },
+        "require": {
+          "types": "./dist/core.d.cts",
+          "default": "./dist/core.cjs"
         }
       },
       "./package.json": "./package.json"

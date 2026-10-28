@@ -2,7 +2,7 @@ import { createInstance, type i18n } from "i18next";
 import { composeResources } from "@manifest-editor/languages/composition";
 import { createCatalogRegistry, createLatestLoader } from "@manifest-editor/languages/loaders";
 import { createI18nextOptions, resolveUiSelection } from "@manifest-editor/languages/selection";
-import { createCatalogContract, resourceCoverage } from "@manifest-editor/languages/validation";
+import { assertValidCatalog, createCatalogContract, resourceCoverage } from "@manifest-editor/languages/validation";
 import { assertRecord, flattenCatalog } from "@manifest-editor/languages/schema";
 import { builtinCatalogs, builtinPlain } from "./builtins";
 import type {
@@ -13,6 +13,7 @@ import type {
   EditorI18nSnapshot,
   MessageReference,
   ResourceStore,
+  CatalogRegistration,
   Translate,
   UiI18nConfig,
 } from "./types";
@@ -53,8 +54,7 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
     availableProfiles: ["standard", "plain"],
     ...options.config,
   };
-  const registry = createCatalogRegistry();
-  for (const registration of options.registrations || []) registry.register(registration);
+  let registry = createCatalogRegistry();
   const base: Record<string, Record<string, Catalog>> = {};
   for (const store of [builtinCatalogs, options.catalogs || {}]) {
     assertRecord(store, "resources");
@@ -65,11 +65,28 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
         base[locale][namespace] = merge(base[locale][namespace] || {}, catalog);
     }
   }
-  const contracts: Record<string, CatalogContract> = { ...registry.contracts() };
+  const contracts: Record<string, CatalogContract> = {};
   for (const [namespace, source] of Object.entries(base[config.fallbackLocale] || {})) {
     // Named rich components are safe only after validation disallows attributes.
     const richText = [...flattenCatalog(source)].filter(([, text]) => /<[A-Za-z]/.test(text)).map(([key]) => key);
     contracts[namespace] ||= createCatalogContract(source, { richText });
+  }
+  const builtinNamespaces = new Set(Object.values(builtinCatalogs).flatMap((catalogs) => Object.keys(catalogs)));
+  function checkRegistration(registration: CatalogRegistration) {
+    const firstPartyOwner = registration.namespace.startsWith("plugin-")
+      ? `@manifest-editor/${registration.namespace.slice(7)}`
+      : undefined;
+    if (builtinNamespaces.has(registration.namespace) && registration.owner !== firstPartyOwner)
+      throw new TypeError(`Namespace is owned by the editor: ${registration.namespace}`);
+    // A host may preload a plugin's source for SSR, but its declared contract must agree.
+    for (const [locale, namespaces] of Object.entries(base)) {
+      if (Object.hasOwn(namespaces, registration.namespace))
+        assertValidCatalog(namespaces[registration.namespace], registration.contract, { locale, complete: false });
+    }
+  }
+  for (const registration of options.registrations || []) {
+    checkRegistration(registration);
+    registry.register(registration);
   }
   let namespaces = [
     ...new Set([
@@ -85,10 +102,15 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       ...options,
       ...request,
     });
-  function prepare(request: typeof desired, loaded: ResourceStore = {}) {
+  function prepare(
+    request: typeof desired,
+    loaded: ResourceStore = {},
+    activeRegistry = registry,
+    activeNamespaces = namespaces
+  ) {
     const selection = selectionFor(request);
     // Loaded namespace source contracts were validated by the registry.
-    const allContracts = { ...contracts, ...registry.contracts() };
+    const allContracts = { ...contracts, ...activeRegistry.contracts() };
     const resources = composeResources(
       {
         base,
@@ -108,7 +130,7 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
     const engine = createInstance();
     // Supplied resources + initAsync:false initialize before the first SSR render.
     void engine.init({
-      ...createI18nextOptions(selection, namespaces),
+      ...createI18nextOptions(selection, activeNamespaces),
       resources,
       initAsync: false,
       interpolation: { escapeValue: false, skipOnVariables: true },
@@ -118,7 +140,7 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       resources,
       allContracts,
       selection.locale,
-      options.requiredNamespaces || namespaces
+      options.requiredNamespaces || activeNamespaces
     );
     const snapshot: EditorI18nSnapshot = Object.freeze({
       locale: selection.locale,
@@ -145,6 +167,7 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
   let current = prepare(desired);
   desired = { locale: current.snapshot.locale, profile: current.snapshot.profile };
   let snapshot = current.snapshot;
+  let selectionVersion = 0;
   const emit = () => {
     for (const listener of listeners) listener();
   };
@@ -157,17 +180,19 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
     return prepare(request, loaded);
   });
   async function select(request: typeof desired): Promise<void> {
+    const requestVersion = ++selectionVersion;
     desired = { ...desired, ...request };
     snapshot = Object.freeze({ ...snapshot, loading: true, error: null });
     emit();
     try {
       const result = await loader.load({ ...desired });
-      if (result.status === "superseded") return;
+      if (result.status === "superseded" || requestVersion !== selectionVersion) return;
       current = result.value;
       snapshot = current.snapshot;
       desired = { locale: snapshot.locale, profile: snapshot.profile };
       emit();
     } catch (cause) {
+      if (requestVersion !== selectionVersion) return;
       desired = { locale: current.snapshot.locale, profile: current.snapshot.profile };
       snapshot = Object.freeze({
         ...current.snapshot,
@@ -203,6 +228,35 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       return typeof result.res === "string" ? result.res : translationOptions?.defaultValue || key;
     };
   }
+  let registrationQueue = Promise.resolve();
+  async function stageRegistration(registration: CatalogRegistration) {
+    checkRegistration(registration);
+    const staged = registry.clone();
+    staged.register(registration);
+    // Validate the source even when it is not in the current locale's fallback chain.
+    await staged.load([registration.sourceLocale], [registration.namespace]);
+    for (;;) {
+      const version = selectionVersion;
+      const request = { ...desired };
+      const selection = selectionFor(request);
+      const activeNamespaces = [...new Set([...namespaces, registration.namespace])];
+      const loaded = await staged.load(
+        selection.localeChain,
+        staged.namespaces().filter((namespace) => activeNamespaces.includes(namespace))
+      );
+      const prepared = prepare(request, loaded, staged, activeNamespaces);
+      // Follow a user's newer locale/profile request before publishing any registration state.
+      if (version !== selectionVersion) continue;
+      selectionVersion++;
+      registry = staged;
+      namespaces = activeNamespaces;
+      current = prepared;
+      snapshot = prepared.snapshot;
+      desired = { locale: snapshot.locale, profile: snapshot.profile };
+      emit();
+      return;
+    }
+  }
   const runtime: EditorI18n = Object.freeze({
     getSnapshot: () => snapshot,
     subscribe(listener: () => void) {
@@ -218,10 +272,10 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       namespaces = [...new Set([...namespaces, ...extra])];
       await select({});
     },
-    async register(registration: Parameters<EditorI18n["register"]>[0]) {
-      registry.register(registration);
-      namespaces = [...new Set([...namespaces, registration.namespace])];
-      await select({});
+    register(registration: CatalogRegistration) {
+      const pending = registrationQueue.then(() => stageRegistration(registration));
+      registrationQueue = pending.catch(() => {});
+      return pending;
     },
     translate,
     resolveMessage(reference: MessageReference | string | undefined, fallback?: string) {

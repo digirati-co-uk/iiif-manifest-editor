@@ -87,3 +87,14 @@ Acceptance status and remaining integration checks:
 - [ ] Complete English/Dutch catalogs and their required-namespace coverage belong to consumer/translation modules. Only English is enabled by default. Enabling metadata without catalogs exposes incomplete coverage and fallback, not a claim of translation support.
 
 The parent server at port 3000 was left untouched. This checkout's changes require parent integration before browser verification. The acceptance checklist distinguishes source/runtime evidence from release checks still outstanding.
+
+## Parent fixes following independent runtime review
+
+The independent review found unsafe rich interpolation, numeric tags bypassing validation, combined selection bypassing controlled props, registration rollback failures, and the missing server entry. Parent fixes add:
+
+- Literal React text interpolation through reserved internal marker components, without spreading values into engine options. Numeric tags, reserved catalog tags, component indices and attributed fallback markup are rejected.
+- One controlled/uncontrolled policy for `select`, `setLocale` and `setProfile`.
+- Staged registry clones and serialized atomic registration, reserved built-in namespace ownership, compatible preloaded plugin contracts, successful loader cache preservation and rollback after rejection.
+- `@manifest-editor/i18n/core` as a server/task-safe source entry, separate configured publication entries/banners, and `useOptionalEditorI18nInstance` for provider inheritance.
+
+Regression evidence: 26 runtime/React tests and 67 foundation tests pass, along with both package no-emit typechecks and targeted lint. The runtime/React tests exercise the actual engines and DOM rendering for the reported failures, registration races/retry, unsubscribe behavior and provider identity. Source tests and typechecks do not establish emitted package or actual Next RSC artifact validity; those remain pending under the repository's build prohibition. A fresh independent review follows the parent fix commit.

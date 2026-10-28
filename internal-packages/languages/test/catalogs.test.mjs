@@ -97,6 +97,9 @@ test("rich messages require declared, balanced tags without HTML attributes", ()
     '<link href="javascript:bad">{{title}}</link>',
     "<link>{{title}}</strong>",
     "<strong>{{title}}</strong>",
+    '<0 href="https://evil.example">{{title}}</0>',
+    "<0>{{title}}</0>",
+    "<i18nvalue0>{{title}}</i18nvalue0>",
   ]) {
     assert.ok(validateCatalog({ help }, rich, { locale: "de" }).length > 0);
   }

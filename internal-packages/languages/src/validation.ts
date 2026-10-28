@@ -16,13 +16,22 @@ function syntax(value: string): { placeholders: string[]; tags: string[]; issues
       message: "Use named {{variables}}; nesting and formatter syntax are not supported by this contract yet",
     });
   const stack: string[] = [];
-  for (const match of value.matchAll(/<\/?[A-Za-z][^>]*>/g)) {
+  // Trans also recognises numeric tags; every markup token must pass this contract.
+  for (const match of value.matchAll(/<[^<>]*>/g)) {
     const parsed = /^<(\/)?([A-Za-z][A-Za-z0-9]*)(\s*\/)?\s*>$/.exec(match[0]);
     if (!parsed) {
       issues.push({ code: "rich-text", path: "", message: "Rich tags may not contain attributes" });
       continue;
     }
     const tag = parsed[2]!;
+    if (tag.toLowerCase().startsWith("i18nvalue")) {
+      issues.push({
+        code: "rich-text",
+        path: "",
+        message: "Rich tag uses the interpolation renderer's reserved prefix",
+      });
+      continue;
+    }
     tags.push(tag);
     if (parsed[1]) {
       if (stack.pop() !== tag) issues.push({ code: "rich-text", path: "", message: `Unbalanced rich tag: ${tag}` });

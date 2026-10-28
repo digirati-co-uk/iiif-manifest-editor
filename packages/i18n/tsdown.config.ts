@@ -1,10 +1,10 @@
 import { defineConfig } from "tsdown";
 export default defineConfig({
-  entry: { index: "src/index.ts" },
+  entry: { index: "src/index.ts", core: "src/core.ts" },
   format: ["esm", "cjs"],
   dts: true,
   // Preserve the React client boundary when tsdown combines the entry modules.
-  banner: { js: "'use client';" },
+  banner: ({ fileName }) => (fileName.startsWith("index.") ? { js: "'use client';" } : undefined),
   exports: false,
   platform: "neutral",
   target: "es2022",

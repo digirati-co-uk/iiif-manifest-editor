@@ -10,10 +10,24 @@ export interface CatalogRegistration {
   readonly loaders: Readonly<Record<string, () => Promise<Catalog>>>;
 }
 
+export interface CatalogRegistry {
+  register(registration: CatalogRegistration): void;
+  load(locales: readonly string[], namespaces: readonly string[]): Promise<ResourceStore>;
+  namespaces(): string[];
+  contracts(): Readonly<Record<string, CatalogContract>>;
+  /** Stage registrations without changing the committed registry or its cache. */
+  clone(): CatalogRegistry;
+}
+
 /** Each editor gets its own registry. Failed loads are evicted so a retry can recover. */
-export function createCatalogRegistry() {
-  const registrations = new Map<string, CatalogRegistration>();
-  const cache = new Map<string, Promise<Catalog>>();
+export function createCatalogRegistry(): CatalogRegistry {
+  return createRegistry(new Map(), new Map());
+}
+
+function createRegistry(
+  registrations: Map<string, CatalogRegistration>,
+  cache: Map<string, Promise<Catalog>>
+): CatalogRegistry {
   function register(registration: CatalogRegistration): void {
     assertNamespace(registration.namespace);
     if (!registration.owner.trim()) throw new TypeError("A catalog owner is required");
@@ -57,9 +71,15 @@ export function createCatalogRegistry() {
               if (cache.get(key) === pending) cache.delete(key);
             });
           }
-          const catalog = await pending;
-          resources[locale] ||= {};
-          resources[locale][namespace] = catalog;
+          try {
+            const catalog = await pending;
+            resources[locale] ||= {};
+            resources[locale][namespace] = catalog;
+          } catch (error) {
+            // A clone can share an in-flight promise; evict failures from its own cache too.
+            if (cache.get(key) === pending) cache.delete(key);
+            throw error;
+          }
         });
       })
     );
@@ -70,6 +90,7 @@ export function createCatalogRegistry() {
   return Object.freeze({
     register,
     load,
+    clone: () => createRegistry(new Map(registrations), new Map(cache)),
     namespaces: () => [...registrations.keys()],
     contracts: () =>
       Object.freeze(
