@@ -2,11 +2,12 @@ import { useTranslations } from "@manifest-editor/i18n";
 import { upgrade } from "@iiif/parser/upgrader";
 import { useQuery } from "@tanstack/react-query";
 import { ManifestEditor } from "manifest-editor";
-import { webUiResources } from "../../i18n/resources";
+import { useWebUiResources } from "../../i18n/WebResources";
 import { useMemo } from "react";
 
 export function SharePreviewEditor({ manifest }: { manifest: string }) {
   const webT = useTranslations("web");
+  const webUiResources = useWebUiResources();
 
   const { isPending, data, error } = useQuery({
     queryKey: ["preview-editor", { manifest: manifest }],

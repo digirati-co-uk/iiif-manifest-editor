@@ -45,7 +45,7 @@ and requesting English rejects. This fixes the independently reproduced P1
 | `manifest-editor/shell` and preset/component/API reexports | Reexport existing public packages; shell/preset localisation composition remains owned there. No new preset assumptions or translated ID matching.                                                                                                                                                    |
 | `browser/entry.ts`                                         | Exports the same facade and props, plus shared `i18n` and `i18nCore` namespaces. Browser runtime contract is now **API 2**.                                                                                                                                                                           |
 | `ManifestEditor.createRuntime`                             | API 2 requires host `I18n` and `I18nCore` modules alongside the six React/renderer modules. They are supplied to the factory under exact public package keys, retaining context/factory identity.                                                                                                     |
-| `ManifestEditor.automaticRuntime`                          | Imports pinned React and public i18n 2.2.1 root/core modules; caches successful result, retries failed imports, exposes API version 2 and the actual shared namespaces. Public i18n publication/CDN availability is a release gate.                                                                   |
+| `ManifestEditor.automaticRuntime`                          | Imports pinned React and the public i18n root once, using its core reexports for both dependency keys; caches success, retries failed imports and exposes API 2 with shared module identities. Public i18n publication/CDN availability is a release gate.                                                                   |
 | `manifest-editor/remote` loader                            | API 2 requires the same public root/core entries in `RuntimeHost`; rejects API 1 and absent modules before asset loading. Loaded exports must retain host provider/factory identity. Factory cache is per host object, not merely React identity; CSS disposal remains independent of editor unmount. |
 | Browser/remote configuration updates                       | No separate imperative mount/update or worker API exists. Keep one React root, Vault and captured runtime/component type; rerender it with updated `localisation`/`config`, or select through the shared provider. Do not recreate a factory/root for language changes.                               |
 | Release resolver/register/catalog                          | Existing stable version selection, integrity descriptors and trusted-asset validation stay technical data. Browser build descriptors now identify API 2. Release resolver remains version-agnostic and rejects mismatched requested API contracts.                                                    |
@@ -150,3 +150,26 @@ Additional generated languages are experimental user test data and may be stale.
 ## Independent review: local-file host regression
 
 The source review found one P1 in a web callsite: a replacement had changed the header logo to a resource-less ManifestEditor. Restored `ManifestEditorLogo` while retaining localisation on the actual editor. A mounted local-file regression runs the real facade/Shell/Vault with a fixture native layout, opens a valid Welsh-labelled manifest, edits a draft, switches EN/NL and fails a file save. It verifies the logo/editor mount, original language maps, draft DOM/value, file name/handle and retained editor on failure. The targeted test passes; native layout/renderers and filesystem I/O are explicitly fixture boundaries. No other actionable source finding was reported. Release/API2 asset/CDN and whole-browser/SSR gates remain open.
+
+## Lazy locale and distribution follow-up — 29 October 2026
+
+The public runtime now accepts ordered `resourceLoaders` for locale bundles, including
+base/profile/preset/intersection data. Shell merges their entries. Web imports optional
+languages dynamically, gates choices through CI-validated coverage metadata, and
+preloads only the initial locale for the root and child runtimes. The initial loaders
+reuse serialized data after hydration instead of downloading that locale again.
+
+Browser dependency pins come from installed package versions and enter the build ID.
+The automatic path supplies the root entry's exact core reexports; injected/remote
+hosts reject mismatched factories before initialization. Tests cover those contracts.
+
+Distribution, payload and published-CDN diagnostics remain available as opt-in local
+commands, using existing build artifacts where required. The normal Build workflow
+checks generated coverage metadata; there are no separate i18n verification workflows
+or post-release CDN gates. The pkg.pr.new workflow includes the public i18n package
+and private catalog triggers.
+
+Local runtime/web/facade tests and focused TypeScript no-emit checks pass. The existing
+port-3000 server still returns the previously documented duplicate `gapcursor` error
+on SSR/reload, so the two live host acceptance tests remain blocked by that baseline.
+No local package build, prepack, server restart or publication was performed.

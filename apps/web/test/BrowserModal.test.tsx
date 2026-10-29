@@ -96,6 +96,7 @@ it.each(["instance", "policy"])(
       );
     };
     await act(async () => render());
+    await act(async () => vi.dynamicImportSettled());
     const id = "https://example.org/host-manifest";
     await act(async () => {
       await fixture.vault!.loadManifest(id, { id, type: "Manifest", label: { cy: ["Teitl Cymraeg"] }, items: [] });
@@ -113,6 +114,7 @@ it.each(["instance", "policy"])(
       i18n = createWebI18n();
     } else policy = createWebUiPolicy({ availableLocales: ["nl"] });
     await act(async () => render());
+    await act(async () => vi.dynamicImportSettled());
     expect(
       document.querySelector(`button[aria-label="${mode === "instance" ? "Open manifest" : "Manifest openen"}"]`)
     ).toBe(action);

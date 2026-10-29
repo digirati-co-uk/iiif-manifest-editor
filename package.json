@@ -6,6 +6,11 @@
     "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git"
   },
   "scripts": {
+    "i18n:coverage": "node scripts/web-i18n-coverage.mjs",
+    "i18n:coverage:write": "node scripts/web-i18n-coverage.mjs --write",
+    "i18n:artifacts": "node scripts/verify-i18n-artifacts.mjs",
+    "i18n:payload": "node scripts/measure-web-i18n.mjs",
+    "i18n:cdn": "node scripts/verify-i18n-cdn.mjs",
     "audit:i18n": "node scripts/audit-i18n.mjs",
     "test:audit-i18n": "node --test scripts/audit-i18n.test.mjs",
     "build": "turbo build",

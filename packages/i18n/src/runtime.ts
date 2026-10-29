@@ -5,11 +5,13 @@ import { createI18nextOptions, resolveUiSelection } from "@manifest-editor/langu
 import { assertValidCatalog, createCatalogContract, resourceCoverage } from "@manifest-editor/languages/validation";
 import { assertRecord, flattenCatalog } from "@manifest-editor/languages/schema";
 import { builtinCatalogs, builtinPlain } from "./builtins";
+import { createResourceLoader } from "./resource-loaders";
 import type {
   Catalog,
   CatalogContract,
   EditorI18n,
   EditorI18nOptions,
+  EditorI18nResources,
   EditorI18nSnapshot,
   MessageReference,
   ResourceStore,
@@ -32,7 +34,6 @@ export function engineFor(runtime: EditorI18n): i18n {
 
 // Validate before copying; never mutate supplied catalog objects.
 function merge(left: Catalog, right: Catalog): Catalog {
-  flattenCatalog(right);
   const result: Record<string, string | Catalog> = { ...left };
   for (const [key, value] of Object.entries(right)) {
     const previous = result[key];
@@ -41,6 +42,38 @@ function merge(left: Catalog, right: Catalog): Catalog {
     result[key] = typeof value === "string" ? value : merge(typeof previous === "object" ? previous : {}, value);
   }
   return result;
+}
+
+function compileCatalogs(catalogs: ResourceStore | undefined, fallbackLocale: string) {
+  const base: Record<string, Record<string, Catalog>> = {};
+  for (const store of [builtinCatalogs, catalogs || {}]) {
+    assertRecord(store, "resources");
+    for (const [locale, namespaces] of Object.entries(store)) {
+      assertRecord(namespaces, locale);
+      base[locale] ||= {};
+      for (const [namespace, catalog] of Object.entries(namespaces)) {
+        // Validate the whole tree once before copying, rather than again at every branch.
+        flattenCatalog(catalog);
+        base[locale][namespace] = merge(base[locale][namespace] || {}, catalog);
+      }
+    }
+  }
+  const contracts: Record<string, CatalogContract> = {};
+  for (const [namespace, source] of Object.entries(base[fallbackLocale] || {})) {
+    const richText = [...flattenCatalog(source)].filter(([, text]) => /<[A-Za-z]/.test(text)).map(([key]) => key);
+    contracts[namespace] = createCatalogContract(source, { richText });
+  }
+  return { base, contracts, resources: new Map<boolean, ResourceStore>() };
+}
+
+// Only package-owned defaults are shared. Host catalogs are copied and validated per runtime;
+// engines, loaders, selections and listeners remain request-local, including SSR and CDN hosts.
+let defaults: ReturnType<typeof compileCatalogs> | undefined;
+
+function hasResources(store: ResourceStore | undefined) {
+  if (store === undefined) return false;
+  assertRecord(store, "resources");
+  return Object.keys(store).length !== 0;
 }
 
 /** Synchronous, request-local initialization with no browser detection or global engine. */
@@ -55,22 +88,12 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
     ...options.config,
   };
   let registry = createCatalogRegistry();
-  const base: Record<string, Record<string, Catalog>> = {};
-  for (const store of [builtinCatalogs, options.catalogs || {}]) {
-    assertRecord(store, "resources");
-    for (const [locale, namespaces] of Object.entries(store)) {
-      assertRecord(namespaces, locale);
-      base[locale] ||= {};
-      for (const [namespace, catalog] of Object.entries(namespaces))
-        base[locale][namespace] = merge(base[locale][namespace] || {}, catalog);
-    }
-  }
-  const contracts: Record<string, CatalogContract> = {};
-  for (const [namespace, source] of Object.entries(base[config.fallbackLocale] || {})) {
-    // Named rich components are safe only after validation disallows attributes.
-    const richText = [...flattenCatalog(source)].filter(([, text]) => /<[A-Za-z]/.test(text)).map(([key]) => key);
-    contracts[namespace] ||= createCatalogContract(source, { richText });
-  }
+  const loadResources = createResourceLoader(options.resourceLoaders);
+  const builtinOnly = !hasResources(options.catalogs) && config.fallbackLocale === "en-GB";
+  const compiled = builtinOnly
+    ? (defaults ||= compileCatalogs(undefined, config.fallbackLocale))
+    : compileCatalogs(options.catalogs, config.fallbackLocale);
+  const { base, contracts } = compiled;
   const builtinNamespaces = new Set(Object.values(builtinCatalogs).flatMap((catalogs) => Object.keys(catalogs)));
   function checkRegistration(registration: CatalogRegistration) {
     const firstPartyOwner = registration.namespace.startsWith("plugin-")
@@ -106,27 +129,54 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
     request: typeof desired,
     loaded: ResourceStore = {},
     activeRegistry = registry,
-    activeNamespaces = namespaces
+    activeNamespaces = namespaces,
+    bundles: readonly EditorI18nResources[] = []
   ) {
     const selection = selectionFor(request);
     // Loaded namespace source contracts were validated by the registry.
     const allContracts = { ...contracts, ...activeRegistry.contracts() };
-    const resources = composeResources(
-      {
-        base,
-        presets: [loaded, ...(options.presets || [])],
-        profile: composeResources(
-          {
-            base: selection.profile === "plain" ? builtinPlain : {},
-            host: options.profiles?.[selection.profile],
-          },
-          allContracts
-        ),
-        presetProfile: options.presetProfiles?.[selection.profile],
-        host: options.host,
-      },
-      allContracts
-    );
+    const reusable =
+      builtinOnly &&
+      !options.presets?.length &&
+      !hasResources(options.host) &&
+      !hasResources(options.profiles?.[selection.profile]) &&
+      !hasResources(options.presetProfiles?.[selection.profile]) &&
+      !bundles.length &&
+      !Object.keys(loaded).length;
+    const plain = selection.profile === "plain";
+    const resources =
+      (reusable && compiled.resources.get(plain)) ||
+      composeResources(
+        {
+          base,
+          presets: [
+            ...bundles.map((bundle) => bundle.catalogs || {}),
+            ...(bundles.length && options.catalogs ? [options.catalogs] : []),
+            loaded,
+            ...bundles.flatMap((bundle) => bundle.presets || []),
+            ...(options.presets || []),
+          ],
+          profile: composeResources(
+            {
+              base: selection.profile === "plain" ? builtinPlain : {},
+              presets: bundles.map((bundle) => bundle.profiles?.[selection.profile] || {}),
+              host: options.profiles?.[selection.profile],
+            },
+            allContracts
+          ),
+          presetProfile: composeResources(
+            {
+              base: {},
+              presets: bundles.map((bundle) => bundle.presetProfiles?.[selection.profile] || {}),
+              host: options.presetProfiles?.[selection.profile],
+            },
+            allContracts
+          ),
+          host: options.host,
+        },
+        allContracts
+      );
+    if (reusable) compiled.resources.set(plain, resources);
     const engine = createInstance();
     // Supplied resources + initAsync:false initialize before the first SSR render.
     void engine.init({
@@ -173,11 +223,14 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
   };
   const loader = createLatestLoader(async (request: typeof desired) => {
     const selection = selectionFor(request);
-    const loaded = await registry.load(
-      selection.localeChain,
-      registry.namespaces().filter((ns) => namespaces.includes(ns))
-    );
-    return prepare(request, loaded);
+    const [loaded, bundles] = await Promise.all([
+      registry.load(
+        selection.localeChain,
+        registry.namespaces().filter((ns) => namespaces.includes(ns))
+      ),
+      loadResources(selection.localeChain, { ...contracts, ...registry.contracts() }),
+    ]);
+    return prepare(request, loaded, registry, namespaces, bundles);
   });
   async function select(request: typeof desired): Promise<void> {
     const requestVersion = ++selectionVersion;
@@ -242,11 +295,14 @@ export function createEditorI18n(options: EditorI18nOptions = {}): EditorI18n {
       const activeNamespaces = [...new Set([...namespaces, registration.namespace])];
       let prepared: ReturnType<typeof prepare>;
       try {
-        const loaded = await staged.load(
-          selection.localeChain,
-          staged.namespaces().filter((namespace) => activeNamespaces.includes(namespace))
-        );
-        prepared = prepare(request, loaded, staged, activeNamespaces);
+        const [loaded, bundles] = await Promise.all([
+          staged.load(
+            selection.localeChain,
+            staged.namespaces().filter((namespace) => activeNamespaces.includes(namespace))
+          ),
+          loadResources(selection.localeChain, { ...contracts, ...staged.contracts() }),
+        ]);
+        prepared = prepare(request, loaded, staged, activeNamespaces, bundles);
       } catch (error) {
         // A failed obsolete locale must not reject a valid registration for the latest selection.
         if (version !== selectionVersion) continue;

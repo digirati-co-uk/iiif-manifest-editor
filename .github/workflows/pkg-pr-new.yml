@@ -8,6 +8,8 @@ on:
       - "packages/**"
       - "plugins/**"
       - "presets/**"
+      - "internal-packages/languages/**"
+      - ".github/workflows/pkg-pr-new.yml"
       - package.json
       - pnpm-lock.yaml
       - pnpm-workspace.yaml
@@ -54,6 +56,7 @@ jobs:
           './packages/creators'
           './packages/editor-api'
           './packages/editors'
+          './packages/i18n'
           './packages/iiif-preview-server'
           './packages/manifest-editor'
           './packages/projects'

@@ -57,7 +57,19 @@ export interface TranslationDiagnostic {
   readonly namespace: string;
   readonly key: string;
 }
-export interface EditorI18nOptions {
+/** Serializable resource layers, also suitable for server-to-client preloading. */
+export interface EditorI18nResources {
+  readonly catalogs?: ResourceStore;
+  readonly presets?: readonly ResourceStore[];
+  readonly profiles?: Readonly<Record<string, ResourceStore>>;
+  readonly presetProfiles?: Readonly<Record<string, ResourceStore>>;
+}
+export interface LocaleResourceLoader {
+  readonly locale: string;
+  /** Return only this locale's data. Source contracts must already be registered. */
+  readonly load: () => Promise<EditorI18nResources>;
+}
+export interface EditorI18nOptions extends EditorI18nResources {
   readonly config?: Partial<UiI18nConfig>;
   readonly locales?: readonly LocaleDefinition[];
   readonly policies?: readonly PresetLanguagePolicy[];
@@ -66,11 +78,8 @@ export interface EditorI18nOptions {
   readonly persistedLocale?: string;
   readonly persistedProfile?: string;
   readonly preferredLocales?: readonly string[];
-  /** Synchronous resources are required for SSR/hydration parity. */
-  readonly catalogs?: ResourceStore;
-  readonly presets?: readonly ResourceStore[];
-  readonly profiles?: Readonly<Record<string, ResourceStore>>;
-  readonly presetProfiles?: Readonly<Record<string, ResourceStore>>;
+  /** Optional locale bundles; selections load these before committing any changes. */
+  readonly resourceLoaders?: readonly LocaleResourceLoader[];
   readonly host?: ResourceStore;
   readonly registrations?: readonly CatalogRegistration[];
   readonly requiredNamespaces?: readonly string[];

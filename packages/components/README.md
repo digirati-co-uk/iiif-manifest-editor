@@ -34,6 +34,14 @@ export function SaveButton() {
 
 Use React 19. Components that read IIIF resources or editor state need the corresponding Vault or shell providers. The combined editor includes the shared styles.
 
+Rich-text editors, media playback and the IIIF browser load their implementations when mounted,
+using React lazy boundaries with localized loading indicators. These boundaries also work in
+non-Next hosts. Imperative editor refs become available when the deferred component mounts.
+Locale/profile changes keep the mounted editor and its draft state intact.
+
+ESM/CJS application bundlers can split these implementations into separate chunks. The classic
+CDN facade keeps its single integrity-checked script and defers their initialization within it.
+
 ## API overview
 
 - Controls: `ActionButton`, `IconButton`, selection controls, tooltips, and menus.

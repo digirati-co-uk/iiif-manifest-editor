@@ -75,6 +75,8 @@ export async function loadManifestEditor(release: RemoteRelease, host: RuntimeHo
     typeof host["@manifest-editor/i18n/core"]?.createEditorI18n !== "function"
   )
     throw new Error("Remote editor requires shared @manifest-editor/i18n and /core host modules");
+  if (host["@manifest-editor/i18n"].createEditorI18n !== host["@manifest-editor/i18n/core"].createEditorI18n)
+    throw new Error("Remote editor i18n host modules must share the same public runtime");
   const key = `${release.script.url}:${release.script.integrity}`;
   let scriptPromise = scripts.get(key);
   if (!scriptPromise) {

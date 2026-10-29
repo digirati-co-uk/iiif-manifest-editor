@@ -10,6 +10,7 @@
     "test/WebI18n.test.tsx",
     "test/LanguageMenu.test.tsx",
     "test/AdditionalLanguages.test.tsx",
+    "test/LazyResources.test.tsx",
     "test/HostUI.test.tsx"
   ]
 }

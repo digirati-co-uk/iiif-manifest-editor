@@ -8,6 +8,7 @@ import { AboutText } from "../src/components/LegacyManifestEditor/apps/About/com
 import ErrorPage from "../src/app/(main)/error";
 import { WebI18nProvider, createWebI18n } from "../src/i18n/WebI18nProvider";
 import { createWebUiPolicy, parseWebUiPreferences, UI_PREFERENCES_COOKIE, webUiCoverage } from "../src/i18n/policy";
+import { preloadWebResources } from "../src/i18n/preload";
 
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 vi.stubGlobal(
@@ -59,8 +60,9 @@ it("uses translated coverage rather than English fallback for deployment gating"
 });
 
 it("hydrates the actual Dutch wording picker and help without a recovery or preference write", async () => {
+  const initialResources = await preloadWebResources("nl");
   const tree = (
-    <WebI18nProvider preferences={{ locale: "nl", profile: "plain" }}>
+    <WebI18nProvider preferences={{ locale: "nl", profile: "plain" }} initialResources={initialResources}>
       <HeaderLanguageMenu />
       <AboutText />
     </WebI18nProvider>
@@ -197,6 +199,7 @@ it("forwards Dutch exhibition resources only to the matching effective runtime",
   const options = { ...webUiResources, locales: [...defaultLocales, dutchLocale], locale: "nl" };
   const ordinary = createEditorI18n(options);
   const exhibition = createEditorI18n({ ...options, ...webExhibitionResources });
+  await Promise.all([ordinary.select({}), exhibition.select({})]);
   expect(ordinary.translate("editors")("canvas.add")).toBe("Canvas toevoegen");
   expect(exhibition.translate("editors")("canvas.add")).toBe("Dia toevoegen");
   await exhibition.setProfile("plain");

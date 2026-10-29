@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { registerRuntime } from "./runtime-api.mjs";
 
+const createEditorI18n = () => {};
 const host = {
-  I18n: { EditorI18nProvider() {} },
-  I18nCore: { createEditorI18n() {} },
+  I18n: { EditorI18nProvider() {}, createEditorI18n },
+  I18nCore: { createEditorI18n },
   React: { version: "19.2.8" },
   ReactDOM: {},
   ReactDOMClient: {},
@@ -44,6 +45,9 @@ describe("browser runtime API", () => {
     expect(() => target.ManifestEditor.createRuntime({ ...host, I18n: undefined })).toThrow("requires I18n");
     expect(() => target.ManifestEditor.createRuntime({ ...host, I18nCore: undefined })).toThrow("requires I18nCore");
     expect(() => target.ManifestEditor.createRuntime({ ...host, I18n: {} })).toThrow("requires public I18n");
+    expect(() => target.ManifestEditor.createRuntime({ ...host, I18nCore: { createEditorI18n() {} } })).toThrow(
+      "same public runtime"
+    );
     expect(() => target.ManifestEditor.createRuntime({ ...host, ReactReconciler: undefined })).toThrow(
       "requires ReactReconciler"
     );
@@ -65,7 +69,6 @@ describe("browser runtime API", () => {
 describe("automatic runtime", () => {
   const modules = [
     host.I18n,
-    host.I18nCore,
     host.React,
     host.ReactDOM,
     host.ReactDOMClient,
@@ -87,6 +90,7 @@ describe("automatic runtime", () => {
         factories++;
         expect(dependencies.react).toBe(host.React);
         expect(dependencies["react-reconciler"]).toBe(host.ReactReconciler);
+        expect(dependencies["@manifest-editor/i18n/core"]).toBe(host.I18n);
         return runtime;
       },
       async (url) => {
@@ -100,7 +104,8 @@ describe("automatic runtime", () => {
     expect(result.ManifestEditor).toBe(runtime.ManifestEditor);
     expect(result.React).toBe(host.React);
     expect(result.ReactDOMClient).toBe(host.ReactDOMClient);
-    expect(urls).toHaveLength(8);
+    expect(urls).toHaveLength(7);
+    expect(urls.some((url) => url.includes("/core?"))).toBe(false);
     expect(urls.every((url) => url.startsWith("https://esm.sh/") && url.includes("target=es2022"))).toBe(true);
     expect(
       urls
@@ -122,11 +127,30 @@ describe("automatic runtime", () => {
       async () => {
         const index = calls++;
         if (index === 0) throw new Error("Network unavailable");
-        return modules[index % 8];
+        return modules[index % 7];
       }
     );
     await expect(target.ManifestEditor.automaticRuntime()).rejects.toThrow("Network unavailable");
     await expect(target.ManifestEditor.automaticRuntime()).resolves.toHaveProperty("React", host.React);
-    expect(calls).toBe(16);
+    expect(calls).toBe(14);
+  });
+
+  it("uses the dependency versions captured by the browser build", async () => {
+    const target = {};
+    const urls = [];
+    registerRuntime(
+      target,
+      "build-a",
+      "3.0.0",
+      () => ({}),
+      async (url) => {
+        urls.push(url);
+        return modules[urls.length - 1];
+      },
+      { i18n: "3.0.1", react: "19.3.0", reconciler: "0.34.0" }
+    );
+    await target.ManifestEditor.automaticRuntime();
+    expect(urls[0]).toBe("https://esm.sh/@manifest-editor/i18n@3.0.1?deps=react@19.3.0&target=es2022");
+    expect(urls[6]).toContain("react-reconciler@0.34.0?deps=react@19.3.0");
   });
 });

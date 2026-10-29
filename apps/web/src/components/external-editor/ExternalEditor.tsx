@@ -1,7 +1,7 @@
 "use client";
 import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
-import { webExhibitionResources } from "../../i18n/resources";
+import { useWebExhibitionResources } from "../../i18n/WebResources";
 import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
 
 import { useTranslations } from "@manifest-editor/i18n";
@@ -47,6 +47,7 @@ const externalDefaultEnabledPlugins = ["@manifest-editor/av-ranges"];
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
   const webT = useTranslations("web");
+  const webExhibitionResources = useWebExhibitionResources();
 
   const vaultRef = useRef<{ key: string; vault: Vault } | null>(null);
   const vaultKey = `${manifest}\0${preset || ""}`;

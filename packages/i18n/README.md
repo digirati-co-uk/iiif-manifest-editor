@@ -54,6 +54,46 @@ const runtime = createEditorI18n({
 
 The same entry exports `dutchExhibition` and `dutchExhibitionPlain` for explicit preset composition. Source catalog edits are reflected by these imports. Coverage proves the currently declared messages, not all repository UI; each consumer module must expand and migrate its own namespace. The web host owns locale persistence and the picker.
 
+Optional languages can instead use `resourceLoaders`. Each entry loads one locale's
+base catalogs, profiles and preset layers together. Only the selected locale chain
+is requested. All returned layers are validated and frozen before committing;
+failed downloads or validation are retryable, concurrent requests coalesce, and
+profile changes reuse the cached bundle. Source contracts must already exist through
+English `catalogs` or plugin registrations. A loader cannot write another locale.
+Synchronous resource options override the corresponding lazy layer; `host` stays last.
+
+```ts
+const runtime = createEditorI18n({
+  locales: [...defaultLocales, dutchLocale],
+  resourceLoaders: [
+    {
+      locale: "nl",
+      load: async () => {
+        const { dutchCatalogs, dutchPlain } = await import("@manifest-editor/i18n/nl");
+        return { catalogs: dutchCatalogs, profiles: { plain: dutchPlain } };
+      },
+    },
+  ],
+});
+await runtime.select({ locale: "nl", profile: "plain" });
+```
+
+For an exhibition, the bundle can also return `presets: [dutchExhibition]` and
+`presetProfiles: { plain: dutchExhibitionPlain }`. Keep loader arrays stable and
+compose them in preset/host order; Shell preserves and deduplicates their entries.
+Plugin namespace registration remains separate and retains its ownership rules.
+For SSR, preload the selected bundle and pass its serializable resource layers to
+both server and client, including any child shell that creates its own runtime.
+Async-only data initially uses fallback until selection finishes.
+
+English stays synchronous so standalone editors and server rendering have an
+immediate, complete fallback without a network request. Optional languages are the
+first splitting boundary. The optional `pnpm i18n:payload` command checks that none leaks into the
+initial web graph and reports raw/gzip/Brotli sizes against an eager equivalent;
+`pnpm i18n:artifacts` records initialization time and installed-core payload size.
+Use that evidence before adding the extra requests and preload coordination needed
+to split English or individual namespaces further.
+
 ```ts
 import { createEditorI18n, createCatalogContract, defaultLocales, dutchLocale } from "@manifest-editor/i18n";
 const source = { run: "Run {{name}}" };

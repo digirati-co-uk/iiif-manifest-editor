@@ -60,6 +60,28 @@ function mount() {
 }
 const options = { locales: [...defaultLocales, dutchLocale], catalogs: dutchCatalogs, profiles: { plain: dutchPlain } };
 
+test("composes preset and host locale bundles and coalesces duplicate loader entries", async () => {
+  const base = {
+    locale: "nl",
+    load: vi.fn(async () => ({ catalogs: { nl: { "editor-api": { fields: { label: "Basis" } } } } })),
+  };
+  const overlay = {
+    locale: "nl",
+    load: vi.fn(async () => ({ profiles: { plain: { nl: { "editor-api": { fields: { label: "Eenvoudig" } } } } } })),
+  };
+  const resources = mergeLocalisation(
+    { locales: options.locales, resourceLoaders: [base] },
+    { resourceLoaders: [base, overlay] }
+  );
+  const runtime = createEditorI18n(resources);
+  await runtime.select({ locale: "nl", profile: "plain" });
+  expect(runtime.translate("editor-api")("fields.label")).toBe("Eenvoudig");
+  await runtime.setProfile("standard");
+  expect(runtime.translate("editor-api")("fields.label")).toBe("Basis");
+  expect(base.load).toHaveBeenCalledOnce();
+  expect(overlay.load).toHaveBeenCalledOnce();
+});
+
 test("config merge keeps content languages separate, replaces allow lists and unions namespaces; validates the persisted schema", () => {
   const merged = mergeConfig(
     {

@@ -1,5 +1,5 @@
 "use client";
-import { webExhibitionResources } from "../../i18n/resources";
+import { useWebExhibitionResources } from "../../i18n/WebResources";
 import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
 
 import { useTranslations } from "@manifest-editor/i18n";
@@ -294,6 +294,7 @@ export default function BrowserEditor({
   plugins = [],
 }: BrowserEditorProps) {
   const webT = useTranslations("web");
+  const webExhibitionResources = useWebExhibitionResources();
 
   const {
     staleEtag,

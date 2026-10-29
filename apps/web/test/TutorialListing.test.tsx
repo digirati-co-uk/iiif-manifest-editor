@@ -22,6 +22,7 @@ afterEach(async () => {
 });
 async function mount() {
   const runtime = createWebI18n({ locale: "nl" });
+  await runtime.select({});
   const node = document.createElement("div");
   document.body.appendChild(node);
   const root = createRoot(node);

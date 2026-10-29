@@ -14,6 +14,7 @@ import { Posthog } from "../../components/PostHog";
 import { SiteProvider } from "../../components/site/Provider";
 import { WebI18nProvider } from "../../i18n/WebI18nProvider";
 import { parseWebUiPreferences, UI_PREFERENCES_COOKIE, webUiPolicy, webUiSelection } from "../../i18n/policy";
+import { preloadWebResources } from "../../i18n/preload";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const preferences = parseWebUiPreferences((await cookies()).get(UI_PREFERENCES_COOKIE)?.value);
   const { locale } = webUiSelection(preferences);
+  const initialResources = await preloadWebResources(locale);
   const direction = webUiPolicy.locales.find((item) => item.id === locale)?.direction ?? "ltr";
   return (
     <html lang={locale} dir={direction}>
@@ -35,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={inter.className}>
-        <WebI18nProvider preferences={preferences}>
+        <WebI18nProvider preferences={preferences} initialResources={initialResources}>
           <SiteProvider>{children}</SiteProvider>
         </WebI18nProvider>
         <Posthog />

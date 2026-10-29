@@ -15,6 +15,22 @@ const catalogs = {
 const options: EditorI18nOptions = { locales, catalogs, requiredNamespaces: ["example"] };
 
 describe("isolated i18next runtime", () => {
+  it("keeps default engines and host validation isolated after warming shared catalog preparation", async () => {
+    const standard = createEditorI18n();
+    const saved = standard.translate("common")("actions.save");
+    const plain = createEditorI18n({ catalogs: {}, host: {}, profile: "plain" });
+    const custom = createEditorI18n({ host: { "en-GB": { common: { actions: { save: "Host save" } } } } });
+    expect(custom.translate("common")("actions.save")).toBe("Host save");
+    expect(plain.translate("common")("actions.save")).toBe(saved);
+    await plain.setProfile("standard");
+    expect(standard.getSnapshot().profile).toBe("standard");
+    expect(standard.translate("common")("actions.save")).toBe(saved);
+    expect(() =>
+      createEditorI18n({ host: { "en-GB": { common: { actions: { save: '<b onclick="x">Save</b>' } } } } })
+    ).toThrow();
+    expect(() => createEditorI18n({ catalogs: [] as never })).toThrow("plain object");
+  });
+
   it("initializes synchronously, supports real plurals and English fallback with English rules", () => {
     const diagnostics: TranslationDiagnostic[] = [];
     const runtime = createEditorI18n({ ...options, locale: "fr", onDiagnostic: (d) => diagnostics.push(d) });

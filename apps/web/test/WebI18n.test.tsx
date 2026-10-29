@@ -4,6 +4,7 @@ import { renderToString } from "react-dom/server";
 import { afterEach, expect, it, vi } from "vitest";
 import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { createWebI18n, WebI18nProvider } from "../src/i18n/WebI18nProvider";
+import { preloadWebResources } from "../src/i18n/preload";
 import {
   createWebUiPolicy,
   parseWebUiPreferences,
@@ -61,12 +62,13 @@ it("validates versioned independent UI choices against the host allow-list", () 
 
 it("hydrates the server-selected Dutch profile without fallback flash or recovery errors", async () => {
   const preferences = { locale: "nl", profile: "plain" };
+  const initialResources = await preloadWebResources("nl");
   function Field() {
     const t = useTranslations("editor-api");
     return <output>{t("fields.label")}</output>;
   }
   const element = () => (
-    <WebI18nProvider preferences={preferences}>
+    <WebI18nProvider preferences={preferences} initialResources={initialResources}>
       <Field />
     </WebI18nProvider>
   );

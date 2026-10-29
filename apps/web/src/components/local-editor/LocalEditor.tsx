@@ -8,7 +8,7 @@ import { upgrade } from "@iiif/parser/upgrader";
 import { ManifestEditorLogo } from "@manifest-editor/components";
 import { type FileWithHandle, fileOpen, fileSave, supported } from "browser-fs-access";
 import { ManifestEditor } from "manifest-editor";
-import { webUiResources } from "../../i18n/resources";
+import { useWebUiResources } from "../../i18n/WebResources";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ import { GlobalNav } from "../site/GlobalNav";
 
 export default function LocalEditor() {
   const webT = useTranslations("web");
+  const webUiResources = useWebUiResources();
 
   const { locale } = useEditorI18n();
   const [file, setFile] = useState<FileWithHandle | null>(null);

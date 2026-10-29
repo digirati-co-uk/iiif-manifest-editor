@@ -35,6 +35,7 @@ it("translates the real rich-text toolbar in place without emitting or replacing
         </EditorI18nProvider>
       )
     );
+    await act(async () => vi.dynamicImportSettled());
     expect(container.querySelector('[aria-label="Bold"]')).not.toBeNull();
     const editable = container.querySelector('[contenteditable="true"]');
     await act(async () => ref.current!.setMarkdown("Testun heb ei gadw"));
@@ -59,15 +60,13 @@ it("localises malformed-source feedback without changing the draft or parser dia
     unobserve() {}
     disconnect() {}
   };
-  window.matchMedia = vi
-    .fn()
-    .mockImplementation(() => ({
-      matches: false,
-      addListener() {},
-      removeListener() {},
-      addEventListener() {},
-      removeEventListener() {},
-    }));
+  window.matchMedia = vi.fn().mockImplementation(() => ({
+    matches: false,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+  }));
   const i18n = createEditorI18n({ locales: [...defaultLocales, dutchLocale], catalogs: dutchCatalogs });
   const container = document.createElement("div");
   document.body.append(container);
@@ -83,6 +82,7 @@ it("localises malformed-source feedback without changing the draft or parser dia
         </EditorI18nProvider>
       )
     );
+    await act(async () => vi.dynamicImportSettled());
     await act(async () => ref.current!.setMarkdown("<unclosed"));
     expect(error).toHaveBeenCalled();
     const diagnostic = error.mock.calls.at(-1)![0];

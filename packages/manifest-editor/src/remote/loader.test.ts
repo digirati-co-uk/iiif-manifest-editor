@@ -94,3 +94,13 @@ test("rejects the older browser contract before loading assets", async () => {
   await expect(loadManifestEditor(descriptor, host)).rejects.toThrow("incompatible");
   expect(append).not.toHaveBeenCalled();
 });
+
+test("rejects mismatched root/core factories before loading assets", async () => {
+  const append = vi.spyOn(document.head, "appendChild");
+  const mismatched = {
+    ...host,
+    "@manifest-editor/i18n/core": { ...core, createEditorI18n: vi.fn(core.createEditorI18n) },
+  };
+  await expect(loadManifestEditor(release(), mismatched)).rejects.toThrow("same public runtime");
+  expect(append).not.toHaveBeenCalled();
+});

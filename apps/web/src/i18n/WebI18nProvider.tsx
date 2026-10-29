@@ -2,14 +2,20 @@
 
 import { createEditorI18n, type EditorI18n } from "@manifest-editor/i18n/core";
 import { EditorI18nProvider } from "@manifest-editor/i18n";
-import { webUiResources } from "./resources";
+import { createWebResourceOptions } from "./resources";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { serializeWebUiPreferences, webUiPolicy, type WebUiPolicy, type WebUiPreferences } from "./policy";
+import { WebResourceContext } from "./WebResources";
+import type { WebResourcePreload } from "./preload";
 
-export function createWebI18n(preferences: WebUiPreferences = {}, policy: WebUiPolicy = webUiPolicy): EditorI18n {
+export function createWebI18n(
+  preferences: WebUiPreferences = {},
+  policy: WebUiPolicy = webUiPolicy,
+  initialResources?: WebResourcePreload
+): EditorI18n {
   return createEditorI18n({
     ...policy,
-    ...webUiResources,
+    ...createWebResourceOptions(initialResources).ui,
     persistedLocale: preferences.locale,
     persistedProfile: preferences.profile,
   });
@@ -55,13 +61,16 @@ function synchronizeWebPreferences(runtime: EditorI18n, preferences: { current: 
 export function WebI18nProvider({
   preferences = {},
   policy = webUiPolicy,
+  initialResources,
   children,
 }: {
   preferences?: WebUiPreferences;
   policy?: WebUiPolicy;
+  initialResources?: WebResourcePreload;
   children: ReactNode;
 }) {
   const [savedPreferences] = useState(() => ({ current: { ...preferences } }));
+  const resources = useMemo(() => createWebResourceOptions(initialResources), [initialResources]);
   const previousRuntime = useRef<EditorI18n | null>(null);
   const runtime = useMemo(() => {
     const previous = previousRuntime.current?.getSnapshot();
@@ -76,11 +85,16 @@ export function WebI18nProvider({
     };
     const next = createWebI18n(
       previous ? { locale: previous.locale, profile: previous.profile } : savedPreferences.current,
-      policy
+      policy,
+      initialResources
     );
     previousRuntime.current = next;
     return next;
-  }, [policy, savedPreferences]);
+  }, [policy, savedPreferences, initialResources]);
   useEffect(() => synchronizeWebPreferences(runtime, savedPreferences), [runtime, savedPreferences]);
-  return <EditorI18nProvider instance={runtime}>{children}</EditorI18nProvider>;
+  return (
+    <WebResourceContext.Provider value={resources}>
+      <EditorI18nProvider instance={runtime}>{children}</EditorI18nProvider>
+    </WebResourceContext.Provider>
+  );
 }

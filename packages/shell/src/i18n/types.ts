@@ -50,6 +50,7 @@ export function mergeLocalisation(
     policies: [...(base?.policies || []), ...(override?.policies || [])],
     presets: [...(base?.presets || []), ...(override?.presets || [])],
     registrations: [...(base?.registrations || []), ...(override?.registrations || [])],
+    resourceLoaders: [...new Set([...(base?.resourceLoaders || []), ...(override?.resourceLoaders || [])])],
     requiredNamespaces: [...new Set([...(base?.requiredNamespaces || []), ...(override?.requiredNamespaces || [])])],
   };
 }

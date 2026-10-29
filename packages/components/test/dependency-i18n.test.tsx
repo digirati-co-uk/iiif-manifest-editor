@@ -200,6 +200,7 @@ it.each(["source", "diff"] as const)(
           </EditorI18nProvider>
         )
       );
+      await act(async () => vi.dynamicImportSettled());
       const editors = container.querySelectorAll<HTMLElement>(".cm-editor");
       const editor = editors[editors.length - 1]!;
       const view = EditorView.findFromDOM(editor)!;
@@ -281,6 +282,7 @@ it("translates actual IIIF image options in an open MDX dialog without resetting
         </EditorI18nProvider>
       )
     );
+    await act(async () => vi.dynamicImportSettled());
     await act(async () => (container.querySelector('[aria-label="Insert IIIF image"]') as HTMLButtonElement).click());
     const click = async (label: string) =>
       act(async () => (document.querySelector(`[aria-label="${label}"]`) as HTMLButtonElement).click());

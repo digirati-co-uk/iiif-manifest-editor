@@ -1,12 +1,15 @@
 "use client";
 import { useTranslations } from "@manifest-editor/i18n";
 import { Tab, TabList, TabPanel, Tabs } from "@manifest-editor/components";
-import { Suspense } from "react";
-import { TutorialListing } from "../tutorials/TutorialListing";
+import { lazy, Suspense } from "react";
 import BrowserRecents from "../browser-editor/BrowserRecents";
 import GettingStarted from "../browser-editor/GettingStarted";
 import { ExampleListing } from "../example-listing/ExampleListing";
 import { HandleQueryString } from "../query-string/HandleQueryString";
+
+const TutorialListing = lazy(() =>
+  import("../tutorials/TutorialListing").then((module) => ({ default: module.TutorialListing }))
+);
 
 export function Launcher({
   defaultTab,
@@ -42,7 +45,9 @@ export function Launcher({
             <ExampleListing examples={examples} />
           </TabPanel>
           <TabPanel id="tutorials">
-            <TutorialListing />
+            <Suspense fallback={<output>{webT("feedback.loading")}</output>}>
+              <TutorialListing />
+            </Suspense>
           </TabPanel>
         </Tabs>
       </div>

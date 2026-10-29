@@ -6,6 +6,7 @@ import {
 } from "@manifest-editor/i18n/core";
 
 import { webUiResources } from "./resources";
+import catalogMetadata from "./coverage.json";
 
 export const webRequiredNamespaces = Object.freeze([
   "web",
@@ -19,10 +20,6 @@ export const webRequiredNamespaces = Object.freeze([
   "ui",
 ]);
 
-// These module-owned catalogs are static. Reuse their coverage when another route
-// creates the same deployment policy instead of validating all 18 languages again.
-const defaultCoverage = new Map<string, EditorI18nSnapshot["coverage"]>();
-
 /** The runtime coverage report excludes English fallback for translated selections. */
 export function webUiCoverage(
   locale: string,
@@ -30,8 +27,19 @@ export function webUiCoverage(
   requiredNamespaces: readonly string[],
   resources: EditorI18nOptions = webUiResources
 ) {
-  const key = JSON.stringify([locale, profile, [...new Set(requiredNamespaces)].sort()]);
-  if (resources === webUiResources && defaultCoverage.has(key)) return defaultCoverage.get(key)!;
+  if (resources === webUiResources) {
+    // Generated from real catalogs and checked for freshness in CI; no message values are imported.
+    const coverage = catalogMetadata.coverage as Readonly<Record<string, Readonly<Record<string, readonly string[]>>>>;
+    const missing = [
+      ...requiredNamespaces
+        .filter((namespace) => !catalogMetadata.namespaces.includes(namespace))
+        .map((namespace) => `${namespace}:*`),
+      ...(coverage[locale]?.[profile] ?? requiredNamespaces.map((namespace) => `${namespace}:*`)).filter((key) =>
+        requiredNamespaces.includes(key.split(":")[0]!)
+      ),
+    ];
+    return { complete: missing.length === 0, missing } satisfies EditorI18nSnapshot["coverage"];
+  }
   const coverage = createEditorI18n({
     ...resources,
     locales: registeredLocales,
@@ -39,7 +47,6 @@ export function webUiCoverage(
     profile,
     requiredNamespaces,
   }).getSnapshot().coverage;
-  if (resources === webUiResources) defaultCoverage.set(key, coverage);
   return coverage;
 }
 

@@ -65,7 +65,10 @@ it("uses one menu in the real site header, loads all languages and applies a lan
   await act(async () => trigger.click());
   expect(document.querySelectorAll('[role="dialog"] ul[aria-label] > li')).toHaveLength(18);
   await act(async () => row("nl").parentElement!.querySelector<HTMLButtonElement>("[aria-controls]")!.click());
-  await act(async () => visibleChoice("Plain wording").click());
+  await act(async () => {
+    visibleChoice("Plain wording").click();
+    await vi.waitFor(() => expect(controls.getSnapshot()).toMatchObject({ locale: "nl", profile: "plain" }));
+  });
   expect(controls).toMatchObject({ locale: "nl", profile: "plain" });
   expect(document.documentElement.lang).toBe("nl");
   expect(node.querySelector("input")).toBe(input);

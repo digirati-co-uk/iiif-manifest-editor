@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { fileOpen } from "browser-fs-access";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Button, Dialog, DialogTrigger, Toolbar } from "react-aria-components";
 import {
   createBlankCollection,
@@ -15,8 +15,12 @@ import {
   createBlankManifest,
   createManifestFromJson,
 } from "./browser-state";
-import { CreateFromUrlModal } from "./CreateFromUrlModal";
-import { IIIFBrowserModal } from "./IIIFBrowserModal";
+const CreateFromUrlModal = lazy(() =>
+  import("./CreateFromUrlModal").then((module) => ({ default: module.CreateFromUrlModal }))
+);
+const IIIFBrowserModal = lazy(() =>
+  import("./IIIFBrowserModal").then((module) => ({ default: module.IIIFBrowserModal }))
+);
 
 export default function GettingStarted() {
   const webT = useTranslations("web");
@@ -25,7 +29,11 @@ export default function GettingStarted() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIIIFBrowserOpen, setIsIIIFBrowserOpen] = useState(false);
   const blankManifest = useMutation({
-    mutationFn: createBlankManifest,
+    mutationFn: () => {
+      // Download in parallel with persistence and route navigation, after explicit user intent.
+      void import("./BrowserManifestEditor").catch(() => {});
+      return createBlankManifest();
+    },
     onSuccess: (data) => {
       if (data) {
         posthog.capture("blank-manifest-created", {});
@@ -35,7 +43,10 @@ export default function GettingStarted() {
   });
 
   const blankCollection = useMutation({
-    mutationFn: createBlankCollection,
+    mutationFn: () => {
+      void import("./BrowserCollectionEditor").catch(() => {});
+      return createBlankCollection();
+    },
     onSuccess: (data) => {
       if (data) {
         posthog.capture("blank-collection-created", {});
@@ -45,7 +56,10 @@ export default function GettingStarted() {
   });
 
   const blankExhibition = useMutation({
-    mutationFn: createBlankExhibition,
+    mutationFn: () => {
+      void import("../exhibition-editor/ExhibitionEditor").catch(() => {});
+      return createBlankExhibition();
+    },
     onSuccess: (data) => {
       if (data) {
         posthog.capture("blank-exhibition-created", {});
@@ -170,8 +184,10 @@ export default function GettingStarted() {
       filesystemManifest.isPending ? (
         <output>{webT("feedback.loading")}</output>
       ) : null}
-      <CreateFromUrlModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
-      <IIIFBrowserModal isOpen={isIIIFBrowserOpen} setIsOpen={setIsIIIFBrowserOpen} />
+      <Suspense fallback={<output>{webT("feedback.loading")}</output>}>
+        {isModalOpen ? <CreateFromUrlModal isOpen setIsOpen={setIsModalOpen} /> : null}
+        {isIIIFBrowserOpen ? <IIIFBrowserModal isOpen setIsOpen={setIsIIIFBrowserOpen} /> : null}
+      </Suspense>
     </div>
   );
 }
