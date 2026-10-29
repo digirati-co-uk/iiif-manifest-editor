@@ -1,3 +1,4 @@
+import { creatorValidationError } from "../../validation-messages";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { getIIIFType, getJsonResource, isDigitalCollectionPage } from "../../resource-probes";
@@ -16,11 +17,14 @@ declare module "@manifest-editor/creator-api" {
 }
 
 export const iiifBrowserCreator = defineCreator({
+  validationErrorMessage: creatorValidationError,
   id: "@manifest-editor/iiif-browser-creator",
   create: createFromIIIFBrowserOutput,
   label: "Browse IIIF content",
+  labelMessage: { namespace: "creators", key: "definitions.browser.label" },
   hideSummary: true,
   summary: "Browse an IIIF manifest, collection, or supported collection webpage and choose content to add.",
+  summaryMessage: { namespace: "creators", key: "definitions.browser.summary" },
   icon: <IIIFBrowserIcon />,
   configuration: {
     fields: [
@@ -28,7 +32,9 @@ export const iiifBrowserCreator = defineCreator({
         id: "addManifestMetadataToCanvas",
         type: "checkbox",
         label: "Add manifest metadata to imported canvases",
+        labelMessage: { namespace: "creators", key: "definitions.browser.copyMetadata" },
         summary: "Copies metadata from the source Manifest when the IIIF Browser creates a Canvas.",
+        summaryMessage: { namespace: "creators", key: "definitions.browser.copyMetadataHelp" },
         defaultValue: true,
       },
     ],

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { Reference } from "@iiif/presentation-3";
 import { ActionButton, AddIcon, DeleteIcon, EditTextIcon, IconButton } from "@manifest-editor/components";
 import { useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
@@ -30,6 +31,7 @@ import { MediaTargetEditor } from "../MediaEditor/MediaTargetEditor";
 type SortableChoiceItem = ChoiceItemInfo & { id: string };
 
 export function ChoicePaintingAnnotationEditor() {
+  const t = useTranslations("editors");
   const vault = useVault();
   const annotationEditor = useEditor();
   const editingResource = useEditingResource();
@@ -47,7 +49,7 @@ export function ChoicePaintingAnnotationEditor() {
       const choiceItems = choiceInfo ? getChoiceItems(choiceInfo.choice, selectorVault as any) : [];
       return { annotation, choiceInfo, choiceItems };
     },
-    [annotationRef.id],
+    [annotationRef.id]
   );
 
   const sortableItems = useMemo<SortableChoiceItem[]>(
@@ -56,7 +58,7 @@ export function ChoicePaintingAnnotationEditor() {
         ...item,
         id: item.ref?.id || item.resource?.id || `${annotationRef.id}/choice-item/${item.index}`,
       })),
-    [state.choiceItems, annotationRef.id],
+    [state.choiceItems, annotationRef.id]
   );
 
   if (!state.choiceInfo) {
@@ -82,7 +84,7 @@ export function ChoicePaintingAnnotationEditor() {
           width: firstImage?.resource?.width || 100,
           height: firstImage?.resource?.height || 100,
         },
-        0.6,
+        0.6
       );
 
       target.setPosition(imagePosition);
@@ -92,7 +94,7 @@ export function ChoicePaintingAnnotationEditor() {
   const choiceLabel = (
     <LanguageFieldEditor
       focusId={`${annotationRef.id}_Choice_label`}
-      label="Choice label"
+      label={t("ui.choiceLabel")}
       fields={choiceInfo.choice.label || {}}
       onSave={(e: any) => updateChoiceField(vault, annotationRef, choiceInfo, "label", e.toInternationalString())}
     />
@@ -109,7 +111,7 @@ export function ChoicePaintingAnnotationEditor() {
           const nextItems = moveItem(
             choiceItems.map((item) => item.item),
             startIndex,
-            endIndex,
+            endIndex
           );
           updateChoiceItems(vault, annotationRef, choiceInfo, nextItems);
         }}
@@ -137,7 +139,7 @@ export function ChoicePaintingAnnotationEditor() {
             });
           }}
         >
-          <AddIcon /> Add media option
+          <AddIcon /> {t("ui.addMediaOption")}
         </ActionButton>
         <ActionButton
           className="justify-center text-xs text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-600"
@@ -155,12 +157,12 @@ export function ChoicePaintingAnnotationEditor() {
                   property: "items",
                   index: unwrapped.index,
                 },
-                { forceOpen: true },
+                { forceOpen: true }
               );
             }
           }}
         >
-          Unwrap choice
+          {t("ui.unwrapChoice")}
         </ActionButton>
       </div>
     </div>
@@ -170,7 +172,7 @@ export function ChoicePaintingAnnotationEditor() {
     <>
       {canvas && !currentTarget.selector ? (
         <InputContainer $wide>
-          <InputLabel $margin>Target</InputLabel>
+          <InputLabel $margin>{t("ui.target")}</InputLabel>
           <div
             style={{
               border: "1px solid #ddd",
@@ -179,10 +181,10 @@ export function ChoicePaintingAnnotationEditor() {
               color: "#999",
             }}
           >
-            This choice fills the whole Canvas.
+            {t("ui.thisChoiceFillsTheWholeCanvas")}
           </div>
           <ButtonGroup $right>
-            <Button onClick={moveAndResizeImage}>Change</Button>
+            <Button onClick={moveAndResizeImage}>{t("ui.change")}</Button>
           </ButtonGroup>
         </InputContainer>
       ) : null}
@@ -198,7 +200,7 @@ export function ChoicePaintingAnnotationEditor() {
         {choiceLabel}
 
         <InputContainer $wide>
-          <InputLabel $margin>Options</InputLabel>
+          <InputLabel $margin>{t("ui.options")}</InputLabel>
           {items}
         </InputContainer>
       </div>
@@ -206,7 +208,7 @@ export function ChoicePaintingAnnotationEditor() {
       <Accordion
         items={[
           {
-            label: "Target",
+            label: t("ui.target"),
             initialOpen: currentSelector !== null,
             children: targetElements,
           },
@@ -215,8 +217,8 @@ export function ChoicePaintingAnnotationEditor() {
 
       {annotationEditor.context ? (
         <DeleteButton
-          label="Remove from canvas"
-          message="Are you sure you want to remove from canvas"
+          label={t("ui.removeFromCanvas")}
+          message={t("messages.removeFromCanvasConfirm")}
           onDelete={() => {
             annotationEditor.context?.removeFromParent();
             edit(annotationEditor.ref());
@@ -240,9 +242,10 @@ function ChoiceItemEditorRow({
   item: SortableChoiceItem;
   canRemove: boolean;
 }) {
+  const t = useTranslations("editors");
   const vault = useVault();
   const { edit } = useLayoutActions();
-  const title = getInternationalStringText(item.resource?.label, `Option ${item.index + 1}`);
+  const title = getInternationalStringText(item.resource?.label, t("messages.option", { number: item.index + 1 }));
   const openMediaItem = () => {
     if (!item.ref) {
       return;
@@ -272,7 +275,7 @@ function ChoiceItemEditorRow({
         </button>
         <div className="flex items-center gap-0.5 flex-shrink-0">
           <IconButton
-            label="Edit media"
+            label={t("ui.editMedia")}
             disabled={!item.ref}
             onPress={openMediaItem}
             className="text-base text-gray-500"
@@ -280,7 +283,7 @@ function ChoiceItemEditorRow({
             <EditTextIcon />
           </IconButton>
           <IconButton
-            label="Remove option"
+            label={t("ui.removeOption")}
             disabled={!canRemove}
             onPress={() => {
               const items = choiceInfo.choice.items || [];
@@ -288,7 +291,7 @@ function ChoiceItemEditorRow({
                 vault,
                 annotationRef,
                 choiceInfo,
-                items.filter((_choiceItem, index) => index !== item.index),
+                items.filter((_choiceItem, index) => index !== item.index)
               );
             }}
             className="text-base text-gray-500 hover:text-red-600 hover:bg-red-50"
@@ -301,7 +304,7 @@ function ChoiceItemEditorRow({
       <div className="border-t border-gray-100 px-3 pt-2 pb-3">
         <LanguageFieldEditor
           focusId={`${item.id}_label`}
-          label="Option label"
+          label={t("ui.optionLabel")}
           fields={item.resource?.label || {}}
           onSave={(e: any) => updateChoiceItemLabel(vault, annotationRef, choiceInfo, item, e.toInternationalString())}
           disableMultiline

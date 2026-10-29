@@ -50,7 +50,8 @@
     "@iiif/helpers": "catalog:",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "react": "catalog:"
+    "react": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "catalog:",

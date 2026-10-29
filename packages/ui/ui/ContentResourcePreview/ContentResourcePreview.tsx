@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
@@ -15,12 +16,13 @@ export function ContentResourcePreview({
   onClick?: () => void;
   margin?: boolean;
 }) {
+  const t = useTranslations("ui");
   const resource = useContentResource({ id: id });
   const thumbnail = useContentResourceThumbnail({ resourceId: id });
 
   invariant(resource, `ContentResource "${id}" not found`);
 
-  const label = getValue((resource as any).label, { defaultText: "Thumbnail" });
+  const label = getValue((resource as any).label, { defaultText: t("thumbnail.alt") });
 
   // Image
   // Text
@@ -38,13 +40,13 @@ export function ContentResourcePreview({
         icon={
           thumbnail ? (
             <ThumbnailContainer $size={40}>
-              <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+              <ThumbnailImg src={thumbnail.id} alt={t("thumbnail.alt")} />
             </ThumbnailContainer>
           ) : null
         }
         link={id}
         label={(resource as any)?.format || resource?.type}
-        iconLabel="Icon label"
+        iconLabel={t("annotation.icon")}
         onClick={
           onClick
             ? (e) => {

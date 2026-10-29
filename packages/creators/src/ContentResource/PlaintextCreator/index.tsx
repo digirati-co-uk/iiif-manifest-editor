@@ -15,7 +15,9 @@ export const plaintextCreator = defineCreator({
   id: "@manifest-editor/plaintext-creator",
   create: createPlaintext,
   label: "Plain text link",
+  labelMessage: { namespace: "creators", key: "definitions.plaintext.label" },
   summary: "Link to an external plain-text file.",
+  summaryMessage: { namespace: "creators", key: "definitions.plaintext.summary" },
   icon: <TextFormatIcon />,
   async supportsResource(value, helpers) {
     if (!isHttpUrl(value)) return false;

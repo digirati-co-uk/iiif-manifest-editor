@@ -1,10 +1,15 @@
+import type { MessageReference } from "@manifest-editor/i18n";
 import { EditorDefinition } from "@manifest-editor/shell";
 import React from "react";
 import { OverviewCanvasEditor } from "./OverviewCanvasEditor";
 
-export const overviewCanvasEditor: EditorDefinition = {
+export const overviewCanvasEditor: EditorDefinition & {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+} = {
   id: "@manifest-editor/overview-canvas-editor",
   label: "Detail",
+  labelMessage: { namespace: "editors", key: "ui.detail" },
   supports: {
     edit: true,
     properties: ["items"],

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { isSpecificResource } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
 import { ReorderList } from "./ReorderList/ReorderList.dndkit";
@@ -13,13 +14,15 @@ interface RangeListProps {
 }
 
 function RangePreview(props: { id: string; onClick?: () => void; margin?: boolean }) {
+  const t = useTranslations("editors");
   const range = useRange();
   const canvas = useCanvas();
 
   if (canvas) {
     return (
       <div onClick={props.onClick}>
-        Canvas: <LocaleString>{canvas.label}</LocaleString>
+        {t("ui.canvas")}
+        <LocaleString>{canvas.label}</LocaleString>
       </div>
     );
   }
@@ -27,12 +30,13 @@ function RangePreview(props: { id: string; onClick?: () => void; margin?: boolea
   if (range) {
     return (
       <div onClick={props.onClick}>
-        Range: <LocaleString>{range?.label}</LocaleString>
+        {t("ui.range")}
+        <LocaleString>{range?.label}</LocaleString>
       </div>
     );
   }
 
-  return <div>Unknown Structure</div>;
+  return <div>{t("ui.unknownStructure")}</div>;
 }
 
 export function RangeList(props: RangeListProps) {

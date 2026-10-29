@@ -1,3 +1,4 @@
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
 import { ActionButton, DeleteForeverIcon, TargetIcon } from "@manifest-editor/components";
 import { useAtlasStore } from "@manifest-editor/shell";
 import { startTransition } from "react";
@@ -5,6 +6,8 @@ import { useStore } from "zustand";
 import { CheckIcon } from "./SVGIcons";
 
 export function AnnotationPopupTools() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const store = useAtlasStore();
   const changeMode = useStore(store, (state) => state.changeMode);
   const mode = useStore(store, (state) => state.mode);
@@ -31,21 +34,21 @@ export function AnnotationPopupTools() {
               changeMode("sketch");
             }}
           >
-            <TargetIcon /> Edit region
+            <TargetIcon /> {t("ui.editRegion")}
           </ActionButton>
           <ActionButton
             onPress={() => {
               cancelRequest();
             }}
           >
-            <DeleteForeverIcon /> Discard changes
+            <DeleteForeverIcon /> {t("ui.discardChanges")}
           </ActionButton>
         </>
       )}
 
       <ActionButton onPress={save} primary>
         <CheckIcon />
-        Confirm
+        {commonT("actions.confirm")}
       </ActionButton>
     </div>
   );

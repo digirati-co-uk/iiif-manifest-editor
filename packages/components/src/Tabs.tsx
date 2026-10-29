@@ -1,3 +1,4 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
 import {
   Tab as BaseTab,
   TabList as BaseTabList,
@@ -12,15 +13,17 @@ import { cn } from "./utils";
 
 export function Tabs({ className, children, ...props }: TabsProps) {
   return (
-    <BaseTabs
-      className={(state) => {
-        const cs = typeof className === "function" ? className(state) : className;
-        return cn("", cs);
-      }}
-      {...props}
-    >
-      {children}
-    </BaseTabs>
+    <ComponentI18nProvider>
+      <BaseTabs
+        className={(state) => {
+          const cs = typeof className === "function" ? className(state) : className;
+          return cn("", cs);
+        }}
+        {...props}
+      >
+        {children}
+      </BaseTabs>
+    </ComponentI18nProvider>
   );
 }
 
@@ -47,7 +50,7 @@ export function Tab({ className, children, ...props }: TabProps) {
           "cursor-default outline-none group py-1 font-semibold px-2 border-b-2 text-me-gray-700",
           state.isSelected && "border-b-me-primary-600 text-black",
           state.isFocusVisible && "focus-visible:bg-me-primary-100",
-          cs,
+          cs
         );
       }}
       {...props}

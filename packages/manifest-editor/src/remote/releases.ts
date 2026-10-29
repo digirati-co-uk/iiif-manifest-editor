@@ -3,6 +3,7 @@ export interface RemoteRelease {
   buildId: string;
   runtimeApiVersion: number;
   reactMajor: number;
+  dependencies?: { i18n: string; react: string; reconciler: string };
   script: { url: string; integrity: string };
   stylesheet: { url: string; integrity: string };
 }
@@ -63,6 +64,16 @@ export function validateCatalog(value: unknown): asserts value is ReleaseCatalog
       }
     }
     versions.add(release.version);
+    if (release.dependencies !== undefined) {
+      const pins = release.dependencies;
+      if (
+        !pins ||
+        typeof pins !== "object" ||
+        [pins.i18n, pins.react, pins.reconciler].some((value) => typeof value !== "string" || !isExactVersion(value)) ||
+        Number(pins.react.split(".")[0]) !== release.reactMajor
+      )
+        throw new Error("Invalid browser dependency pins");
+    }
   }
   if (catalog.latest !== null && (!stable.test(catalog.latest) || !versions.has(catalog.latest))) {
     throw new Error("Latest must reference a catalogued stable release");

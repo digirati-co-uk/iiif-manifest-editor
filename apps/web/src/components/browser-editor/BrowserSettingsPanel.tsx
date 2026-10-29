@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations, useEditorI18n } from "@manifest-editor/i18n";
+
 import { Form } from "@manifest-editor/components";
 import {
   type Config,
@@ -16,16 +18,19 @@ import { useState } from "react";
 type SettingsSection = "general" | "preview" | "editor" | "export" | "iiif" | "creators" | "plugins";
 
 const sections: Array<{ id: SettingsSection; label: string }> = [
-  { id: "general", label: "General" },
-  { id: "preview", label: "Preview" },
-  { id: "editor", label: "Editor" },
-  { id: "export", label: "Export" },
-  { id: "iiif", label: "IIIF Options" },
-  { id: "creators", label: "Creator settings" },
-  { id: "plugins", label: "Plugins" },
+  { id: "general", label: "settings.general" },
+  { id: "preview", label: "settings.preview" },
+  { id: "editor", label: "settings.editor" },
+  { id: "export", label: "settings.export" },
+  { id: "iiif", label: "settings.iiif" },
+  { id: "creators", label: "settings.creators" },
+  { id: "plugins", label: "settings.plugins" },
 ];
 
 export function BrowserSettingsPanel() {
+  const webT = useTranslations("web");
+  const i18n = useEditorI18n();
+
   const previews = usePreviewContext();
   const resource = useAppResource();
   const config = useConfig();
@@ -76,9 +81,11 @@ export function BrowserSettingsPanel() {
     <div className="flex h-[70vh] min-h-[60vh] w-full flex-col overflow-hidden border-t border-gray-100 bg-white sm:!flex-row">
       <nav
         className="w-full flex-none border-b border-gray-200 bg-gray-50 p-3 sm:!w-52 sm:!border-r sm:!border-b-0"
-        aria-label="Settings sections"
+        aria-label={webT("settings.sections")}
       >
-        <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-gray-600">Settings</div>
+        <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+          {webT("settings.title")}
+        </div>
         <div className="flex gap-1 overflow-x-auto sm:!flex-col">
           {sections.map((item) => (
             <button
@@ -91,7 +98,7 @@ export function BrowserSettingsPanel() {
               ].join(" ")}
               onClick={() => setSection(item.id)}
             >
-              {item.label}
+              {webT(item.label)}
             </button>
           ))}
         </div>
@@ -99,13 +106,13 @@ export function BrowserSettingsPanel() {
 
       <div className="min-w-0 flex-1 overflow-y-auto p-4 sm:!p-6">
         {section === "plugins" ? (
-          <SettingsSection title="Plugins">
+          <SettingsSection title={webT("settings.plugins")}>
             <PluginManager />
           </SettingsSection>
         ) : section === "iiif" ? (
           <IIIFOptions />
         ) : section === "creators" ? (
-          <SettingsSection title="Creator settings">
+          <SettingsSection title={webT("settings.creators")}>
             <CreatorSettings />
           </SettingsSection>
         ) : (
@@ -114,9 +121,9 @@ export function BrowserSettingsPanel() {
             className="flex max-w-3xl flex-col gap-6"
           >
             {section === "general" ? (
-              <SettingsSection title="General">
+              <SettingsSection title={webT("settings.general")}>
                 <Form.InputContainer>
-                  <Form.Label htmlFor="defaultLanguage">Default language</Form.Label>
+                  <Form.Label htmlFor="defaultLanguage">{webT("settings.defaultContentLanguage")}</Form.Label>
                   <Form.Input
                     type="text"
                     name="defaultLanguage"
@@ -126,7 +133,7 @@ export function BrowserSettingsPanel() {
                 </Form.InputContainer>
 
                 <Form.InputContainer>
-                  <Form.Label htmlFor="availableLanguages">Available languages</Form.Label>
+                  <Form.Label htmlFor="availableLanguages">{webT("settings.contentLanguages")}</Form.Label>
                   <Form.Input
                     type="text"
                     name="availableLanguages"
@@ -137,21 +144,21 @@ export function BrowserSettingsPanel() {
 
                 <Checkbox
                   name="advancedLanguageMode"
-                  label="Advanced language mode"
+                  label={webT("settings.advancedLanguage")}
                   checked={config.i18n?.advancedLanguageMode || false}
                 />
                 <Checkbox
                   name="textGranularityEnabled"
-                  label="Enable text granularity"
+                  label={webT("settings.granularity")}
                   checked={config.i18n?.textGranularityEnabled || false}
                 />
               </SettingsSection>
             ) : null}
 
             {section === "preview" ? (
-              <SettingsSection title="Preview">
+              <SettingsSection title={webT("actions.preview")}>
                 <Form.InputContainer>
-                  <Form.Label htmlFor="defaultPreview">Default preview</Form.Label>
+                  <Form.Label htmlFor="defaultPreview">{webT("settings.defaultPreview")}</Form.Label>
                   <div className="flex flex-col gap-2">
                     {previews.configs.map((preview, key) => {
                       if (preview.type === "iiif-preview-service") {
@@ -166,7 +173,7 @@ export function BrowserSettingsPanel() {
                             value={preview.id}
                             defaultChecked={!config.defaultPreview ? key === 0 : config.defaultPreview === preview.id}
                           />
-                          <label htmlFor={preview.id}>{preview.label}</label>
+                          <label htmlFor={preview.id}>{i18n.resolveMessage(preview.labelMessage, preview.label)}</label>
                         </Form.InputContainer>
                       );
                     })}
@@ -176,30 +183,30 @@ export function BrowserSettingsPanel() {
             ) : null}
 
             {section === "editor" ? (
-              <SettingsSection title="Editor">
+              <SettingsSection title={webT("settings.editor")}>
                 <Checkbox
                   name="rememberCanvasId"
-                  label="Remember canvas ID"
+                  label={webT("settings.rememberCanvas")}
                   checked={config.editorFeatureFlags?.rememberCanvasId || false}
                 />
                 <Checkbox
                   name="rememberLeftPanelId"
-                  label="Remember left panel"
+                  label={webT("settings.rememberPanel")}
                   checked={config.editorFeatureFlags?.rememberLeftPanelId || false}
                 />
                 <Checkbox
                   name="manifestGridOptions"
-                  label="Manifest grid options"
+                  label={webT("settings.grid")}
                   checked={config.editorFeatureFlags?.manifestGridOptions || false}
                 />
               </SettingsSection>
             ) : null}
 
             {section === "export" ? (
-              <SettingsSection title="Export">
+              <SettingsSection title={webT("settings.export")}>
                 <Checkbox
                   name="isVersion2"
-                  label={`Export Presentation 2 ${resource.type}s`}
+                  label={webT(resource.type === "Manifest" ? "settings.exportManifests" : "settings.exportCollections")}
                   checked={config.export?.version === 2}
                 />
                 {resource.type === "Manifest" ? (
@@ -212,8 +219,8 @@ export function BrowserSettingsPanel() {
                     }
                   >
                     {window.location.pathname.includes("/exhibition")
-                      ? "Return to Manifest Editor"
-                      : "Go to Exhibition Editor"}
+                      ? webT("settings.returnManifest")
+                      : webT("settings.goExhibition")}
                   </a>
                 ) : null}
               </SettingsSection>

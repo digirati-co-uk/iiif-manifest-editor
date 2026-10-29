@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import { ActionButton, BackIcon, DeleteForeverIcon, EmptyState, MoreMenuIcon } from "@manifest-editor/components";
@@ -21,6 +22,8 @@ import { LocaleString, useManifest, useVault, useVaultSelector } from "react-iii
 import { flattenedRanges, useRangeTreeOptions } from "./RangeTree";
 
 export function RangeCardView() {
+  const t = useTranslations("manifest");
+  const { locale, profile } = useEditorI18n();
   const vault = useVault();
   const manifest = useManifest();
   const manifestEditor = useManifestEditor();
@@ -39,7 +42,7 @@ export function RangeCardView() {
       const structures = vault.get(manifest!.structures || []);
       return helper.rangesToTableOfContentsTree(structures, undefined, { showNoNav: true })! || {};
     },
-    [vault, manifest, rangeInStack],
+    [vault, manifest, rangeInStack]
   );
 
   const filteredItems = useMemo(() => {
@@ -56,7 +59,7 @@ export function RangeCardView() {
           return text;
         }
         return null as never;
-      }),
+      })
     );
   }
 
@@ -81,7 +84,7 @@ export function RangeCardView() {
     renderDragPreview(items) {
       return (
         <div className="opacity-50 bg-gray-200 rounded p-1">
-          <span className="">{items.length} items</span>
+          <span className="">{t("workflow.itemCount", { count: items.length })}</span>
         </div>
       );
     },
@@ -202,7 +205,7 @@ export function RangeCardView() {
       ///// PERFORM REORDER from different parent.
       /////
       const referenceIndex = fullParentVault.items.findIndex(
-        (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id,
+        (item) => toRef(item, "Canvas")?.id === toMoveItem.item.id
       );
       if (referenceIndex === -1) {
         console.log("[error] Invalid index found for item to move");
@@ -270,14 +273,14 @@ export function RangeCardView() {
         parentEditor.structural.items.deleteAtIndex(idx);
       }
     },
-    [range.id, range.isVirtual, manifestEditor, vault],
+    [range.id, range.isVirtual, manifestEditor, vault]
   );
 
   const title = (
     <div className="flex items-center gap-4 mb-4">
       {rangeInStack ? (
         <>
-          <ActionButton aria-label="Back to parent range" onPress={() => back()}>
+          <ActionButton aria-label={t("workflow.backToParentRange")} onPress={() => back()}>
             <BackIcon aria-hidden="true" className="text-xl" />
           </ActionButton>
           <LocaleString as="h3">{range.label}</LocaleString>
@@ -290,7 +293,7 @@ export function RangeCardView() {
     return (
       <>
         {title}
-        <EmptyState>This Range only contains canvases.</EmptyState>
+        <EmptyState>{t("workflow.onlyCanvasChildren")}</EmptyState>
       </>
     );
   }
@@ -299,7 +302,7 @@ export function RangeCardView() {
     return (
       <>
         {title}
-        <EmptyState>No ranges found</EmptyState>
+        <EmptyState>{t("workflow.noRangesFound")}</EmptyState>
       </>
     );
   }
@@ -308,10 +311,11 @@ export function RangeCardView() {
     <>
       {title}
       <GridList
+        aria-label={t("panels.ranges")}
         className="w-full flex flex-col gap-2"
         items={filteredItems}
         dragAndDropHooks={dragAndDropHooks}
-        dependencies={[isEditing]}
+        dependencies={[isEditing, locale, profile, t]}
       >
         {(item) => (
           <GridListItem
@@ -325,27 +329,38 @@ export function RangeCardView() {
               <div>
                 <LocaleString className="text-lg mb-4">{item.label}</LocaleString>
                 <div className="text-sm text-me-primary-600">
-                  {item.items?.length} {item.isRangeLeaf ? "Canvases" : "Ranges"}
+                  {t(item.isRangeLeaf ? "workflow.canvasCount" : "workflow.rangeCount", {
+                    count: item.items?.length || 0,
+                  })}
                 </div>
               </div>
               {isEditing ? (
                 <div className="flex items-center gap-2">
                   <MenuTrigger>
-                    <ActionButton aria-label={`Actions for ${getValue(item.label) || "untitled range"}`}>
+                    <ActionButton
+                      aria-label={t("workflow.actionsFor", {
+                        label: getValue(item.label) || t("workflow.untitledRange"),
+                      })}
+                    >
                       <MoreMenuIcon aria-hidden="true" className="text-lg" />
                     </ActionButton>
                     <Popover className="bg-white shadow-md rounded-md p-1">
                       <Menu>
                         <MenuItem
-                          onAction={() => window.confirm("Are you sure you want to delete this range?") && deleteRange(item)}
+                          onAction={() =>
+                            window.confirm(t("workflow.removeRangeConfirm")) && deleteRange(item)
+                          }
                           className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                         >
-                          <DeleteForeverIcon /> Delete range item
+                          <DeleteForeverIcon /> {t("workflow.deleteRangeItem")}
                         </MenuItem>
                       </Menu>
                     </Popover>
                   </MenuTrigger>
-                  <Button aria-label={`Reorder ${getValue(item.label) || "untitled range"}`} slot="drag">
+                  <Button
+                    aria-label={t("workflow.reorder", { label: getValue(item.label) || t("workflow.untitledRange") })}
+                    slot="drag"
+                  >
                     <ResizeHandleIcon aria-hidden="true" className="text-xl" />
                   </Button>
                 </div>

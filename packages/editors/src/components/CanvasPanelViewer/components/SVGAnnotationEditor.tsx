@@ -1,4 +1,6 @@
-import { type BoxStyle, HTMLPortal, useAtlas } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
+import { type BoxStyle, useAtlas } from "@atlas-viewer/atlas";
 import { useEffect } from "react";
 import { useSvgEditor } from "../hooks/use-svg-editor";
 
@@ -48,6 +50,7 @@ export interface CreateCustomShapeProps {
 }
 
 export function SVGAnnotationEditor(props: CreateCustomShapeProps) {
+  const t = useTranslations("editors");
   const theme = props.theme || svgThemes[0];
   const atlas = useAtlas();
   const { image } = props;
@@ -102,11 +105,7 @@ export function SVGAnnotationEditor(props: CreateCustomShapeProps) {
     if (state.actionIntentType === "cut-line" && state.modifiers?.Shift) {
       wrapperClasses.push("atlas-cursor-cut");
     }
-    if (
-      isHoveringPoint ||
-      state.transitionIntentType === "move-shape" ||
-      state.transitionIntentType === "move-point"
-    ) {
+    if (isHoveringPoint || state.transitionIntentType === "move-shape" || state.transitionIntentType === "move-point") {
       wrapperClasses.push("atlas-cursor-move");
     }
     if (isAddingPoint) {
@@ -171,13 +170,8 @@ export function SVGAnnotationEditor(props: CreateCustomShapeProps) {
         ) : null}
         <HTMLPortal relative={true} interactive={false}>
           <div className="absolute top-0 right-0 left-0 bottom-0">
-            <svg
-              width="100%"
-              height="100%"
-              viewBox={`0 0 ${image.width} ${image.height}`}
-              tabIndex={-1}
-            >
-              <title>Annotation Editor</title>
+            <svg width="100%" height="100%" viewBox={`0 0 ${image.width} ${image.height}`} tabIndex={-1}>
+              <title>{t("ui.annotationEditor")}</title>
               <defs>{defs}</defs>
               {editor}
             </svg>

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ReactNode } from "react";
 import { ModalButton } from "../../madoc/components/ModalButton";
 import { ButtonGroup, Button } from "../../atoms/Button";
@@ -14,9 +15,10 @@ export function DeleteButton({
   children?: ReactNode;
   onDelete: () => void | Promise<void>;
 }) {
+  const t = useTranslations("ui");
   return (
     <ModalButton
-      title={message || "Are you sure you want to delete?"}
+      title={message || t("delete.confirm")}
       render={() => <>{children}</>}
       renderFooter={({ close }) => {
         return (
@@ -27,13 +29,13 @@ export function DeleteButton({
                 close();
               }}
             >
-              {label || "Delete"}
+              {label || t("actions.delete")}
             </Button>
           </ButtonGroup>
         );
       }}
     >
-      <DeleteButtonStyle>{label || "Delete"}</DeleteButtonStyle>
+      <DeleteButtonStyle>{label || t("actions.delete")}</DeleteButtonStyle>
     </ModalButton>
   );
 }

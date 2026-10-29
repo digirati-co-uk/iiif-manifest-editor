@@ -3,10 +3,7 @@ import { defineCreator } from "@manifest-editor/creator-api";
 import { repositionMultipleImages } from "../../side-effects/reposition-multiple-images";
 import { resizeResourceToEmptyCanvas } from "../../side-effects/resize-resource-to-empty-canvas";
 import { resizeToFitService } from "../../side-effects/resize-to-fit-service";
-import {
-  CreateImageUrlAnnotationForm,
-  createImageUrlAnnotation,
-} from "./create-image-url-annotation";
+import { CreateImageUrlAnnotationForm, createImageUrlAnnotation } from "./create-image-url-annotation";
 import { imageUrlCreator } from "../../ContentResource/ImageUrlCreator";
 
 declare module "@manifest-editor/creator-api" {
@@ -21,8 +18,10 @@ export const imageUrlAnnotation = defineCreator({
   id: "@manifest-editor/image-url-annotation",
   create: createImageUrlAnnotation,
   label: "Image",
+  labelMessage: { namespace: "creators", key: "definitions.imageUrl.label" },
   dependencies: ["@manifest-editor/image-url-creator"],
   summary: "Add an image using a direct image-file link.",
+  summaryMessage: { namespace: "creators", key: "definitions.imageUrl.summary" },
   tags: ["image"],
   icon: <AddImageIcon />,
   render(ctx) {
@@ -38,11 +37,7 @@ export const imageUrlAnnotation = defineCreator({
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
-  sideEffects: [
-    resizeToFitService,
-    resizeResourceToEmptyCanvas,
-    repositionMultipleImages,
-  ],
+  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
   staticFields: {
     type: "Annotation",
   },

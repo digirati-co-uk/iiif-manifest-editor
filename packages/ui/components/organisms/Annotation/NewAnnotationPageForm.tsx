@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { useCanvas } from "react-iiif-vault";
 import { Button, SecondaryButton } from "@/atoms/Button";
@@ -12,6 +13,7 @@ import { LanguageFieldEditor } from "@/editors/generic/LanguageFieldEditor/Langu
 import { Input } from "@/editors/Input";
 
 export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack }) => {
+  const t = useTranslations("ui");
   const canvas = useCanvas();
   const { addNewAnnotationPage } = useAnnotationList(canvas?.id || "");
   const { defaultLanguages } = useConfig();
@@ -21,18 +23,18 @@ export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack
   const [url, setUrl] = useState("");
 
   const options = [
-    { label: "Store annotations in the Manifest which can be edited in the Manifest Editor", value: "embedded" },
-    { label: " Link to an external Annotation Page for annotations created elsewhere", value: "external" },
+    { label: t("annotation.embedded"), value: "embedded" },
+    { label: t("annotation.linked"), value: "external" },
   ];
 
   return (
     <LightBox>
       <PaddingComponentMedium>
         <FlexContainerRow style={{ alignItems: "center" }}>
-          <Button style={{ cursor: "pointer" }} onClick={goBack} title={"go back"}>
-            <BackIcon aria-label={"go back"} />
+          <Button style={{ cursor: "pointer" }} onClick={goBack} title={t("actions.back")}>
+            <BackIcon aria-label={t("actions.back")} />
           </Button>
-          <h4>Create new Annotation Page</h4>
+          <h4>{t("annotation.newPage")}</h4>
         </FlexContainerRow>
       </PaddingComponentMedium>
 
@@ -41,7 +43,7 @@ export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack
       </div>
 
       <LanguageFieldEditor
-        label={"label"}
+        label={t("annotation.label")}
         availableLanguages={defaultLanguages}
         onSave={(e: any) => {
           setLabel(e.toInternationalString());
@@ -51,13 +53,13 @@ export const NewAnnotationPageForm: React.FC<{ goBack: () => void }> = ({ goBack
       />
       {selected === 1 && (
         <FlexContainerRow>
-          <Input placeholder={"Annotation Page URL"} onChange={(e) => setUrl(e.target.value)} property={"label"} />
+          <Input placeholder={t("annotation.pageUrl")} onChange={(e) => setUrl(e.target.value)} property={"label"} />
           <PaddingComponentMedium />
         </FlexContainerRow>
       )}
       <PaddingComponentMedium />
       <SecondaryButton onClick={() => addNewAnnotationPage(url, label, selected === 0, goBack)}>
-        Create annotation page
+        {t("annotation.createPage")}
       </SecondaryButton>
     </LightBox>
   );

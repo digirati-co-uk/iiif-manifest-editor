@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import type { Vault } from "@iiif/helpers/vault";
 import { ActionButton, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import {
@@ -19,6 +21,7 @@ type ManifestRootResource = { id: string; type?: string } | null | undefined;
 export const tagsPanel: LayoutPanel = {
   id: "@manifest-editor/tags",
   label: "Tags",
+  labelMessage: manifestMessage("panels.tags"),
   icon: <TagsIcon />,
   supports: ({ vault, rootResource }) => manifestHasCanvasTags(vault, rootResource),
   render: () => <TagsSidebar />,
@@ -41,6 +44,7 @@ export function manifestHasCanvasTags(vault: Vault | undefined, rootResource: Ma
 }
 
 function TagsSidebar() {
+  const t = useTranslations("manifest");
   const vault = useVault();
   const { structural } = useManifestEditor();
   const canvases = structural.items.get() || [];
@@ -50,7 +54,7 @@ function TagsSidebar() {
         .map((canvas) => canvas?.id)
         .filter((id): id is string => !!id)
         .map((id) => ({ id, type: "Canvas" }) satisfies CanvasTagResource),
-    [canvases],
+    [canvases]
   );
   const canvasIdsKey = useMemo(() => canvasResources.map((canvas) => canvas.id).join("|"), [canvasResources]);
   const groups = useVaultSelector(() => getResourceTagGroups(vault, canvasResources), [canvasIdsKey]);
@@ -60,10 +64,7 @@ function TagsSidebar() {
   const tagActions = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
   const selectedTagRows = useMemo(() => rows.filter((row) => selectedRows.has(row.key)), [rows, selectedRows]);
   const totalTagApplications = useMemo(() => groups.reduce((total, group) => total + group.tagCount, 0), [groups]);
-  const taggedCanvasCount = useMemo(
-    () => new Set(groups.flatMap((group) => group.canvasIds)).size,
-    [groups],
-  );
+  const taggedCanvasCount = useMemo(() => new Set(groups.flatMap((group) => group.canvasIds)).size, [groups]);
 
   useEffect(() => {
     const available = new Set(rows.map((row) => row.key));
@@ -81,7 +82,11 @@ function TagsSidebar() {
     const tagApplications = rowsToDelete.reduce((total, row) => total + row.canvasCount, 0);
     const affectedCanvasCount = new Set(rowsToDelete.flatMap((row) => row.canvasIds)).size;
     const confirmed = window.confirm(
-      `Delete ${formatCount(tagApplications, "tag application")} from ${formatCount(affectedCanvasCount, "canvas")}?\n\n${confirmationLabel}`,
+      t(affectedCanvasCount === 1 ? "workflow.deleteTagsOneCanvas" : "workflow.deleteTagsCanvases", {
+        count: tagApplications,
+        canvases: affectedCanvasCount,
+        detail: confirmationLabel,
+      })
     );
 
     if (!confirmed) {
@@ -104,11 +109,11 @@ function TagsSidebar() {
   }
 
   function removeGroup(group: ManifestEditorTagGroup) {
-    removeRows(group.rows, `Type: ${group.type}`);
+    removeRows(group.rows, t("workflow.tagType", { type: group.type }));
   }
 
   function removeSelectedRows() {
-    removeRows(selectedTagRows, `${formatCount(selectedTagRows.length, "tag")} selected.`);
+    removeRows(selectedTagRows, t("workflow.tagsSelected", { count: selectedTagRows.length }));
   }
 
   function removeAllTags() {
@@ -117,7 +122,10 @@ function TagsSidebar() {
     }
 
     const confirmed = window.confirm(
-      `Delete all ${formatCount(totalTagApplications, "tag application")} from ${formatCount(taggedCanvasCount, "canvas")}?`,
+      t(taggedCanvasCount === 1 ? "workflow.deleteAllTagsOneCanvas" : "workflow.deleteAllTagsCanvases", {
+        count: totalTagApplications,
+        canvases: taggedCanvasCount,
+      })
     );
 
     if (!confirmed) {
@@ -133,11 +141,11 @@ function TagsSidebar() {
   return (
     <Sidebar>
       <SidebarHeader
-        title="Tags"
+        title={t("panels.tags")}
         actions={[
           {
             icon: <DeleteTagIcon className="text-xl" />,
-            title: "Delete all tags",
+            title: t("workflow.deleteAllTags"),
             disabled: totalTagApplications === 0,
             onClick: removeAllTags,
           },
@@ -150,9 +158,12 @@ function TagsSidebar() {
           totalCanvasCount={canvasResources.length}
         />
         {!canvasResources.length ? (
-          <TagsEmptyState title="No canvases" message="Canvas tags will appear here after canvases are added." />
+          <TagsEmptyState
+            title={t("canvas.empty")}
+            message={t("workflow.tagsNeedCanvasesHelp")}
+          />
         ) : !groups.length ? (
-          <TagsEmptyState title="No canvas tags" message="Canvas tags added by editor tools and background actions will appear here." />
+          <TagsEmptyState title={t("workflow.noCanvasTags")} message={t("workflow.tagSourcesHelp")} />
         ) : (
           <div className="grid gap-3 pb-4">
             {groups.map((group) => (
@@ -186,7 +197,7 @@ function TagsSidebar() {
           onPress={removeSelectedRows}
         >
           <DeleteTagIcon className="text-xl" />
-          Delete selected ({selectedTagRows.length})
+          {t("workflow.deleteSelectedCount", { count: selectedTagRows.length })}
         </ActionButton>
       </div>
     </Sidebar>
@@ -202,14 +213,15 @@ function TagsSummary({
   taggedCanvasCount: number;
   totalCanvasCount: number;
 }) {
+  const t = useTranslations("manifest");
   return (
     <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
       <div className="rounded border border-me-gray-200 bg-me-gray-50 p-2">
-        <div className="font-medium text-me-gray-600">Tag applications</div>
+        <div className="font-medium text-me-gray-600">{t("workflow.tagApplications")}</div>
         <div className="text-lg font-semibold text-me-gray-900">{totalTagApplications}</div>
       </div>
       <div className="rounded border border-me-gray-200 bg-me-gray-50 p-2">
-        <div className="font-medium text-me-gray-600">Tagged canvases</div>
+        <div className="font-medium text-me-gray-600">{t("workflow.taggedCanvases")}</div>
         <div className="text-lg font-semibold text-me-gray-900">
           {taggedCanvasCount}/{totalCanvasCount}
         </div>
@@ -241,20 +253,24 @@ function TagGroupSection({
   onToggleRow: (key: string, selected: boolean) => void;
   onRemoveGroup: () => void;
 }) {
+  const t = useTranslations("manifest");
   return (
     <section className="overflow-hidden rounded border border-me-gray-200 bg-white">
       <div className="flex items-start justify-between gap-2 border-b border-me-gray-200 bg-me-gray-50 px-3 py-2">
         <div className="min-w-0">
           <h2 className="truncate text-sm font-semibold text-me-gray-900">{group.type}</h2>
           <p className="text-xs text-me-gray-600">
-            {formatCount(group.tagCount, "tag application")} on {formatCount(group.canvasCount, "canvas")}
+            {t(group.canvasCount === 1 ? "workflow.tagsOnOneCanvas" : "workflow.tagsOnCanvases", {
+              count: group.tagCount,
+              canvases: group.canvasCount,
+            })}
           </p>
         </div>
         <button
           type="button"
           className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-me-gray-500 hover:bg-red-100 hover:text-red-700"
-          aria-label={`Delete ${group.type} tags`}
-          title={`Delete ${group.type} tags`}
+          aria-label={t("workflow.deleteTagType", { type: group.type })}
+          title={t("workflow.deleteTagType", { type: group.type })}
           onClick={onRemoveGroup}
         >
           <DeleteTagIcon className="text-lg" />
@@ -317,10 +333,6 @@ function getDisplayTag(row: ManifestEditorTagGroupRow): ManifestEditorTag {
     textColor: tag.textColor || "#111827",
     icon: tag.icon,
   };
-}
-
-function formatCount(count: number, singular: string) {
-  return `${count} ${singular}${count === 1 ? "" : "s"}`;
 }
 
 export function TagsIcon(props: React.SVGProps<SVGSVGElement>) {

@@ -1,15 +1,26 @@
+import type { ShellLocalisation } from "../i18n/ShellI18n";
 import type { AppExtension, MappedApp } from "../AppContext/AppContext";
 import type { Config } from "../ConfigContext/ConfigContext";
 import type { ReactNode } from "react";
 
 export type PluginMetadata = {
+  /** Available on lazy manifests as well as loaded modules. */
+  localisation?: Pick<ShellLocalisation, "registrations" | "requiredNamespaces">;
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   description?: string;
+  descriptionMessage?: import("@manifest-editor/i18n/core").MessageReference;
   author?: string | { name: string; url?: string };
   official?: boolean;
-  image?: string | { src: string; alt?: string };
-  screenshots?: Array<{ src: string; label?: string; alt?: string }>;
+  image?: string | { src: string; alt?: string; altMessage?: import("@manifest-editor/i18n/core").MessageReference };
+  screenshots?: Array<{
+    src: string;
+    label?: string;
+    labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
+    alt?: string;
+    altMessage?: import("@manifest-editor/i18n/core").MessageReference;
+  }>;
   version?: string;
   tags?: string[];
   supports?: {
@@ -49,19 +60,24 @@ export type PluginSettingsRecord = Record<string, PluginSettingsValue>;
 
 export type PluginSettingsFieldOption = {
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   value: string | number | boolean;
 };
 
 export type PluginSettingsField = {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   description?: string;
+  descriptionMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type?: "text" | "textarea" | "number" | "boolean" | "select";
   placeholder?: string;
+  placeholderMessage?: import("@manifest-editor/i18n/core").MessageReference;
   options?: PluginSettingsFieldOption[];
 };
 
 export type PluginSettingsRenderContext<T extends PluginSettingsValue = PluginSettingsValue> = {
+  i18n?: Pick<import("@manifest-editor/i18n/core").EditorI18n, "resolveMessage">;
   plugin: MappedPlugin;
   appId: string;
   scope: PluginConfigScope;

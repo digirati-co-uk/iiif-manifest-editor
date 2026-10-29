@@ -1,0 +1,89 @@
+# Manifest preset workflows
+
+Status: **Owned consumer migration implemented and interaction-tested; integrated browser and publication acceptance pending.** Module: [`presets/manifest-preset`](../../../../presets/manifest-preset). Based on committed parent `57a2127a`; this isolated checkout does not contain the parent's subsequent rotation/facade changes or dirty manifest-summary edits.
+
+Prerequisites [06 shell](06-shell.md), [07 editors](07-editors.md), [08 creators](08-creators.md) and the public runtime contracts are consumed. The [original inventory](../inventories/10-manifest-preset.md) and shared index are unchanged. Only English/Dutch manifest resources were expanded; experimental languages are independent and may now have incomplete coverage.
+
+## Completed source integration
+
+- App metadata, every exported/registered panel, background-panel metadata, context-menu actions, and embedded A/V, remote-inference and quality-plugin metadata use deferred message references. IDs, activation/default-enabled state, supports/probes, tags, resource types and action payloads are unchanged. Quality remains an optional source module; this change does not enable it or add it to the preset plugin list.
+- Migrated all canvas, range and tag lists/workbenches; selection counts; list/grid/card/tree actions; empty states; placeholders; destructive confirmations; previews; missing-title display fallbacks; timeline/transport controls; validation feedback; onboarding; remote model settings and both inference forms/results; thumbnail configuration, preview, results, task plans, status and logs. `RangeGridThumbnail`'s memoised empty state is included. The cached React Aria range-card collection explicitly depends on locale, profile and the bound translator, retaining row/resource identity while its messages change.
+- Onboarding steps are constructed in the mounted component, with whole translated instructions and an independently named guide link. The existing tour key/force-start behavior is retained; locale/profile is never used as a React key. Range merge menu messages interpolate the authored destination title into complete messages. Tag confirmations and quality/inference summaries use independent semantic count variants, rather than suffixes or translated sentence fragments.
+- The current editor viewer still renders `item.label` directly, so preset context-menu items provide live label getters alongside their explicit descriptors. Each getter reads the component’s current resolver ref, including after a provider replacement; retained objects and action bindings remain valid. The shell has no `sectionTitleMessage` slot: the preset resolves its section heading in React and re-registers only that menu on locale/profile/provider changes. No editing/Vault store is rebuilt. Literal compatibility labels are retained.
+- Temporal validation keeps legacy English diagnostics and stable issue codes, adding serialisable `messageReference` display metadata. The A/V creator memo retains references and resolves them at render, preserving a draft while a validation message changes language. Authored/default title inputs and language maps are never translated.
+- Thumbnail and inference histories retain explicit display references on labels, statuses, progress, logs and first-party result/skip feedback. The existing shell task-label path supplies progress labels instead of a callback returning a frozen English sentence. Original task IDs, input/results, status/event/level codes, request headers/body, HTTP status numbers and external diagnostics remain unchanged. New result/probe sidecars are serialisable display metadata; no runtime/translator enters a plan, worker request or IIIF entity. Raw model output/extracted fields, custom model names, and unknown external error text stay verbatim.
+- Quality reports retain issue IDs/severity/resource bindings and deferred title/detail references. React refreshes the display report on UI changes so an unnamed canvas's numbered fallback follows the locale/profile. No translated title is written to the Vault.
+
+Namespace ownership is explicit: the preset requires `manifest`, reused `common`, `editor-api`, `shell`, `editors`, `creators`, `components`, `ui`, and the existing separately owned `plugin-annotations` / `plugin-canvas-label-generator`. All **embedded** A/V, inference and quality metadata declare `manifest` in `localisation.requiredNamespaces`; their actions/report/settings keys belong to `manifest.workflow`. No shared registration map or runtime was changed. The two independently owned plugin namespaces' declared catalog coverage is not evidence that those plugin consumers are migrated.
+
+`localisation` supplies required namespaces only, preserving host-controlled locale/profile policy and complete host resource forwarding. It does not add an allow-list, enable Dutch implicitly, replace an inherited runtime, or reset a host's resource options. English is default. Hosts explicitly enable Dutch via the public `@manifest-editor/i18n/nl` catalogs and plain overlay. Existing inheritance composes these resources; exhibition12 owns any further slide/exhibition wording for the newly added workflow keys. Expanded manifest messages intentionally inherit the manifest standard/plain wording until that owner overrides them.
+
+## Catalog and translation evidence
+
+The manifest base catalogs contain **382 English and 382 Dutch messages**, including **365 added workflow messages**. Plain overlays contain **175 English and 175 Dutch messages**, including **163 added whole-message overrides**. Keys cover actions, counts, accessibility, onboarding, A/V validation/timeline, task/history feedback, quality reports, thumbnail generation and inference settings/results. Whole plain instructions use page/item/section wording; there is no global term-replacement implementation.
+
+Every added English message has a real Dutch translation, including all plural/count variants and plain instructions. English fallback/defaultValue was not used as Dutch evidence. Thirteen new exact-source reviews are limited to individual Dutch technical nouns/counts (Canvas, Manifest, Audio, Video, Model, Label, OCR, Type, range/ranges) and plain Item. Translator notes explain the two-count cases, literal authored placeholders, temporal clock notation, original `Range 1` authored default and external diagnostics. Notes/reviews were changed only for manifest ownership.
+
+Latest strict combined check: **2411 required messages, zero missing, zero unreviewed English copies** across the existing 26 catalog/overlay files. This is declared catalog coverage, not whole-application coverage.
+
+## Reviewed source and exemptions
+
+Reviewed the entire preset source, beyond heuristic seed matches:
+
+- `index.tsx`, `components.tsx`, `context-menus.tsx`, both center panels, every center-panel component, every left panel and component: migrated display surfaces as above. Sidebar required-statement/metadata labels, `LocaleString` values, authored tag labels/types/IDs and range titles remain content. Existing `enableDangerouslySetInnerHTML` concerns authored IIIF content; no catalog markup/raw HTML rendering was introduced. Flags preserve their existing tag objects. Default labels such as `Untitled range`, `Untitled sequence`, `Table of contents` and generated numbering remain authored defaults; only missing-title display fallbacks translate.
+- `av-ranges/*`: both panels, form and display validation migrated. `av-media-utils`, mutation/store code and selector/time/parser/clamp helpers were reviewed as data/transport and remain semantically unchanged. ASCII `t=` fragments, clock parsing/formatting, numeric seconds, ratio/zoom math, keyboard binding codes, `no-nav`, media type/format and caption `srcLang` remain unchanged. Native audio/video browser controls are user-agent UI; custom preset controls translate, but this does not establish user-agent language behavior or actual playback/keyboard acceptance.
+- `bulk-thumbnail-builder/background-action.tsx`: UI, plans and all first-party display feedback migrated. Image API URLs/sizes/regions, composition/layer selection, canvas drawing, fetch verification, entity mutations and task identifiers retain their original behavior. Authored labels and pixel/multiplication notation stay data; locale text never enters URLs or dimensions.
+- `plugins/remote-inference.tsx`: metadata/settings, both configuration forms, action/task feedback and results migrated. Request endpoint/method/header, API key/storage keys, model keys, annotation import/replacement, IDs, extracted field values and palettes are unchanged. `remote-inference-models.ts` contains vendor/model names and stable keys; those proper names are exempt. Custom model names are authored data, not catalogs.
+- `plugins/manifest-quality-checks.tsx`, `plugins/av-ranges.tsx`: all first-party report/plugin display migrated. Specification UI reached through the independent specifications plugin is module17's responsibility; shared shell evaluator contracts are already available.
+- `query-string.tsx` metadata migrated; `query-string-state.ts`, range-splitting store, hooks/effects, icons, CSS and exports were reviewed as protocol/state/style plumbing. URL parameter keys, storage/event names and developer-only console guards remain unchanged.
+- `background-actions.tsx` is an unregistered demo file: no import anywhere in the repository and no package entry export. Its demonstration-only strings are explicitly exempt from the shipped preset migration; it was not silently enabled or rewritten. Existing test fixture strings are likewise not UI. Original inventories are retained as historical evidence, not regenerated.
+
+Shared browsers/media/rich editors/shape controls inherit modules04/05/07/08 adapters. Independent notebook commands remain a dependency gap. Parent integration now includes the scoped Leaflet/Draw implementation documented in [guide07](07-editors.md); its live pointer/touch acceptance remains pending. First-party preset catalogs do not establish dependency completion. No source from other presets/plugins/shared packages/web or the parent's checkout was changed by the isolated module implementation.
+
+## Verification and remaining acceptance
+
+- **9 new real React/runtime/Vault interaction tests pass**: English/Dutch × standard/plain A/V draft/DOM retention and original Welsh content; retained validation descriptors; selector/ID-preserving temporal mutations and inverse edit restoration; creator payloads; real thumbnail modal draft → real task store → real Vault thumbnails and retained history references; all preset/embedded-plugin metadata; inference settings/custom model drafts; selected tag rows, Dutch/plain confirmations and exact removals; cached range-card row identity/counts/editing mode; live quality-report fallbacks; an actual retained preset menu/registration across locale/profile and provider replacement with stable action/ID bindings. Translators and mounted components are real. Test contexts provide real Vault/resource/layout/menu providers with fixture layout callbacks; the retained-menu test fixtures only the outer layout/creator actions through shell hooks. Fetch verification is stubbed for the thumbnail task. These are JSDOM interactions, not live browser or whole-editor undo acceptance.
+- Complete preset suite: **25 passed / 1 failed (26 tests)**. The existing `temporal-range-utils.test.ts` “calculates gaps and clamps against neighbors” expects `{start:10,end:20}` but gets `{start:0,end:0}`. Running that test with the **original committed utility restored temporarily** reproduces the identical failure: 5 pass / 1 fail. The clamp implementation was not changed or hidden by skipping the test. This remains a baseline behavioral issue for the parent to triage.
+- **38 catalog parity/review tests pass**; strict Dutch check passes as above. Frozen lifecycle-disabled installation passes. Only this preset's jsdom dev dependency/importer was added; no new resolution/snapshot or shared importer edits.
+- Source no-emit check: **81 diagnostics before and after, identical file/code/message signatures** ignoring shifted positions. The test-inclusive check has **83 baseline diagnostics**, including two pre-existing `tags.test.ts` Canvas-reference type errors; no diagnostics in the new test file. Existing preset diagnostics include Vault entity normalization/optional references plus unresolved independently published plugin declarations; sibling source diagnostics remain unsuppressed. These are nonzero checks, not a claim of clean full-source typing. Aliases exist only in explicit local no-emit/Vitest configs; production/watch tsconfig is unchanged.
+- Targeted oxlint exits successfully with existing hook/media/portable-img warnings; formatting was applied to changed source/catalog/test/config files and `git diff --check` passes. Source audit confirms literal IDs/protocol fields and authored label maps are identical to the committed version.
+- **Pending parent acceptance:** integrated open/add/metadata/range/action/export browser journey; retained focus/selection/drag/playback and actual rich-editor undo; screenshot/accessibility/portal checks; combined inherited exhibition wording; RSC/publication/declaration/tarball consumer verification. The parent-owned port3000 server and its recorded Turbopack `gapcursor` HTTP500 issue were not tested or modified from this worktree. No build/dev/predev hook, server operation, browser webServer setup, cache deletion, push, PR or delegation was run. The source migration is not a current whole-browser pass.
+
+## Reproducible no-build commands
+
+Run from repository root with working Node24:
+
+```sh
+pnpm install --ignore-scripts --frozen-lockfile
+node presets/manifest-preset/node_modules/vitest/vitest.mjs run --config presets/manifest-preset/vitest.config.ts --maxWorkers 1 --pool threads
+node node_modules/typescript/bin/tsc --noEmit -p presets/manifest-preset/tsconfig.source.json
+node node_modules/typescript/bin/tsc --noEmit -p presets/manifest-preset/tsconfig.test.json
+node node_modules/oxlint/bin/oxlint presets/manifest-preset/src presets/manifest-preset/test presets/manifest-preset/vitest.config.ts
+npm --prefix internal-packages/languages run translations:check
+node --test internal-packages/languages/test/nl-parity.test.mjs internal-packages/languages/test/translation-review.test.mjs
+```
+
+The suite/typecheck limitations above are deliberate reports of actual results. Parent alone owns live browser integration (`E2E_TARGET=watch`) after merging alongside the concurrent rotation and manifest-summary changes. No experimental locale synchronization is implied by this handoff.
+
+## Parent merge verification
+
+Integrated as `177c9835` alongside the user's committed canvas controls and restored
+uncommitted manifest-summary styling. The styling remains outside the module commit;
+translated placeholders and the user's layout changes are both present. The scoped
+map follow-up is integrated as `24283e95`.
+
+After a full `pnpm install --ignore-scripts --frozen-lockfile`, the parent reran the
+complete preset suite: **25 pass, the same one clamp test fails** with the exact
+expected/actual values above. All nine new interaction tests pass. The combined
+editors suite passes **58 tests**, and all **68 tracked foundation tests** pass.
+The current test-inclusive preset no-emit check reports **80 diagnostics**, with no
+diagnostics in the new tests or display-reference helper; existing Vault, optional
+reference and sibling diagnostics remain. The editors test-inclusive check reports
+the documented **42 existing diagnostics**, with none in the map source/tests.
+Targeted preset/map lint and `git diff --check` pass (existing preset warnings remain).
+
+The Dutch check at this merge reports **2,481 required messages, zero missing and
+zero unreviewed English copies**, including concurrent web catalog changes. This is
+a point-in-time working-tree catalog check, not a claim that the experimental
+languages, integrated browser/SSR, or publication gates pass. An independent review
+and the remaining collection/exhibition consumer migrations are still required.

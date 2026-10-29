@@ -1,3 +1,4 @@
+import { creatorValidationError } from "../../validation-messages";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { getIIIFType, getJsonResource, isDigitalCollectionPage } from "../../resource-probes";
@@ -15,12 +16,15 @@ declare module "@manifest-editor/creator-api" {
 }
 
 export const manifestBrowserCreator = defineCreator({
+  validationErrorMessage: creatorValidationError,
   id: "@manifest-editor/manifest-browser-creator",
   configKey: "@manifest-editor/iiif-browser-creator",
   create: createFromManifestBrowserOutput,
   label: "Browse IIIF content",
+  labelMessage: { namespace: "creators", key: "definitions.browser.label" },
   hideSummary: true,
   summary: "Browse IIIF manifests and collections to choose a resource to add.",
+  summaryMessage: { namespace: "creators", key: "definitions.manifestBrowser.summary" },
   icon: <IIIFBrowserIcon />,
   render(ctx: any) {
     return <ManifestBrowserCreatorForm {...ctx} />;

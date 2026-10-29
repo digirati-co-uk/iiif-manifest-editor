@@ -16,7 +16,9 @@ export const imageServiceCreator = defineCreator({
   configKey: "iiif-image-services",
   create: createImageServer,
   label: "IIIF image",
+  labelMessage: { namespace: "creators", key: "definitions.service.label" },
   summary: "Add a zoomable image using an IIIF image service or info.json link.",
+  summaryMessage: { namespace: "creators", key: "definitions.service.summary" },
   icon: <IIIFLogo />,
   tags: ["image", "image-service"],
   async supportsResource(value, helpers) {

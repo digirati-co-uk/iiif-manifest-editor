@@ -1,6 +1,8 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { FloatingPanel, FloatingPanelContainer, FloatingPanelInner, TextOverlay } from "./EmptyCanvasState.styles";
 
 export function EmptyCanvasState() {
+  const t = useTranslations("ui");
   return (
     <div
       style={{
@@ -68,7 +70,7 @@ export function EmptyCanvasState() {
         </FloatingPanel>
       </FloatingPanelContainer>
       <TextOverlay style={{ textAlign: "center" }}>
-        <h1>No canvases</h1>
+        <h1>{t("canvas.empty")}</h1>
       </TextOverlay>
     </div>
   );

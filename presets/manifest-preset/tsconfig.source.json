@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "paths": {
+      "@manifest-editor/editor-api": ["../../packages/editor-api/src/index.ts"],
+      "@manifest-editor/shell": ["../../packages/shell/src/index.ts"],
+      "@manifest-editor/components": ["../../packages/components/src/index.tsx"],
+      "@manifest-editor/creator-api": ["../../packages/creator-api/src/index.ts"],
+      "@manifest-editor/client-vault": ["../../packages/client-vault/src/index.ts"],
+      "@manifest-editor/editors": ["../../packages/editors/src/index.ts"],
+      "@manifest-editor/creators": ["../../packages/creators/src/index.ts"]
+    }
+  },
+  "exclude": ["src/**/*.test.ts", "src/**/*.stories.tsx"]
+}

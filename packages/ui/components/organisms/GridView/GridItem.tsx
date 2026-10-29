@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { useCallback, useState } from "react";
 import { useCanvas, useManifest } from "react-iiif-vault";
@@ -23,6 +24,7 @@ export const GridItem: React.FC<{
   remove: (fromPosition: number, ref: Reference) => void;
   index: number;
 }> = ({ handleChange, handleChangeDouble, canvasId, reorder, remove, index }) => {
+  const t = useTranslations("ui");
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const canvas = useCanvas();
@@ -64,9 +66,9 @@ export const GridItem: React.FC<{
                 }}
               />
             )}
-            title="New Canvas"
+            title={t("canvas.new")}
           >
-            New canvas
+            {t("canvas.new")}
           </ModalButton>
           <HorizontalDivider />
           {reorder ? (
@@ -77,7 +79,7 @@ export const GridItem: React.FC<{
                   setContextMenuVisible(false);
                 }}
               >
-                Move to beginning
+                {t("canvas.moveFirst")}
               </DropdownItem>
               <DropdownItem
                 onClick={() => {
@@ -92,7 +94,7 @@ export const GridItem: React.FC<{
                   setContextMenuVisible(false);
                 }}
               >
-                Move to end
+                {t("canvas.moveLast")}
               </DropdownItem>
               <HorizontalDivider />
             </>
@@ -103,7 +105,7 @@ export const GridItem: React.FC<{
               setContextMenuVisible(false);
             }}
           >
-            Delete canvas
+            {t("canvas.delete")}
           </DropdownItem>
         </DropdownContent>
       )}

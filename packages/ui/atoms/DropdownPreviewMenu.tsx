@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import styled from "styled-components";
 import { FlexContainerColumn } from "../components/layout/FlexContainer";
@@ -29,7 +30,6 @@ export const DropdownContainer = styled(FlexContainerColumn)`
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 13;
   right: 0;
-
 `;
 
 type DropdownOption = {
@@ -59,6 +59,7 @@ export const DropdownPreviewMenu: React.FC<{
   previewUrl: string;
   showAgain: boolean;
 }> = ({ label, options, onPreviewClick, setSelectedPreviewIndex, previewUrl, showAgain }) => {
+  const t = useTranslations("ui");
   const [open, setOpen] = useState(false);
 
   const clickHandler = (index: number) => {
@@ -71,11 +72,11 @@ export const DropdownPreviewMenu: React.FC<{
   return (
     <MenuContainer>
       <Outline>
-        <Button aria-label="Preview" onClick={onPreviewClick}>
+        <Button aria-label={t("preview.action")} onClick={onPreviewClick}>
           <PreviewIcon />
           {label}
         </Button>
-        <Button aria-label="Preview choices" onClick={() => setOpen(!open)}>
+        <Button aria-label={t("preview.choices")} onClick={() => setOpen(!open)}>
           <VerticalDivider />
           <DownIcon />
         </Button>
@@ -84,11 +85,11 @@ export const DropdownPreviewMenu: React.FC<{
         <DropdownContainer justify={"flex-end"} onMouseLeave={() => setOpen(!open)}>
           {options.map((option: DropdownOption, index: number) => {
             return (
-              <DropdownItem aria-label="Open the preview" onClick={() => clickHandler(index)} key={index}>
+              <DropdownItem aria-label={t("preview.open")} onClick={() => clickHandler(index)} key={index}>
                 {showAgain ? (
                   option.label
                 ) : (
-                  <a href={previewUrl} target={"_blank"} rel="noreferrer" aria-label="Open the preview">
+                  <a href={previewUrl} target={"_blank"} rel="noreferrer" aria-label={t("preview.open")}>
                     {option.label}
                   </a>
                 )}

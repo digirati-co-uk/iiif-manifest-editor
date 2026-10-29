@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, Form, PaddedSidebarContainer } from "@manifest-editor/components";
 import {
   type CreatorContext,
@@ -27,6 +28,8 @@ export async function createImageUrlList(
 }
 
 export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListPayload>) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const data = new FormData(e.target as HTMLFormElement);
@@ -41,9 +44,9 @@ export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListP
     <PaddedSidebarContainer>
       <Form.Form onSubmit={onSubmit}>
         <Form.InputContainer className="mb-4">
-          <Form.Label>Enter a list of URLs (one per line)</Form.Label>
+          <Form.Label>{t("form.urlList")}</Form.Label>
           <Form.TextArea
-            aria-label="Image URLs"
+            aria-label={t("form.urlList")}
             name="urls"
             rows="10"
             defaultValue={
@@ -52,7 +55,7 @@ export function CreateImageUrlListForm(props: CreatorContext<CreateImageUrlListP
           />
         </Form.InputContainer>
         <ActionButton primary large type="submit">
-          Create
+          {common("actions.create")}
         </ActionButton>
       </Form.Form>
     </PaddedSidebarContainer>

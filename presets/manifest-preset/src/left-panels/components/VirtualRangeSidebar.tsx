@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { ActionButton, DeleteForeverIcon, InfoMessage, WarningMessage } from "@manifest-editor/components";
@@ -15,6 +16,7 @@ export function VirtualRangeSidebar({
   range: RangeTableOfContentsNode;
   setSelectedTopLevelRange: (range: { id: string; type: "Range" }) => void;
 }) {
+  const t = useTranslations("manifest");
   const manifest = useManifestEditor();
   const vault = useVault();
   const creator = useInlineCreator();
@@ -40,7 +42,7 @@ export function VirtualRangeSidebar({
           resource: { id: manifest.technical.id.getWithoutTracking(), type: "Manifest" },
           atIndex: 0,
         },
-      },
+      }
     )) as { id: string; type: "Range" };
 
     vault.dispatch(
@@ -60,7 +62,7 @@ export function VirtualRangeSidebar({
           type: "Range",
           key: "items",
         },
-      }),
+      })
     );
   }, []);
 
@@ -70,28 +72,25 @@ export function VirtualRangeSidebar({
 
   return (
     <div>
-      <InfoMessage className="mb-2 leading-tight text-sm">
-        This manifests contains multiple top-level ranges. You can either merge them together into a single range or
-        select a range to edit.
-      </InfoMessage>
+      <InfoMessage className="mb-2 leading-tight text-sm">{t("workflow.multipleRangesHelp")}</InfoMessage>
 
-      <h3 className="mb-2 text-black/40">Choose an option</h3>
+      <h3 className="mb-2 text-black/40">{t("workflow.chooseAnOption")}</h3>
       <ul className="mb-4">
         <li className="px-2 py-1">
           <ActionButton onClick={combineVirtualRanges}>
             <PlusIcon />
-            Combine into single range
+            {t("workflow.combineIntoSingleRange")}
           </ActionButton>
         </li>
         <li className="px-2 py-1">
           <ActionButton onClick={deleteVirtualRanges}>
             <DeleteForeverIcon />
-            Delete ranges and start again
+            {t("workflow.deleteRangesAndStartAgain")}
           </ActionButton>
         </li>
       </ul>
 
-      <h3 className="mb-2 text-black/40">Choose a range to edit</h3>
+      <h3 className="mb-2 text-black/40">{t("workflow.chooseARangeToEdit")}</h3>
       <ul>
         {(range.items || []).map((item) => (
           <li key={item.id} className="mb-1 bg-gray-100 hover:bg-gray-200 rounded px-2 py-1">

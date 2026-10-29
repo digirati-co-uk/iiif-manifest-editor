@@ -1,18 +1,25 @@
 import type { Vault } from "@iiif/helpers/vault";
-import type { Preview, PreviewHandler } from "../PreviewContext.types";
+import type { Preview, PreviewHandler, PreviewConfiguration } from "../PreviewContext.types";
 
 export class ExternalManifestUrlPreview implements PreviewHandler {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type = "external-manifest-preview";
   focusable = true;
 
   private readonly serviceUrl: string;
   private readonly windows: Record<string, { location: string; window: Window | null }> = {};
 
-  constructor({ id, config, label }: { id: string; type?: string; label: string; config: { url: string } }) {
+  constructor({
+    id,
+    config,
+    label,
+    labelMessage,
+  }: Omit<PreviewConfiguration<{ url: string }>, "type"> & { type?: string }) {
     this.id = id;
     this.label = label;
+    this.labelMessage = labelMessage;
     this.serviceUrl = config.url;
   }
 
@@ -37,7 +44,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
     instanceId: string,
     resource: { id: string; type: string },
     vault: Vault,
-    ctx: { readOnlyManifest: string },
+    ctx: { readOnlyManifest: string }
   ): Promise<Preview> {
     // @todo change this to be a template, with more features.
     const location = `${this.serviceUrl}`
@@ -66,7 +73,7 @@ export class ExternalManifestUrlPreview implements PreviewHandler {
     instanceId: string,
     resource: { id: string; type: string },
     vault: Vault,
-    ctx: { readOnlyManifest: string },
+    ctx: { readOnlyManifest: string }
   ): Promise<Preview | null> {
     const found = this.windows[instanceId];
 

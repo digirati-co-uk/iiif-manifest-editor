@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { TargetIcon } from "@manifest-editor/components";
 import { BaseAnnotationCreator, useAtlasStore, useConfig } from "@manifest-editor/shell";
 import { ModalCloseIcon } from "@manifest-editor/ui/madoc/components/ModalButton";
@@ -34,6 +35,7 @@ export function AnnotationCreationPopup({
   annotationPageId: string;
   canvasId: string;
 }) {
+  const t = useTranslations("editors");
   const store = useAtlasStore();
   const mode = useStore(store, (s) => s.mode);
   const changeMode = useStore(store, (s) => s.changeMode);
@@ -58,9 +60,9 @@ export function AnnotationCreationPopup({
   return (
     <div className="w-[420px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/5">
       <div className="flex items-center gap-2 border-b border-gray-100 py-2 pl-4 pr-2">
-        <h2 className="flex-1 truncate text-sm font-semibold text-gray-900">New annotation</h2>
+        <h2 className="flex-1 truncate text-sm font-semibold text-gray-900">{t("ui.newAnnotation")}</h2>
         <ToggleButtonGroup
-          aria-label="Canvas interaction"
+          aria-label={t("ui.canvasInteraction")}
           selectionMode="single"
           disallowEmptySelection
           selectedKeys={[mode === "explore" ? "explore" : "sketch"]}
@@ -70,17 +72,17 @@ export function AnnotationCreationPopup({
           }}
           className="flex rounded-md bg-gray-100 p-0.5"
         >
-          <ToggleButton id="sketch" className={modeButtonClass} aria-label="Edit target">
+          <ToggleButton id="sketch" className={modeButtonClass} aria-label={t("ui.editTarget")}>
             <TargetIcon aria-hidden className="h-4 w-4" />
-            Target
+            {t("ui.target")}
           </ToggleButton>
-          <ToggleButton id="explore" className={modeButtonClass} aria-label="Pan and zoom">
+          <ToggleButton id="explore" className={modeButtonClass} aria-label={t("ui.panAndZoom")}>
             <PanIcon />
-            Pan
+            {t("ui.pan")}
           </ToggleButton>
         </ToggleButtonGroup>
         <Button
-          aria-label="Cancel annotation"
+          aria-label={t("ui.cancelAnnotation")}
           onPress={() => cancelRequest()}
           className="flex h-7 w-7 items-center justify-center rounded text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 data-[focus-visible]:ring-2 data-[focus-visible]:ring-me-primary-500"
         >

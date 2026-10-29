@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { AnnotationContext, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
 import { Button } from "../../../atoms/Button";
 import { ErrorBoundary } from "../../../atoms/ErrorBoundary";
@@ -18,29 +19,30 @@ interface AnnotationProps {
 }
 
 export const Annotation: React.FC<AnnotationProps> = ({ id, pageId }) => {
+  const t = useTranslations("ui");
   const vault = useVault();
   const annotation = useVaultSelector((state) => state.iiif.entities.Annotation[id]);
   const canvas = useCanvas();
   const { removeAnnotation } = useAnnotationList(canvas?.id || "");
 
   if (!annotation) {
-    return <>Annotation not found</>;
+    return <>{t("annotation.notFound")}</>;
   }
 
   return (
     <LightBox style={{ width: "100%" }}>
       <FlexContainerRow justify="flex-end">
-        <Button title="delete" onClick={() => removeAnnotation(id, pageId)}>
+        <Button title={t("actions.delete")} onClick={() => removeAnnotation(id, pageId)}>
           <CloseIcon />
         </Button>
       </FlexContainerRow>
       <FlexContainerColumn>
         <InputLabel>
-          Identifier
+          {t("annotation.identifier")}
           <InputUnderlined id={annotation.id} disabled value={annotation.id} />
         </InputLabel>
         <InputLabel>
-          Motivation
+          {t("annotation.motivation")}
           <InputUnderlined
             id={annotation.id}
             onChange={(e: any) =>
@@ -50,7 +52,7 @@ export const Annotation: React.FC<AnnotationProps> = ({ id, pageId }) => {
           />
         </InputLabel>
         <InputLabel>
-          Body
+          {t("annotation.body")}
           <LightBox style={{ width: "100%" }}>
             {annotation.body &&
               annotation.body.map((annotationBody: any) => {
@@ -61,7 +63,7 @@ export const Annotation: React.FC<AnnotationProps> = ({ id, pageId }) => {
         {annotation.target && typeof annotation.target === "string" ? (
           <AnnotationPreview region={annotation.target.split("#xywh=")[1]} />
         ) : (
-          "No target specified"
+          t("annotation.noTarget")
         )}
 
         <AnnotationTarget canvasTarget={annotation.target} annotationID={annotation.id} />

@@ -50,7 +50,8 @@
     "react-aria": "^3.38.1",
     "react-dom": "catalog:",
     "react-iiif-vault": "catalog:",
-    "styled-components": "catalog:"
+    "styled-components": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

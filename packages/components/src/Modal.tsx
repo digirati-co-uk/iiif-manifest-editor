@@ -1,10 +1,7 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { createPortal } from "react-dom";
-import {
-  Dialog,
-  Heading,
-  Modal as AriaModal,
-  ModalOverlay,
-} from "react-aria-components";
+import { Dialog, Heading, Modal as AriaModal, ModalOverlay } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 
 export interface ModalProps {
@@ -28,7 +25,7 @@ export function ModalBackSlot({ children }: { children: React.ReactNode }) {
   return createPortal(children, element);
 }
 
-export function Modal({
+function ModalContent({
   id,
   className,
   title,
@@ -40,6 +37,8 @@ export function Modal({
   height,
   disableAnimation,
 }: ModalProps) {
+  const t = useTranslations("components");
+  const { locale, direction } = useEditorI18n();
   return (
     <ModalOverlay
       isDismissable
@@ -50,6 +49,8 @@ export function Modal({
       className="manifest-editor-modal-overlay manifest-editor"
     >
       <AriaModal
+        lang={locale}
+        dir={direction}
         className={twMerge("manifest-editor-modal relative w-full max-w-4xl max-h-full", className)}
         style={{ width, height, animation: disableAnimation ? "none" : undefined }}
       >
@@ -82,15 +83,25 @@ export function Modal({
                   d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                 />
               </svg>
-              <span className="sr-only">Close</span>
+              <span className="sr-only">{t("actions.close")}</span>
             </button>
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">{children}</div>
 
-          {actions ? <div className="flex items-center p-4 border-t border-gray-200 rounded-b justify-end">{actions}</div> : null}
+          {actions ? (
+            <div className="flex items-center p-4 border-t border-gray-200 rounded-b justify-end">{actions}</div>
+          ) : null}
         </Dialog>
       </AriaModal>
     </ModalOverlay>
+  );
+}
+
+export function Modal(props: ModalProps) {
+  return (
+    <ComponentI18nProvider>
+      <ModalContent {...props} />
+    </ComponentI18nProvider>
   );
 }

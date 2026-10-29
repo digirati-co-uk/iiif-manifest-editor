@@ -1,16 +1,12 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { SplashTabsStyles as S } from "./SplashTabs.styles";
 import { ReactNode } from "react";
 import { useLocalStorage } from "@manifest-editor/components";
 
-export function SplashTabs({
-  children,
-}: {
-  children: Record<string, ReactNode>;
-}) {
-  const [current, setCurrent] = useLocalStorage(
-    "splash-tabs",
-    "getting-started",
-  );
+export function SplashTabs({ children }: { children: Record<string, ReactNode> }) {
+  const webT = useTranslations("web");
+
+  const [current, setCurrent] = useLocalStorage("splash-tabs", "getting-started");
 
   const menuProps = (type: string) => {
     return {
@@ -23,10 +19,8 @@ export function SplashTabs({
     <S.Container>
       <S.Menu>
         <S.InnerContainer>
-          <S.MenuItem {...menuProps("getting-started")}>
-            Getting started
-          </S.MenuItem>
-          <S.MenuItem {...menuProps("my-projects")}>My projects</S.MenuItem>
+          <S.MenuItem {...menuProps("getting-started")}>{webT("launcher.start")}</S.MenuItem>
+          <S.MenuItem {...menuProps("my-projects")}>{webT("legacy.myProjects")}</S.MenuItem>
         </S.InnerContainer>
       </S.Menu>
       <S.Content>

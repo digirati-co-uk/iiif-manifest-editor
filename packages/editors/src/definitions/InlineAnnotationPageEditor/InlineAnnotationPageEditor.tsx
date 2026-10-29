@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { isSpecificResource, toRef } from "@iiif/parser";
 import type { Reference } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer, TargetIcon } from "@manifest-editor/components";
@@ -19,6 +20,8 @@ import { InputLabel } from "../../components/Input";
 import { createAppActions } from "../../helpers/create-app-actions";
 
 export function InlineAnnotationPageEditor() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const editor = useEditor();
   const canvasId = editor.getPartOf();
 
@@ -37,14 +40,14 @@ export function InlineAnnotationPageEditor() {
     editor.ref(),
     "items",
     "Annotation",
-    canvasId ? { id: canvasId, type: "Canvas" } : undefined,
+    canvasId ? { id: canvasId, type: "Canvas" } : undefined
   );
 
   // Does the canvas have multiple media?
 
   return (
     <PaddedSidebarContainer>
-      <InputLabel>Annotations</InputLabel>
+      <InputLabel>{t("ui.annotations")}</InputLabel>
       <AnnotationList
         id={items.focusId()}
         list={items.get() || []}
@@ -52,7 +55,7 @@ export function InlineAnnotationPageEditor() {
         canvasId={canvasId}
         reorder={(t) => items.reorder(t.startIndex, t.endIndex)}
         onSelect={(item, idx) => annotationActions.edit(item, idx)}
-        createActions={createAppActions(items)}
+        createActions={createAppActions(items, undefined, t, commonT)}
       />
       <br />
       {canCreateAnnotation ? (
@@ -65,13 +68,13 @@ export function InlineAnnotationPageEditor() {
             });
           }}
         >
-          Create annotation
+          {t("ui.createAnnotation")}
         </ActionButton>
       ) : null}
       {isActive ? (
         <div className="bg-me-primary-500 text-white p-2 m-1 rounded flex gap-2">
           <TargetIcon />
-          Draw a box on the canvas
+          {t("ui.drawABoxOnTheCanvas")}
         </div>
       ) : null}
     </PaddedSidebarContainer>
@@ -92,7 +95,7 @@ export function useAnnotationTargetAnnotations(id: string, deps: any[]) {
       }
       return toList;
     },
-    [id, ...deps],
+    [id, ...deps]
   );
 }
 
@@ -113,7 +116,7 @@ export function PromptToAddPaintingAnnotations({
   const targets = useAnnotationTargetAnnotations(page.id, [totalItems]);
   const annotations = useVaultSelector(
     (state, vault) => vault.get(paintingAnnotations?.items || []),
-    [targets, totalItems],
+    [targets, totalItems]
   );
 
   const validToAdd = annotations.filter((item) => {
@@ -153,7 +156,7 @@ export function PromptToAddPaintingAnnotations({
                             id: item.id,
                             type: "Annotation",
                           },
-                        },
+                        }
                       );
                     }}
                   />

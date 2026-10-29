@@ -1,5 +1,6 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { formatTime, useMediaActions, useMediaElements, useMediaState } from "react-iiif-vault";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { PauseIcon, PlayIcon, VolumeDownIcon, VolumeOffIcon, VolumeUpIcon } from "./MediaControls.icons";
 import {
   AudioPlayerContainer,
@@ -21,6 +22,12 @@ export function MediaControls(props: {
   onError?: (error: string) => void;
   onDuration?: (duration: number) => void;
 }) {
+  const t = useTranslations("ui");
+  const sliderId = useId();
+  const callbacks = useRef(props);
+  callbacks.current = props;
+  const translate = useRef(t);
+  translate.current = t;
   const [isVolumeOpen, setIsVolumeOpen] = useState(false);
   const { progress, currentTime, element } = useMediaElements();
   const { duration, isMuted, volume, isPlaying, playRequested } = useMediaState();
@@ -32,21 +39,21 @@ export function MediaControls(props: {
   useLayoutEffect(() => {
     if (element.current) {
       const $el = element.current;
-      if ($el.error && props.onError) {
-        props.onError($el.error?.message || "Unknown error");
+      if ($el.error && callbacks.current.onError) {
+        callbacks.current.onError($el.error?.message || translate.current("media.unknownError"));
         return;
       }
       const onError = () => {
-        if (props.onError) {
-          props.onError($el.error?.message || "Unknown error");
+        if (callbacks.current.onError) {
+          callbacks.current.onError($el.error?.message || translate.current("media.unknownError"));
         }
       };
       const loadedMetadata = () => {
-        if ($el.duration && props.onDuration) {
-          props.onDuration($el.duration);
+        if ($el.duration && callbacks.current.onDuration) {
+          callbacks.current.onDuration($el.duration);
         }
-        if (props.onDimensions && $el instanceof HTMLVideoElement) {
-          props.onDimensions($el.videoWidth, $el.videoHeight);
+        if (callbacks.current.onDimensions && $el instanceof HTMLVideoElement) {
+          callbacks.current.onDimensions($el.videoWidth, $el.videoHeight);
         }
       };
       $el.addEventListener("loadedmetadata", loadedMetadata);
@@ -56,11 +63,12 @@ export function MediaControls(props: {
         $el.removeEventListener("error", onError);
       };
     }
-  }, []);
+  }, [element]);
 
   return (
     <AudioPlayerContainer>
       <PlayButton
+        aria-label={playRequested ? t("loading.title") : isPlaying ? t("media.pause") : t("media.play")}
         disabled={playRequested}
         onClick={() => {
           if (isPlaying) {
@@ -73,13 +81,15 @@ export function MediaControls(props: {
         {playRequested ? (
           <Spinner stroke="#999" />
         ) : isPlaying ? (
-          <PauseIcon title={"Pause"} />
+          <PauseIcon title={t("media.pause")} />
         ) : (
-          <PlayIcon title={"Play"} />
+          <PlayIcon title={t("media.play")} />
         )}
       </PlayButton>
       <TimeDisplay ref={currentTime}>0:00</TimeDisplay>
       <ProgressContainer
+        aria-label={t("media.seek")}
+        title={t("media.seek")}
         onClick={(e) => {
           const { left, width } = e.currentTarget.getBoundingClientRect();
           const percent = (e.pageX - left) / width;
@@ -93,10 +103,9 @@ export function MediaControls(props: {
       <SoundContainer onMouseEnter={() => setIsVolumeOpen(true)} onMouseLeave={() => setIsVolumeOpen(false)}>
         <VolumeContainer $isOpen={isVolumeOpen}>
           <span>
-            <VisuallyHiddenLabel htmlFor="audio-slider">{"Change volume"}</VisuallyHiddenLabel>
+            <VisuallyHiddenLabel htmlFor={sliderId}>{t("media.changeVolume")}</VisuallyHiddenLabel>
             <VolumeSlider
-              id="audio-slider"
-              role="slider"
+              id={sliderId}
               disabled={isMuted}
               min="0"
               max="100"
@@ -105,8 +114,8 @@ export function MediaControls(props: {
             />
           </span>
         </VolumeContainer>
-        <SoundButton onClick={() => toggleMute()}>
-          <Volume title={isMuted ? "Mute" : "Unmute"} />
+        <SoundButton aria-label={isMuted ? t("media.unmute") : t("media.mute")} onClick={() => toggleMute()}>
+          <Volume title={isMuted ? t("media.unmute") : t("media.mute")} />
         </SoundButton>
       </SoundContainer>
     </AudioPlayerContainer>

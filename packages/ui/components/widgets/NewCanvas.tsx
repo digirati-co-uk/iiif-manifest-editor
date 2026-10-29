@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { Input, InputLabel } from "@/editors/Input";
 import { Button, CalltoButton, SecondaryButton } from "@/atoms/Button";
@@ -17,6 +18,7 @@ import { useApps, useAppState } from "@/shell";
 import { useProjectCreators } from "@/shell";
 
 export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
+  const t = useTranslations("ui");
   const { createProjectFromManifestId } = useProjectCreators();
   const { currentApp, changeApp } = useApps();
   const { state, setState } = useAppState();
@@ -175,7 +177,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
     <>
       {!emptyCanvas && (
         <div>
-          <InputLabel>From content</InputLabel>
+          <InputLabel>{t("canvas.fromContent")}</InputLabel>
           <FlexContainer>
             <Input
               placeholder={inputValue}
@@ -191,22 +193,22 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
                 }
               }}
             />
-            <Button aria-label="validate url" onClick={() => runAnalyser()}>
+            <Button aria-label={t("canvas.validate")} onClick={() => runAnalyser()}>
               <TickIcon />
             </Button>
           </FlexContainer>
 
-          <small>Any image, IIIF Image Service, audio, video, or IIIF Canvas.</small>
+          <small>{t("canvas.contentHelp")}</small>
         </div>
       )}
       {isLoading && <Loading />}
       {emptyCanvas && (
         <>
-          <InputLabel>Canvas dimensions</InputLabel>
+          <InputLabel>{t("canvas.dimensions")}</InputLabel>
           <FlexContainer style={{ justifyContent: "space-between" }}>
             <ErrorBoundary>
               <FlexContainerColumn>
-                <InputLabel>{"height"}</InputLabel>
+                <InputLabel>{t("canvas.height")}</InputLabel>
                 <Input
                   type="number"
                   onChange={(e: any) => {
@@ -220,7 +222,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
             </ErrorBoundary>
             <ErrorBoundary>
               <FlexContainerColumn>
-                <InputLabel>{"width"}</InputLabel>
+                <InputLabel>{t("canvas.width")}</InputLabel>
                 <Input
                   type="number"
                   onChange={(e: any) => {
@@ -234,7 +236,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
             </ErrorBoundary>
             <ErrorBoundary>
               <FlexContainerColumn>
-                <InputLabel>{"duration"}</InputLabel>
+                <InputLabel>{t("canvas.duration")}</InputLabel>
                 <Input
                   type="number"
                   onChange={(e: any) => {
@@ -255,10 +257,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
           <FlexContainer>
             <img src={inputValue} height={100} style={{ transition: "all 0.3s ease-in" }} />
             <PaddingComponentLarge />
-            <small>
-              This image/service is {width} x {height}, the Manifest Editor will create a Canvas {width} x {height} from
-              this image/service.
-            </small>
+            <small>{t("canvas.imageDimensions", { width: width ?? "", height: height ?? "" })}</small>
           </FlexContainer>
         </>
       )}
@@ -272,10 +271,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
             <img src={"https://iiif.io/assets/images/logos/logo-sm.png"} height={20} />
 
             <PaddingComponentLarge />
-            <small>
-              This image/service is {width} x {height}, the Manifest Editor will create a Canvas {width} x {height} from
-              this image/service.
-            </small>
+            <small>{t("canvas.imageDimensions", { width: width ?? "", height: height ?? "" })}</small>
           </FlexContainer>
         </>
       )}
@@ -283,30 +279,30 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
       <FlexContainer style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
         <InputLabel $inline={true}>
           <Input type={"checkbox"} onChange={(e: any) => setEmptyCanvas(!emptyCanvas)} checked={emptyCanvas} />
-          Empty Canvas
+          {t("canvas.blank")}
         </InputLabel>
         <FlexContainerColumn justify="flex-end" style={{ alignItems: "flex-end" }}>
           <FlexContainer>
-            <SecondaryButton aria-label="cancel" onClick={() => close()}>
-              CANCEL
+            <SecondaryButton aria-label={t("actions.cancel")} onClick={() => close()}>
+              {t("actions.cancel")}
             </SecondaryButton>
             <PaddingComponentSmall />
             <PaddingComponentSmall />
 
             {emptyCanvas && (
-              <CalltoButton disabled={!(width && height)} onClick={() => handleChange()} aria-label="add">
-                ADD
+              <CalltoButton disabled={!(width && height)} onClick={() => handleChange()} aria-label={t("actions.add")}>
+                {t("actions.add")}
               </CalltoButton>
             )}
             {!emptyCanvas && (
-              <CalltoButton disabled={!inputValue} onClick={() => handleChange()} aria-label="add">
-                ADD
+              <CalltoButton disabled={!inputValue} onClick={() => handleChange()} aria-label={t("actions.add")}>
+                {t("actions.add")}
               </CalltoButton>
             )}
           </FlexContainer>
           <PaddingComponentSmall>
             <InputLabel $inline={true} style={{ justifySelf: "flex-end" }}>
-              Add another
+              {t("canvas.addAnother")}
               <Input type={"checkbox"} onChange={(e: any) => setAddAnother(!addAnother)} checked={addAnother} />
             </InputLabel>
           </PaddingComponentSmall>
@@ -317,7 +313,7 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
         inputType &&
         selectedApplication === "manifest-editor" && (
           <FlexContainerColumn justify={"flex-start"}>
-            <p>This resource is not an image.</p>
+            <p>{t("canvas.notImage")}</p>
             <small>{inputType}</small>
             <small>{label}</small>
           </FlexContainerColumn>
@@ -330,16 +326,16 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
             <PaddingComponentMedium />
             <small>
               {/* This UI will change again */}
-              This resource is a collection, do you want to launch the IIIF Browser App?
+              {t("canvas.collectionHelp")}
             </small>
             <Button
-              aria-label="launch application"
+              aria-label={t("canvas.launch")}
               onClick={() => {
                 changeApp({ id: "collection-explorer", args: inputValue });
                 close();
               }}
             >
-              Launch Application
+              {t("canvas.launch")}
             </Button>
           </FlexContainer>
         </>
@@ -350,14 +346,14 @@ export const NewCanvas: React.FC<{ close: () => void }> = ({ close }) => {
           <FlexContainer style={{ justifyContent: "space-between" }}>
             <img src={"https://iiif.io/assets/images/logos/logo-sm.png"} height={20} />
             <PaddingComponentMedium />
-            <small>This resource is a manifest, do you want to start a new manifest from this resource?</small>
+            <small>{t("canvas.manifestHelp")}</small>
             <Button
-              aria-label="load-manifest"
+              aria-label={t("load.manifest")}
               onClick={() => {
                 createProjectFromManifestId(inputValue).then(close);
               }}
             >
-              Load Manifest
+              {t("load.manifest")}
             </Button>
           </FlexContainer>
         </>

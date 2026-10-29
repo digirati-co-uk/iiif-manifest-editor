@@ -1,4 +1,5 @@
-import { FormEvent, useState } from "react";
+import { useTranslations } from "@manifest-editor/i18n";
+import { FormEvent, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import styled from "styled-components";
 import { useProjectContext } from "../ProjectContext";
@@ -40,6 +41,12 @@ export const DraftTitleEditButton = styled(SmallButton as any)`
 `;
 
 export const DraftTitle = styled.div`
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
   color: #333;
   flex: 1;
   text-overflow: ellipsis;
@@ -48,36 +55,43 @@ export const DraftTitle = styled.div`
 `;
 
 export function DraftTitleEditor() {
+  const t = useTranslations("projects");
+  const common = useTranslations("common");
+  const input = useRef<HTMLInputElement>(null);
   const { actions, current } = useProjectContext();
   const [editingTitle, setIsEditingTitle] = useState(false);
 
   return (
     <Draft>
-      <DraftsText>Drafts</DraftsText>
+      <DraftsText>{t("draft.list")}</DraftsText>
       {current ? (
         <>
           {editingTitle ? (
             <DraftTitleEdit
               onSubmit={(e: FormEvent<HTMLFormElement>) => {
+                e.preventDefault();
                 const form = new FormData(e.target as any);
                 const data = Object.fromEntries(form.entries());
                 actions.updateDetails(data as any);
                 setIsEditingTitle(false);
               }}
             >
-              <DraftTitleEditInput id="project-title" defaultValue={current.name} name="name" />
-              <DraftTitleEditButton>Save</DraftTitleEditButton>
+              <DraftTitleEditInput ref={input} aria-label={t("draft.title")} defaultValue={current.name} name="name" />
+              <DraftTitleEditButton type="submit">{common("actions.save")}</DraftTitleEditButton>
             </DraftTitleEdit>
           ) : (
             <DraftTitle
+              as="button"
+              type="button"
+              aria-label={t("draft.edit", { name: current.name || t("draft.untitledProject") })}
               onClick={() => {
                 flushSync(() => {
                   setIsEditingTitle(true);
                 });
-                document.getElementById("project-title")?.focus();
+                input.current?.focus();
               }}
             >
-              {current.name || "Untitled project"}
+              {current.name || t("draft.untitledProject")}
             </DraftTitle>
           )}
         </>

@@ -1,0 +1,148 @@
+diff --git a/dev/chunks/vidstack-BUd8DcBH.js b/dev/chunks/vidstack-BUd8DcBH.js
+index 91473ba..c1c912c 100644
+--- a/dev/chunks/vidstack-BUd8DcBH.js
++++ b/dev/chunks/vidstack-BUd8DcBH.js
+@@ -325,7 +325,7 @@ function useTextCues(track) {
+ }
+ 
+ function useChapterOptions() {
+-  const media = useMediaContext(), track = useActiveTextTrack("chapters"), cues = useTextCues(track), $startTime = useSignal(media.$state.seekableStart), $endTime = useSignal(media.$state.seekableEnd);
++  const media = useMediaContext(), uiTime = useSignal(media.$props.uiTime), track = useActiveTextTrack("chapters"), cues = useTextCues(track), $startTime = useSignal(media.$state.seekableStart), $endTime = useSignal(media.$state.seekableEnd);
+   useActiveTextCues(track);
+   return React.useMemo(() => {
+     const options = track ? cues.filter((cue) => cue.startTime <= $endTime && cue.endTime >= $startTime).map((cue, i) => {
+@@ -335,7 +335,7 @@ function useChapterOptions() {
+         label: cue.text,
+         value: i.toString(),
+         startTimeText: formatTime(Math.max(0, cue.startTime - $startTime)),
+-        durationText: formatSpokenTime(
++        durationText: (uiTime?.formatSpokenTime ?? formatSpokenTime)(
+           Math.min($endTime, cue.endTime) - Math.max($startTime, cue.startTime)
+         ),
+         get selected() {
+@@ -369,7 +369,7 @@ function useChapterOptions() {
+       }
+     });
+     return options;
+-  }, [cues, $startTime, $endTime]);
++  }, [cues, $startTime, $endTime, uiTime]);
+ }
+ 
+ export { Captions, ChapterTitle, Content, GoogleCastButton, Group, MediaAnnouncer, Root$4 as Root, Root$2 as Root$1, Root$3 as Root$2, Root$1 as Root$3, Root$5 as Root$4, Root as Root$5, Title, Track, TrackFill, Trigger, audioGainSlider, controls, createComputed, createEffect, createSignal, qualitySlider, speedSlider, spinner, tooltip, useActiveTextCues, useActiveTextTrack, useChapterOptions, useChapterTitle, useScoped, useTextCues };
+diff --git a/dev/chunks/vidstack-C-WrcxmD.js b/dev/chunks/vidstack-C-WrcxmD.js
+index f1365a7..4d3c18b 100644
+--- a/dev/chunks/vidstack-C-WrcxmD.js
++++ b/dev/chunks/vidstack-C-WrcxmD.js
+@@ -4345,6 +4345,7 @@ const mediaAttributes = [
+ ];
+ 
+ const mediaPlayerProps = {
++  uiTime: null,
+   artist: "",
+   artwork: null,
+   autoplay: false,
+@@ -7438,9 +7439,9 @@ class MediaAnnouncer extends Component {
+         if (!this.scope) return;
+         const newTime = peek(currentTime), seconds = Math.abs(newTime - this.#startedSeekingAt);
+         if (seconds >= 1) {
+-          const isForward = newTime >= this.#startedSeekingAt, spokenTime = formatSpokenTime(seconds);
++          const isForward = newTime >= this.#startedSeekingAt, spokenTime = this.#media.$props.uiTime()?.formatSpokenTime?.(seconds) ?? formatSpokenTime(seconds);
+           this.#setLabel(
+-            `${this.#translate(isForward ? "Seek Forward" : "Seek Backward")} ${spokenTime}`
++            this.#media.$props.uiTime()?.formatSeek?.(seconds, isForward ? "forward" : "backward") ?? `${this.#translate(isForward ? "Seek Forward" : "Seek Backward")} ${spokenTime}`
+           );
+         }
+         this.#startedSeekingAt = -1;
+@@ -9681,7 +9682,8 @@ class TimeSlider extends Component {
+   }
+   #getARIAValueText() {
+     const time = this.#percentToTime(this.$state.value()), { duration } = this.#media.$state;
+-    return Number.isFinite(time) ? `${formatSpokenTime(time)} out of ${formatSpokenTime(duration())}` : "live";
++    const uiTime = this.#media.$props.uiTime();
++    return uiTime?.formatTimeRange?.(time, duration()) ?? (Number.isFinite(time) ? `${uiTime?.formatSpokenTime?.(time) ?? formatSpokenTime(time)} out of ${uiTime?.formatSpokenTime?.(duration()) ?? formatSpokenTime(duration())}` : "live");
+   }
+   // -------------------------------------------------------------------------------------------
+   // Format
+diff --git a/prod/chunks/vidstack-G6lmWJUv.js b/prod/chunks/vidstack-G6lmWJUv.js
+index 268762e..23905e2 100644
+--- a/prod/chunks/vidstack-G6lmWJUv.js
++++ b/prod/chunks/vidstack-G6lmWJUv.js
+@@ -325,7 +325,7 @@ function useTextCues(track) {
+ }
+ 
+ function useChapterOptions() {
+-  const media = useMediaContext(), track = useActiveTextTrack("chapters"), cues = useTextCues(track), $startTime = useSignal(media.$state.seekableStart), $endTime = useSignal(media.$state.seekableEnd);
++  const media = useMediaContext(), uiTime = useSignal(media.$props.uiTime), track = useActiveTextTrack("chapters"), cues = useTextCues(track), $startTime = useSignal(media.$state.seekableStart), $endTime = useSignal(media.$state.seekableEnd);
+   useActiveTextCues(track);
+   return React.useMemo(() => {
+     const options = track ? cues.filter((cue) => cue.startTime <= $endTime && cue.endTime >= $startTime).map((cue, i) => {
+@@ -335,7 +335,7 @@ function useChapterOptions() {
+         label: cue.text,
+         value: i.toString(),
+         startTimeText: formatTime(Math.max(0, cue.startTime - $startTime)),
+-        durationText: formatSpokenTime(
++        durationText: (uiTime?.formatSpokenTime ?? formatSpokenTime)(
+           Math.min($endTime, cue.endTime) - Math.max($startTime, cue.startTime)
+         ),
+         get selected() {
+@@ -369,7 +369,7 @@ function useChapterOptions() {
+       }
+     });
+     return options;
+-  }, [cues, $startTime, $endTime]);
++  }, [cues, $startTime, $endTime, uiTime]);
+ }
+ 
+ export { Captions, ChapterTitle, Content, GoogleCastButton, Group, MediaAnnouncer, Root$4 as Root, Root$2 as Root$1, Root$3 as Root$2, Root$1 as Root$3, Root$5 as Root$4, Root as Root$5, Title, Track, TrackFill, Trigger, audioGainSlider, controls, createComputed, createEffect, createSignal, qualitySlider, speedSlider, spinner, tooltip, useActiveTextCues, useActiveTextTrack, useChapterOptions, useChapterTitle, useScoped, useTextCues };
+diff --git a/prod/chunks/vidstack-WyKbSRm0.js b/prod/chunks/vidstack-WyKbSRm0.js
+index e22e9dd..9fc57d0 100644
+--- a/prod/chunks/vidstack-WyKbSRm0.js
++++ b/prod/chunks/vidstack-WyKbSRm0.js
+@@ -4169,6 +4169,7 @@ const mediaAttributes = [
+ ];
+ 
+ const mediaPlayerProps = {
++  uiTime: null,
+   artist: "",
+   artwork: null,
+   autoplay: false,
+@@ -6977,9 +6978,9 @@ class MediaAnnouncer extends Component {
+         if (!this.scope) return;
+         const newTime = peek(currentTime), seconds = Math.abs(newTime - this.#startedSeekingAt);
+         if (seconds >= 1) {
+-          const isForward = newTime >= this.#startedSeekingAt, spokenTime = formatSpokenTime(seconds);
++          const isForward = newTime >= this.#startedSeekingAt, spokenTime = this.#media.$props.uiTime()?.formatSpokenTime?.(seconds) ?? formatSpokenTime(seconds);
+           this.#setLabel(
+-            `${this.#translate(isForward ? "Seek Forward" : "Seek Backward")} ${spokenTime}`
++            this.#media.$props.uiTime()?.formatSeek?.(seconds, isForward ? "forward" : "backward") ?? `${this.#translate(isForward ? "Seek Forward" : "Seek Backward")} ${spokenTime}`
+           );
+         }
+         this.#startedSeekingAt = -1;
+@@ -9210,7 +9211,8 @@ class TimeSlider extends Component {
+   }
+   #getARIAValueText() {
+     const time = this.#percentToTime(this.$state.value()), { duration } = this.#media.$state;
+-    return Number.isFinite(time) ? `${formatSpokenTime(time)} out of ${formatSpokenTime(duration())}` : "live";
++    const uiTime = this.#media.$props.uiTime();
++    return uiTime?.formatTimeRange?.(time, duration()) ?? (Number.isFinite(time) ? `${uiTime?.formatSpokenTime?.(time) ?? formatSpokenTime(time)} out of ${uiTime?.formatSpokenTime?.(duration()) ?? formatSpokenTime(duration())}` : "live");
+   }
+   // -------------------------------------------------------------------------------------------
+   // Format
+diff --git a/types/vidstack.d.ts b/types/vidstack.d.ts
+index 046e5fd..ccb1bd6 100644
+--- a/types/vidstack.d.ts
++++ b/types/vidstack.d.ts
+@@ -2916,6 +2916,13 @@ interface MediaStateAccessors extends Pick<MediaState, 'paused' | 'muted' | 'vol
+ }
+ type PlayerSrc = MediaSrc | MediaSrc[];
+ interface MediaPlayerProps extends Pick<Writable<MediaState>, 'artist' | 'artwork' | 'autoPlay' | 'clipStartTime' | 'clipEndTime' | 'controls' | 'currentTime' | 'loop' | 'muted' | 'paused' | 'playsInline' | 'poster' | 'preload' | 'playbackRate' | 'viewType' | 'volume' | 'title' | 'streamType' | 'liveEdgeTolerance' | 'minLiveDVRWindow'> {
++    /** Instance-scoped UI formatters. Does not set subtitle/content language. English fallback. */
++    uiTime: {
++        formatSpokenTime?: (seconds: number) => string;
++        /** Non-finite current time denotes live media. Return the whole accessible message. */
++        formatTimeRange?: (currentTime: number, duration: number) => string;
++        formatSeek?: (seconds: number, direction: 'forward' | 'backward') => string;
++    } | null;
+     /** @deprecated - Use `autoPlay` */
+     autoplay: boolean;
+     /** @deprecated - Use `crossOrigin` */

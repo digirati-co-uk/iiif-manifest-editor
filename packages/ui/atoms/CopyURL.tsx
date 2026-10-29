@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useRef, useState } from "react";
 
 import { CopyIcon } from "../icons/CopyIcon";
@@ -20,13 +21,14 @@ const HiddenElement = styled.textarea`
 `;
 
 export const CopyURL: React.FC<{ manifest: string; link: string }> = ({ manifest, link }) => {
-  const [copySuccess, setCopySuccess] = useState("");
+  const t = useTranslations("ui");
+  const [copySuccess, setCopySuccess] = useState(false);
   const textAreaRef = useRef(null);
 
   function copyToClipboard() {
     if (textAreaRef && textAreaRef.current) {
       navigator.clipboard.writeText(manifest);
-      setCopySuccess("Copied!");
+      setCopySuccess(true);
     }
   }
   return (
@@ -37,11 +39,11 @@ export const CopyURL: React.FC<{ manifest: string; link: string }> = ({ manifest
         </a>
       </LinkBox>
       <HiddenElement ref={textAreaRef} defaultValue={manifest} />
-      <SecondaryButton onClick={() => copyToClipboard()} aria-label="copy url">
+      <SecondaryButton onClick={() => copyToClipboard()} aria-label={t("clipboard.copyLink")}>
         <CopyIcon />
-        Copy Link
+        {t("clipboard.copyLink")}
       </SecondaryButton>
-      <small>{copySuccess}</small>
+      <output>{copySuccess ? t("clipboard.copied") : null}</output>
     </FlexContainerRow>
   );
 };

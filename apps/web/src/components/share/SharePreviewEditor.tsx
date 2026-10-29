@@ -1,9 +1,14 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { upgrade } from "@iiif/parser/upgrader";
 import { useQuery } from "@tanstack/react-query";
 import { ManifestEditor } from "manifest-editor";
+import { useWebUiResources } from "../../i18n/WebResources";
 import { useMemo } from "react";
 
 export function SharePreviewEditor({ manifest }: { manifest: string }) {
+  const webT = useTranslations("web");
+  const webUiResources = useWebUiResources();
+
   const { isPending, data, error } = useQuery({
     queryKey: ["preview-editor", { manifest: manifest }],
     queryFn: async () => upgrade(await fetch(manifest).then((res) => res.json())),
@@ -14,8 +19,8 @@ export function SharePreviewEditor({ manifest }: { manifest: string }) {
 
   const resource = useMemo(() => (data ? { id: data?.id, type: data?.type } : null), [data]);
 
-  if (isPending || !resource) return <div>Loading...</div>;
-  if (error) return "An error has occurred: " + error.message;
+  if (isPending) return <div>{webT("feedback.loading")}</div>;
+  if (error || !resource) return <p role="alert">{webT("feedback.projectFailed")}</p>;
 
-  return <ManifestEditor resource={resource} data={data as any} />;
+  return <ManifestEditor localisation={webUiResources} resource={resource} data={data as any} />;
 }

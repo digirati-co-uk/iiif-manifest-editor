@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { RecentFilesWidget, RecentLabel, RecentThumbnails } from "../../atoms/RecentFilesWidget";
 import { getValue } from "@iiif/helpers";
 import * as IIIFVault from "@iiif/helpers/vault";
@@ -38,9 +39,10 @@ const TemplateCard: React.FC<{
 };
 
 export const NewTemplates: React.FC<NewTemplates> = ({ newTemplates, changeManifest }) => {
+  const t = useTranslations("ui");
   return (
     <RecentFilesWidget>
-      <WidgetHeader>Start from template</WidgetHeader>
+      <WidgetHeader>{t("load.template")}</WidgetHeader>
 
       <RecentThumbnails>
         {newTemplates &&

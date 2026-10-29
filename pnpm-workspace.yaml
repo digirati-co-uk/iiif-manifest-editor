@@ -62,3 +62,15 @@ overrides:
   react-aria: 3.43.2
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0
+
+patchedDependencies:
+  'leaflet-draw@1.0.4': patches/leaflet-draw@1.0.4.patch
+  '@mdxeditor/editor@4.0.4': patches/@mdxeditor__editor@4.0.4.patch
+  'iiif-browser@2.2.6': patches/iiif-browser@2.2.6.patch
+  '@vidstack/react@1.12.12': patches/@vidstack__react@1.12.12.patch
+
+# The maintained source/search patch uses the public search-panel commands.
+packageExtensions:
+  '@mdxeditor/editor@4.0.4':
+    dependencies:
+      '@codemirror/search': 6.5.8

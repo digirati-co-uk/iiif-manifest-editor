@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useReorderAccessibility } from "../../hooks/useReorderAccessibility";
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   type DragEndEvent,
   DndContext,
@@ -35,10 +38,7 @@ import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { TickIcon } from "@manifest-editor/ui/icons/TickIcon";
 import DOMPurify from "dompurify";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  AppDropdown,
-  type AppDropdownItem,
-} from "../../components/AppDropdown/AppDropdown";
+import { AppDropdown, type AppDropdownItem } from "../../components/AppDropdown/AppDropdown";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 
 type SortableMetadataItem = { id: string } & MetadataItem;
@@ -87,34 +87,32 @@ function MetadataActionMenu({
   onMoveToEnd: () => void;
   onMoveToStart: () => void;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const items: AppDropdownItem[] = [
     ...(itemCount > 1
       ? [
           {
-            label: "Move to start",
+            label: t("ui.moveToStart"),
             icon: <ResetIcon />,
             onClick: onMoveToStart,
           },
           {
-            label: "Move to end",
+            label: t("ui.moveToEnd"),
             icon: <DownIcon />,
             onClick: onMoveToEnd,
           },
         ]
       : []),
     {
-      label: "Delete",
+      label: commonT("actions.delete"),
       icon: <DeleteIcon />,
       onClick: onDelete,
     },
   ];
 
   return (
-    <AppDropdown
-      aria-label={`Metadata item ${index + 1} actions`}
-      as={HandleContainer}
-      items={items}
-    >
+    <AppDropdown aria-label={t("messages.metadataActions", { number: index + 1 })} as={HandleContainer} items={items}>
       <MoreMenu />
     </AppDropdown>
   );
@@ -143,18 +141,13 @@ function MetadataRow({
   onSaveLabel: (label: InternationalString) => void;
   onSaveValue: (value: InternationalString) => void;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const label = previewText(item.label);
   const value = previewText(item.value);
   const dragEnabled = itemCount > 1;
-  const {
-    attributes,
-    listeners,
-    setActivatorNodeRef,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setActivatorNodeRef, setNodeRef, transform, transition, isDragging } = useSortable({
+    attributes: { roleDescription: t("reorder.roleDescription") },
     id: item.id,
     data: { ref: item },
     transition: {
@@ -170,12 +163,12 @@ function MetadataRow({
       transform: CSS.Transform.toString(transform),
       transition,
     }),
-    [isDragging, transform, transition],
+    [isDragging, transform, transition]
   );
 
   return (
     <fieldset
-      aria-label={`Metadata item ${index + 1}`}
+      aria-label={t("messages.metadataItem", { number: index + 1 })}
       className="mb-2 rounded border border-gray-200 bg-white p-0 shadow-sm focus-within:ring focus-within:ring-me-primary-500"
       ref={setNodeRef}
       style={style}
@@ -183,10 +176,10 @@ function MetadataRow({
       <div className="flex min-h-12 items-start gap-1.5 p-2">
         {dragEnabled ? (
           <HandleContainer
-            aria-label={`Reorder metadata item ${index + 1}`}
+            aria-label={t("messages.metadataReorder", { number: index + 1 })}
             className="mt-0.5 shrink-0 cursor-grab active:cursor-grabbing"
             ref={setActivatorNodeRef}
-            title="Reorder"
+            title={t("ui.reorder")}
             {...attributes}
             {...listeners}
           >
@@ -204,23 +197,21 @@ function MetadataRow({
           type="button"
         >
           <span className="block whitespace-pre-wrap break-words text-sm font-semibold leading-5 text-[#333]">
-            {label || (
-              <span className="font-normal text-gray-500">Untitled label</span>
-            )}
+            {label || <span className="font-normal text-gray-500">{t("ui.untitledLabel")}</span>}
           </span>
           <span className="mt-0.5 block whitespace-pre-wrap break-words text-xs leading-5 text-gray-600">
-            {value || <span className="text-gray-400">No value</span>}
+            {value || <span className="text-gray-400">{t("ui.noValue")}</span>}
           </span>
         </ButtonReset>
         <ButtonReset
           aria-label={
             isEditing
-              ? `Done editing metadata item ${index + 1}`
-              : `Edit metadata item ${index + 1}`
+              ? t("messages.metadataDone", { number: index + 1 })
+              : t("messages.metadataEdit", { number: index + 1 })
           }
           className="mt-0.5 flex aspect-square shrink-0 items-center rounded-sm p-1 text-xl hover:bg-me-primary-100"
           onClick={onEdit}
-          title={isEditing ? "Done" : "Edit"}
+          title={isEditing ? commonT("actions.done") : commonT("actions.edit")}
           type="button"
         >
           {isEditing ? <TickIcon /> : <EditIcon />}
@@ -240,13 +231,15 @@ function MetadataRow({
             disallowHTML
             fields={item.label || emptyLanguageMap}
             focusId={item.id}
-            label="Label"
+            label={t("fields.label")}
+            labelMessage={propertyLabels.label.labelMessage}
             onSave={(label: any) => onSaveLabel(label.toInternationalString())}
           />
           <LanguageFieldEditor
             fields={item.value || emptyLanguageMap}
             focusId={`${item.id}_value`}
-            label="Value"
+            label={t("metadata.value")}
+            labelMessage={propertyLabels.value.labelMessage}
             disallowHTML={false}
             onSave={(value: any) => onSaveValue(value.toInternationalString())}
           />
@@ -257,26 +250,25 @@ function MetadataRow({
 }
 
 export function Metadata() {
+  const t = useTranslations("editors");
   const { descriptive } = useEditor();
   const [editingId, setEditingId] = useState<string>();
   const [pendingNewItemCount, setPendingNewItemCount] = useState<number>();
   const editingIndexRef = useRef<number>();
   const items = descriptive.metadata.getSortable() as SortableMetadataItem[];
   const itemCount = items.length;
+  const accessibility = useReorderAccessibility(items);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   useEffect(() => {
     if (editingId && !items.some((item) => item.id === editingId)) {
-      const fallbackItem =
-        typeof editingIndexRef.current !== "undefined"
-          ? items[editingIndexRef.current]
-          : undefined;
+      const fallbackItem = typeof editingIndexRef.current !== "undefined" ? items[editingIndexRef.current] : undefined;
 
       if (fallbackItem) {
         setEditingId(fallbackItem.id);
@@ -288,10 +280,7 @@ export function Metadata() {
   }, [editingId, items]);
 
   useEffect(() => {
-    if (
-      typeof pendingNewItemCount !== "undefined" &&
-      items.length > pendingNewItemCount
-    ) {
+    if (typeof pendingNewItemCount !== "undefined" && items.length > pendingNewItemCount) {
       editingIndexRef.current = items.length - 1;
       setEditingId(items[items.length - 1]!.id);
       setPendingNewItemCount(undefined);
@@ -300,8 +289,7 @@ export function Metadata() {
 
   const findItemById = useCallback(
     (id: string) => {
-      const currentItems =
-        descriptive.metadata.getSortable() as SortableMetadataItem[];
+      const currentItems = descriptive.metadata.getSortable() as SortableMetadataItem[];
       const index = currentItems.findIndex((item) => item.id === id);
 
       return {
@@ -309,7 +297,7 @@ export function Metadata() {
         item: currentItems[index],
       };
     },
-    [descriptive.metadata],
+    [descriptive.metadata]
   );
 
   const saveLabel = useCallback(
@@ -320,7 +308,7 @@ export function Metadata() {
         descriptive.metadata.update(index, label, item.value);
       }
     },
-    [descriptive.metadata, findItemById],
+    [descriptive.metadata, findItemById]
   );
 
   const saveValue = useCallback(
@@ -331,7 +319,7 @@ export function Metadata() {
         descriptive.metadata.update(index, item.label, value);
       }
     },
-    [descriptive.metadata, findItemById],
+    [descriptive.metadata, findItemById]
   );
 
   const deleteItem = useCallback(
@@ -346,7 +334,7 @@ export function Metadata() {
         setEditingId(undefined);
       }
     },
-    [descriptive.metadata, editingId, findItemById],
+    [descriptive.metadata, editingId, findItemById]
   );
 
   const moveToStart = useCallback(
@@ -357,7 +345,7 @@ export function Metadata() {
         descriptive.metadata.moveToStart(index);
       }
     },
-    [descriptive.metadata, findItemById],
+    [descriptive.metadata, findItemById]
   );
 
   const moveToEnd = useCallback(
@@ -368,7 +356,7 @@ export function Metadata() {
         descriptive.metadata.moveToEnd(index);
       }
     },
-    [descriptive.metadata, findItemById],
+    [descriptive.metadata, findItemById]
   );
 
   const onDragEnd = useCallback(
@@ -386,12 +374,13 @@ export function Metadata() {
         descriptive.metadata.reorder(startIndex, endIndex);
       }
     },
-    [descriptive.metadata, items],
+    [descriptive.metadata, items]
   );
 
   return (
     <PaddedSidebarContainer>
       <DndContext
+        accessibility={accessibility}
         collisionDetection={closestCenter}
         measuring={{
           droppable: {
@@ -402,10 +391,7 @@ export function Metadata() {
         onDragEnd={onDragEnd}
         sensors={sensors}
       >
-        <SortableContext
-          items={items.map((item) => item.id)}
-          strategy={verticalListSortingStrategy}
-        >
+        <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
           {items.map((item, index) => (
             <MetadataRow
               index={index}
@@ -415,11 +401,8 @@ export function Metadata() {
               key={item.id}
               onDelete={() => deleteItem(item.id)}
               onEdit={() => {
-                editingIndexRef.current =
-                  editingId === item.id ? undefined : index;
-                setEditingId((current) =>
-                  current === item.id ? undefined : item.id,
-                );
+                editingIndexRef.current = editingId === item.id ? undefined : index;
+                setEditingId((current) => (current === item.id ? undefined : item.id));
               }}
               onMoveToEnd={() => moveToEnd(item.id)}
               onMoveToStart={() => moveToStart(item.id)}
@@ -432,7 +415,7 @@ export function Metadata() {
 
       {itemCount === 0 && (
         <EmptyState $noMargin $box>
-          No metadata items
+          {t("ui.noMetadataItems")}
         </EmptyState>
       )}
 
@@ -444,7 +427,7 @@ export function Metadata() {
         }}
       >
         <AddIcon />
-        Add metadata item
+        {t("ui.addMetadataItem")}
       </ActionButton>
     </PaddedSidebarContainer>
   );

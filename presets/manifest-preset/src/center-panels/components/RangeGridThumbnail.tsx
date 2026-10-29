@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { createRangeHelper } from "@iiif/helpers";
 import { CanvasThumbnailGridItem, RangesIcon } from "@manifest-editor/components";
 import { memo, useMemo } from "react";
@@ -10,6 +11,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
   range: { id: string; type: string };
   onClick?: () => void;
 }) {
+  const t = useTranslations("manifest");
   const range = useRange({ id: props.range.id });
   const { dragProps } = useDrag({
     isDisabled: !props.dragState,
@@ -39,7 +41,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
     return deDuplicatedCanvases;
   }, [range, vault]);
 
-  if (canvases.length === 0) return <div>EMPTY</div>;
+  if (canvases.length === 0) return <div>{t("workflow.emptyRange")}</div>;
 
   return (
     <div
@@ -49,7 +51,7 @@ export const RangeGridThumbnail = memo(function RangeGridThumbnail(props: {
         canvases.length === 1 && "grid-cols-1 grid-rows-1",
         canvases.length === 2 && "grid-cols-1 grid-rows-2",
         canvases.length === 3 && "grid-cols-2 grid-rows-2",
-        canvases.length === 4 && "grid-cols-2 grid-rows-2",
+        canvases.length === 4 && "grid-cols-2 grid-rows-2"
       )}
     >
       <div className="absolute bottom-2 left-2 bg-white/80 p-1 rounded z-20 flex items-center justify-center text-black/50">

@@ -14,7 +14,9 @@ export const htmlBodyCreator = defineCreator({
   id: "@manifest-editor/html-body-creator",
   create: createHtmlBody,
   label: "Formatted text",
+  labelMessage: { namespace: "creators", key: "definitions.htmlBody.label" },
   summary: "Write formatted text as the content of an annotation.",
+  summaryMessage: { namespace: "creators", key: "definitions.htmlBody.summary" },
   icon: <TextIcon />,
   render(ctx) {
     return <CreateHTMLBodyForm {...ctx} />;
@@ -29,10 +31,7 @@ export const htmlBodyCreator = defineCreator({
         return parent.property === "body";
       }
 
-      const resource = vault.get(
-        parent.resource as any,
-        { skipSelfReturn: false } as any,
-      ) as any;
+      const resource = vault.get(parent.resource as any, { skipSelfReturn: false } as any) as any;
       return parent.property === "items" && resource?.type === "Choice";
     },
   },

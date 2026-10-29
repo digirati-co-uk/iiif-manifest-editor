@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   applyCanvasLayout,
   canResizeCanvas,
@@ -11,6 +12,7 @@ import { useAtlasStore, useCanvas, useVault, useVaultSelector } from "react-iiif
 import { CanvasLayoutPicker } from "./CanvasLayoutPicker";
 
 export function CanvasLayoutSection() {
+  const t = useTranslations("editors");
   const canvas = useCanvas();
   const store = useAtlasStore();
   const vault = useVault();
@@ -42,7 +44,7 @@ export function CanvasLayoutSection() {
           onClick={() => clearCanvasPlaceholders(vault, canvas)}
           style={{ marginTop: 10, background: "none", border: 0, padding: 0, color: "#892c4e", fontSize: 12 }}
         >
-          Clear placeholders
+          {t("ui.clearPlaceholders")}
         </button>
       )}
     </div>

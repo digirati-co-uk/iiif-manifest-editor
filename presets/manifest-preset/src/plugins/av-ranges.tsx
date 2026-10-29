@@ -1,8 +1,5 @@
-import type {
-  BackgroundPanel,
-  LayoutPanel,
-  PluginMetadata,
-} from "@manifest-editor/shell";
+import { manifestMessage } from "../i18n";
+import type { BackgroundPanel, LayoutPanel, PluginMetadata } from "@manifest-editor/shell";
 import { useLayoutActions, useLayoutState } from "@manifest-editor/shell";
 import { useEffect, useState } from "react";
 import { avRangesPanel } from "../av-ranges/av-ranges-panel";
@@ -13,9 +10,12 @@ import { getAvCanvases } from "../av-ranges/av-media-utils";
 export default {
   id: "@manifest-editor/av-ranges",
   label: "A/V Ranges",
+  labelMessage: manifestMessage("workflow.aVRanges"),
   description: "Create and edit temporal ranges for audio and video canvases.",
+  descriptionMessage: manifestMessage("workflow.avPluginSummary"),
   author: "Digirati",
   official: true,
+  localisation: { requiredNamespaces: ["manifest"] },
   defaultEnabled: false,
   tags: ["audio", "video", "ranges", "chaptering"],
   supports: {
@@ -52,6 +52,7 @@ export const background: BackgroundPanel[] = [
   {
     id: "av-ranges-plugin-sync",
     label: "A/V ranges plugin sync",
+    labelMessage: manifestMessage("workflow.aVRangesPluginSync"),
     render: () => <AvRangesPluginSync />,
   },
 ];
@@ -59,10 +60,7 @@ export const background: BackgroundPanel[] = [
 function AvRangesPluginSync() {
   const { leftPanel, rightPanel } = useLayoutState();
   const { open, rightPanel: rightPanelActions } = useLayoutActions();
-  const [
-    wasRightPanelClosedAutomatically,
-    setWasRightPanelClosedAutomatically,
-  ] = useState(false);
+  const [wasRightPanelClosedAutomatically, setWasRightPanelClosedAutomatically] = useState(false);
 
   useEffect(() => {
     if (leftPanel.current === avRangesPanel.id) {
@@ -80,13 +78,7 @@ function AvRangesPluginSync() {
       rightPanelActions.open();
       setWasRightPanelClosedAutomatically(false);
     }
-  }, [
-    leftPanel.current,
-    rightPanel.open,
-    wasRightPanelClosedAutomatically,
-    open,
-    rightPanelActions,
-  ]);
+  }, [leftPanel.current, rightPanel.open, wasRightPanelClosedAutomatically, open, rightPanelActions]);
 
   return null;
 }

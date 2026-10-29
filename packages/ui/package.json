@@ -52,7 +52,10 @@
   "main": "./index.tsx",
   "types": "./index.tsx",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "lint": "oxlint atoms components editors form-elements madoc ui test",
+    "typecheck:i18n": "tsc --noEmit -p tsconfig.i18n.json"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",
@@ -65,11 +68,16 @@
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-dom": "catalog:",
     "react-iiif-vault": "catalog:",
-    "styled-components": "catalog:"
+    "styled-components": "catalog:",
+    "@manifest-editor/i18n": "workspace:*",
+    "react-select-search": "4.1.7"
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "vitest": "catalog:",
+    "jsdom": "26.1.0",
+    "typescript": "catalog:"
   },
   "private": true
 }

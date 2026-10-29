@@ -4,7 +4,9 @@ import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 export const Container = styled.div`
   display: flex;
   align-items: center;
-  height: 3em;
+  min-height: 3em;
+  flex-wrap: wrap;
+  gap: 0.5em;
   padding: 0.5em;
 `;
 

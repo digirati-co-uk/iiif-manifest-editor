@@ -1,0 +1,39 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node", "react", "react-dom"],
+    "paths": {
+      "manifest-editor": ["../../packages/manifest-editor/src/index.ts"],
+      "@manifest-editor/client-vault": ["../../packages/client-vault/src/index.ts"],
+      "@manifest-editor/shell": ["../../packages/shell/src/index.ts"],
+      "@manifest-editor/projects": ["../../packages/projects/src/index.ts"],
+      "@manifest-editor/editor-api": ["../../packages/editor-api/src/index.ts"],
+      "@manifest-editor/editors": ["../../packages/editors/src/index.ts"],
+      "@manifest-editor/components": ["../../packages/components/src/index.tsx"],
+      "@manifest-editor/creators": ["../../packages/creators/src/index.ts"],
+      "@manifest-editor/iiif-preview-server": ["../../packages/iiif-preview-server/src/index.ts"],
+      "@manifest-editor/i18n": ["../../packages/i18n/src/index.ts"],
+      "@manifest-editor/server-vault": ["../../packages/server-vault/src/index.ts"],
+      "@manifest-editor/creator-api": ["../../packages/creator-api/src/index.ts"],
+      "@manifest-editor/collection-preset": ["../../presets/collection-preset/src/index.tsx"],
+      "@manifest-editor/exhibition-preset": ["../../presets/exhibition-preset/src/index.tsx"],
+      "@manifest-editor/manifest-preset": ["../../presets/manifest-preset/src/index.tsx"],
+      "@manifest-editor/ocr-classification": ["../../plugins/ocr-classification/src/index.ts"],
+      "@manifest-editor/specifications": ["../../plugins/specifications/src/index.tsx"],
+      "@manifest-editor/translation": ["../../plugins/translation/src/index.ts"],
+      "@manifest-editor/annotations": ["../../plugins/annotations/src/index.ts"],
+      "@manifest-editor/ocr-docling": ["../../plugins/ocr-docling/src/index.ts"],
+      "@manifest-editor/canvas-label-generator": ["../../plugins/canvas-label-generator/src/index.ts"],
+      "@manifest-editor/ui/*": ["../../packages/ui/src/*"],
+      "@manifest-editor/ocr-classification/lazy": ["../../plugins/ocr-classification/src/lazy.ts"],
+      "@manifest-editor/ocr-docling/lazy": ["../../plugins/ocr-docling/src/lazy.ts"],
+      "@manifest-editor/translation/lazy": ["../../plugins/translation/src/lazy.ts"],
+      "@manifest-editor/iiif-preview-server/next-app-router": [
+        "../../packages/iiif-preview-server/src/wrappers/next-app-router.ts"
+      ]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.test.tsx", "vitest.config.ts"]
+}

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { Button, ButtonGroup } from "@manifest-editor/ui/atoms/Button";
@@ -11,6 +12,7 @@ import { centerRectangles } from "../../helpers/center-rectangles";
 import { useAnnotationThumbnail } from "../../hooks/useAnnotationThumbnail";
 
 export function FallbackAnnotationEditor() {
+  const t = useTranslations("editors");
   // This is for an annotation
   const vault = useVault();
   const annotationEditor = useEditor();
@@ -29,9 +31,9 @@ export function FallbackAnnotationEditor() {
     <>
       {canvas && !currentTarget.selector ? (
         <InputContainer $wide>
-          <InputLabel $margin>Target</InputLabel>
+          <InputLabel $margin>{t("ui.target")}</InputLabel>
           <div style={{ border: "1px solid #ddd", borderRadius: 3, padding: "1em", color: "#999" }}>
-            This annotation fills the whole Canvas.
+            {t("ui.thisAnnotationFillsTheWholeCanvas")}
           </div>
           <ButtonGroup $right>
             <Button
@@ -43,14 +45,14 @@ export function FallbackAnnotationEditor() {
                       width: 100,
                       height: 100,
                     },
-                    0.6,
+                    0.6
                   );
 
                   target.setPosition(imagePosition);
                 });
               }}
             >
-              Change
+              {t("ui.change")}
             </Button>
           </ButtonGroup>
         </InputContainer>
@@ -67,9 +69,9 @@ export function FallbackAnnotationEditor() {
           >
             <ButtonGroup $right>
               <Button type="button" onClick={() => target.removeSelector()}>
-                Target whole canvas
+                {t("ui.targetWholeCanvas")}
               </Button>
-              <Button type="submit">Update target</Button>
+              <Button type="submit">{t("ui.updateTarget")}</Button>
             </ButtonGroup>
           </BoxSelectorField>
         </InputContainer>
@@ -83,8 +85,8 @@ export function FallbackAnnotationEditor() {
 
       {annotationEditor.context ? (
         <DeleteButton
-          label="Remove from canvas"
-          message="Are you sure you want to remove from canvas"
+          label={t("ui.removeFromCanvas")}
+          message={t("messages.removeFromCanvasConfirm")}
           onDelete={() => {
             annotationEditor.context?.removeFromParent();
             edit(annotationEditor.ref());

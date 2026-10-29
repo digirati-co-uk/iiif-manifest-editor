@@ -37,12 +37,14 @@ export interface PreviewConfiguration<Config = any> {
   id: string;
   type: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   config: Config;
 }
 
 export interface PreviewHandler {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type: string;
   focusable: boolean;
 

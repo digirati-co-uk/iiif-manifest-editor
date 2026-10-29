@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { Vault } from "@iiif/helpers/vault";
 import { useMemo } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
@@ -54,14 +55,14 @@ export function getCanvasProgressStatusFromState(state: any, resource: CanvasPro
   }
 
   return normaliseCanvasProgressStatus(
-    state?.iiif?.meta?.[id]?.[CANVAS_PROGRESS_META_NAMESPACE]?.[CANVAS_PROGRESS_STATUS_META_KEY],
+    state?.iiif?.meta?.[id]?.[CANVAS_PROGRESS_META_NAMESPACE]?.[CANVAS_PROGRESS_STATUS_META_KEY]
   );
 }
 
 export function setCanvasProgressStatus(
   vault: Vault,
   resource: CanvasProgressResource,
-  status: CanvasProgressStatusInput,
+  status: CanvasProgressStatusInput
 ): CanvasProgressStatus {
   const id = getResourceId(resource);
   if (!id) {
@@ -80,7 +81,7 @@ export function clearCanvasProgressStatus(vault: Vault, resource: CanvasProgress
 export function setCanvasProgressStatuses(
   vault: Vault,
   resources: CanvasProgressResource[],
-  status: CanvasProgressStatusInput,
+  status: CanvasProgressStatusInput
 ): Record<string, CanvasProgressStatus> {
   const statuses: Record<string, CanvasProgressStatus> = {};
 
@@ -98,7 +99,7 @@ export function setCanvasProgressStatuses(
 
 export function clearCanvasProgressStatuses(
   vault: Vault,
-  resources: CanvasProgressResource[],
+  resources: CanvasProgressResource[]
 ): Record<string, CanvasProgressStatus> {
   return setCanvasProgressStatuses(vault, resources, "none");
 }
@@ -107,7 +108,10 @@ export interface ManifestEditorCanvasProgressApi {
   getStatus(resource: CanvasProgressResource): CanvasProgressStatus;
   setStatus(resource: CanvasProgressResource, status: CanvasProgressStatusInput): CanvasProgressStatus;
   clearStatus(resource: CanvasProgressResource): CanvasProgressStatus;
-  setStatuses(resources: CanvasProgressResource[], status: CanvasProgressStatusInput): Record<string, CanvasProgressStatus>;
+  setStatuses(
+    resources: CanvasProgressResource[],
+    status: CanvasProgressStatusInput
+  ): Record<string, CanvasProgressStatus>;
   clearStatuses(resources: CanvasProgressResource[]): Record<string, CanvasProgressStatus>;
 }
 
@@ -133,7 +137,7 @@ export function createManifestEditorCanvasProgressApi(vault: Vault): ManifestEdi
 
 export function createTrackingCanvasProgressApi(
   baseApi: ManifestEditorCanvasProgressApi,
-  trackedResourceIds = new Set<string>(),
+  trackedResourceIds = new Set<string>()
 ): ManifestEditorCanvasProgressApi & { clearTrackedStatuses(): void; trackedResourceIds: Set<string> } {
   function track(resource: CanvasProgressResource) {
     const id = getResourceId(resource);
@@ -179,12 +183,15 @@ export function createTrackingCanvasProgressApi(
 export function useCanvasProgressStatus(resource: CanvasProgressResource): CanvasProgressStatus {
   const resourceId = getResourceId(resource);
 
-  return useVaultSelector((state) => {
-    if (!resourceId) {
-      return "none";
-    }
-    return getCanvasProgressStatusFromState(state, resourceId);
-  }, [resourceId]);
+  return useVaultSelector(
+    (state) => {
+      if (!resourceId) {
+        return "none";
+      }
+      return getCanvasProgressStatusFromState(state, resourceId);
+    },
+    [resourceId]
+  );
 }
 
 export function useCanvasProgressActions(resource: CanvasProgressResource) {
@@ -204,27 +211,24 @@ export function useCanvasProgressActions(resource: CanvasProgressResource) {
         return progressActions.getStatus(resourceId);
       },
     }),
-    [progressActions, resourceId],
+    [progressActions, resourceId]
   );
 }
 
 const statusConfig: Record<
   CanvasProgressActiveStatus,
-  { label: string; stripClass: string; badgeClass: string; dimOverlay?: boolean }
+  { stripClass: string; badgeClass: string; dimOverlay?: boolean }
 > = {
   queued: {
-    label: "Queued",
     stripClass: "bg-zinc-400/80",
     badgeClass: "bg-zinc-500",
     dimOverlay: true,
   },
   pending: {
-    label: "In progress",
     stripClass: "bg-amber-400/90 animate-pulse",
     badgeClass: "bg-amber-500",
   },
   done: {
-    label: "Done",
     stripClass: "bg-me-primary-500",
     badgeClass: "bg-me-primary-500",
   },
@@ -232,7 +236,15 @@ const statusConfig: Record<
 
 function QueuedIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l2.5 2.5" />
     </svg>
@@ -250,7 +262,15 @@ function SpinnerIcon({ className }: { className?: string }) {
 
 function CheckIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M5 12l4 4 8-8" />
     </svg>
   );
@@ -291,6 +311,7 @@ function ManifestEditorCanvasProgressOverlayContent({
   status: CanvasProgressStatus;
   className?: string;
 }) {
+  const t = useTranslations("shell");
   if (status === "none") {
     return null;
   }
@@ -311,9 +332,9 @@ function ManifestEditorCanvasProgressOverlayContent({
       {/* Icon badge — top-right corner, doesn't conflict with tag overlay (top-left) */}
       <div
         className={`pointer-events-none absolute right-1.5 top-1.5 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full ${config.badgeClass} shadow-md ring-2 ring-white/70`}
-        title={config.label}
+        title={t(`progress.${status}`)}
       >
-        <span className="sr-only">{config.label}</span>
+        <span className="sr-only">{t(`progress.${status}`)}</span>
         {status === "queued" && <QueuedIcon className="h-2.5 w-2.5 text-white" />}
         {status === "pending" && <SpinnerIcon className="h-2.5 w-2.5 animate-spin text-white" />}
         {status === "done" && <CheckIcon className="h-2.5 w-2.5 text-white" />}

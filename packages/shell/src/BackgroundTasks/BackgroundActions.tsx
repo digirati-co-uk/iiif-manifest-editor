@@ -1,3 +1,5 @@
+import { backgroundActionLabel, backgroundActionStatus } from "./BackgroundActionMessages";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import {
   BackgroundActionMenuButton,
   BackgroundActionMenuActionButton,
@@ -47,6 +49,11 @@ function toRootTarget(resource: { id: string; type: string }): BackgroundActionT
     id: resource.id,
     type: resource.type,
     label: resource.type,
+    labelMessage: {
+      namespace: "editor-api",
+      key: `resources.${resource.type.charAt(0).toLowerCase()}${resource.type.slice(1)}`,
+      defaultValue: resource.type,
+    },
     scope: "root",
   };
 }
@@ -60,6 +67,7 @@ function toCanvasTarget(resource: { id?: string; type?: string } | undefined): B
     id: resource.id,
     type: "Canvas",
     label: "Current canvas",
+    labelMessage: { namespace: "shell", key: "background.currentCanvas" },
     scope: "canvas",
   };
 }
@@ -74,7 +82,25 @@ function useCurrentCanvasTarget() {
   }, [current, stack]);
 }
 
+/** Keeps a running action bound to this editor even when its runtime resources are replaced. */
+export function useBackgroundActionFormatter(): NonNullable<BackgroundActionSystemContext["i18n"]> {
+  const { resolveMessage, translate } = useEditorI18n();
+  const current = useRef({ resolveMessage, translate });
+  current.current = { resolveMessage, translate };
+  return useMemo(
+    () => ({
+      resolveMessage: (reference, fallback) => current.current.resolveMessage(reference, fallback),
+      translate:
+        (namespace) =>
+        (...args) =>
+          current.current.translate(namespace)(...args),
+    }),
+    []
+  );
+}
+
 function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
+  const i18n = useBackgroundActionFormatter();
   const rootResource = useAppResource();
   const currentCanvas = useCurrentCanvasTarget();
   const vault = useVault();
@@ -87,6 +113,7 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
 
   return useMemo(
     () => ({
+      i18n,
       rootResource,
       currentCanvas,
       vault,
@@ -97,7 +124,7 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
       layoutState,
       layoutActions,
     }),
-    [rootResource, currentCanvas, vault, tags, canvasProgress, plugins, config, layoutState, layoutActions]
+    [i18n, rootResource, currentCanvas, vault, tags, canvasProgress, plugins, config, layoutState, layoutActions]
   );
 }
 
@@ -178,6 +205,20 @@ export function BackgroundActionsMount() {
   );
 }
 
+function BackgroundToastText({
+  definition,
+  instance,
+  part,
+}: {
+  definition: BackgroundActionDefinition;
+  instance: BackgroundActionInstance;
+  part: "title" | "description" | "action";
+}) {
+  const i18n = useEditorI18n();
+  const content = getBackgroundActionToastContent(definition, instance, () => {}, i18n);
+  return <>{part === "action" ? content?.action?.label : content?.[part]}</>;
+}
+
 export function BackgroundActionToasts() {
   const definitions = useBackgroundActionsStore((state) => state.definitions);
   const instances = useBackgroundActionsStore((state) => state.instances);
@@ -216,11 +257,24 @@ export function BackgroundActionToasts() {
           ? () => {
               void definition.onResults?.(context);
             }
-          : undefined
+          : undefined,
+        systemContext.i18n
       );
 
       if (content) {
-        toasts.add(content);
+        toasts.add({
+          ...content,
+          title: <BackgroundToastText definition={definition} instance={instance} part="title" />,
+          description: content.description ? (
+            <BackgroundToastText definition={definition} instance={instance} part="description" />
+          ) : undefined,
+          action: content.action
+            ? {
+                ...content.action,
+                label: <BackgroundToastText definition={definition} instance={instance} part="action" />,
+              }
+            : undefined,
+        });
         shownToastKeys.current.add(dedupKey);
       }
     }
@@ -233,56 +287,16 @@ function isBusy(instance: BackgroundActionInstance | undefined) {
   return instance?.status === "preparing" || instance?.status === "running";
 }
 
-function getActionStatusLabel(instance: BackgroundActionInstance | undefined) {
-  if (!instance || instance.status === "idle") {
-    return "";
-  }
-
-  if (instance.status === "error") {
-    return instance.error?.message || instance.statusText || "Error";
-  }
-
-  if (instance.status === "complete" && instance.resultsAvailable) {
-    return "Results ready";
-  }
-
-  if (instance.status === "cancelled") {
-    return "Cancelled";
-  }
-
-  return instance.statusText || instance.status;
+function formatTimestamp(value: number | undefined, locale: string, timeZone: string, notRecorded: string) {
+  return value && Number.isFinite(value)
+    ? new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "medium", timeZone }).format(value)
+    : notRecorded;
 }
-
-function formatTimestamp(value: number | undefined) {
-  if (!value) {
-    return "Not recorded";
-  }
-
-  return new Date(value).toLocaleString();
+function formatTime(value: number | undefined, locale: string, timeZone: string) {
+  return value && Number.isFinite(value)
+    ? new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone }).format(value)
+    : "--:--:--";
 }
-
-function formatTime(value: number | undefined) {
-  if (!value) return "--:--:--";
-  return new Date(value).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-}
-
-function formatDuration(instance: BackgroundActionInstance) {
-  if (!instance.startedAt) {
-    return "Not recorded";
-  }
-
-  const end = instance.completedAt || Date.now();
-  const seconds = Math.max(0, Math.round((end - instance.startedAt) / 1000));
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-
-  if (minutes) {
-    return `${minutes}m ${remainingSeconds}s`;
-  }
-
-  return `${remainingSeconds}s`;
-}
-
 function formatJson(value: unknown) {
   if (typeof value === "undefined") {
     return "";
@@ -357,9 +371,18 @@ function BackgroundActionDetailsModal({
   instance: BackgroundActionInstance;
   onClose: () => void;
 }) {
+  const i18n = useEditorI18n();
+  const { resolveMessage, locale } = i18n;
+  const timeZone = useConfig().uiI18n?.timeZone || "UTC";
+  const t = useTranslations("shell");
+
   const [activeTab, setActiveTab] = useState<DetailsTab>("overview");
   const logEndRef = useRef<HTMLDivElement>(null);
   const logCount = instance.logs.length;
+  const progressLabel = resolveMessage(instance.progress?.labelMessage, instance.progress?.label);
+  const progressPercent = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 }).format(
+    (instance.progress?.percent || 0) / 100
+  );
 
   // Auto-scroll log terminal to bottom when switching to logs tab
   useEffect(() => {
@@ -380,12 +403,12 @@ function BackgroundActionDetailsModal({
   const milestoneEvents = instance.events.filter((e) => isMilestoneEvent(e.type));
 
   const tabs: Array<{ id: DetailsTab; label: string; count?: number }> = [
-    { id: "overview", label: "Overview" },
-    { id: "logs", label: "Logs", count: logCount },
+    { id: "overview", label: t("background.overview") },
+    { id: "logs", label: t("background.logs"), count: logCount },
   ];
 
   return (
-    <Modal title={instance.label || definition.label} onClose={onClose} className="max-w-3xl">
+    <Modal title={backgroundActionLabel(definition, instance, i18n)} onClose={onClose} className="max-w-3xl">
       {/* Tab bar — sticky inside the scroll container */}
       <div className="sticky top-0 z-10 border-b border-zinc-200 bg-white px-2">
         <div className="flex gap-0.5">
@@ -423,22 +446,52 @@ function BackgroundActionDetailsModal({
                 statusColourMap[instance.status] ?? "bg-zinc-100 text-zinc-600",
               ].join(" ")}
             >
-              {instance.status}
+              {t(`background.${instance.status}`)}
             </span>
-            {instance.statusText ? <span className="text-sm text-zinc-500">{instance.statusText}</span> : null}
+            {instance.statusText ? (
+              <span className="text-sm text-zinc-500">
+                {resolveMessage(instance.statusTextMessage, instance.statusText)}
+              </span>
+            ) : null}
           </div>
 
+          <p className="text-xs text-zinc-500">{t("background.timeZone", { timeZone })}</p>
           {/* Details grid */}
           <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-            <DetailItem label="Target" value={`${instance.target.label} (${instance.target.type})`} />
-            <DetailItem label="Run ID" value={instance.runId} />
-            <DetailItem label="Started" value={formatTimestamp(instance.startedAt)} />
-            <DetailItem label="Finished" value={formatTimestamp(instance.completedAt)} />
-            <DetailItem label="Duration" value={formatDuration(instance)} />
+            <DetailItem
+              label={t("background.target")}
+              value={resolveMessage(instance.target.labelMessage, instance.target.label)}
+            />
+            <DetailItem label={t("background.runId")} value={instance.runId} />
+            <DetailItem
+              label={t("background.started")}
+              value={formatTimestamp(instance.startedAt, locale, timeZone, t("background.notRecorded"))}
+            />
+            <DetailItem
+              label={t("background.finished")}
+              value={formatTimestamp(instance.completedAt, locale, timeZone, t("background.notRecorded"))}
+            />
+            <DetailItem
+              label={t("background.duration")}
+              value={
+                instance.startedAt
+                  ? t("background.seconds", {
+                      count: Math.max(
+                        0,
+                        Math.round(((instance.completedAt || Date.now()) - instance.startedAt) / 1000)
+                      ),
+                    })
+                  : t("background.notRecorded")
+              }
+            />
             {instance.progress ? (
               <DetailItem
-                label="Progress"
-                value={`${Math.round(instance.progress.percent)}%${instance.progress.label ? ` — ${instance.progress.label}` : ""}`}
+                label={t("background.progressLabel")}
+                value={
+                  progressLabel
+                    ? t("background.progressValue", { percent: progressPercent, label: progressLabel })
+                    : progressPercent
+                }
               />
             ) : null}
           </dl>
@@ -448,11 +501,14 @@ function BackgroundActionDetailsModal({
             <div>
               <BackgroundActionMenuProgressBar
                 percent={instance.progress.percent}
-                label={instance.progress.label || "Background action progress"}
+                label={
+                  resolveMessage(instance.progress.labelMessage, instance.progress.label) ||
+                  t("background.progressAccessible")
+                }
               />
               {typeof instance.progress.current === "number" && typeof instance.progress.total === "number" ? (
                 <div className="mt-1 text-xs text-zinc-500">
-                  {instance.progress.current} of {instance.progress.total} items
+                  {t("background.items", { current: instance.progress.current, count: instance.progress.total })}
                 </div>
               ) : null}
             </div>
@@ -462,10 +518,14 @@ function BackgroundActionDetailsModal({
           {instance.error ? (
             <div className="rounded-lg border border-red-200 bg-red-50">
               <div className="border-b border-red-200 px-4 py-2.5">
-                <span className="text-xs font-semibold uppercase tracking-widest text-red-600">Error</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-red-600">
+                  {t("background.error")}
+                </span>
               </div>
               <div className="p-4">
-                <div className="text-sm font-medium text-red-800">{instance.error.message}</div>
+                <div className="text-sm font-medium text-red-800">
+                  {resolveMessage(instance.error.messageReference, instance.error.message)}
+                </div>
                 {instance.error.stack ? (
                   <pre className="mt-3 max-h-40 overflow-auto rounded bg-red-100 p-3 text-xs text-red-700 leading-relaxed whitespace-pre-wrap">
                     {instance.error.stack}
@@ -478,7 +538,9 @@ function BackgroundActionDetailsModal({
           {/* Key milestones */}
           {milestoneEvents.length > 0 ? (
             <div>
-              <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">Key events</h3>
+              <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-400">
+                {t("background.events")}
+              </h3>
               <div className="divide-y divide-zinc-100 rounded-lg border border-zinc-200">
                 {milestoneEvents.map((event) => (
                   <div key={event.id} className="flex items-baseline gap-3 px-3 py-2">
@@ -488,10 +550,17 @@ function BackgroundActionDetailsModal({
                         getMilestoneBadgeClass(event.type),
                       ].join(" ")}
                     >
-                      {event.type}
+                      {t(`events.${event.type}`, undefined, { defaultValue: event.type })}
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-sm text-zinc-700">{event.message || event.type}</span>
-                    <time className="shrink-0 text-xs text-zinc-400">{formatTime(event.createdAt)}</time>
+                    <span className="min-w-0 flex-1 truncate text-sm text-zinc-700">
+                      {resolveMessage(event.messageReference, event.message) ||
+                        t(`events.${t(`events.${event.type}`, undefined, { defaultValue: event.type })}`, undefined, {
+                          defaultValue: event.type,
+                        })}
+                    </span>
+                    <time className="shrink-0 text-xs text-zinc-400">
+                      {formatTime(event.createdAt, locale, timeZone)}
+                    </time>
                   </div>
                 ))}
               </div>
@@ -505,7 +574,7 @@ function BackgroundActionDetailsModal({
         <div className="p-5">
           {logCount === 0 ? (
             <div className="rounded-lg border border-zinc-200 p-6 text-center text-sm text-zinc-400">
-              No logs recorded.
+              {t("background.noLogs")}
             </div>
           ) : (
             <div className="overflow-hidden rounded-lg bg-zinc-950 shadow-inner">
@@ -515,7 +584,7 @@ function BackgroundActionDetailsModal({
                 <div className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
                 <div className="h-2.5 w-2.5 rounded-full bg-zinc-700" />
                 <span className="ml-2 text-[10px] text-zinc-500 font-mono">
-                  {logCount} {logCount === 1 ? "entry" : "entries"}
+                  {t("background.entries", { count: logCount })}
                 </span>
               </div>
               {/* Log lines */}
@@ -525,14 +594,16 @@ function BackgroundActionDetailsModal({
                   return (
                     <div key={log.id} className="group flex gap-0 hover:bg-white/5 rounded px-2 py-1 leading-relaxed">
                       {/* Timestamp */}
-                      <time className="w-20 shrink-0 text-zinc-600 select-none pr-2">{formatTime(log.createdAt)}</time>
+                      <time className="w-20 shrink-0 text-zinc-600 select-none pr-2">
+                        {formatTime(log.createdAt, locale, timeZone)}
+                      </time>
                       {/* Level badge */}
                       <span className={["w-10 shrink-0 select-none font-bold pr-2", levelCfg.className].join(" ")}>
-                        {levelCfg.label}
+                        {t(`logLevels.${log.level}`, undefined, { defaultValue: levelCfg.label })}
                       </span>
                       {/* Message + optional data */}
                       <span className="min-w-0 flex-1 text-zinc-200 break-words">
-                        {log.message}
+                        {resolveMessage(log.messageReference, log.message)}
                         {typeof log.data !== "undefined" ? (
                           <span className="block mt-0.5 text-zinc-500 whitespace-pre-wrap">{formatJson(log.data)}</span>
                         ) : null}
@@ -552,6 +623,10 @@ function BackgroundActionDetailsModal({
 }
 
 export function BackgroundActionsMenu() {
+  const i18n = useEditorI18n();
+  const { resolveMessage } = i18n;
+  const t = useTranslations("shell");
+
   const store = useBackgroundActionsStoreApi();
   const groups = useAvailableBackgroundActions();
   const [detailsInstanceKey, setDetailsInstanceKey] = useState<string | null>(null);
@@ -581,7 +656,7 @@ export function BackgroundActionsMenu() {
         active={isOpen}
         runningCount={runningCount}
         errorCount={errorCount}
-        aria-label="Actions menu"
+        aria-label={t("background.menu")}
         {...buttonProps}
       />
       <BackgroundActionMenuPanel open={isOpen} role="menu" aria-hidden={!isOpen} inert={!isOpen}>
@@ -589,11 +664,13 @@ export function BackgroundActionsMenu() {
           {groups.map((group, groupIndex) => (
             <Fragment key={group.id}>
               {groupIndex ? <BackgroundActionMenuDivider /> : null}
-              <BackgroundActionMenuSection>{group.label}</BackgroundActionMenuSection>
+              <BackgroundActionMenuSection>
+                {resolveMessage(group.target.labelMessage, group.label)}
+              </BackgroundActionMenuSection>
               {group.actions.map((action) => {
                 const currentItemProps = itemProps[itemIndex++] || {};
                 const { onKeyDown, ...menuItemProps } = currentItemProps as any;
-                const statusLabel = getActionStatusLabel(action.instance);
+                const statusLabel = backgroundActionStatus(action.instance, i18n);
                 const busy = isBusy(action.instance);
                 const runAction = () => {
                   if (!busy) {
@@ -613,7 +690,9 @@ export function BackgroundActionsMenu() {
                     <BackgroundActionMenuTrigger
                       running={busy}
                       {...menuItemProps}
-                      aria-label={busy ? `Cancel ${action.definition.label}` : `Run ${action.definition.label}`}
+                      aria-label={t(busy ? "background.cancelAction" : "background.runAction", {
+                        name: resolveMessage(action.definition.labelMessage, action.definition.label),
+                      })}
                       onMouseDown={(event) => {
                         event.preventDefault();
                       }}
@@ -641,20 +720,26 @@ export function BackgroundActionsMenu() {
                     >
                       <BackgroundActionMenuText>
                         <BackgroundActionMenuLabel running={busy}>
-                          {action.instance?.label || action.definition.label}
+                          {backgroundActionLabel(action.definition, action.instance, i18n)}
                         </BackgroundActionMenuLabel>
                         {statusLabel ? (
                           <BackgroundActionMenuMeta variant={action.instance?.status === "error" ? "error" : "default"}>
                             {statusLabel}
                           </BackgroundActionMenuMeta>
                         ) : null}
-                        {action.definition.summary && !statusLabel ? (
-                          <BackgroundActionMenuMeta>{action.definition.summary}</BackgroundActionMenuMeta>
+                        {resolveMessage(action.definition.summaryMessage, action.definition.summary) && !statusLabel ? (
+                          <BackgroundActionMenuMeta>
+                            {resolveMessage(action.definition.summaryMessage, action.definition.summary)}
+                          </BackgroundActionMenuMeta>
                         ) : null}
                         {busy && action.instance?.progress ? (
                           <BackgroundActionMenuProgressBar
                             percent={action.instance.progress.percent}
-                            label={action.instance.progress.label || statusLabel || action.definition.label}
+                            label={
+                              resolveMessage(action.instance.progress.labelMessage, action.instance.progress.label) ||
+                              statusLabel ||
+                              resolveMessage(action.definition.labelMessage, action.definition.label)
+                            }
                           />
                         ) : null}
                       </BackgroundActionMenuText>
@@ -666,12 +751,14 @@ export function BackgroundActionsMenu() {
                           action.definition.onResults?.(action.context);
                         }}
                       >
-                        Results
+                        {t("background.results")}
                       </BackgroundActionMenuInlineAction>
                     ) : null}
                     {action.instance ? (
                       <BackgroundActionMenuInfoButton
-                        aria-label={`View ${action.definition.label} details`}
+                        aria-label={t("background.viewDetails", {
+                          name: resolveMessage(action.definition.labelMessage, action.definition.label),
+                        })}
                         onClick={(event) => {
                           event.preventDefault();
                           event.stopPropagation();

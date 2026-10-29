@@ -1,3 +1,5 @@
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 import { BehaviorEditorConfiguration } from "./BehaviorEditor.types";
 
@@ -50,6 +52,8 @@ export function RenderCustomBehaviorEditor(props: {
   behaviors: string[];
   setBehaviors: (b: string[]) => void;
 }) {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   switch (props.config.type) {
     case "custom": {
       return <>{props.config.component(props.behaviors, props.setBehaviors)}</>;
@@ -58,7 +62,7 @@ export function RenderCustomBehaviorEditor(props: {
     case "choice": {
       const groupBehavior = props.config.groupBehavior;
       const items = props.config.addNone
-        ? [{ label: { en: ["None"] }, value: "" }, ...props.config.items]
+        ? [{ label: { en: [t("ui.none")] }, value: "" }, ...props.config.items]
         : props.config.items;
 
       const values = items.map((i) => i.value);
@@ -87,11 +91,17 @@ export function RenderCustomBehaviorEditor(props: {
         }
       };
 
-      return <InlineSelect options={items} value={selected[0]} onChange={setNewChoice} />;
+      return (
+        <InlineSelect
+          options={items.map((item) => ({ ...item, label: apiLabel(item) ?? item.label }))}
+          value={selected[0]}
+          onChange={setNewChoice}
+        />
+      );
     }
 
     case "template": {
-      return <div>... todo ...</div>;
+      return <div>{t("messages.unsupportedBehavior")}</div>;
     }
   }
 

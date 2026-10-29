@@ -1,3 +1,4 @@
+import { useEditorI18n, type MessageReference } from "@manifest-editor/i18n";
 import type { Placement } from "@floating-ui/react-dom";
 import { twMerge } from "tailwind-merge";
 import { DefaultTooltipContent, Tooltip, TooltipTrigger } from "./Tooltip";
@@ -6,6 +7,7 @@ export function IconButton({
   children,
   active,
   label,
+  labelMessage,
   disabled,
   onPress,
   root,
@@ -18,13 +20,16 @@ export function IconButton({
   active?: boolean;
   disabled?: boolean;
   label: string;
+  labelMessage?: MessageReference;
   placement?: Placement;
   root?: HTMLElement;
 }) {
+  const { resolveMessage } = useEditorI18n();
+  const displayLabel = resolveMessage(labelMessage, label);
   return (
     <Tooltip placement={placement}>
       <TooltipTrigger
-        aria-label={label}
+        aria-label={displayLabel}
         onClick={onPress}
         className={twMerge(
           "rounded flex items-center bg-white justify-center p-2 hover:bg-gray-100 text-2xl",
@@ -35,7 +40,7 @@ export function IconButton({
       >
         {children}
         <DefaultTooltipContent root={root} className="translate-x-3 z-50">
-          {label}
+          {displayLabel}
         </DefaultTooltipContent>
       </TooltipTrigger>
     </Tooltip>

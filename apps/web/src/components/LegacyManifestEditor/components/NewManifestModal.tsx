@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useProjectCreators, useProjectContext } from "@manifest-editor/projects";
 import { useConfig, useApps } from "@manifest-editor/shell";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -7,6 +8,8 @@ import { NewTemplates } from "./NewTemplates";
 export const NewManifestModal: React.FC<{
   close: any;
 }> = ({ close }) => {
+  const webT = useTranslations("web");
+
   const { newTemplates } = useConfig();
   const { changeApp } = useApps();
   const { createProjectFromManifestId } = useProjectCreators();
@@ -27,7 +30,7 @@ export const NewManifestModal: React.FC<{
         <InfoMessage $banner>
           {currentProject.name}{" "}
           <Button style={{ marginLeft: 20 }} onClick={() => changeApp({ id: "manifest-editor" })}>
-            Continue editing
+            {webT("legacy.continue")}
           </Button>
         </InfoMessage>
       ) : null}

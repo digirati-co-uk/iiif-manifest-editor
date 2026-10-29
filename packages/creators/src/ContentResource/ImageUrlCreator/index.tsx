@@ -16,7 +16,9 @@ export const imageUrlCreator = defineCreator({
   id: "@manifest-editor/image-url-creator",
   create: createImageUrl,
   label: "Image",
+  labelMessage: { namespace: "creators", key: "definitions.imageUrl.label" },
   summary: "Add an image using a direct image-file link.",
+  summaryMessage: { namespace: "creators", key: "definitions.imageUrl.summary" },
   icon: <AddImageIcon />,
   tags: ["image"],
   async supportsResource(value, helpers) {

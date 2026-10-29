@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import { useGenericEditor } from "@manifest-editor/shell";
 import { useEffect } from "react";
@@ -18,6 +19,8 @@ export function AnnotationBodyEditor({
   defaultLanguage?: string;
   showLanguage?: boolean;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const editor = useGenericEditor({
     id: resourceId as string,
     type: "ContentResource",
@@ -25,28 +28,28 @@ export function AnnotationBodyEditor({
   const { language, value } = editor.descriptive;
 
   useEffect(() => {
-    if (!showLanguage) {
+    if (!showLanguage && !language.get()) {
       language.set(defaultLanguage as any);
     }
-  }, [showLanguage]);
+  }, [showLanguage, defaultLanguage, language]);
 
   return (
     <div className={className}>
       <div className="flex gap-4 items-center">
         {showLanguage ? (
           <>
-            <Label>Language</Label>
+            <Label>{t("fields.language")}</Label>
             <div className="w-32">
               <Input value={language.get() || ""} onChange={(newValue) => language.set(newValue.target.value as any)} />
             </div>
             <ActionButton
               onPress={() => {
-                if (confirm("Do you want to remove this body?")) {
+                if (confirm(t("messages.removeBodyConfirm"))) {
                   onRemove();
                 }
               }}
             >
-              Remove
+              {commonT("actions.remove")}
             </ActionButton>
           </>
         ) : null}

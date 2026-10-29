@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useAnnotation, useVault, useVaultSelector } from "react-iiif-vault";
 import { InputLabel, InputUnderlined } from "../../../editors/Input";
 import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
@@ -9,6 +10,7 @@ type BodyEditorProps = {
 };
 
 export const AnnotationBody: React.FC<BodyEditorProps> = ({ annotationID, bodyID }) => {
+  const t = useTranslations("ui");
   const annotation = useAnnotation({ id: annotationID });
   const vault = useVault();
 
@@ -21,7 +23,7 @@ export const AnnotationBody: React.FC<BodyEditorProps> = ({ annotationID, bodyID
   return (
     <FlexContainerColumn>
       <InputLabel>
-        Value
+        {t("annotation.value")}
         <InputUnderlined
           id={annotation.id}
           onChange={(e: any) => updateAnnotation(e.target.value)}
@@ -30,7 +32,7 @@ export const AnnotationBody: React.FC<BodyEditorProps> = ({ annotationID, bodyID
         />
       </InputLabel>
       <InputLabel>
-        Type
+        {t("annotation.type")}
         <InputUnderlined
           id={annotation.id}
           onChange={(e: any) =>
@@ -40,7 +42,7 @@ export const AnnotationBody: React.FC<BodyEditorProps> = ({ annotationID, bodyID
         />
       </InputLabel>
       <InputLabel>
-        Format
+        {t("annotation.format")}
         <InputUnderlined
           id={annotation.id}
           onChange={(e: any) =>

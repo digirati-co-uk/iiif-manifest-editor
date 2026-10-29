@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { CanvasShapePicker } from "./CanvasImageMode";
 import {
   canResizeCanvas,
@@ -22,6 +23,8 @@ export function SmartCanvasSize({
   showShapes?: boolean;
   fallback?: ReactNode;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const canvas = useCanvas();
   const vault = useVault();
   const id = useId();
@@ -55,16 +58,19 @@ export function SmartCanvasSize({
   const canApply = dirty && validSize(size);
 
   return (
-    <section aria-label="Canvas size" style={{ display: "flex", flexDirection: "column", gap: 10, paddingBottom: 8 }}>
-      <h3 className="text-sm font-semibold text-gray-900">Canvas size</h3>
+    <section
+      aria-label={t("ui.canvasSize")}
+      style={{ display: "flex", flexDirection: "column", gap: 10, paddingBottom: 8 }}
+    >
+      <h3 className="text-sm font-semibold text-gray-900">{t("ui.canvasSize")}</h3>
       <div className="flex items-end gap-1.5">
         {(["width", "height"] as const).map((axis, index) => (
           <div key={axis} className="contents">
             {index === 1 && (
               <button
                 type="button"
-                aria-label="Lock aspect ratio"
-                title={locked ? "Aspect ratio locked" : "Aspect ratio unlocked"}
+                aria-label={t("ui.lockAspectRatio")}
+                title={locked ? t("ui.aspectRatioLocked") : t("ui.aspectRatioUnlocked")}
                 aria-pressed={locked}
                 onClick={() => {
                   if (!locked && validSize(size)) ratioBasis.current = size;
@@ -94,9 +100,9 @@ export function SmartCanvasSize({
               </button>
             )}
             <label htmlFor={`${id}-${axis}`} className="min-w-0 flex-1 text-[11px] font-medium text-gray-500">
-              {axis === "width" ? "W" : "H"} px
+              {axis === "width" ? t("ui.widthPx") : t("ui.heightPx")}
               <input
-                aria-label={axis === "width" ? "Width (px)" : "Height (px)"}
+                aria-label={axis === "width" ? t("ui.widthPx") : t("ui.heightPx")}
                 id={`${id}-${axis}`}
                 type="number"
                 min={1}
@@ -117,7 +123,7 @@ export function SmartCanvasSize({
         ))}
         <button
           type="button"
-          aria-label="Apply size"
+          aria-label={t("ui.applySize")}
           disabled={!canApply}
           onClick={() => resizeCanvas(vault, canvas, { x: 0, y: 0, ...size })}
           className="shrink-0 rounded px-3 text-sm font-semibold"
@@ -129,7 +135,7 @@ export function SmartCanvasSize({
             cursor: canApply ? "pointer" : "not-allowed",
           }}
         >
-          Apply
+          {commonT("actions.apply")}
         </button>
       </div>
 
@@ -150,19 +156,19 @@ export function SmartCanvasSize({
 
       {needsFit && (
         <p className="text-xs text-gray-600">
-          Images extend past the canvas.{" "}
+          {t("ui.imagesExtendPastTheCanvas")}{" "}
           <button
             type="button"
             className="font-semibold underline"
             style={{ color: ACCENT, background: "none", border: "none", padding: 0 }}
             onClick={() => resizeCanvas(vault, canvas, fit)}
           >
-            Expand to fit {fit.width} × {fit.height}
+            {t("messages.expandSize", { width: fit.width, height: fit.height })}
           </button>
         </p>
       )}
       {dirty && clipsContent && (
-        <output className="block text-xs text-amber-800">This size will clip part of an image.</output>
+        <output className="block text-xs text-amber-800">{t("ui.thisSizeWillClipPartOfAnImage")}</output>
       )}
     </section>
   );

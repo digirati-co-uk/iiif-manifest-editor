@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { FlexContainer } from "@manifest-editor/ui/components/layout/FlexContainer";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import React, { useRef } from "react";
@@ -71,8 +72,10 @@ export const InputLabelEditContainer = styled.div`
 `;
 
 export function InputLabelEdit(props: any) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   return (
-    <InputLabelEditContainer {...props}>
+    <InputLabelEditContainer title={commonT("actions.edit")} aria-label={commonT("actions.edit")} {...props}>
       <EditIcon />
     </InputLabelEditContainer>
   );
@@ -159,9 +162,8 @@ export const InputGroup = styled(FlexContainer as any)<{ $active?: boolean }>`
   display: flex;
 `;
 
-export const Submit = styled.input.attrs({
+const StyledSubmit = styled.input.attrs({
   type: "submit",
-  value: "Load",
 })`
   padding: 0 ${(props: any) => props.theme.padding.medium || "1rem"};
   color: ${(props: any) => props.theme.color.white || "white"};
@@ -175,7 +177,7 @@ export const Submit = styled.input.attrs({
 `;
 
 export const Input: typeof _Input = React.forwardRef((props: any, ref) =>
-  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />,
+  props.type === "checkbox" ? <CheckboxInput ref={ref} {...props} /> : <InputUnderlined ref={ref} {...props} />
 ) as any;
 
 export const HighlightInput: typeof _Input = ((props: any) => {
@@ -314,3 +316,15 @@ export const InputLink = styled.a`
 export const HiddenCheckbox = styled.input`
   display: none;
 `;
+
+/** Keeps the exported submit input configurable while translating its built-in default. */
+export const Submit = React.forwardRef<HTMLInputElement, React.ComponentProps<typeof StyledSubmit>>((props, ref) => {
+  const t = useTranslations("editors");
+  return (
+    <StyledSubmit
+      {...props}
+      ref={ref}
+      value={props.value ?? (props.defaultValue === undefined ? t("messages.load") : undefined)}
+    />
+  );
+});

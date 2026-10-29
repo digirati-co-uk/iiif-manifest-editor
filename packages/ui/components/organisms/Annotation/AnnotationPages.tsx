@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { useVault, useCanvas } from "react-iiif-vault";
 import { Button, CalltoButton } from "../../../atoms/Button";
@@ -12,9 +13,10 @@ import { AnnotationItems } from "./AnnotationItems";
 import { AnnotationPage } from "./AnnotationPage";
 
 const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ annotationPageID, canvasID }) => {
+  const t = useTranslations("ui");
   const page = useVaultSelector((state) => state.iiif.entities.AnnotationPage[annotationPageID]);
   if (!page) {
-    return <div>Vault cannot access details of: {annotationPageID}, please try refreshing the page</div>;
+    return <div>{t("annotation.unavailable", { id: annotationPageID })}</div>;
   }
   const vault = useVault();
   const { addNewAnnotation, removeAnnotationPage } = useAnnotationList(canvasID);
@@ -32,7 +34,7 @@ const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ 
         <PaddingComponentSmall>
           <FlexContainerColumn>
             <h3 style={{ margin: "0.5rem" }}>{getValue(annotationPage.label)}</h3>
-            <p>AnnotationPage</p>
+            <p>{t("annotation.pageType")}</p>
             <small>
               <a
                 style={{ color: "unset", width: "100%", wordWrap: "break-word" }}
@@ -46,14 +48,11 @@ const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ 
             </small>
             <br />
             <small>
-              <i>
-                This annotation page has no items, either create a new annotation or make this page part of this
-                manifest, for editing.
-              </i>
+              <i>{t("annotation.convertHelp")}</i>
             </small>
             <PaddingComponentSmall />
             <FlexContainerRow>
-              <CalltoButton onClick={() => convert(annotationPage)}>Convert to internal AnnotationPage</CalltoButton>
+              <CalltoButton onClick={() => convert(annotationPage)}>{t("annotation.convert")}</CalltoButton>
             </FlexContainerRow>
           </FlexContainerColumn>
         </PaddingComponentSmall>
@@ -68,23 +67,23 @@ const SinglePage: React.FC<{ annotationPageID: string; canvasID: string }> = ({ 
   return (
     <LightBox key={annotationPageID}>
       <FlexContainerRow justify="flex-end">
-        <Button title="delete" onClick={() => removeAnnotationPage(page.id)}>
+        <Button title={t("actions.delete")} onClick={() => removeAnnotationPage(page.id)}>
           <CloseIcon />
         </Button>
       </FlexContainerRow>
-      <Accordian renderOpen={false} title={getValue(page?.label) || "Annotation Page Properties"}>
+      <Accordian renderOpen={false} title={getValue(page?.label) || t("annotation.pageProperties")}>
         <AnnotationPage id={annotationPageID} />
       </Accordian>
       <PaddingComponentMedium />
       {isExternal(page) && externalConvert(page)}
-      <Accordian renderOpen={false} title={`items (${page.items.length})`}>
+      <Accordian renderOpen={false} title={t("annotation.items", { count: page.items.length })}>
         <PaddingComponentMedium>{items(page)}</PaddingComponentMedium>
         {page.items.length === 0 && (
           <FlexContainerRow style={{ padding: "1rem" }}>
-            <i>No annotations yet! Add new annotations using the button below</i>
+            <i>{t("annotation.start")}</i>
           </FlexContainerRow>
         )}
-        <Button onClick={() => addNewAnnotation(page.id)}>Add new annotation</Button>
+        <Button onClick={() => addNewAnnotation(page.id)}>{t("annotation.add")}</Button>
       </Accordian>
     </LightBox>
   );

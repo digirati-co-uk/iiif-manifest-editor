@@ -1,21 +1,13 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { Button } from "react-aria-components";
-import {
-  LocaleString,
-  type TextualContentStrategy,
-  useVault,
-} from "react-iiif-vault";
+import { LocaleString, type TextualContentStrategy, useVault } from "react-iiif-vault";
 
-export function RenderTextualContent(props: {
-  strategy: TextualContentStrategy;
-}) {
-  const languages = props.strategy.items.map(
-    (item) => Object.keys(item.text)[0]!,
-  );
+export function RenderTextualContent(props: { strategy: TextualContentStrategy }) {
+  const t = useTranslations("components");
+  const languages = props.strategy.items.map((item) => Object.keys(item.text)[0]!);
   const [langauge, setLanguage] = useState(languages[0]);
-  const selected = props.strategy.items.find(
-    (item) => Object.keys(item.text)[0] === langauge,
-  );
+  const selected = props.strategy.items.find((item) => Object.keys(item.text)[0] === langauge);
 
   return (
     <div className="overflow-y-auto bg-white shadow">
@@ -35,11 +27,7 @@ export function RenderTextualContent(props: {
       <div className="p-4 prose">
         <LocaleString
           enableDangerouslySetInnerHTML
-          defaultText={
-            (
-              <span className="text-gray-500 my-8">No content available</span>
-            ) as any
-          }
+          defaultText={(<span className="text-gray-500 my-8">{t("empty.content")}</span>) as any}
         >
           {selected?.text}
         </LocaleString>

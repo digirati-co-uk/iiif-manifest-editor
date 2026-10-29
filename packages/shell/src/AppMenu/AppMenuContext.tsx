@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 
 type MenuItem = {
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   onClick?: () => void;
   active?: boolean;
 };

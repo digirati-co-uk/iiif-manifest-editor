@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -19,6 +20,8 @@ export async function createWebPage(data: CreateWebpagePayload, ctx: CreatorFunc
 }
 
 export function CreateWebPageForm(props: CreatorContext) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const [label, setLabel] = useState<InternationalString>(props.options.initialData?.label || { en: [""] });
 
   const onSubmit = (e: FormEvent) => {
@@ -36,18 +39,18 @@ export function CreateWebPageForm(props: CreatorContext) {
       <form onSubmit={onSubmit}>
         <LanguageFieldEditor
           focusId={"label"}
-          label={"Label"}
+          label={property("fields.label")}
           fields={label}
           onSave={(e: any) => setLabel(e.toInternationalString())}
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="url">Link</InputLabel>
+          <InputLabel htmlFor="url">{t("form.link")}</InputLabel>
           <Input type="url" id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">
-          Create link
+          {t("form.createLink")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

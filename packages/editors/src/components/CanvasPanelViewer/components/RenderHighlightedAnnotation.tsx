@@ -1,11 +1,6 @@
-import { HTMLPortal } from "@atlas-viewer/atlas";
-import {
-  autoUpdate,
-  flip,
-  offset,
-  shift,
-  useFloating,
-} from "@floating-ui/react";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+
+import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/react";
 import { AtlasStoreReactContext, useAtlasStore } from "@manifest-editor/shell";
 import { createPortal } from "react-dom";
 
@@ -46,7 +41,7 @@ export function RenderHighlightAnnotation({
             {children}
           </div>
         </AtlasStoreReactContext.Provider>,
-        document.getElementById("floating-ui") as HTMLElement,
+        document.getElementById("floating-ui") as HTMLElement
       )}
     </HTMLPortal>
   );

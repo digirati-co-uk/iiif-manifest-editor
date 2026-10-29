@@ -1,0 +1,42 @@
+import type { catalog as catalog0 } from "./locales/en-GB/common.ts";
+import type { catalog as catalog1 } from "./locales/en-GB/shell.ts";
+import type { catalog as catalog2 } from "./locales/en-GB/editors.ts";
+import type { catalog as catalog3 } from "./locales/en-GB/creators.ts";
+import type { catalog as catalog4 } from "./locales/en-GB/manifest.ts";
+import type { catalog as catalog5 } from "./locales/en-GB/collection.ts";
+import type { catalog as catalog6 } from "./locales/en-GB/exhibition.ts";
+import type { catalog as catalog7 } from "./locales/en-GB/components.ts";
+import type { catalog as catalog8 } from "./locales/en-GB/ui.ts";
+import type { catalog as catalog9 } from "./locales/en-GB/projects.ts";
+import type { catalog as catalog10 } from "./locales/en-GB/editor-api.ts";
+import type { catalog as catalog11 } from "./locales/en-GB/creator-api.ts";
+import type { catalog as catalog12 } from "./locales/en-GB/web.ts";
+import type { catalog as catalog13 } from "./locales/en-GB/plugin-annotations.ts";
+import type { catalog as catalog14 } from "./locales/en-GB/plugin-canvas-label-generator.ts";
+import type { catalog as catalog15 } from "./locales/en-GB/plugin-ocr-classification.ts";
+import type { catalog as catalog16 } from "./locales/en-GB/plugin-ocr-docling.ts";
+import type { catalog as catalog17 } from "./locales/en-GB/plugin-specifications.ts";
+import type { catalog as catalog18 } from "./locales/en-GB/plugin-translation.ts";
+
+export interface SourceCatalogs {
+  common: typeof catalog0;
+  shell: typeof catalog1;
+  editors: typeof catalog2;
+  creators: typeof catalog3;
+  manifest: typeof catalog4;
+  collection: typeof catalog5;
+  exhibition: typeof catalog6;
+  components: typeof catalog7;
+  ui: typeof catalog8;
+  projects: typeof catalog9;
+  "editor-api": typeof catalog10;
+  "creator-api": typeof catalog11;
+  web: typeof catalog12;
+  "plugin-annotations": typeof catalog13;
+  "plugin-canvas-label-generator": typeof catalog14;
+  "plugin-ocr-classification": typeof catalog15;
+  "plugin-ocr-docling": typeof catalog16;
+  "plugin-specifications": typeof catalog17;
+  "plugin-translation": typeof catalog18;
+}
+export type BuiltinNamespace = keyof SourceCatalogs;

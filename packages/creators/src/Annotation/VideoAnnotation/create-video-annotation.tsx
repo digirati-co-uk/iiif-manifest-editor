@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
@@ -78,6 +79,8 @@ export async function createVideoAnnotation(data: CreateVideoAnnotationPayload, 
 }
 
 export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnotationPayload>) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const [initialData] = useState(() => props.options.initialData as Partial<CreateVideoAnnotationPayload>);
   const [url, setUrl] = useState(initialData.url || "");
   const [duration, setDuration] = useState(initialData.duration || 0);
@@ -111,11 +114,25 @@ export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnot
 
   return (
     <PaddedSidebarContainer>
-      {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+      {error ? (
+        <ErrorMessage>
+          <div role="alert">{t("errors.media")}</div>
+          <details>
+            <summary>{t("errors.details")}</summary>
+            {error}
+          </details>
+        </ErrorMessage>
+      ) : null}
 
       <InputContainer $wide>
-        <InputLabel htmlFor="video-url">Link to video file</InputLabel>
-        <Input type="url" placeholder="https://example.org/video.mp4" id="video-url" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <InputLabel htmlFor="video-url">{t("form.videoUrl")}</InputLabel>
+        <Input
+          type="url"
+          placeholder="https://example.org/video.mp4"
+          id="video-url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
       </InputContainer>
 
       {url && !error ? (
@@ -124,7 +141,7 @@ export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnot
             key={`${url}__${duration}`}
             containerId={"label"}
             focusId={"label_"}
-            label={"Label"}
+            label={property("fields.label")}
             fields={label}
             onSave={(e: any) => setLabel(e.toInternationalString())}
           />
@@ -171,7 +188,7 @@ export function CreateVideoAnnotationForm(props: CreatorContext<CreateVideoAnnot
       ) : null}
 
       <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url || !!error}>
-        Add video
+        {t("form.addVideo")}
       </ActionButton>
     </PaddedSidebarContainer>
   );

@@ -9,21 +9,19 @@ import type {
   StructuralProperties,
   TechnicalProperties,
 } from "@iiif/presentation-3";
-import type {
-  resources,
-  technicalProperties,
-} from "@manifest-editor/editor-api";
+import type { resources, technicalProperties } from "@manifest-editor/editor-api";
+import type { EditorI18n, MessageReference } from "@manifest-editor/i18n";
 import type { ReactNode } from "react";
 import type { CreatorInstance } from "./CreatorInstance";
 import type { CreatorResource } from "./CreatorResource";
 import type { ReferencedResource } from "./ReferencedResource";
-import type {
-  CreatorDefinitionFilterByParent,
-  ExtractCreatorGenerics,
-  IIIFManifestEditor,
-} from "./creator-register";
+import type { CreatorDefinitionFilterByParent, ExtractCreatorGenerics, IIIFManifestEditor } from "./creator-register";
 
 export interface CreatorContext<T = any> {
+  /** Optional editor-instance formatter for form feedback; never use for authored IIIF values.
+   * Hosts supply this at render time. Do not persist or send it through a worker.
+   */
+  i18n?: Pick<EditorI18n, "resolveMessage">;
   vault: Vault;
   options: CreatorOptions;
   config?: Record<string, unknown>;
@@ -32,9 +30,7 @@ export interface CreatorContext<T = any> {
 }
 
 export type ResolvedCreatorReturn<T extends CreatorDefinition> =
-  Awaited<ExtractCreatorGenerics<T>["CreateReturnType"]> extends any[]
-    ? CreatorResource[]
-    : CreatorResource;
+  Awaited<ExtractCreatorGenerics<T>["CreateReturnType"]> extends any[] ? CreatorResource[] : CreatorResource;
 
 export interface CreatorFunctionContext {
   vault: Vault;
@@ -46,12 +42,12 @@ export interface CreatorFunctionContext {
   create(
     definition: string,
     payload: any,
-    options?: Partial<CreatorOptions>,
+    options?: Partial<CreatorOptions>
   ): Promise<CreatorResource | CreatorResource[]>;
   create<Definition extends CreatorDefinition = any>(
     definition: Definition["id"],
     payload: GetCreatorPayload<Definition>,
-    options?: Partial<CreatorOptions>,
+    options?: Partial<CreatorOptions>
   ): Promise<ResolvedCreatorReturn<Definition>>;
 
   generateId(type: string, parent?: Reference | ReferencedResource): string;
@@ -87,7 +83,33 @@ export interface CreatorOptions {
 
 export type CreatorConfig = Record<string, Record<string, unknown>>;
 
-export type CreatorConfigField = {
+/** Deferred UI text only. Plain references are safe in module-level definitions.
+ * Resolve at display time with the corresponding legacy string as fallback.
+ * Help and placeholders are optional metadata for custom forms, not payload defaults.
+ */
+export interface CreatorDisplayMessages {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+  helpMessage?: MessageReference;
+  placeholderMessage?: MessageReference;
+}
+
+/** Serialisable feedback, separate from Error instances and IIIF resource data. */
+export interface CreatorValidationMessage {
+  /** Stable machine-readable code; never translated. */
+  readonly code?: string;
+  /** Optional payload/config field ID; never translated. */
+  readonly field?: string;
+  readonly message: MessageReference;
+}
+
+/** Input to the opt-in error mapper; this context itself is not worker transport. */
+export interface CreatorValidationContext<Payload = any> {
+  readonly payload: Payload;
+  readonly vault: Vault;
+}
+
+export type CreatorConfigField = CreatorDisplayMessages & {
   id: string;
   type: "checkbox";
   label: string;
@@ -117,9 +139,8 @@ export type AllAvailableParentTypes = keyof typeof resources.supported;
 
 type ManifestFields = typeof resources.supported.Manifest.all;
 
-export type GetSupportedResourceFields<
-  Resource extends AllAvailableParentTypes,
-> = {} & (typeof resources.supported)[Resource]["allowed"][number];
+export type GetSupportedResourceFields<Resource extends AllAvailableParentTypes> =
+  {} & (typeof resources.supported)[Resource]["allowed"][number];
 
 export type AllProperties =
   | ({} & keyof LinkingProperties)
@@ -151,7 +172,7 @@ export interface SpecificCreatorDefinition<
   SupportsParentTypes extends Array<AllAvailableParentTypes> = AllParentTypes,
   SupportsParentFields extends Array<AllProperties> = [],
   CreateReturnType = any | Promise<any> | any[] | Promise<any[]>,
-> {
+> extends CreatorDisplayMessages {
   // The creation itself
   readonly id: ID;
   label: string;
@@ -166,10 +187,18 @@ export interface SpecificCreatorDefinition<
 
   create: (payload: Payload, ctx: CreatorInstance) => CreateReturnType;
   validate?: (payload: Payload, vault: Vault) => void | Promise<void>;
+  /** Map a known validation/creation failure for display without replacing the error.
+   * Consumers opt in at their existing catch boundary; undefined uses their normal
+   * fallback. The creator runtime does not call this or change validation semantics.
+   */
+  validationErrorMessage?: (
+    error: unknown,
+    context: CreatorValidationContext<Payload>
+  ) => CreatorValidationMessage | undefined;
   supportsResource?: (
     value: string,
     helpers: CreatorResourceProbeHelpers,
-    ctx: { vault: Vault; resource: CreatableResource },
+    ctx: { vault: Vault; resource: CreatableResource }
   ) => CreatorResourceProbeResult | Promise<CreatorResourceProbeResult>;
 
   render?: (ctx: CreatorContext<Payload>) => ReactNode;
@@ -180,6 +209,7 @@ export interface SpecificCreatorDefinition<
   resourceType: ResourceType;
   additionalTypes?: AdditionalResourceTypes;
   actionButton?: string;
+  actionButtonMessage?: MessageReference;
   resourceFields: string[];
   embeddedResources?: string[];
   // This is completely static values. (e.g. {type: 'Image'})
@@ -203,21 +233,10 @@ export interface SpecificCreatorDefinition<
 }
 
 // Keep this for compatibility.
-export type CreatorDefinition<Payload = any> = SpecificCreatorDefinition<
-  Payload,
-  any,
-  any,
-  any,
-  any,
-  any,
-  any
->;
+export type CreatorDefinition<Payload = any> = SpecificCreatorDefinition<Payload, any, any, any, any, any, any>;
 
 export interface CreatorSideEffect {
-  run?: (
-    result: any,
-    ctx: { options: CreatorOptions; vault: Vault },
-  ) => void | Promise<void>;
+  run?: (result: any, ctx: { options: CreatorOptions; vault: Vault }) => void | Promise<void>;
   temporal?: boolean;
   spatial?: boolean;
   replaceSiblings?: boolean;

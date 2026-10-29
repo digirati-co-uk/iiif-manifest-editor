@@ -1,10 +1,13 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Checkbox } from "react-aria-components";
 import { twMerge } from "tailwind-merge";
 
-export function SelectionCheckbox({ alwaysVisible }: { alwaysVisible?: boolean }) {
+export function SelectionCheckbox({ alwaysVisible, label }: { alwaysVisible?: boolean; label?: string }) {
+  const t = useTranslations("components");
   return (
     <Checkbox
       slot="selection"
+      aria-label={label ?? t("selection.item")}
       className={twMerge(
         "bg-white/50",
         "group-hover:opacity-100 block h-5 w-5 shrink-0 rounded border border-gray-300 hover:border-gray-400 ring-offset-1",
@@ -13,7 +16,7 @@ export function SelectionCheckbox({ alwaysVisible }: { alwaysVisible?: boolean }
         "data-[selected]:text-white data-[disabled]:opacity-50 data-[focus-visible]:outline-none data-[focus-visible]:ring-2",
         "data-[focus-visible]:ring-me-700 data-[focus-visible]:ring-offset-2 data-[focus-visible]:opacity-100",
         !alwaysVisible &&
-          "opacity-0 group-hover:opacity-100 data-[selected]:opacity-100 data-[indeterminate]:opacity-100",
+          "opacity-0 group-hover:opacity-100 data-[selected]:opacity-100 data-[indeterminate]:opacity-100"
       )}
     >
       {({ isSelected, isIndeterminate }) => (
