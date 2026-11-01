@@ -30,7 +30,7 @@ export function SvgControlBar({
   helper,
   showShapes,
 }: {
-  helper: ReturnType<typeof createHelper>;
+  helper: Pick<ReturnType<typeof createHelper>, "stamps">;
   state: any;
   showShapes: any;
 }) {
