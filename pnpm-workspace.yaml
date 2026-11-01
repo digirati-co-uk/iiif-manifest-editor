@@ -27,7 +27,7 @@ catalog:
   "@types/node": 22.20.1
   "@types/react": 19.2.18
   "@types/react-dom": 19.2.4
-  react-iiif-vault: 4.0.0
+  react-iiif-vault: 4.0.3
   react: 19.2.8
   react-dom: 19.2.8
   styled-components: 6.1.8
@@ -36,7 +36,7 @@ catalog:
   "@iiif/helpers": 4.0.0
   # "iiif-browser": 2.2.4
   iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef
-  "@atlas-viewer/atlas": 3.3.0
+  "@atlas-viewer/atlas": 3.3.4
   "react-aria-components": ^1.12
 
 minimumReleaseAgeExclude:
@@ -49,16 +49,18 @@ minimumReleaseAgeExclude:
   - syncpack-windows-arm64@15.3.3
   - syncpack-windows-x64@15.3.3
   - syncpack@15.3.3
-  - '@atlas-viewer/atlas@3.3.0'
-  - react-iiif-vault@4.0.0
+  - '@atlas-viewer/atlas@3.3.4'
+  - react-iiif-vault@4.0.3
+  - polygon-editor@1.0.0
 
 blockExoticSubdeps: false
 
 overrides:
   # Notebook and descriptive editors must share ProseMirror node/fragment instances.
   prosemirror-model: 1.25.12
-  "@atlas-viewer/atlas": 3.3.0
-  react-iiif-vault: 4.0.0
+  "@atlas-viewer/atlas": 3.3.4
+  react-iiif-vault: 4.0.3
+  polygon-editor: 1.0.0
   react-aria: 3.43.2
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0

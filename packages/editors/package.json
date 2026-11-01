@@ -70,7 +70,7 @@
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "mitt": "^3.0.1",
-    "polygon-editor": "0.0.23",
+    "polygon-editor": "1.0.0",
     "react": "catalog:",
     "react-accessible-dropdown-menu-hook": "4.0.0",
     "react-aria-components": "^1.12",

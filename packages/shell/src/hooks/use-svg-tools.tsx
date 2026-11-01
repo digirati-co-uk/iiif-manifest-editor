@@ -1,8 +1,27 @@
 import { useMemo } from "react";
-import { useAtlasStore } from "react-iiif-vault";
+import { type AtlasStore, useAtlasStore } from "react-iiif-vault";
 import { useStore } from "zustand";
 
-export function useSvgTools() {
+type SvgTool = {
+  active: boolean;
+  enable: () => void;
+};
+
+export interface SvgTools {
+  currentTool: AtlasStore["polygonState"]["currentTool"];
+  selectedStamp: AtlasStore["polygonState"]["selectedStamp"];
+  draw: SvgTool;
+  polygon: SvgTool;
+  line: SvgTool;
+  lineBox: SvgTool;
+  square: SvgTool;
+  triangle: SvgTool;
+  hexagon: SvgTool;
+  circle: SvgTool;
+  remove: SvgTool;
+}
+
+export function useSvgTools(): SvgTools {
   const store = useAtlasStore();
   const switchTool = useStore(store, (s) => s.switchTool);
   const currentTool = useStore(store, (s) => s.polygonState.currentTool);
