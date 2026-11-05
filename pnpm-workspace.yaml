@@ -33,7 +33,7 @@ catalog:
   styled-components: 6.1.8
   zustand: 4.5.2
   "@iiif/parser": 4.0.1
-  "@iiif/helpers": 4.0.0
+  "@iiif/helpers": https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@cc67f4a
   # "iiif-browser": 2.2.4
   iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef
   "@atlas-viewer/atlas": 3.3.4
