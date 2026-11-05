@@ -1,0 +1,76 @@
+{
+  "name": "@manifest-editor/diff",
+  "version": "2.2.1",
+  "type": "module",
+  "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git",
+    "directory": "plugins/diff"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "keywords": [
+    "iiif",
+    "editor",
+    "diff"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./lazy": {
+      "types": "./src/lazy.ts",
+      "import": "./src/lazy.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepack": "tsdown --clean"
+  },
+  "dependencies": {
+    "@iiif/helpers": "catalog:",
+    "@iiif/parser": "catalog:",
+    "@manifest-editor/components": "workspace:*",
+    "@manifest-editor/shell": "workspace:*",
+    "@manifest-editor/ui": "workspace:*",
+    "react": "catalog:",
+    "react-iiif-vault": "catalog:",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:",
+    "react-dom": "catalog:",
+    "@types/react-dom": "catalog:",
+    "jsdom": "26.1.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "./lazy": {
+        "import": "./dist/lazy.js",
+        "require": "./dist/lazy.cjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "Compare a source IIIF resource with the current editor document."
+}

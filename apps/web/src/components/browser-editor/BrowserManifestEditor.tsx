@@ -1,3 +1,4 @@
+import diffPlugin from "@manifest-editor/diff/lazy";
 import * as manifestPreset from "@manifest-editor/manifest-preset";
 import ocrClassificationPlugin from "@manifest-editor/ocr-classification/lazy";
 import ocrDoclingPlugin from "@manifest-editor/ocr-docling/lazy";
@@ -9,7 +10,13 @@ import { replaceCreator } from "./replace-creator";
 
 const preset = mapApp(manifestPreset, (app) => replaceCreator(app, browserWebPageCreator));
 
-const plugins = [...(manifestPreset.plugins || []), ocrDoclingPlugin, translationPlugin, ocrClassificationPlugin];
+const plugins = [
+  ...(manifestPreset.plugins || []),
+  ocrDoclingPlugin,
+  translationPlugin,
+  ocrClassificationPlugin,
+  diffPlugin,
+];
 
 export default function BrowserManifestEditor({ id, layoutMode }: { id: string; layoutMode?: "default" | "focused" }) {
   return (
