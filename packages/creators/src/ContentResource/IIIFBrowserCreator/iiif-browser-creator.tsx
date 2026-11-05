@@ -273,7 +273,10 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
             continue;
           }
 
-          // @todo check return types (At the moment only annotation is supported.)
+          if (targetType === "ContentResource") {
+            returnResources.push(ctx.embed(addManifestTracking(fullAnnotation.body)));
+            continue;
+          }
 
           returnResources.push(
             ctx.embed(

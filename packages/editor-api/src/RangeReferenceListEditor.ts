@@ -1,7 +1,5 @@
-import {
-  createRangeHelper,
-  type RangeTableOfContentsNode,
-} from "@iiif/helpers";
+import { createRangeHelper, type RangeTableOfContentsNode } from "@iiif/helpers";
+import type { Vault } from "@iiif/helpers/vault";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import { toRef } from "@iiif/parser";
 import type { RangeNormalized } from "@iiif/presentation-3-normalized";
@@ -18,17 +16,11 @@ export class RangeReferenceListEditor<Entity> extends BaseReferenceListEditor<
     this.helper = createRangeHelper(config.vault);
   }
 
-  mergeRanges(
-    mergeRange: RangeTableOfContentsNode,
-    toMergeRange: RangeTableOfContentsNode,
-    empty?: boolean,
-  ) {
+  mergeRanges(mergeRange: RangeTableOfContentsNode, toMergeRange: RangeTableOfContentsNode, empty?: boolean) {
     if (mergeRange.type !== "Range" || toMergeRange.type !== "Range") return;
 
     const vault = this.config.vault;
-    const foundIndex = this.getWithoutTracking().findIndex(
-      (item) => toRef(item)?.id === mergeRange.id,
-    );
+    const foundIndex = this.getWithoutTracking().findIndex((item) => toRef(item)?.id === mergeRange.id);
 
     if (foundIndex === -1) {
       console.error(`Range ${mergeRange.id} not found in ${toMergeRange.id}`);
@@ -55,7 +47,7 @@ export class RangeReferenceListEditor<Entity> extends BaseReferenceListEditor<
             type: "Range",
             key: "items",
           },
-        }),
+        })
       );
       // Then remove the range.
       if (!empty) {
@@ -70,59 +62,56 @@ export class RangeReferenceListEditor<Entity> extends BaseReferenceListEditor<
     item: RangeTableOfContentsNode,
     createEmptyRange: (
       atIndex: number,
-    ) =>
-      | Promise<{ id: string; type: "Range" }>
-      | { id: string; range: "Range" },
+      vault: Vault
+    ) => Promise<{ id: string; type: "Range" }> | { id: string; range: "Range" }
   ) {
-    const vault = this.config.vault;
     if (!topLevelRange) return;
-
-    // @todo Batch all of these actions as one.
-
-    const index = (range.items || []).indexOf(item);
-    const fullRange = vault.get({ id: range.id, type: "Range" });
-    if (!fullRange) {
-      console.error("Range not found", range.id);
-      return;
-    }
-
-    const length = fullRange.items.length - index;
-    const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
-    if (atIndex === -1) {
-      console.error("Range not found", range.id);
-      return;
-    }
-
-    let existingEmptyRange: { id: string; type: "Range" } | null = null;
-    const existingRange = (topLevelRange.items || [])[atIndex];
-    if (existingRange && existingRange.type === "Range") {
-      const fullExistingRange = vault.get(existingRange);
-      if (fullExistingRange.items.length === 0) {
-        existingEmptyRange = { id: fullExistingRange.id, type: "Range" };
+    return this.config.vault.interaction({ label: "Split range" }, async (vault) => {
+      const index = (range.items || []).indexOf(item);
+      const fullRange = vault.get({ id: range.id, type: "Range" });
+      if (!fullRange) {
+        console.error("Range not found", range.id);
+        return;
       }
-    }
 
-    const newRange = existingEmptyRange || (await createEmptyRange(atIndex));
+      const length = fullRange.items.length - index;
+      const atIndex = (topLevelRange.items || []).indexOf(range) + 1;
+      if (atIndex === -1) {
+        console.error("Range not found", range.id);
+        return;
+      }
 
-    vault.dispatch(
-      moveEntities({
-        subjects: {
-          type: "slice",
-          startIndex: index,
-          length: length,
-        },
-        from: {
-          id: range.id,
-          type: "Range",
-          key: "items",
-        },
-        to: {
-          id: newRange.id,
-          type: "Range",
-          key: "items",
-          // index not specified - should append to end
-        },
-      }),
-    );
+      let existingEmptyRange: { id: string; type: "Range" } | null = null;
+      const existingRange = (topLevelRange.items || [])[atIndex];
+      if (existingRange && existingRange.type === "Range") {
+        const fullExistingRange = vault.get(existingRange);
+        if (fullExistingRange.items.length === 0) {
+          existingEmptyRange = { id: fullExistingRange.id, type: "Range" };
+        }
+      }
+
+      const newRange = existingEmptyRange || (await createEmptyRange(atIndex, vault));
+
+      vault.dispatch(
+        moveEntities({
+          subjects: {
+            type: "slice",
+            startIndex: index,
+            length: length,
+          },
+          from: {
+            id: range.id,
+            type: "Range",
+            key: "items",
+          },
+          to: {
+            id: newRange.id,
+            type: "Range",
+            key: "items",
+            // index not specified - should append to end
+          },
+        })
+      );
+    });
   }
 }

@@ -23,3 +23,7 @@ export * from "./canvas-layout/layout";
 export * from "./canvas-layout/colors";
 export * from "./meta/display";
 export * from "./meta/labels";
+
+export * from "./history";
+
+export * from "./canvas-layout/draft";
