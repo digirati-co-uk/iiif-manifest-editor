@@ -1,11 +1,14 @@
+import { createManifestEditorVault } from "@manifest-editor/client-vault";
 import { Vault } from "@iiif/helpers/vault";
 import { EditorProject, ProjectStorage } from "../ProjectContext.types";
 import { Collection, Manifest, Reference } from "@iiif/presentation-3";
 import { CollectionStorage, ManifestStorage, Storage } from "../types/Storage";
 
-export abstract class AbstractVaultLoader<T extends Storage>
-  implements ProjectStorage<ManifestStorage | CollectionStorage, Manifest | Collection, T>
-{
+export abstract class AbstractVaultLoader<T extends Storage> implements ProjectStorage<
+  ManifestStorage | CollectionStorage,
+  Manifest | Collection,
+  T
+> {
   abstract type: string;
   vaults: Record<string, Vault | null> = {};
   saveInterval: number;
@@ -34,7 +37,7 @@ export abstract class AbstractVaultLoader<T extends Storage>
       return [foundVault, Promise.resolve()];
     }
 
-    const vault = new Vault();
+    const vault = createManifestEditorVault();
 
     const promise = async () => {
       const data = await this.getStorage(project.storage as any);

@@ -1,4 +1,6 @@
 "use client";
+
+import { createManifestEditorVault } from "@manifest-editor/client-vault";
 import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { useWebExhibitionResources } from "../../i18n/WebResources";
@@ -50,9 +52,10 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   const webExhibitionResources = useWebExhibitionResources();
 
   const vaultRef = useRef<{ key: string; vault: Vault } | null>(null);
-  const vaultKey = `${manifest}\0${preset || ""}`;
+  const vaultKey = manifest;
   if (vaultRef.current?.key !== vaultKey) {
-    vaultRef.current = { key: vaultKey, vault: new Vault() };
+    vaultRef.current?.vault.history?.dispose();
+    vaultRef.current = { key: vaultKey, vault: createManifestEditorVault() };
   }
   const vault = vaultRef.current.vault;
 
