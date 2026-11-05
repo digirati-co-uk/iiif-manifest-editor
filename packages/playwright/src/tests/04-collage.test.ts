@@ -155,13 +155,17 @@ test("Delft collage: resize an image, switch selection, and resize the canvas ed
   expect(next[2]).toBeGreaterThan(region[2]);
   expect(next[2] / next[3]).toBeCloseTo(region[2] / region[3], 2);
 
-  const freeBox = (await button.boundingBox())!;
   await button.click();
   await expect(page.getByRole("button", { name: "Done", exact: true }).first()).toBeVisible();
+  const freeBox = (await page
+    .locator('svg:has(> title:text-is("Annotation Editor")) > polygon')
+    .first()
+    .boundingBox())!;
   await page.keyboard.down("Shift");
   const freeRight = freeBox.x + freeBox.width;
-  const freeBottom = freeBox.y + (freeBox.width * next[3]) / next[2];
+  const freeBottom = freeBox.y + freeBox.height;
   await page.mouse.move(freeRight, freeBottom);
+  await expect(page.locator(".atlas-canvas")).toHaveClass(/atlas-cursor-se/);
   await page.mouse.down();
   await page.mouse.move(freeRight + 25, freeBottom, { steps: 12 });
   await page.mouse.up();
@@ -190,6 +194,7 @@ test("Delft collage: resize an image, switch selection, and resize the canvas ed
   await page.mouse.down();
   await page.mouse.move(edgeX, edgeY - 30, { steps: 12 });
   await page.mouse.up();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("button", { name: "Resize canvas", exact: true })).toBeVisible();
   const smaller = await exportedCanvas(page);
   expect(smaller.width).toBe(original.width);
@@ -204,14 +209,14 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await page.getByRole("button", { name: "Start building", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Start adding content", exact: true }).click();
-  await page.getByRole("option", { name: "Empty slide An empty image slide.", exact: true }).click();
+  await page.getByRole("option", { name: "Empty slide", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Title", exact: true })).toHaveCount(0);
   await page.getByRole("radio", { name: "Feature left", exact: true }).check();
   await page.getByRole("button", { name: "Create canvas", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Add content", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(3);
   await page.getByRole("button", { name: "Add image to position 1", exact: true }).click();
-  await page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true }).click();
+  await page.getByRole("option", { name: "IIIF image", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Link to image service", exact: true })
     .fill(service.id || (service as any)["@id"]);
@@ -246,15 +251,16 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
   await page.getByRole("button", { name: "Browse IIIF for position 1", exact: true }).click();
   await expect(page.locator(".iiif-browser")).toBeVisible();
-  await expect(page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("option", { name: "IIIF image", exact: true })).toHaveCount(0);
 });
 
 test("main manifest editor shares the ratio lock and expand-to-fit controls", async ({ page }) => {
   await openDelft(page);
   const projectPath = new URL(page.url()).pathname.split("/").slice(0, 3).join("/");
   await page.goto(projectPath);
-  await page.getByRole("button", { name: "Canvases", exact: true }).click();
-  await page.getByRole("tab", { name: "Technical", exact: true }).click();
+  await page.getByRole("button", { name: "Citarum River, then and now", exact: true }).dblclick();
+  await page.getByRole("button", { name: "More tabs", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Technical", exact: true }).click();
   const width = page.getByRole("spinbutton", { name: "Width (px)", exact: true });
   const height = page.getByRole("spinbutton", { name: "Height (px)", exact: true });
   await page.getByRole("button", { name: "Lock aspect ratio", exact: true }).click();
@@ -317,7 +323,7 @@ test("image controls: reversible mode, colours and clear placeholders", async ({
   expect(canvas.backgroundColor).toBe("#aaccdd");
   await expect(page.locator(".atlas-container")).toHaveCSS("background-color", "rgb(146, 175, 190)");
   await page.getByRole("button", { name: "Add media", exact: true }).first().click();
-  await expect(page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true })).toBeVisible();
+  await expect(page.getByRole("option", { name: "IIIF image", exact: true })).toBeVisible();
 });
 
 test("resize across a placeholder and discard both image and canvas changes", async ({ page }) => {
@@ -338,11 +344,13 @@ test("resize across a placeholder and discard both image and canvas changes", as
   await page.mouse.move(placeholder.x + placeholder.width / 2, placeholder.y + placeholder.height / 2, { steps: 18 });
   await page.mouse.up();
   await page.keyboard.up("Shift");
-  const changed = await exportedCanvas(page);
-  const region = (target: string) => target.split("xywh=")[1].split(",").map(Number);
-  expect(region(changed.items[0].items[0].target)[2]).toBeGreaterThan(
-    region(original.items[0].items[0].target)[2] + 100
-  );
+  // Draft geometry is visible, while export and autosave still use the committed document.
+  const preview = (await page
+    .locator('svg:has(> title:text-is("Annotation Editor")) > polygon')
+    .first()
+    .boundingBox())!;
+  expect(preview.width).toBeGreaterThan(selection.width + 20);
+  expect(await exportedCanvas(page)).toEqual(original);
   await page.getByRole("button", { name: "Discard changes", exact: true }).click();
   expect(await exportedCanvas(page)).toEqual(original);
   await page.getByRole("button", { name: "Resize canvas", exact: true }).click();
@@ -352,8 +360,7 @@ test("resize across a placeholder and discard both image and canvas changes", as
   await page.mouse.move(edge.x + edge.width / 2 + 40, edge.y + edge.height / 2, { steps: 12 });
   await page.mouse.up();
   const smaller = await exportedCanvas(page);
-  expect(smaller.width).toBeLessThan(original.width);
-  expect(smaller.behavior).not.toEqual(original.behavior);
+  expect(smaller).toEqual(original);
   await page.getByRole("button", { name: "Discard changes", exact: true }).click();
   expect(await exportedCanvas(page)).toEqual(original);
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);

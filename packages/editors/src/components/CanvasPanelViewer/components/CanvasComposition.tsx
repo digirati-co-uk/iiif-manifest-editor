@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
 import { EditorMessage } from "../../EditorMessage";
 import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
@@ -5,8 +6,7 @@ import { IIIFBrowserIcon } from "@manifest-editor/components";
 
 import { CanvasResizeEdges } from "./CanvasResizeEdges";
 import {
-  captureCanvasComposition,
-  restoreCanvasComposition,
+  CanvasCompositionDraft,
   expandedCanvasBounds,
   getAnnotationRectangle,
   getEmptyCanvasPlaceholders,
@@ -20,7 +20,7 @@ import {
 } from "@manifest-editor/editor-api";
 import { useAddCanvasImage } from "../../CanvasLayout/useAddCanvasImage";
 import { useStore } from "zustand";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useReducer } from "react";
 import {
   useAtlasStore,
   useCanvas,
@@ -54,13 +54,26 @@ function selectionHitArea(rect: Rectangle, selection: Rectangle | null) {
 }
 
 /** Uses the same target request as the media editor, with canvas growth committed on release. */
-export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolean; onResizeDone: () => void }) {
+export function CanvasComposition({
+  resizing,
+  onResizeDone,
+  sourceVault,
+  onDraftVault,
+}: {
+  resizing: boolean;
+  onResizeDone: () => void;
+  sourceVault: Vault;
+  onDraftVault: (vault: Vault | null) => void;
+}) {
   const t = useTranslations("editors");
-  const canvas = useCanvas()!;
-  const vault = useVault();
-  const createImage = useAddCanvasImage();
+  const liveCanvas = useCanvas()!;
+  const draft = useRef<CanvasCompositionDraft | null>(null);
+  const [, redraw] = useReducer((value: number) => value + 1, 0);
+  const canvas = draft.current?.canvas || liveCanvas;
+  const [conflict, setConflict] = useState(false);
+  const vault = sourceVault;
+  const createImage = useAddCanvasImage(sourceVault);
   const store = useAtlasStore();
-  const snapshot = useRef<ReturnType<typeof captureCanvasComposition> | null>(null);
   const selected = useRef<string | null>(null);
   const shiftHeld = useRef(false);
   const [active, setActive] = useState<string | null>(null);
@@ -69,8 +82,10 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   const [pointerDragging, setPointerDragging] = useState(false);
   const transitioning = useStore(store, (state) => state.polygonState.transitioning);
   const dragging = pointerDragging || transitioning || !!preview;
-  const images = useVaultSelector((_, v) => getPaintingImages(v, canvas), [canvas]);
-  const placeholders = useVaultSelector((_, v) => getEmptyCanvasPlaceholders(v, canvas), [canvas]);
+  const liveImages = useVaultSelector((_, v) => getPaintingImages(v, liveCanvas), [liveCanvas]);
+  const livePlaceholders = useVaultSelector((_, v) => getEmptyCanvasPlaceholders(v, liveCanvas), [liveCanvas]);
+  const images = draft.current ? getPaintingImages(draft.current.vault, canvas) : liveImages;
+  const placeholders = draft.current ? getEmptyCanvasPlaceholders(draft.current.vault, canvas) : livePlaceholders;
   const { requestAnnotation, cancelRequest, isActive, busy, requestId } = useRequestAnnotation({
     onSuccess: (response) => {
       if (!response.cancelled && response.boundingBox && response.arguments.annotationId === selected.current)
@@ -81,9 +96,10 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   current.current = { canvas, active, isActive, requestId, resizing, onResizeDone };
 
   function save(rect: Rectangle) {
-    if (!validRectangle(rect)) return;
-    if (resizing) resizeCanvas(vault, current.current.canvas, rect);
-    else if (selected.current) movePaintingImage(vault, current.current.canvas, selected.current, rect);
+    if (!validRectangle(rect) || !draft.current) return;
+    if (resizing) resizeCanvas(draft.current.vault, draft.current.canvas, rect);
+    else if (selected.current) movePaintingImage(draft.current.vault, draft.current.canvas, selected.current, rect);
+    redraw();
   }
   const release = useCallback(() => {
     const state = store.getState();
@@ -98,12 +114,20 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     helper.setBounds({ x: 0, y: 0, width: current.current.canvas.width, height: current.current.canvas.height });
   }, [store]);
   const finish = useCallback(() => {
+    if (draft.current && !draft.current.apply().ok) {
+      setConflict(true);
+      return;
+    }
+    draft.current = null;
+    onDraftVault(null);
+    setConflict(false);
+    redraw();
     store.getState().completeRequest(current.current.requestId || undefined);
     release();
-    snapshot.current = null;
+
     setActive(null);
     setPreview(null);
-  }, [store, release]);
+  }, [store, release, onDraftVault]);
   const cancel = useCallback(() => {
     setQueued(null);
     store.getState().cancelRequest(current.current.requestId || undefined);
@@ -113,21 +137,37 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     setPreview(null);
   }, [store, release]);
   const discard = useCallback(() => {
-    const original = snapshot.current;
     cancel();
-    if (original) restoreCanvasComposition(vault, current.current.canvas.id, original);
-    snapshot.current = null;
+    draft.current?.discard();
+    draft.current = null;
+    onDraftVault(null);
+    setConflict(false);
+    redraw();
+
     if (current.current.resizing) current.current.onResizeDone();
-  }, [cancel, vault]);
+  }, [cancel, onDraftVault]);
   function select(id: string, rect: Rectangle) {
     if (busy) return;
     if (isActive) cancelRequest();
-    snapshot.current = captureCanvasComposition(vault, current.current.canvas);
+    if (draft.current && !draft.current.apply().ok) {
+      setConflict(true);
+      return;
+    }
+    draft.current = new CanvasCompositionDraft(vault, current.current.canvas.id);
+    onDraftVault(draft.current.vault);
+    setConflict(false);
+    redraw();
     selected.current = id;
     setQueued({ id, rect });
     setPreview(null);
   }
   async function addImage(slot: CanvasPlaceholder, browser = false) {
+    if (draft.current && !draft.current.apply().ok) {
+      setConflict(true);
+      return;
+    }
+    draft.current = null;
+    onDraftVault(null);
     if (isActive) cancel();
     await createImage(slot, browser);
   }
@@ -230,12 +270,22 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   });
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
+      if (
+        event.target instanceof HTMLElement &&
+        event.target.closest("input,textarea,select,[contenteditable]:not([contenteditable='false'])")
+      )
+        return;
       shiftHeld.current = event.shiftKey;
-      if (current.current.resizing && (event.key === "Escape" || event.key === "Enter")) {
+      if (event.type === "keyup" && event.key !== "Shift") return;
+      if (draft.current && (event.key === "Escape" || event.key === "Enter")) {
         if (event.key === "Escape") discard();
-        else current.current.onResizeDone();
+        else {
+          finish();
+          if (!draft.current && current.current.resizing) current.current.onResizeDone();
+        }
         setPreview(null);
         event.preventDefault();
+        event.stopImmediatePropagation();
         return;
       }
       if (
@@ -286,43 +336,68 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   }, [store, cancel, finish, discard]);
   useEffect(
     () => () => {
+      draft.current?.discard();
+      draft.current = null;
+      onDraftVault(null);
       if (current.current.isActive) {
         store.getState().cancelRequest(current.current.requestId || undefined);
         release();
       }
     },
-    [store, release]
+    [store, release, onDraftVault]
+  );
+
+  useEffect(
+    () =>
+      vault.getStore().onReset((phase) => {
+        if (phase === "before") discard();
+      }),
+    [vault, discard]
   );
 
   useEffect(() => {
     if (resizing) {
       cancel();
-      snapshot.current = captureCanvasComposition(vault, current.current.canvas);
+      draft.current?.discard();
+      draft.current = new CanvasCompositionDraft(vault, current.current.canvas.id);
+      onDraftVault(draft.current.vault);
+      setConflict(false);
+      redraw();
     }
-  }, [resizing, cancel, vault]);
+  }, [resizing, cancel, vault, onDraftVault]);
   useEffect(() => {
     if (busy && resizing) onResizeDone();
   }, [busy, resizing, onResizeDone]);
 
   const activeImage = images.find((image) => image.id === active);
-  const activeRect = activeImage ? getAnnotationRectangle(vault, activeImage, canvas) : null;
+  const activeRect = activeImage ? getAnnotationRectangle(draft.current?.vault || vault, activeImage, canvas) : null;
   const expansion = preview && (resizing ? preview : expandedCanvasBounds(canvas, [preview]));
   const expanding =
     expansion && (expansion.x || expansion.y || expansion.width !== canvas.width || expansion.height !== canvas.height);
   return (
     <>
+      {conflict && (
+        <HTMLPortal>
+          <div role="alert" className="rounded bg-white p-2">
+            <EditorMessage namespace="shell" message="history.conflict" />
+          </div>
+        </HTMLPortal>
+      )}
       {resizing && !busy && (
         <CanvasResizeEdges
           size={canvas}
           preview={preview}
-          onDone={onResizeDone}
+          onDone={() => {
+            finish();
+            if (!draft.current) onResizeDone();
+          }}
           onDiscard={discard}
           onPreview={setPreview}
           onCommit={save}
         />
       )}
       {images.map((image, index) => {
-        const rect = getAnnotationRectangle(vault, image, canvas);
+        const rect = getAnnotationRectangle(draft.current?.vault || vault, image, canvas);
         if (busy || resizing || !rect || !(image.target as any)?.selector || active === image.id) return null;
         return (
           <world-object key={image.id} x={rect.x} y={rect.y} width={rect.width} height={rect.height}>

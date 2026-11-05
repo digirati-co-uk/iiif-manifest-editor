@@ -1,3 +1,4 @@
+import { runVaultCommand } from "@manifest-editor/shell";
 import type {
   BackgroundActionDefinition,
   BackgroundActionPlan,
@@ -10,10 +11,7 @@ import {
   collectTranslationLanguageProgress,
   collectTranslationTargets,
 } from "./collection";
-import {
-  renderTranslationConfigModal,
-  requestTranslationConfig,
-} from "./config-modal";
+import { renderTranslationConfigModal, requestTranslationConfig } from "./config-modal";
 import { TRANSLATION_ACTION_ID, TRANSLATION_PLUGIN_ID } from "./constants";
 import { translatePreservingSimpleHtml } from "./html";
 import {
@@ -22,11 +20,7 @@ import {
   getSupportedAvailableLanguages,
   normaliseRunOptions,
 } from "./options";
-import {
-  createTranslationWorkerClient,
-  type TranslationEvent,
-  type TranslationWorkerClient,
-} from "./runtime";
+import { createTranslationWorkerClient, type TranslationEvent, type TranslationWorkerClient } from "./runtime";
 import { openTranslationResults, renderTranslationResults } from "./results";
 import type {
   TranslationActionResult,
@@ -36,11 +30,7 @@ import type {
   TranslationTarget,
   TranslationTaskResult,
 } from "./types";
-import {
-  getWritableOccurrences,
-  writeTranslationForOccurrence,
-  type TranslationWriteContext,
-} from "./writeback";
+import { getWritableOccurrences, writeTranslationForOccurrence, type TranslationWriteContext } from "./writeback";
 
 export type TranslationPlanData = {
   options: TranslationRunOptions;
@@ -48,55 +38,42 @@ export type TranslationPlanData = {
 };
 
 export type TranslationActionDependencies = {
-  createClient?: (
-    settings?: TranslationPluginSettings,
-  ) => TranslationWorkerClient;
+  createClient?: (settings?: TranslationPluginSettings) => TranslationWorkerClient;
   collectTargets?: typeof collectTranslationTargets;
   requestConfig?: (
     ctx: BackgroundActionRunContext,
     targets: TranslationTarget[],
-    defaults: TranslationRunOptions,
+    defaults: TranslationRunOptions
   ) => Promise<TranslationRunOptions | false>;
   translateHtml?: typeof translatePreservingSimpleHtml;
 };
 
 const queuedOptions = new Map<string, TranslationRunOptions>();
 
-export function queueTranslationRunOptions(
-  instanceKey: string,
-  options: Partial<TranslationRunOptions>,
-) {
+export function queueTranslationRunOptions(instanceKey: string, options: Partial<TranslationRunOptions>) {
   queuedOptions.set(instanceKey, normaliseRunOptions(options));
 }
 
 export function createTranslationBackgroundAction(
-  dependencies: TranslationActionDependencies = {},
+  dependencies: TranslationActionDependencies = {}
 ): BackgroundActionDefinition {
   const createClient =
     dependencies.createClient ||
     ((settings?: TranslationPluginSettings) =>
       createTranslationWorkerClient({
         workerUrl:
-          typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
-            ? settings.workerUrl
-            : undefined,
+          typeof settings?.workerUrl === "string" && settings.workerUrl.trim() ? settings.workerUrl : undefined,
       }));
-  const collectTargets =
-    dependencies.collectTargets || collectTranslationTargets;
+  const collectTargets = dependencies.collectTargets || collectTranslationTargets;
   const requestConfig = dependencies.requestConfig || defaultRequestConfig;
-  const translateHtml =
-    dependencies.translateHtml || translatePreservingSimpleHtml;
+  const translateHtml = dependencies.translateHtml || translatePreservingSimpleHtml;
   let retainedClient: TranslationWorkerClient | null = null;
   let retainedWorkerUrl: string | undefined;
 
   const getEffectiveWorkerUrl = (settings?: TranslationPluginSettings) =>
-    typeof settings?.workerUrl === "string" && settings.workerUrl.trim()
-      ? settings.workerUrl.trim()
-      : undefined;
+    typeof settings?.workerUrl === "string" && settings.workerUrl.trim() ? settings.workerUrl.trim() : undefined;
 
-  const terminateClient = (
-    client: TranslationWorkerClient | null = retainedClient,
-  ) => {
+  const terminateClient = (client: TranslationWorkerClient | null = retainedClient) => {
     if (!client) {
       return;
     }
@@ -137,25 +114,16 @@ export function createTranslationBackgroundAction(
         {renderTranslationResults(ctx.definition.id)}
       </>
     ),
-    onResults: (ctx) =>
-      openTranslationResults(ctx.definition.id, ctx.instance?.result),
+    onResults: (ctx) => openTranslationResults(ctx.definition.id, ctx.instance?.result),
     supports: (ctx) => {
       const manifest = ctx.vault.get(ctx.target as any) as any;
       return manifest?.type === "Manifest";
     },
     prepare: async (ctx) => {
-      const settings = ctx.plugins.getSettings<TranslationPluginSettings>(
-        TRANSLATION_PLUGIN_ID,
-      );
+      const settings = ctx.plugins.getSettings<TranslationPluginSettings>(TRANSLATION_PLUGIN_ID);
       const defaults = getDefaultRunOptions(ctx.config, settings);
-      const previewTargets = collectTargets(
-        ctx.vault,
-        getTranslationScope(ctx, defaults),
-        defaults,
-      );
-      const options =
-        queuedOptions.get(ctx.instanceKey) ||
-        (await requestConfig(ctx, previewTargets, defaults));
+      const previewTargets = collectTargets(ctx.vault, getTranslationScope(ctx, defaults), defaults);
+      const options = queuedOptions.get(ctx.instanceKey) || (await requestConfig(ctx, previewTargets, defaults));
       queuedOptions.delete(ctx.instanceKey);
 
       if (options === false) {
@@ -163,18 +131,12 @@ export function createTranslationBackgroundAction(
       }
 
       const normalisedOptions = normaliseRunOptions(options);
-      const targets = collectTargets(
-        ctx.vault,
-        getTranslationScope(ctx, normalisedOptions),
-        normalisedOptions,
-      );
+      const targets = collectTargets(ctx.vault, getTranslationScope(ctx, normalisedOptions), normalisedOptions);
       return createTranslationPlan(targets, normalisedOptions);
     },
     run: async (ctx) => {
       const planData = getPlanData(ctx.plan);
-      const options = normaliseRunOptions(
-        planData?.options || getDefaultRunOptions(ctx.config),
-      );
+      const options = normaliseRunOptions(planData?.options || getDefaultRunOptions(ctx.config));
       const tasks = ctx.tasks.getAll();
       const pendingTasks = ctx.tasks.getPending();
       const writeContext: TranslationWriteContext = { vault: ctx.vault };
@@ -188,13 +150,9 @@ export function createTranslationBackgroundAction(
       }
 
       if (pendingTasks.length) {
-        const settings = ctx.plugins.getSettings<TranslationPluginSettings>(
-          TRANSLATION_PLUGIN_ID,
-        );
+        const settings = ctx.plugins.getSettings<TranslationPluginSettings>(TRANSLATION_PLUGIN_ID);
         const client = getClient(settings);
-        const unsubscribe = client.onEvent((event) =>
-          handleTranslationEvent(ctx, event),
-        );
+        const unsubscribe = client.onEvent((event) => handleTranslationEvent(ctx, event));
         const abort = () => terminateClient(client);
 
         ctx.signal.addEventListener("abort", abort, { once: true });
@@ -209,13 +167,7 @@ export function createTranslationBackgroundAction(
               throwIfAborted(ctx.signal);
               const target = task.input as TranslationTarget | undefined;
               if (!target) {
-                return skippedTask(
-                  "Missing translation target",
-                  task.id,
-                  "",
-                  0,
-                  0,
-                );
+                return skippedTask("Missing translation target", task.id, "", 0, 0);
               }
 
               ctx.appendActionLog(`Translating ${index + 1}/${total}`, "info", {
@@ -227,25 +179,17 @@ export function createTranslationBackgroundAction(
               const writable = getWritableOccurrences(writeContext, target);
               if (!writable.writable.length) {
                 return skippedTask(
-                  getSkipReason(
-                    writable.existing.length,
-                    writable.stale.length,
-                  ),
+                  getSkipReason(writable.existing.length, writable.stale.length),
                   target.key,
                   target.sourceText,
                   writable.existing.length,
-                  writable.stale.length,
+                  writable.stale.length
                 );
               }
 
               let translationText: string | null;
               try {
-                translationText = await translateTargetText(
-                  client,
-                  target,
-                  options,
-                  translateHtml,
-                );
+                translationText = await translateTargetText(client, target, options, translateHtml);
               } catch (error) {
                 if (isFatalTranslationError(error)) {
                   terminateClient(client);
@@ -259,7 +203,7 @@ export function createTranslationBackgroundAction(
                   target.key,
                   target.sourceText,
                   writable.existing.length,
-                  writable.stale.length,
+                  writable.stale.length
                 );
               }
 
@@ -267,39 +211,31 @@ export function createTranslationBackgroundAction(
               let existing = writable.existing.length;
               let stale = writable.stale.length;
 
-              for (const occurrence of writable.writable) {
-                const latest = getWritableOccurrences(writeContext, {
-                  ...target,
-                  occurrences: [occurrence],
-                });
-                if (latest.stale.length) {
-                  stale += latest.stale.length;
-                  continue;
-                }
-                if (latest.existing.length) {
-                  existing += latest.existing.length;
-                  continue;
-                }
+              ctx.signal.throwIfAborted();
+              runVaultCommand(ctx.vault, "Apply translation result", (scoped) => {
+                const writeContext = { vault: scoped };
+                for (const occurrence of writable.writable) {
+                  const latest = getWritableOccurrences(writeContext, {
+                    ...target,
+                    occurrences: [occurrence],
+                  });
+                  if (latest.stale.length) {
+                    stale += latest.stale.length;
+                    continue;
+                  }
+                  if (latest.existing.length) {
+                    existing += latest.existing.length;
+                    continue;
+                  }
 
-                if (
-                  writeTranslationForOccurrence(
-                    writeContext,
-                    occurrence,
-                    translationText,
-                  )
-                ) {
-                  applied += 1;
+                  if (writeTranslationForOccurrence(writeContext, occurrence, translationText)) {
+                    applied += 1;
+                  }
                 }
-              }
+              });
 
               if (!applied) {
-                return skippedTask(
-                  "No missing occurrences remained",
-                  target.key,
-                  target.sourceText,
-                  existing,
-                  stale,
-                );
+                return skippedTask("No missing occurrences remained", target.key, target.sourceText, existing, stale);
               }
 
               return {
@@ -317,9 +253,8 @@ export function createTranslationBackgroundAction(
               };
             },
             {
-              progressLabel: (_task, index, total) =>
-                `Translating strings ${index + 1}/${total}`,
-            },
+              progressLabel: (_task, index, total) => `Translating strings ${index + 1}/${total}`,
+            }
           );
         } catch (error) {
           terminateClient(client);
@@ -330,10 +265,7 @@ export function createTranslationBackgroundAction(
         }
       }
 
-      const result = aggregateTranslationResult(
-        planData?.totalTargets || tasks.length,
-        ctx.tasks.getAll(),
-      );
+      const result = aggregateTranslationResult(planData?.totalTargets || tasks.length, ctx.tasks.getAll());
       ctx.setActionStatus("running", `Applied ${result.applied} translations`);
       ctx.setActionProgress({
         current: result.total,
@@ -348,7 +280,7 @@ export function createTranslationBackgroundAction(
 
 export function createTranslationPlan(
   targets: TranslationTarget[],
-  options: TranslationRunOptions,
+  options: TranslationRunOptions
 ): BackgroundActionPlan {
   return {
     version: 1,
@@ -357,9 +289,7 @@ export function createTranslationPlan(
       totalTargets: targets.length,
     } satisfies TranslationPlanData,
     tasks: targets.map((target) => {
-      const existingOccurrences = target.occurrences.filter(
-        (occurrence) => occurrence.status === "existing",
-      ).length;
+      const existingOccurrences = target.occurrences.filter((occurrence) => occurrence.status === "existing").length;
       const skipped = target.status !== "missing";
 
       return {
@@ -385,10 +315,7 @@ export function createTranslationPlan(
   };
 }
 
-function getTranslationScope(
-  ctx: BackgroundActionRunContext,
-  options: TranslationRunOptions,
-): TranslationResourceRef {
+function getTranslationScope(ctx: BackgroundActionRunContext, options: TranslationRunOptions): TranslationResourceRef {
   if (options.currentResourceOnly && ctx.currentCanvas) {
     return {
       id: ctx.currentCanvas.id,
@@ -403,15 +330,10 @@ function getTranslationScope(
 async function defaultRequestConfig(
   ctx: BackgroundActionRunContext,
   targets: TranslationTarget[],
-  defaults: TranslationRunOptions,
+  defaults: TranslationRunOptions
 ) {
-  const detectedLanguages = collectDetectedManifestLanguages(
-    ctx.vault,
-    ctx.target,
-  );
-  const detectedLanguageCodes = detectedLanguages.map(
-    (language) => language.language,
-  );
+  const detectedLanguages = collectDetectedManifestLanguages(ctx.vault, ctx.target);
+  const detectedLanguageCodes = detectedLanguages.map((language) => language.language);
 
   return requestTranslationConfig({
     actionId: ctx.definition.id,
@@ -431,22 +353,20 @@ async function defaultRequestConfig(
       collectTranslationTargets(
         ctx.vault,
         getTranslationScope(ctx, normaliseRunOptions(options)),
-        normaliseRunOptions(options),
+        normaliseRunOptions(options)
       ),
     getTargetLanguageProgress: (options) =>
       collectTranslationLanguageProgress(
         ctx.vault,
         getTranslationScope(ctx, normaliseRunOptions(options)),
         normaliseRunOptions(options),
-        detectedLanguageCodes,
+        detectedLanguageCodes
       ),
     signal: ctx.signal,
   });
 }
 
-function getPlanData(
-  plan: BackgroundActionPlan | undefined,
-): TranslationPlanData | null {
+function getPlanData(plan: BackgroundActionPlan | undefined): TranslationPlanData | null {
   const data = plan?.data as TranslationPlanData | undefined;
   if (!data?.options) {
     return null;
@@ -459,7 +379,7 @@ async function translateTargetText(
   client: TranslationWorkerClient,
   target: TranslationTarget,
   options: TranslationRunOptions,
-  translateHtml: typeof translatePreservingSimpleHtml,
+  translateHtml: typeof translatePreservingSimpleHtml
 ) {
   const translate = async (text: string) => {
     const result = await client.translate({
@@ -478,13 +398,7 @@ async function translateTargetText(
   return translate(target.sourceText);
 }
 
-function skippedTask(
-  reason: string,
-  key: string,
-  sourceText: string,
-  existing: number,
-  stale: number,
-) {
+function skippedTask(reason: string, key: string, sourceText: string, existing: number, stale: number) {
   return {
     taskStatus: "skipped" as const,
     statusText: reason,
@@ -499,10 +413,7 @@ function skippedTask(
   };
 }
 
-function aggregateTranslationResult(
-  total: number,
-  tasks: BackgroundActionTask[],
-): TranslationActionResult {
+function aggregateTranslationResult(total: number, tasks: BackgroundActionTask[]): TranslationActionResult {
   const result = createEmptyResult(total);
 
   for (const task of tasks) {
@@ -573,42 +484,26 @@ function getSkipReason(existing: number, stale: number) {
   return "No writable occurrences";
 }
 
-function handleTranslationEvent(
-  ctx: BackgroundActionRunContext,
-  event: TranslationEvent,
-) {
+function handleTranslationEvent(ctx: BackgroundActionRunContext, event: TranslationEvent) {
   switch (event.type) {
     case "model-progress":
       ctx.setActionStatus(
         "running",
-        `Loading model ${Math.round(event.progress)}% (${formatBytes(event.loaded)} / ${formatBytes(event.total)})`,
+        `Loading model ${Math.round(event.progress)}% (${formatBytes(event.loaded)} / ${formatBytes(event.total)})`
       );
       break;
     case "model-ready":
-      ctx.setActionStatus(
-        "running",
-        `Model ready (${event.runtime.toUpperCase()})`,
-      );
+      ctx.setActionStatus("running", `Model ready (${event.runtime.toUpperCase()})`);
       break;
     case "runtime-fallback":
-      ctx.appendActionLog(
-        "Falling back to WASM translation runtime",
-        "warn",
-        event,
-      );
+      ctx.appendActionLog("Falling back to WASM translation runtime", "warn", event);
       ctx.setActionStatus("running", "WebGPU unavailable; using WASM");
       break;
     case "translation-start":
-      ctx.setActionStatus(
-        "running",
-        `Translating ${event.sourceLanguage} to ${event.targetLanguage}`,
-      );
+      ctx.setActionStatus("running", `Translating ${event.sourceLanguage} to ${event.targetLanguage}`);
       break;
     case "translation-complete":
-      ctx.setActionStatus(
-        "running",
-        `Translated ${event.result.text.length} characters`,
-      );
+      ctx.setActionStatus("running", `Translated ${event.result.text.length} characters`);
       break;
     case "error":
       if (!ctx.signal.aborted) {
@@ -618,9 +513,7 @@ function handleTranslationEvent(
   }
 }
 
-function toBackgroundActionTarget(
-  target: TranslationTarget,
-): BackgroundActionTarget {
+function toBackgroundActionTarget(target: TranslationTarget): BackgroundActionTarget {
   const occurrence = target.occurrences[0];
   const resource = occurrence?.resource;
   const label = resource?.label || target.sourceText || "Translation string";
@@ -634,8 +527,7 @@ function toBackgroundActionTarget(
 }
 
 function getTaskLabel(target: TranslationTarget) {
-  const text =
-    target.normalisedSourceText || target.sourceText || "Translation string";
+  const text = target.normalisedSourceText || target.sourceText || "Translation string";
   return text.length > 80 ? `${text.slice(0, 77)}...` : text;
 }
 
@@ -646,10 +538,7 @@ function throwIfAborted(signal: AbortSignal) {
 }
 
 function isFatalTranslationError(error: unknown) {
-  return (
-    error instanceof Error &&
-    (error.name === "model_load_failed" || error.name === "worker_failed")
-  );
+  return error instanceof Error && (error.name === "model_load_failed" || error.name === "worker_failed");
 }
 
 function formatBytes(value: number) {

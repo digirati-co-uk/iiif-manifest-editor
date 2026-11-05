@@ -32,13 +32,13 @@ export function LanguageMapEditor({
     `Unsupported property "${dispatchType}" passed to <LanguageMapEditor /> (${supported.join(", ")})`
   );
 
-  const changeHandler: MetadataSave = (data) => {
+  const changeHandler: MetadataSave = (data, _index, _property, scoped) => {
     if (formElement) {
       if (inputRef.current) {
         inputRef.current.value = JSON.stringify(data.toInternationalString());
       }
     } else if (resource) {
-      vault.modifyEntityField(resource, dispatchType, data.toInternationalString());
+      (scoped || vault).modifyEntityField(resource, dispatchType, data.toInternationalString());
     }
   };
 

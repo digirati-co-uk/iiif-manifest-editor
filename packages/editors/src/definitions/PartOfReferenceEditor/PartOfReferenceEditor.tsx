@@ -13,7 +13,8 @@ export function PartOfReferenceEditor() {
   const t = useTranslations("editors");
   const apiLabel = useDisplayLabel();
   const editing = useEditingResource();
-  const vault = useVault();
+  const rootVault = useVault();
+  const vault = rootVault;
   const current = useVaultSelector((state) => {
     const parent = editing?.parent;
     const property = editing?.property;
@@ -29,7 +30,7 @@ export function PartOfReferenceEditor() {
     | (Reference & { label?: InternationalString; summary?: InternationalString })
     | undefined;
 
-  function update(patch: { label?: InternationalString; summary?: InternationalString }) {
+  function update(patch: { label?: InternationalString; summary?: InternationalString }, vault = rootVault) {
     if (!editing?.parent || editing.property !== "partOf" || typeof editing.index === "undefined" || !ref) {
       return;
     }
@@ -39,23 +40,25 @@ export function PartOfReferenceEditor() {
     const type = (ref as any).originalType || ref.type;
     next[editing.index] = { ...ref, ...patch, type };
     delete (next[editing.index] as any).originalType;
-    vault.modifyEntityField(editing.parent as any, "partOf", next);
-    if (ref.id && type && (patch.label || patch.summary)) {
-      vault.dispatch(
-        importEntities({
-          entities: {
-            [type]: {
-              [ref.id]: {
-                id: ref.id,
-                type,
-                ...(patch.label ? { label: patch.label } : {}),
-                ...(patch.summary ? { summary: patch.summary } : {}),
+    vault.batch(() => {
+      vault.modifyEntityField(editing.parent as any, "partOf", next);
+      if (ref.id && type && (patch.label || patch.summary)) {
+        vault.dispatch(
+          importEntities({
+            entities: {
+              [type]: {
+                [ref.id]: {
+                  id: ref.id,
+                  type,
+                  ...(patch.label ? { label: patch.label } : {}),
+                  ...(patch.summary ? { summary: patch.summary } : {}),
+                },
               },
             },
-          },
-        } as any)
-      );
-    }
+          } as any)
+        );
+      }
+    });
   }
 
   return (
@@ -63,13 +66,13 @@ export function PartOfReferenceEditor() {
       <LanguageFieldEditor
         label={apiLabel(propertyLabels.label)!}
         fields={(ref?.label || { none: [] }) as InternationalString}
-        onSave={(value: any) => update({ label: value.toInternationalString() })}
+        onSave={(value: any, _index, _property, scoped) => update({ label: value.toInternationalString() }, scoped)}
       />
       <LanguageFieldEditor
         label={apiLabel(propertyLabels.summary)!}
         disallowHTML={false}
         fields={(ref?.summary || { none: [] }) as InternationalString}
-        onSave={(value: any) => update({ summary: value.toInternationalString() })}
+        onSave={(value: any, _index, _property, scoped) => update({ summary: value.toInternationalString() }, scoped)}
       />
       <InputContainer $wide>
         <InputLabel htmlFor="part-of-reference-id">{apiLabel(propertyLabels.id)!}</InputLabel>

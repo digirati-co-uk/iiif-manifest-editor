@@ -1,7 +1,6 @@
 import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
-import { useGenericEditor } from "@manifest-editor/shell";
-import { useEffect } from "react";
+import { useGenericEditor, useVaultEditSession } from "@manifest-editor/shell";
 import { Input, Label } from "../";
 
 export function AnnotationBodyEditor({
@@ -26,15 +25,15 @@ export function AnnotationBodyEditor({
     type: "ContentResource",
   });
   const { language, value } = editor.descriptive;
-
-  useEffect(() => {
-    if (!showLanguage && !language.get()) {
-      language.set(defaultLanguage as any);
-    }
-  }, [showLanguage, defaultLanguage, language]);
+  const session = useVaultEditSession("Edit annotation body", resourceId);
 
   return (
-    <div className={className}>
+    <div
+      className={className}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) session.finish();
+      }}
+    >
       <div className="flex gap-4 items-center">
         {showLanguage ? (
           <>
@@ -56,9 +55,18 @@ export function AnnotationBodyEditor({
       </div>
       <div className="prose-headings:mt-1 prose-headings:mb-1 prose-sm">
         <HTMLEditor
+          key={`${resourceId}:${session.epoch}`}
+          registerFlush={(callback) => session.onFlush(callback)}
           className={editorClassName}
           value={value.get() || ""}
-          onChange={(newValue) => value.set(newValue)}
+          onChange={(newValue) =>
+            session.run((scoped) =>
+              scoped.batch(() => {
+                if (!showLanguage && !language.get()) language.withVault(scoped).set(defaultLanguage as any);
+                value.withVault(scoped).set(newValue);
+              })
+            )
+          }
         />
       </div>
     </div>

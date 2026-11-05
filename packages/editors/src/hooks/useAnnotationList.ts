@@ -1,6 +1,6 @@
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useCallback, useState, useEffect } from "react";
-import { importEntities, removeReference } from "@iiif/helpers/vault/actions";
+import { addMappings, importEntities, removeReference } from "@iiif/helpers/vault/actions";
 
 import { useAnnotationPage } from "./useAnnotationPage";
 import { useCanvas, useManifest, useVault, useVaultSelector } from "react-iiif-vault";
@@ -9,24 +9,15 @@ import { addReference } from "@iiif/helpers/vault/actions";
 import { randomId } from "../helpers";
 
 export function getInitialAnnotationList(canvasId: string) {
-  const canvas = useVaultSelector((state) => state.iiif.entities.Canvas[canvasId]);
-  if (!canvas) {
-    return [];
-  }
-  const vault = useVault();
-  const annoPages = canvas.annotations.map((annoPage) => {
-    return vault.get(annoPage);
-  });
-  const annos: any[] = [];
-
-  annoPages.map((annoPage: any) => {
-    if (annoPage) {
-      return annoPage.items.map((item: any) => {
-        annos.push(vault.get(item.id));
-      });
-    }
-  });
-  return annos;
+  return useVaultSelector(
+    (state, vault) => {
+      const canvas = state.iiif.entities.Canvas[canvasId];
+      return (canvas?.annotations || [])
+        .flatMap((page) => vault.get(page)?.items || [])
+        .map((annotation) => vault.get(annotation));
+    },
+    [canvasId]
+  );
 }
 
 export function getAnnotationsByAnnotationPage(annotationPageID?: string) {
@@ -48,11 +39,11 @@ export function useAnnotationList<T = AnnotationNormalized>(
 ): AnnotationNormalized[] | T | undefined | [] | any {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [selectedAnnotation, setSelectedAnnotation] = useState<string>();
-  const [annotations, setAnnotations] = useState<any[]>(getInitialAnnotationList(canvasId));
+  const annotations = getInitialAnnotationList(canvasId);
   const manifest = useManifest();
   const canvas = useCanvas();
   const vault = useVault();
-  const [pagedAnnotations, setPagedAnnotations] = useState<any[]>(getAnnotationsByAnnotationPage(annotationPageId));
+  const pagedAnnotations = getAnnotationsByAnnotationPage(annotationPageId);
   const annotationPage = useAnnotationPage();
 
   const addNewAnnotation = (
@@ -68,72 +59,79 @@ export function useAnnotationList<T = AnnotationNormalized>(
       return;
     }
     const id = `https://example.org/annotation/${randomId()}/annotation`;
-    const target = `${canvasId}#xywh=${bounds.x},${bounds.y},${bounds.width},${bounds.height}`;
-    setAnnotations((a) => [...a, { id, target }]);
     setIsEditing(false);
     setSelectedAnnotation(undefined);
 
-    vault.dispatch(
-      importEntities({
-        entities: {
-          Annotation: {
-            [id]: {
-              ...emptyAnnotation,
-              id: id,
-              // target: target,
+    vault.batch(() => {
+      vault.dispatch(
+        importEntities({
+          entities: {
+            Annotation: {
+              [id]: {
+                ...emptyAnnotation,
+                id: id,
+                target: {
+                  type: "SpecificResource",
+                  source: { id: canvasId, type: "Canvas" },
+                  selector: {
+                    type: "FragmentSelector",
+                    value: `xywh=${bounds.x},${bounds.y},${bounds.width},${bounds.height}`,
+                  },
+                } as any,
+              },
             },
           },
-        },
-      })
-    );
+        })
+      );
 
-    vault.dispatch(
-      addReference({
-        id: pageId,
-        type: "AnnotationPage",
-        key: "items",
-        reference: {
-          id: id,
-          type: "Annotation",
-        },
-      })
-    );
+      vault.dispatch(addMappings({ mapping: { [id]: "Annotation" } }));
+      vault.dispatch(
+        addReference({
+          id: pageId,
+          type: "AnnotationPage",
+          key: "items",
+          reference: {
+            id: id,
+            type: "Annotation",
+          },
+        })
+      );
+    });
   };
 
-  const addNewAnnotationPage = (id?: string, label?: any, importPage?: boolean, callback?: () => void) => {
-    if (!canvas) {
-      return;
-    }
-    const newID = id ? id : `https://example.org/annotations/${randomId()}/annotation-page`;
-    const lab = label ? label : {};
-    vault.dispatch(
-      importEntities({
-        entities: {
-          [newID]: {
-            ...emptyAnnotationPage,
-            id: newID,
-            label: lab,
-          },
-        },
-      })
-    );
-    vault.dispatch(
-      addReference({
-        id: canvas.id,
-        type: "Canvas",
-        key: "annotations",
-        reference: {
-          id: newID,
-          type: "AnnotationPage",
-        },
-      })
-    );
-    if (importPage) {
-      vault.load(newID);
-    }
-    if (callback) {
-      callback();
-    }
+  const addNewAnnotationPage = async (id?: string, label?: any, importPage?: boolean, callback?: () => void) => {
+    return vault.interaction({ label: "Add annotation page" }, async (vault) => {
+      if (!canvas) {
+        return;
+      }
+      const newID = id ? id : `https://example.org/annotations/${randomId()}/annotation-page`;
+      const lab = label ? label : {};
+      vault.batch(() => {
+        vault.dispatch(
+          importEntities({
+            entities: { AnnotationPage: { [newID]: { ...emptyAnnotationPage, id: newID, label: lab } } },
+          })
+        );
+        vault.dispatch(addMappings({ mapping: { [newID]: "AnnotationPage" } }));
+        vault.dispatch(
+          addReference({
+            id: canvas.id,
+            type: "Canvas",
+            key: "annotations",
+            reference: {
+              id: newID,
+              type: "AnnotationPage",
+            },
+          })
+        );
+      });
+      if (importPage) {
+        await vault.load(newID);
+      }
+      if (callback) {
+        callback();
+      }
+    });
   };
 
   const removeAnnotationPage = (id: string) => {

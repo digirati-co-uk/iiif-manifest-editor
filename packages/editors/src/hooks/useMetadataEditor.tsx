@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { InternationalString } from "@iiif/presentation-3";
 import { useConfig } from "@manifest-editor/shell";
 import { produce } from "immer";
@@ -209,11 +210,13 @@ export type MetadataSave = (
     toInternationalString: () => InternationalString;
   },
   index?: number,
-  property?: "label" | "value"
+  property?: "label" | "value",
+  scopedVault?: Vault
 ) => void;
 
 export interface UseMetadataEditor {
   fields: InternationalString | MetadataDefinition[];
+  resetKey?: number;
   metadataKey?: string;
 
   // Actions.
@@ -224,12 +227,13 @@ export interface UseMetadataEditor {
   defaultLocale?: string;
 }
 
-export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseMetadataEditor) {
+export function useMetadataEditor({ fields, metadataKey = "none", onSave, resetKey }: UseMetadataEditor) {
   const { i18n } = useConfig();
   const { availableLanguages, defaultLanguage: defaultLocale } = i18n;
   const [state, setState] = useState(() => createInitialValues({ fields, key: metadataKey }));
   const latestState = useRef(state);
   const previousFields = useRef(fields);
+  const previousReset = useRef(resetKey);
   const onSaveRef = useRef(onSave);
   onSaveRef.current = onSave;
 
@@ -239,12 +243,15 @@ export function useMetadataEditor({ fields, metadataKey = "none", onSave }: UseM
     setState(latestState.current);
   };
 
-  if (fields !== previousFields.current) {
+  if (fields !== previousFields.current || resetKey !== previousReset.current) {
+    const reset = resetKey !== previousReset.current;
+    previousReset.current = resetKey;
     previousFields.current = fields;
     const incoming = Array.isArray(fields) ? fields : intlStringToValues(fields, metadataKey);
     if (
+      reset ||
       JSON.stringify(valuesToIntlString(incoming)) !==
-      JSON.stringify(valuesToIntlString(Object.values(latestState.current.fields)))
+        JSON.stringify(valuesToIntlString(Object.values(latestState.current.fields)))
     ) {
       latestState.current = createInitialValues({ fields, key: metadataKey });
       setState(latestState.current);
