@@ -89,7 +89,7 @@ export function useCollectionEditor() {
 
 export function useGenericEditor(
   ref: Reference<any> | SpecificResource | undefined,
-  ctx: { parent?: Reference; parentProperty?: string; index?: number; allowNull?: boolean } = {},
+  ctx: { parent?: Reference; parentProperty?: string; index?: number; allowNull?: boolean } = {}
 ) {
   const vault = useVault();
   const [key, invalidate] = useReducer((i: number) => i + 1, 0);
@@ -163,27 +163,37 @@ function useInternalEditingStackActions(defaultState: EditingStackState) {
   }, []);
 
   useEffect(() => {
-    return vault.on("@iiif/REMOVE_REFERENCE", (payload: any) => {
-      const action = payload.action;
-      const parent = { id: action.payload.id, type: action.payload.type };
-      const resource = action.payload.reference;
-      _dispatch({ type: "syncRemoval", payload: { resource: { parent, resource } } });
+    return vault.subscribeCommits(() => {
+      _dispatch({
+        type: "reconcile",
+        payload: {
+          valid: (item: EditableResource) => {
+            const ref = toRef(item.resource);
+            if (!ref || !vault.get(ref)) return false;
+            if (!item.parent || !item.property) return true;
+            const parent = vault.get(item.parent) as any;
+            if (!parent) return false;
+            const value = parent[item.property];
+            return (Array.isArray(value) ? value : [value]).some((entry: any) => toRef(entry)?.id === ref.id);
+          },
+        },
+      });
     });
   }, [vault]);
 
   const edit = useCallback(
     (resource: EditableResource, reset = false) => dispatch({ type: "edit", payload: { resource, reset } }),
-    [],
+    []
   );
 
   const setStack = useCallback(
     (resources: EditableResource[]) => dispatch({ type: "setStack", payload: { resources } }),
-    [],
+    []
   );
 
   const updateCurrent = useCallback(
     (resource: EditableResource) => dispatch({ type: "updateCurrent", payload: { resource } }),
-    [],
+    []
   );
 
   const close = useCallback(() => dispatch({ type: "close" }), []);

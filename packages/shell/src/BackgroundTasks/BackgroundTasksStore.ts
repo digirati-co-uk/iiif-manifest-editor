@@ -1,3 +1,5 @@
+import { useVault } from "react-iiif-vault";
+import { runVaultCommand } from "@manifest-editor/editor-api";
 import { backgroundActionFormatter, shellTaskMessage } from "./BackgroundActionMessages";
 import type { MessageReference } from "@manifest-editor/i18n/core";
 import localforage from "localforage";
@@ -1499,6 +1501,10 @@ function createRunContext(
     tasks,
     signal,
     prepareData: options.prepareData,
+    commitResult(label, apply) {
+      signal.throwIfAborted();
+      return runVaultCommand(context.vault, label, apply);
+    },
     setActionLabel(label, labelMessage) {
       store.getState().setActionLabel(instanceKey, label, labelMessage);
     },
@@ -1698,6 +1704,7 @@ export function BackgroundActionsProvider({
 }) {
   const app = useApp();
   const appInstance = useAppInstance();
+  const vault = useVault();
   const store = useMemo(() => createBackgroundActionsStore(), []);
   const definitions = app.layout.backgroundActions || [];
   const resolvedPersistence = useMemo(
@@ -1711,6 +1718,19 @@ export function BackgroundActionsProvider({
 
     return persistenceKey;
   }, [persistenceKey]);
+
+  useEffect(() => {
+    const abort = () => {
+      for (const controller of Object.values(store.getState().controllers)) controller.abort();
+    };
+    const stop = vault.getStore().onReset((phase) => {
+      if (phase === "before") abort();
+    });
+    return () => {
+      stop();
+      abort();
+    };
+  }, [store, vault, resolvedPersistenceKey?.rootResource.id, resolvedPersistenceKey?.rootResource.type]);
 
   useEffect(() => {
     store.getState().setDefinitions(definitions);

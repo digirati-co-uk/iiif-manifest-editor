@@ -1,5 +1,6 @@
 import { useTranslations } from "@manifest-editor/i18n";
-import type { Vault } from "@iiif/helpers/vault";
+import { metaActions } from "@iiif/helpers/vault/actions";
+import type { DispatchOptions, Vault } from "@iiif/helpers/vault";
 import { useMemo } from "react";
 import { useVault, useVaultSelector } from "react-iiif-vault";
 
@@ -62,7 +63,8 @@ export function getCanvasProgressStatusFromState(state: any, resource: CanvasPro
 export function setCanvasProgressStatus(
   vault: Vault,
   resource: CanvasProgressResource,
-  status: CanvasProgressStatusInput
+  status: CanvasProgressStatusInput,
+  options?: Pick<DispatchOptions, "history">
 ): CanvasProgressStatus {
   const id = getResourceId(resource);
   if (!id) {
@@ -70,38 +72,54 @@ export function setCanvasProgressStatus(
   }
 
   const nextStatus = isActiveCanvasProgressStatus(status) ? status : undefined;
-  vault.setMetaValue([id, CANVAS_PROGRESS_META_NAMESPACE, CANVAS_PROGRESS_STATUS_META_KEY], nextStatus);
+  vault.dispatch(
+    metaActions.setMetaValue({
+      id,
+      meta: CANVAS_PROGRESS_META_NAMESPACE,
+      key: CANVAS_PROGRESS_STATUS_META_KEY,
+      value: nextStatus,
+    }),
+    options
+  );
   return nextStatus || "none";
 }
 
-export function clearCanvasProgressStatus(vault: Vault, resource: CanvasProgressResource): CanvasProgressStatus {
-  return setCanvasProgressStatus(vault, resource, "none");
+export function clearCanvasProgressStatus(
+  vault: Vault,
+  resource: CanvasProgressResource,
+  options?: Pick<DispatchOptions, "history">
+): CanvasProgressStatus {
+  return setCanvasProgressStatus(vault, resource, "none", options);
 }
 
 export function setCanvasProgressStatuses(
   vault: Vault,
   resources: CanvasProgressResource[],
-  status: CanvasProgressStatusInput
+  status: CanvasProgressStatusInput,
+  options?: Pick<DispatchOptions, "history">
 ): Record<string, CanvasProgressStatus> {
   const statuses: Record<string, CanvasProgressStatus> = {};
 
-  for (const resource of resources) {
-    const id = getResourceId(resource);
-    if (!id) {
-      continue;
-    }
+  vault.batch(() => {
+    for (const resource of resources) {
+      const id = getResourceId(resource);
+      if (!id) {
+        continue;
+      }
 
-    statuses[id] = setCanvasProgressStatus(vault, resource, status);
-  }
+      statuses[id] = setCanvasProgressStatus(vault, resource, status, options);
+    }
+  });
 
   return statuses;
 }
 
 export function clearCanvasProgressStatuses(
   vault: Vault,
-  resources: CanvasProgressResource[]
+  resources: CanvasProgressResource[],
+  options?: Pick<DispatchOptions, "history">
 ): Record<string, CanvasProgressStatus> {
-  return setCanvasProgressStatuses(vault, resources, "none");
+  return setCanvasProgressStatuses(vault, resources, "none", options);
 }
 
 export interface ManifestEditorCanvasProgressApi {
@@ -115,22 +133,25 @@ export interface ManifestEditorCanvasProgressApi {
   clearStatuses(resources: CanvasProgressResource[]): Record<string, CanvasProgressStatus>;
 }
 
-export function createManifestEditorCanvasProgressApi(vault: Vault): ManifestEditorCanvasProgressApi {
+export function createManifestEditorCanvasProgressApi(
+  vault: Vault,
+  options?: Pick<DispatchOptions, "history">
+): ManifestEditorCanvasProgressApi {
   return {
     getStatus(resource) {
       return getCanvasProgressStatus(vault, resource);
     },
     setStatus(resource, status) {
-      return setCanvasProgressStatus(vault, resource, status);
+      return setCanvasProgressStatus(vault, resource, status, options);
     },
     clearStatus(resource) {
-      return clearCanvasProgressStatus(vault, resource);
+      return clearCanvasProgressStatus(vault, resource, options);
     },
     setStatuses(resources, status) {
-      return setCanvasProgressStatuses(vault, resources, status);
+      return setCanvasProgressStatuses(vault, resources, status, options);
     },
     clearStatuses(resources) {
-      return clearCanvasProgressStatuses(vault, resources);
+      return clearCanvasProgressStatuses(vault, resources, options);
     },
   };
 }

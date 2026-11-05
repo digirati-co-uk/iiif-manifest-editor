@@ -1,13 +1,7 @@
 import { toRef } from "@iiif/parser";
-import type {
-  EditingStackActionCreators,
-  EditingStackState,
-} from "./EditingStack.types";
+import type { EditingStackActionCreators, EditingStackState } from "./EditingStack.types";
 
-export function editingStackReducer(
-  state: EditingStackState,
-  action: EditingStackActionCreators,
-): EditingStackState {
+export function editingStackReducer(state: EditingStackState, action: EditingStackActionCreators): EditingStackState {
   switch (action.type) {
     case "setStack": {
       return {
@@ -26,10 +20,7 @@ export function editingStackReducer(
         reset = true;
       }
 
-      if (
-        state.current?.resource.source.id ===
-        action.payload.resource?.resource.source.id
-      ) {
+      if (state.current?.resource.source.id === action.payload.resource?.resource.source.id) {
         return {
           ...state,
           current: action.payload.resource,
@@ -39,11 +30,7 @@ export function editingStackReducer(
       return {
         ...state,
         current: action.payload.resource,
-        stack: reset
-          ? []
-          : state.current
-            ? [state.current, ...state.stack]
-            : state.stack,
+        stack: reset ? [] : state.current ? [state.current, ...state.stack] : state.stack,
       };
     }
     case "syncRemoval": {
@@ -57,11 +44,10 @@ export function editingStackReducer(
         return state;
       }
 
-      const newCurrent =
-        state.current?.resource.id === item.id ? null : state.current;
+      const newCurrent = state.current?.resource.id === item.id ? null : state.current;
       const newStack = filterStack(
         state.stack.filter((r) => toRef(r.resource)?.id !== item.id),
-        newCurrent,
+        newCurrent
       );
 
       return {
@@ -69,6 +55,11 @@ export function editingStackReducer(
         stack: newStack,
         current: newCurrent,
       };
+    }
+    case "reconcile": {
+      const stack = state.stack.filter(action.payload.valid);
+      const current = state.current && action.payload.valid(state.current) ? state.current : null;
+      return stack.length === state.stack.length && current === state.current ? state : { ...state, stack, current };
     }
     case "updateCurrent": {
       return {
@@ -111,7 +102,7 @@ export function editingStackReducer(
 
 function filterStack(
   newStackWithDuplicates: EditingStackState["stack"],
-  current: EditingStackState["current"],
+  current: EditingStackState["current"]
 ): EditingStackState["stack"] {
   const newStack = [];
   let prev = null;
