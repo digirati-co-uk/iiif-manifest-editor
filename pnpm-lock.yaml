@@ -6,9 +6,6 @@ settings:
 
 catalogs:
   default:
-    '@iiif/parser':
-      specifier: 4.0.1
-      version: 4.0.1
     '@tsdown/css':
       specifier: 0.22.14
       version: 0.22.14
@@ -53,6 +50,7 @@ catalogs:
       version: 4.5.2
 
 overrides:
+  '@iiif/parser': 4.0.1
   '@iiif/helpers': 4.0.4
   prosemirror-model: 1.25.12
   '@atlas-viewer/atlas': 3.3.4
@@ -244,7 +242,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -449,7 +447,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -594,7 +592,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -637,7 +635,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -716,7 +714,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -762,7 +760,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1009,7 +1007,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1133,7 +1131,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1258,7 +1256,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1512,7 +1510,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@manifest-editor/i18n':
         specifier: workspace:*
@@ -1567,7 +1565,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@manifest-editor/components':
         specifier: workspace:*
@@ -1731,7 +1729,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1771,7 +1769,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1850,7 +1848,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -1935,7 +1933,7 @@ importers:
         specifier: 4.0.4
         version: 4.0.4(@iiif/parser@4.0.1)
       '@iiif/parser':
-        specifier: 'catalog:'
+        specifier: 4.0.1
         version: 4.0.1
       '@iiif/presentation-3':
         specifier: ^2.2.3
@@ -3093,23 +3091,12 @@ packages:
     resolution: {integrity: sha512-vQZFwCOI1jt6ajxatzdk9sPSUYWExGI6zDj37G25BSqll+FaqUd6IHJlU6wDGiGAi0o4gix8zqHKHLOrdFdKOw==}
     engines: {node: '>=22'}
     peerDependencies:
-      '@iiif/parser': ^4.0.0
-
-  '@iiif/parser@2.2.14':
-    resolution: {integrity: sha512-8gUsd30W/cVrYkhmNv4KY2uipgES6AuxHENhuEVRapl+tB4HmGVwevRn37u6Llm/bzh9Jey0VXZXB+IQqFW/xQ==}
-
-  '@iiif/parser@2.2.5':
-    resolution: {integrity: sha512-+170+G9EZamMPNErJ2enxPYWwRK5OEnl+dK0IbaT6bTqR6Rr9KeQxLAqYE/L0ur/A3bXcD0miM6E1cP7kigVig==}
+      '@iiif/parser': 4.0.1
 
   '@iiif/parser@4.0.1':
     resolution: {integrity: sha512-IsoztTt+KprIIJHqPUqWGmxTRvduB8/XlTARZTBi7SeVakdRAtdWEKp6XAkL843KHs85qLJ638eQta0998owjw==}
     engines: {node: '>=22'}
     hasBin: true
-
-  '@iiif/presentation-2@1.0.4':
-    resolution: {integrity: sha512-hJakpq62VBajesLJrYPtFm6hcn6c/HkKP7CmKZ5atuzu40m0nifWYsqigR1l9sZGvhhHb/DRshPmiW/0GNrJoA==}
-    peerDependencies:
-      '@iiif/presentation-3': '*'
 
   '@iiif/presentation-3-normalized@0.9.7':
     resolution: {integrity: sha512-Aqk0sYBFIH5W3wmVxW02tnAFbNzUU5oPygGQjvszB3PP2nSkFQ1skVjqJhQPPZTyi/de1qcJUrgSy0vp6s+c5A==}
@@ -13930,36 +13917,10 @@ snapshots:
 
   '@iiif/builder@2.0.1':
     dependencies:
-      '@iiif/helpers': 4.0.4(@iiif/parser@2.2.14)
-      '@iiif/parser': 2.2.14
+      '@iiif/helpers': 4.0.4(@iiif/parser@4.0.1)
+      '@iiif/parser': 4.0.1
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
-
-  '@iiif/helpers@4.0.4(@iiif/parser@2.2.14)':
-    dependencies:
-      '@iiif/parser': 2.2.14
-      '@terraformer/wkt': 2.2.1
-      '@types/geojson': 7946.0.13
-      diff: 8.0.2
-      mitt: 3.0.1
-      typesafe-actions: 5.1.0
-    optionalDependencies:
-      abs-svg-path: 0.1.1
-      parse-svg-path: 0.1.2
-      svg-arc-to-cubic-bezier: 3.2.0
-
-  '@iiif/helpers@4.0.4(@iiif/parser@2.2.5)':
-    dependencies:
-      '@iiif/parser': 2.2.5
-      '@terraformer/wkt': 2.2.1
-      '@types/geojson': 7946.0.13
-      diff: 8.0.2
-      mitt: 3.0.1
-      typesafe-actions: 5.1.0
-    optionalDependencies:
-      abs-svg-path: 0.1.1
-      parse-svg-path: 0.1.2
-      svg-arc-to-cubic-bezier: 3.2.0
 
   '@iiif/helpers@4.0.4(@iiif/parser@4.0.1)':
     dependencies:
@@ -13974,25 +13935,7 @@ snapshots:
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/parser@2.2.14':
-    dependencies:
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      '@types/geojson': 7946.0.14
-
-  '@iiif/parser@2.2.5':
-    dependencies:
-      '@iiif/presentation-2': 1.0.4(@iiif/presentation-3@2.2.3)
-      '@iiif/presentation-3': 2.2.3
-      '@iiif/presentation-3-normalized': 0.9.7
-      '@types/geojson': 7946.0.14
-
   '@iiif/parser@4.0.1': {}
-
-  '@iiif/presentation-2@1.0.4(@iiif/presentation-3@2.2.3)':
-    dependencies:
-      '@iiif/presentation-3': 2.2.3
 
   '@iiif/presentation-3-normalized@0.9.7':
     dependencies:
@@ -20577,8 +20520,8 @@ snapshots:
   exhibition-viewer@1.0.14(@atlas-viewer/atlas@3.3.4(@iiif/helpers@4.0.4(@iiif/parser@4.0.1))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@iiif/helpers': 4.0.4(@iiif/parser@2.2.5)
-      '@iiif/parser': 2.2.5
+      '@iiif/helpers': 4.0.4(@iiif/parser@4.0.1)
+      '@iiif/parser': 4.0.1
       '@iiif/presentation-3': 2.2.3
       '@iiif/presentation-3-normalized': 0.9.7
       '@types/react': 18.3.31

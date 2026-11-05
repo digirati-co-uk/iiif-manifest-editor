@@ -57,6 +57,7 @@ minimumReleaseAgeExclude:
 blockExoticSubdeps: false
 
 overrides:
+  "@iiif/parser": 4.0.1
   "@iiif/helpers": 4.0.4
   # Notebook and descriptive editors must share ProseMirror node/fragment instances.
   prosemirror-model: 1.25.12
