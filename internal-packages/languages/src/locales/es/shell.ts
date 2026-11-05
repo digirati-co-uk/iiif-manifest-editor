@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Historial de edición",
+    undo: "Deshacer",
+    redo: "Rehacer",
+    redoOperation: "Rehacer {{label}}",
+    undoOperation: "Deshacer {{label}}",
+    disabled: "El historial no está disponible para este documento.",
+    empty: "No hay cambios que deshacer.",
+    open: "Termine la edición actual antes de deshacer.",
+    busy: "Esperando a que termine el cambio actual.",
+    syncConflict: "Una edición simultánea impidió guardar este cambio. Se ha vuelto a cargar el documento actual.",
+    conflict: "Este cambio no se puede deshacer porque el contenido afectado ha cambiado.",
+  },
   project: {
     open: "Abrir proyecto",
     export: "Exportar",

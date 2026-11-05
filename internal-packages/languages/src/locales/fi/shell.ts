@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Muokkaushistoria",
+    undo: "Kumoa",
+    redo: "Tee uudelleen",
+    redoOperation: "Tee uudelleen: {{label}}",
+    undoOperation: "Kumoa: {{label}}",
+    disabled: "Tämän asiakirjan historia ei ole käytettävissä.",
+    empty: "Kumottavia muutoksia ei ole.",
+    open: "Viimeistele nykyinen muokkaus ennen kumoamista.",
+    busy: "Odotetaan nykyisen muutoksen valmistumista.",
+    syncConflict: "Samanaikainen muokkaus esti tämän muutoksen tallentamisen. Nykyinen asiakirja on ladattu uudelleen.",
+    conflict: "Tätä muutosta ei voi kumota, koska siihen liittyvä sisältö on muuttunut.",
+  },
   project: {
     open: "Avoin projekti",
     export: "Viedä",

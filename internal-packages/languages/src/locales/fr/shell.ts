@@ -1,5 +1,19 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Historique des modifications",
+    undo: "Annuler",
+    redo: "Rétablir",
+    redoOperation: "Rétablir {{label}}",
+    undoOperation: "Annuler {{label}}",
+    disabled: "L’historique n’est pas disponible pour ce document.",
+    empty: "Il n’y a aucune modification à annuler.",
+    open: "Terminez la modification en cours avant d’annuler.",
+    busy: "En attente de la fin de la modification en cours.",
+    syncConflict:
+      "Une modification simultanée a empêché l’enregistrement de cette modification. Le document actuel a été rechargé.",
+    conflict: "Cette modification ne peut pas être annulée, car le contenu concerné a changé.",
+  },
   project: {
     open: "Projet ouvert",
     export: "Exporter",

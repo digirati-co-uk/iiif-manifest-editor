@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "संपादन इतिहास",
+    undo: "पूर्ववत करें",
+    redo: "फिर से करें",
+    redoOperation: "{{label}} फिर से करें",
+    undoOperation: "{{label}} पूर्ववत करें",
+    disabled: "इस दस्तावेज़ के लिए इतिहास उपलब्ध नहीं है।",
+    empty: "पूर्ववत करने के लिए कोई बदलाव नहीं है।",
+    open: "पूर्ववत करने से पहले मौजूदा संपादन पूरा करें।",
+    busy: "मौजूदा बदलाव के पूरा होने की प्रतीक्षा की जा रही है।",
+    syncConflict: "एक साथ किए गए संपादन के कारण यह बदलाव सहेजा नहीं जा सका। मौजूदा दस्तावेज़ फिर से लोड किया गया है।",
+    conflict: "यह बदलाव पूर्ववत नहीं किया जा सकता क्योंकि संबंधित सामग्री बदल गई है।",
+  },
   project: {
     open: "ओपन प्रोजेक्ट",
     export: "निर्यात",

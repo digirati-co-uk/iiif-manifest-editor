@@ -1,5 +1,19 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Redigeringshistorik",
+    undo: "Fortryd",
+    redo: "Annuller fortryd",
+    redoOperation: "Udfør {{label}} igen",
+    undoOperation: "Fortryd {{label}}",
+    disabled: "Historik er ikke tilgængelig for dette dokument.",
+    empty: "Der er ingen ændringer at fortryde.",
+    open: "Afslut den aktuelle redigering, før du fortryder.",
+    busy: "Venter på, at den aktuelle ændring afsluttes.",
+    syncConflict:
+      "En samtidig redigering forhindrede, at ændringen blev gemt. Det aktuelle dokument er blevet genindlæst.",
+    conflict: "Denne ændring kan ikke fortrydes, fordi det berørte indhold er ændret.",
+  },
   project: {
     open: "Åbent projekt",
     export: "Eksportere",

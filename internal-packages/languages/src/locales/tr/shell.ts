@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Düzenleme geçmişi",
+    undo: "Geri al",
+    redo: "Yinele",
+    redoOperation: "{{label}} işlemini yinele",
+    undoOperation: "{{label}} işlemini geri al",
+    disabled: "Bu belge için geçmiş kullanılamıyor.",
+    empty: "Geri alınacak değişiklik yok.",
+    open: "Geri almadan önce mevcut düzenlemeyi tamamlayın.",
+    busy: "Mevcut değişikliğin tamamlanması bekleniyor.",
+    syncConflict: "Eş zamanlı bir düzenleme bu değişikliğin kaydedilmesini engelledi. Mevcut belge yeniden yüklendi.",
+    conflict: "Etkilenen içerik değiştiği için bu değişiklik geri alınamıyor.",
+  },
   project: {
     open: "Projeyi aç",
     export: "İhracat",

@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Sejarah suntingan",
+    undo: "Buat asal",
+    redo: "Buat semula",
+    redoOperation: "Buat semula {{label}}",
+    undoOperation: "Buat asal {{label}}",
+    disabled: "Sejarah tidak tersedia untuk dokumen ini.",
+    empty: "Tiada perubahan untuk dibuat asal.",
+    open: "Selesaikan suntingan semasa sebelum membuat asal.",
+    busy: "Menunggu perubahan semasa selesai.",
+    syncConflict: "Suntingan serentak menghalang perubahan ini daripada disimpan. Dokumen semasa telah dimuat semula.",
+    conflict: "Perubahan ini tidak dapat dibuat asal kerana kandungan yang terjejas telah berubah.",
+  },
   project: {
     open: "Buka projek",
     export: "Eksport",

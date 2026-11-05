@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Historie úprav",
+    undo: "Zpět",
+    redo: "Znovu",
+    redoOperation: "Znovu provést: {{label}}",
+    undoOperation: "Vrátit: {{label}}",
+    disabled: "Historie není pro tento dokument k dispozici.",
+    empty: "Nejsou žádné změny, které lze vrátit.",
+    open: "Před vrácením dokončete aktuální úpravu.",
+    busy: "Čeká se na dokončení aktuální změny.",
+    syncConflict: "Souběžná úprava zabránila uložení této změny. Aktuální dokument byl znovu načten.",
+    conflict: "Tuto změnu nelze vrátit, protože dotčený obsah byl změněn.",
+  },
   project: {
     open: "Otevřete projekt",
     export: "Vývozní",
