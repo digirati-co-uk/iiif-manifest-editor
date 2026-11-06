@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { avRangesPanel } from "../av-ranges/av-ranges-panel";
 import { avRangesWorkbench } from "../av-ranges/av-ranges-workbench";
 import { avTemporalRangeCreator } from "../av-ranges/av-temporal-range-creator";
-import { getAvCanvases } from "../av-ranges/av-media-utils";
+import { supportsAvCanvases } from "../av-ranges/av-media-utils";
 
 export default {
   id: "@manifest-editor/av-ranges",
@@ -23,26 +23,17 @@ export default {
   },
 } satisfies PluginMetadata;
 
-function supportsAvRanges(ctx: any) {
-  if (!ctx.rootResource || ctx.rootResource.type !== "Manifest" || !ctx.vault) {
-    return false;
-  }
-
-  const manifest = ctx.vault.get(ctx.rootResource, { skipSelfReturn: false });
-  return getAvCanvases(ctx.vault, manifest).length > 0;
-}
-
 export const leftPanels: LayoutPanel[] = [
   {
     ...avRangesPanel,
-    supports: supportsAvRanges,
+    supports: supportsAvCanvases,
   } as LayoutPanel,
 ];
 
 export const centerPanels: LayoutPanel[] = [
   {
     ...avRangesWorkbench,
-    supports: supportsAvRanges,
+    supports: supportsAvCanvases,
   } as LayoutPanel,
 ];
 
