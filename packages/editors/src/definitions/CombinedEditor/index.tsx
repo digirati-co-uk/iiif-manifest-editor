@@ -21,7 +21,7 @@ export const combinedProperties: EditorDefinition & {
       // Ignore for annotations as they already have a combined editor.
       // "Annotation",
       "AnnotationPage",
-      "Range",
+      // Ranges have their own overview (see RangeOverview).
     ],
   },
   component: (config) => <CombinedEditor config={config} />,

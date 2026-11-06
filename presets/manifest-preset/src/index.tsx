@@ -24,6 +24,7 @@ import { manifestPanel } from "./left-panels/manifest";
 import { rangesPanel } from "./left-panels/range-listing";
 import { tagsPanel } from "./left-panels/tags";
 import * as avRangesPlugin from "./plugins/av-ranges";
+import * as variationsTimelinerPlugin from "./plugins/variations-timeliner";
 import { queryStringTask } from "./query-string";
 import "./index.css";
 import * as remoteInference from "./plugins/remote-inference";
@@ -100,12 +101,13 @@ export const creators = allCreators;
 
 export const resources = ["Manifest", "Canvas", "ContentResource", "Agent", "AnnotationPage", "Annotation", "Range"];
 
-export { annotationsPlugin, avRangesPlugin, canvasLabelGeneratorPlugin };
+export { annotationsPlugin, avRangesPlugin, variationsTimelinerPlugin, canvasLabelGeneratorPlugin };
 
 export const plugins: PluginInput[] = [
   //
   annotationsPlugin,
   avRangesPlugin,
+  variationsTimelinerPlugin,
   canvasLabelGeneratorPlugin,
   remoteInference,
 ];

@@ -29,7 +29,6 @@ export function DescriptiveProperties() {
   const { resolveMessage } = useEditorI18n();
   const apiLabel = useDisplayLabel();
   const resource = useEditingResource();
-  const [requiredStatementVisible, setRequiredStatementVisible] = useState(false);
   const { descriptive, notAllowed } = useEditor();
   const { edit } = useLayoutActions();
 
@@ -41,7 +40,6 @@ export function DescriptiveProperties() {
     language,
     navDate,
     provider,
-    requiredStatement,
     rights,
     thumbnail,
     // Still @todo.
@@ -123,42 +121,7 @@ export function DescriptiveProperties() {
         </InputContainer>
       ) : null}
 
-      {!notAllowed.includes("requiredStatement") ? (
-        <InputContainer $wide id={requiredStatement.containerId()}>
-          <InputLabel htmlFor={requiredStatement.focusId()}>{apiLabel(propertyLabels.requiredStatement)!}</InputLabel>
-          {!requiredStatement.get() && !requiredStatementVisible ? (
-            <EmptyPrompt
-              action={{
-                id: requiredStatement.focusId(),
-                label: t("ui.addNew"),
-                onClick: () => setRequiredStatementVisible(true),
-              }}
-            >
-              {t("ui.noRequiredStatement")}
-            </EmptyPrompt>
-          ) : (
-            <InputFieldset id={requiredStatement.focusId()}>
-              <LanguageFieldEditor
-                focusId={`${requiredStatement.focusId()}_label`}
-                label={apiLabel(propertyLabels.label)!}
-                fields={requiredStatement.get()?.label || { none: [] }}
-                onSave={(e: any, _index, _property, scoped) =>
-                  requiredStatement.withVault(scoped!).updateLabel(e.toInternationalString())
-                }
-              />
-              <LanguageFieldEditor
-                focusId={`${requiredStatement.focusId()}_value`}
-                label={t("metadata.value")}
-                disallowHTML={false}
-                fields={requiredStatement.get()?.value || { none: [] }}
-                onSave={(e: any, _index, _property, scoped) =>
-                  requiredStatement.withVault(scoped!).update(e.toInternationalString())
-                }
-              />
-            </InputFieldset>
-          )}
-        </InputContainer>
-      ) : null}
+      {!notAllowed.includes("requiredStatement") ? <RequiredStatementField /> : null}
 
       {!notAllowed.includes("provider") ? (
         <InputContainer $wide id={provider.containerId()}>
@@ -234,5 +197,51 @@ export function DescriptiveProperties() {
         </InputContainer>
       ) : null}
     </PaddedSidebarContainer>
+  );
+}
+
+/** Required statement editor, shared by the descriptive tab and the Range overview. */
+export function RequiredStatementField() {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
+  const { descriptive } = useEditor();
+  const { requiredStatement } = descriptive;
+  const [requiredStatementVisible, setRequiredStatementVisible] = useState(false);
+
+  return (
+    <InputContainer $wide id={requiredStatement.containerId()}>
+      <InputLabel htmlFor={requiredStatement.focusId()}>{apiLabel(propertyLabels.requiredStatement)!}</InputLabel>
+      {!requiredStatement.get() && !requiredStatementVisible ? (
+        <EmptyPrompt
+          action={{
+            id: requiredStatement.focusId(),
+            label: t("ui.addNew"),
+            onClick: () => setRequiredStatementVisible(true),
+          }}
+        >
+          {t("ui.noRequiredStatement")}
+        </EmptyPrompt>
+      ) : (
+        <InputFieldset id={requiredStatement.focusId()}>
+          <LanguageFieldEditor
+            focusId={`${requiredStatement.focusId()}_label`}
+            label={apiLabel(propertyLabels.label)!}
+            fields={requiredStatement.get()?.label || { none: [] }}
+            onSave={(e: any, _index, _property, scoped) =>
+              requiredStatement.withVault(scoped!).updateLabel(e.toInternationalString())
+            }
+          />
+          <LanguageFieldEditor
+            focusId={`${requiredStatement.focusId()}_value`}
+            label={t("metadata.value")}
+            disallowHTML={false}
+            fields={requiredStatement.get()?.value || { none: [] }}
+            onSave={(e: any, _index, _property, scoped) =>
+              requiredStatement.withVault(scoped!).update(e.toInternationalString())
+            }
+          />
+        </InputFieldset>
+      )}
+    </InputContainer>
   );
 }
