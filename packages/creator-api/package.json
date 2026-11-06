@@ -34,7 +34,8 @@
     "dev": "tsdown src/index.ts --watch",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsdown src/index.ts"
+    "prepack": "tsdown src/index.ts",
+    "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",
@@ -43,13 +44,15 @@
     "@iiif/presentation-3": "^2.2.3",
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "polygon-editor": "0.0.23",
     "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
     "tiny-invariant": "^1.3.3",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

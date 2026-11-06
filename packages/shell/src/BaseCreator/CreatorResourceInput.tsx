@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   ActionButton,
   AddImageIcon,
@@ -53,6 +54,8 @@ export function CreatorResourceInput({
   rotateExamples = true,
   onBrowse,
 }: CreatorResourceInputProps) {
+  const t = useTranslations("shell");
+
   const reduced = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
   const animating = rotateExamples && !reduced && !value && !isChecking;
@@ -76,7 +79,7 @@ export function CreatorResourceInput({
         @media (prefers-reduced-motion: reduce) { .creator-resource-hint { animation: none; } }
       `}</style>
       <label className="block text-sm font-medium text-gray-700" htmlFor="creator-resource-link">
-        Paste a link
+        {t("creator.paste")}
       </label>
       <div className="mt-1 flex min-h-12 w-full items-center rounded-md border border-gray-300 bg-white p-1 focus-within:border-me-primary-500 focus-within:ring-2 focus-within:ring-me-primary-500">
         <div className="relative min-w-0 flex-1">
@@ -110,8 +113,8 @@ export function CreatorResourceInput({
         {onBrowse ? (
           <button
             type="button"
-            aria-label="Open IIIF Browser"
-            title="Open IIIF Browser"
+            aria-label={t("creator.browse")}
+            title={t("creator.browse")}
             disabled={isChecking}
             onClick={onBrowse}
             className="mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded bg-transparent text-gray-500 hover:bg-gray-100 hover:text-me-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-me-primary-500 disabled:opacity-50"
@@ -125,7 +128,7 @@ export function CreatorResourceInput({
           isDisabled={!value.trim() || isChecking}
           className="h-9 shrink-0 justify-center px-3"
         >
-          {isChecking ? "Checking…" : "Use link"}
+          {isChecking ? t("creator.checkingShort") : t("creator.useLink")}
         </ActionButton>
       </div>
     </div>

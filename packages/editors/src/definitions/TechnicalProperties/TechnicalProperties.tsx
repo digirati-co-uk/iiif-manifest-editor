@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { CanvasContext } from "react-iiif-vault";
 import { SmartCanvasSize } from "../../components/CanvasLayout/SmartCanvasSize";
 import type { ViewingDirection } from "@iiif/presentation-3";
@@ -9,6 +12,8 @@ import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { InlineSelect } from "../../form-elements/InlineSelect/InlineSelect";
 
 export function TechnicalProperties() {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const { technical, notAllowed } = useEditor();
   const { id, viewingDirection, height, width, duration, behavior, format, motivation, profile, timeMode } = technical;
 
@@ -16,7 +21,7 @@ export function TechnicalProperties() {
     <>
       <PaddedSidebarContainer>
         <InputContainer $wide id={id.containerId()}>
-          <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
+          <InputLabel htmlFor={id.focusId()}>{apiLabel(propertyLabels.id)!}</InputLabel>
           <Input disabled id={id.focusId()} value={id.get()} />
         </InputContainer>
 
@@ -52,7 +57,7 @@ export function TechnicalProperties() {
             )}
             {technical.type === "Canvas" && !notAllowed.includes("duration") && (
               <label htmlFor={duration.focusId()} className="mt-3 block text-sm">
-                Duration (seconds)
+                {t("ui.durationSeconds")}
                 <Input
                   id={duration.focusId()}
                   type="number"
@@ -68,7 +73,7 @@ export function TechnicalProperties() {
 
         {!notAllowed.includes("viewingDirection") ? (
           <InputContainer $fluid id={viewingDirection.containerId()}>
-            <InputLabel htmlFor={viewingDirection.focusId()}>Viewing direction</InputLabel>
+            <InputLabel htmlFor={viewingDirection.focusId()}>{apiLabel(propertyLabels.viewingDirection)!}</InputLabel>
             <InlineSelect
               id={viewingDirection.focusId()}
               name="viewingDirection"
@@ -76,19 +81,19 @@ export function TechnicalProperties() {
               onChange={(newValue) => viewingDirection.set(newValue as ViewingDirection)}
               options={[
                 {
-                  label: { en: ["Left to right"] },
+                  label: { en: [t("ui.leftToRight")] },
                   value: "left-to-right",
                 },
                 {
-                  label: { en: ["Right to left"] },
+                  label: { en: [t("ui.rightToLeft")] },
                   value: "right-to-left",
                 },
                 {
-                  label: { en: ["Top to bottom"] },
+                  label: { en: [t("ui.topToBottom")] },
                   value: "top-to-bottom",
                 },
                 {
-                  label: { en: ["Bottom to top"] },
+                  label: { en: [t("ui.bottomToTop")] },
                   value: "bottom-to-top",
                 },
               ]}
@@ -98,21 +103,21 @@ export function TechnicalProperties() {
 
         {!notAllowed.includes("profile") ? (
           <InputContainer $wide id={profile.containerId()}>
-            <InputLabel htmlFor={profile.focusId()}>Profile</InputLabel>
+            <InputLabel htmlFor={profile.focusId()}>{apiLabel(propertyLabels.profile)!}</InputLabel>
             <Input id={profile.focusId()} value={profile.get()} onChange={(e) => profile.set(e.target.value)} />
           </InputContainer>
         ) : null}
 
         {!notAllowed.includes("timeMode") ? (
           <InputContainer $wide id={timeMode.containerId()}>
-            <InputLabel htmlFor={timeMode.focusId()}>Time mode</InputLabel>
+            <InputLabel htmlFor={timeMode.focusId()}>{apiLabel(propertyLabels.timeMode)!}</InputLabel>
             <InlineSelect
               value={timeMode.get() || ""}
               options={[
-                { label: { en: ["None"] }, value: "" },
-                { label: { en: ["Trim"] }, value: "trim" },
-                { label: { en: ["Scale"] }, value: "scale" },
-                { label: { en: ["Loop"] }, value: "loop" },
+                { label: { en: [t("ui.none")] }, value: "" },
+                { label: { en: [t("ui.trim")] }, value: "trim" },
+                { label: { en: [t("ui.scale")] }, value: "scale" },
+                { label: { en: [t("ui.loop")] }, value: "loop" },
               ]}
               id={timeMode.focusId()}
               onChange={(value) => timeMode.set(value || null)}
@@ -123,11 +128,11 @@ export function TechnicalProperties() {
 
         {!notAllowed.includes("format") ? (
           <InputContainer $wide id={format.containerId()}>
-            <InputLabel htmlFor={format.focusId()}>Format</InputLabel>
+            <InputLabel htmlFor={format.focusId()}>{apiLabel(propertyLabels.format)!}</InputLabel>
             <Input
               id={format.focusId()}
               value={format.get()}
-              placeholder={"jpg, png etc."}
+              placeholder={t("ui.jpgPngEtc")}
               onChange={(e: any) => format.set(e.target.value)}
             />
           </InputContainer>
@@ -136,11 +141,11 @@ export function TechnicalProperties() {
         {/* @todo this should be smarted based on the context. */}
         {!notAllowed.includes("motivation") ? (
           <InputContainer $wide id={motivation.containerId()}>
-            <InputLabel htmlFor={motivation.focusId()}>Motivation</InputLabel>
+            <InputLabel htmlFor={motivation.focusId()}>{apiLabel(propertyLabels.motivation)!}</InputLabel>
             <Input
               id={motivation.focusId()}
               value={motivation.get() || ""}
-              placeholder={"painting, supplementing etc."}
+              placeholder={t("ui.paintingSupplementingEtc")}
               onChange={(e: any) => motivation.set(e.target.value)}
             />
           </InputContainer>

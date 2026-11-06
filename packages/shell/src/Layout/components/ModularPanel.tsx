@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import {
   Dropdown,
   DropdownDivider,
@@ -187,6 +188,10 @@ export function ModularPanel({
   noHeader,
   isModal,
 }: ModularPanelProps) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const vault = useContext(ReactVaultContext) || null;
   const [didError, setDidError] = useState(false);
   const appState = useAppState();
@@ -250,13 +255,13 @@ export function ModularPanel({
 
   const backButton =
     panel.backAction || state.stack.length ? (
-      <ModulePanelButton aria-label="Back" onClick={backAction}>
+      <ModulePanelButton aria-label={t("actions.back")} onClick={backAction}>
         <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     ) : null;
 
   const closeButton = (
-    <ModulePanelButton aria-label="Close panel" onClick={close || actions.close}>
+    <ModulePanelButton aria-label={t("actions.closePanel")} onClick={close || actions.close}>
       <CloseIcon aria-hidden="true" />
     </ModulePanelButton>
   );
@@ -276,7 +281,7 @@ export function ModularPanel({
               {panel.renderBackAction ? panel.renderBackAction({ backAction, fallback: backButton }) : backButton}
               {switchablePanels.length ? (
                 <DropdownMenu $open={isOpen} role="menu" style={{ left: "0.5em" }}>
-                  <DropdownLabel>All panels</DropdownLabel>
+                  <DropdownLabel>{t("panels.all")}</DropdownLabel>
                   <DropdownDivider />
                   {switchablePanels.map((newPanel, i) => (
                     <DropdownItem
@@ -285,7 +290,7 @@ export function ModularPanel({
                       onClick={() => menuHandler(newPanel)}
                       $active={panel.id === newPanel.id}
                     >
-                      {newPanel.label}
+                      {resolveMessage(newPanel?.labelMessage, newPanel.label)}
                     </DropdownItem>
                   ))}
                 </DropdownMenu>
@@ -297,16 +302,18 @@ export function ModularPanel({
             ) : hideHeader ? (
               <ModulePanelSpacer />
             ) : (
-              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>{panel.label}</ModularPanelLabel>
+              <ModularPanelLabel as={isLeft ? "h1" : "h2"}>
+                {resolveMessage(panel?.labelMessage, panel.label)}
+              </ModularPanelLabel>
             )}
             {pinnable ? (
               (state as PinnablePanelState).pinned ? (
-                <ModulePanelButton aria-label="Unpin panel" onClick={pinActions.unpin}>
+                <ModulePanelButton aria-label={t("panels.unpin")} onClick={pinActions.unpin}>
                   <StarIcon aria-hidden="true" fill="orange" />
                 </ModulePanelButton>
               ) : (
                 <ModulePanelButton
-                  aria-label="Pin panel"
+                  aria-label={t("panels.pin")}
                   onClick={() => pinActions.pin({ id: panel.id, state: state.state })}
                 >
                   <StarIcon aria-hidden="true" fill="#ddd" />

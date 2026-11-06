@@ -2,6 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((config) => ({
   dts: true,
+  external: ["@manifest-editor/i18n", /^@manifest-editor\/i18n\//],
   banner: {
     js: "'use client'",
   },

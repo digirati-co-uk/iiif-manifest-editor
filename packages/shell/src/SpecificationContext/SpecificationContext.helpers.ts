@@ -1,3 +1,4 @@
+import type { EditorI18n, MessageReference } from "@manifest-editor/i18n/core";
 import type { Vault } from "@iiif/helpers/vault";
 import type { Reference } from "@iiif/presentation-3";
 import type {
@@ -50,30 +51,22 @@ type CollectedResource = {
 };
 
 export function normaliseSpecificationPath(
-  path: SpecificationPropertyPath | string | undefined,
+  path: SpecificationPropertyPath | string | undefined
 ): SpecificationPropertyPath {
   if (!path) return [];
-  return Array.isArray(path)
-    ? path.filter(Boolean)
-    : path.split(".").filter(Boolean);
+  return Array.isArray(path) ? path.filter(Boolean) : path.split(".").filter(Boolean);
 }
 
 export function specificationPathEquals(
   a: SpecificationPropertyPath | string | undefined,
-  b: SpecificationPropertyPath | string | undefined,
+  b: SpecificationPropertyPath | string | undefined
 ) {
   const pathA = normaliseSpecificationPath(a);
   const pathB = normaliseSpecificationPath(b);
-  return (
-    pathA.length === pathB.length &&
-    pathA.every((part, index) => part === pathB[index])
-  );
+  return pathA.length === pathB.length && pathA.every((part, index) => part === pathB[index]);
 }
 
-export function getValueAtPath(
-  resource: any,
-  path: SpecificationPropertyPath | string | undefined,
-): unknown {
+export function getValueAtPath(resource: any, path: SpecificationPropertyPath | string | undefined): unknown {
   let current = resource;
   for (const part of normaliseSpecificationPath(path)) {
     if (current == null) {
@@ -84,17 +77,11 @@ export function getValueAtPath(
   return current;
 }
 
-export function setValueAtPath(
-  resource: any,
-  path: SpecificationPropertyPath | string,
-  value: unknown,
-): any {
+export function setValueAtPath(resource: any, path: SpecificationPropertyPath | string, value: unknown): any {
   const parts = normaliseSpecificationPath(path);
   if (!parts.length) return value;
 
-  const next = Array.isArray(resource)
-    ? [...resource]
-    : { ...(resource || {}) };
+  const next = Array.isArray(resource) ? [...resource] : { ...(resource || {}) };
   let cursor = next;
 
   parts.forEach((part, index) => {
@@ -104,9 +91,7 @@ export function setValueAtPath(
     }
 
     const existing = cursor[part];
-    cursor[part] = Array.isArray(existing)
-      ? [...existing]
-      : { ...(existing || {}) };
+    cursor[part] = Array.isArray(existing) ? [...existing] : { ...(existing || {}) };
     cursor = cursor[part];
   });
 
@@ -117,18 +102,14 @@ export function hasMeaningfulValue(value: unknown): boolean {
   if (value == null) return false;
   if (typeof value === "string") return value.trim().length > 0;
   if (typeof value === "number" || typeof value === "boolean") return true;
-  if (Array.isArray(value))
-    return value.some((item) => hasMeaningfulValue(item));
+  if (Array.isArray(value)) return value.some((item) => hasMeaningfulValue(item));
   if (typeof value !== "object") return false;
 
   const entries = Object.entries(value as Record<string, unknown>);
   if (!entries.length) return false;
 
   const looksLikeLanguageMap = entries.every(([, item]) => {
-    return (
-      typeof item === "string" ||
-      (Array.isArray(item) && item.every((value) => typeof value === "string"))
-    );
+    return typeof item === "string" || (Array.isArray(item) && item.every((value) => typeof value === "string"));
   });
 
   if (looksLikeLanguageMap) {
@@ -156,10 +137,7 @@ export function normaliseJsonValue(value: unknown): unknown {
 }
 
 export function specificationJsonEquals(a: unknown, b: unknown): boolean {
-  return (
-    JSON.stringify(normaliseJsonValue(a)) ===
-    JSON.stringify(normaliseJsonValue(b))
-  );
+  return JSON.stringify(normaliseJsonValue(a)) === JSON.stringify(normaliseJsonValue(b));
 }
 
 export function getTerminologyLabel(
@@ -167,6 +145,7 @@ export function getTerminologyLabel(
   entityType: SpecificationEntityType | string | undefined,
   path: SpecificationPropertyPath | string | undefined,
   fallback?: string,
+  i18n?: Pick<EditorI18n, "resolveMessage" | "translate">
 ): string {
   const normalisedPath = normaliseSpecificationPath(path);
 
@@ -174,18 +153,23 @@ export function getTerminologyLabel(
     for (const item of specification.terminology?.properties || []) {
       if (item.entityType && item.entityType !== entityType) continue;
       if (specificationPathEquals(item.path, normalisedPath)) {
-        return item.label;
+        return i18n ? i18n.resolveMessage(item.labelMessage, item.label) : item.label;
       }
     }
   }
 
-  return fallback || humanisePath(normalisedPath);
+  return i18n
+    ? i18n.translate("editor-api")(`fields.${normalisedPath.join(".")}`, undefined, {
+        defaultValue: fallback || humanisePath(normalisedPath),
+      })
+    : fallback || humanisePath(normalisedPath);
 }
 
 export function getPropertyPolicy(
   specifications: ManifestEditorSpecification[] | undefined,
   resource: Reference | null | undefined,
   path: SpecificationPropertyPath | string,
+  i18n?: Pick<EditorI18n, "resolveMessage" | "translate">
 ): SpecificationPropertyPolicy {
   const normalisedPath = normaliseSpecificationPath(path);
   const rules: SpecificationRule[] = [];
@@ -198,11 +182,7 @@ export function getPropertyPolicy(
     return {
       entityType: resource?.type as SpecificationEntityType | undefined,
       path: normalisedPath,
-      label: getTerminologyLabel(
-        specifications,
-        resource?.type,
-        normalisedPath,
-      ),
+      label: getTerminologyLabel(specifications, resource?.type, normalisedPath, undefined, i18n),
       disallowed: false,
       required: false,
       rules,
@@ -236,7 +216,7 @@ export function getPropertyPolicy(
   return {
     entityType: resource.type as SpecificationEntityType,
     path: normalisedPath,
-    label: getTerminologyLabel(specifications, resource.type, normalisedPath),
+    label: getTerminologyLabel(specifications, resource.type, normalisedPath, undefined, i18n),
     disallowed,
     required,
     fixedValue,
@@ -249,6 +229,7 @@ export function evaluateSpecifications(
   specifications: ManifestEditorSpecification[] | undefined,
   vault: Vault,
   rootRef: Reference,
+  i18n?: Pick<EditorI18n, "resolveMessage" | "translate">
 ): SpecificationReport {
   const resolvedSpecifications = specifications || [];
   const resources = collectSpecificationResources(vault, rootRef);
@@ -256,23 +237,50 @@ export function evaluateSpecifications(
 
   for (const specification of resolvedSpecifications) {
     for (const [ruleIndex, rule] of (specification.rules || []).entries()) {
-      results.push(
-        ...evaluateRule(specification, rule, ruleIndex, resources, vault),
-      );
+      results.push(...evaluateRule(specification, rule, ruleIndex, resources, vault));
     }
   }
 
   return {
     specifications: resolvedSpecifications,
-    results,
+    results: i18n
+      ? results.map((item) => {
+          const specification = resolvedSpecifications.find((spec) => spec.id === item.specificationId);
+          const rule = specification?.rules[item.ruleIndex];
+          // Metadata-template labels are authored content, not property headings.
+          const displayLabel =
+            item.ruleType === "iiif:metadata-template"
+              ? item.displayLabel
+              : item.path
+                ? getTerminologyLabel(
+                    specification ? [specification] : [],
+                    item.target?.type,
+                    item.path,
+                    item.displayLabel,
+                    i18n
+                  )
+                : item.ruleType === "iiif:canvas-with-image-service" && !rule?.label
+                  ? i18n.translate("shell")("specificationFields.canvasImageService")
+                  : item.displayLabel;
+          const reference =
+            item.messageReference?.values?.label === item.displayLabel
+              ? { ...item.messageReference, values: { ...item.messageReference.values, label: displayLabel } }
+              : item.messageReference;
+          return {
+            ...item,
+            displayLabel,
+            ruleLabel: rule?.label || displayLabel,
+            specificationLabel: i18n.resolveMessage(specification?.labelMessage, item.specificationLabel),
+            messageReference: reference,
+            message: i18n.resolveMessage(reference, item.message),
+          };
+        })
+      : results,
     counts: countResults(results),
   };
 }
 
-export function collectSpecificationResources(
-  vault: Vault,
-  rootRef: Reference,
-): CollectedResource[] {
+export function collectSpecificationResources(vault: Vault, rootRef: Reference): CollectedResource[] {
   const collected: CollectedResource[] = [];
   const seen = new Set<string>();
 
@@ -285,8 +293,7 @@ export function collectSpecificationResources(
       return;
     }
 
-    const resource =
-      resolveResource(vault, input) || resolveResource(vault, ref);
+    const resource = resolveResource(vault, input) || resolveResource(vault, ref);
     if (!resource || !resource.type) return;
 
     const key = `${resource.type}:${resource.id || JSON.stringify(ref)}`;
@@ -315,7 +322,7 @@ function evaluateRule(
   rule: SpecificationRule,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault
 ): SpecificationReportItem[] {
   switch (rule.type) {
     case "disallow-property":
@@ -323,39 +330,15 @@ function evaluateRule(
     case "fixed-value":
       return evaluatePropertyRule(specification, rule, ruleIndex, resources);
     case "iiif:canvas-with-image-service":
-      return [
-        evaluateCanvasWithImageService(
-          specification,
-          rule,
-          ruleIndex,
-          resources,
-          vault,
-        ),
-      ];
+      return [evaluateCanvasWithImageService(specification, rule, ruleIndex, resources, vault)];
     case "iiif:thumbnail-from-body-service":
-      return evaluateThumbnailFromBodyService(
-        specification,
-        rule,
-        ruleIndex,
-        resources,
-        vault,
-      );
+      return evaluateThumbnailFromBodyService(specification, rule, ruleIndex, resources, vault);
     case "iiif:valid-rights":
       return evaluateValidRights(specification, rule, ruleIndex, resources);
     case "iiif:required-statement":
-      return evaluateRequiredStatement(
-        specification,
-        rule,
-        ruleIndex,
-        resources,
-      );
+      return evaluateRequiredStatement(specification, rule, ruleIndex, resources);
     case "iiif:metadata-template":
-      return evaluateMetadataTemplate(
-        specification,
-        rule,
-        ruleIndex,
-        resources,
-      );
+      return evaluateMetadataTemplate(specification, rule, ruleIndex, resources);
     default:
       return [];
   }
@@ -363,19 +346,12 @@ function evaluateRule(
 
 function evaluatePropertyRule(
   specification: ManifestEditorSpecification,
-  rule: Extract<
-    SpecificationRule,
-    { entityType: SpecificationEntityType; path: SpecificationPropertyPath }
-  >,
+  rule: Extract<SpecificationRule, { entityType: SpecificationEntityType; path: SpecificationPropertyPath }>,
   ruleIndex: number,
-  resources: CollectedResource[],
+  resources: CollectedResource[]
 ): SpecificationReportItem[] {
   const targets = resources.filter((item) => item.ref.type === rule.entityType);
-  const displayLabel = getTerminologyLabel(
-    specification ? [specification] : [],
-    rule.entityType,
-    rule.path,
-  );
+  const displayLabel = getTerminologyLabel(specification ? [specification] : [], rule.entityType, rule.path);
 
   if (!targets.length) {
     return [
@@ -383,6 +359,12 @@ function evaluatePropertyRule(
         status: "not-applicable",
         displayLabel,
         message: `No ${rule.entityType} resources were found for ${displayLabel}.`,
+        messageReference: {
+          namespace: "shell",
+          key: "specification.noResources",
+          defaultValue: "No {{type}} resources were found for {{label}}.",
+          values: { type: rule.entityType, label: displayLabel },
+        },
         path: rule.path,
       }),
     ];
@@ -399,9 +381,20 @@ function evaluatePropertyRule(
         status: hasValue ? "disallowed" : "satisfied",
         displayLabel,
         actual: value,
-        message: hasValue
-          ? `${displayLabel} is present but is not allowed.`
-          : `${displayLabel} is not present.`,
+        message: hasValue ? `${displayLabel} is present but is not allowed.` : `${displayLabel} is not present.`,
+        messageReference: hasValue
+          ? {
+              namespace: "shell",
+              key: "specification.disallowed",
+              defaultValue: "{{label}} is present but is not allowed.",
+              values: { label: displayLabel },
+            }
+          : {
+              namespace: "shell",
+              key: "specification.absent",
+              defaultValue: "{{label}} is not present.",
+              values: { label: displayLabel },
+            },
         editorTarget: createEditorTarget(ref, rule.path),
       });
     }
@@ -413,9 +406,20 @@ function evaluatePropertyRule(
         status: hasValue ? "satisfied" : "missing",
         displayLabel,
         actual: value,
-        message: hasValue
-          ? `${displayLabel} has a value.`
-          : `${displayLabel} must be filled in.`,
+        message: hasValue ? `${displayLabel} has a value.` : `${displayLabel} must be filled in.`,
+        messageReference: hasValue
+          ? {
+              namespace: "shell",
+              key: "specification.hasValue",
+              defaultValue: "{{label}} has a value.",
+              values: { label: displayLabel },
+            }
+          : {
+              namespace: "shell",
+              key: "specification.required",
+              defaultValue: "{{label}} must be filled in.",
+              values: { label: displayLabel },
+            },
         editorTarget: createEditorTarget(ref, rule.path),
       });
     }
@@ -433,6 +437,26 @@ function evaluatePropertyRule(
         : hasValue
           ? `${displayLabel} does not match the required value.`
           : `${displayLabel} must use the required value.`,
+      messageReference: matches
+        ? {
+            namespace: "shell",
+            key: "specification.matches",
+            defaultValue: "{{label}} matches the required value.",
+            values: { label: displayLabel },
+          }
+        : hasValue
+          ? {
+              namespace: "shell",
+              key: "specification.mismatch",
+              defaultValue: "{{label}} does not match the required value.",
+              values: { label: displayLabel },
+            }
+          : {
+              namespace: "shell",
+              key: "specification.fixed",
+              defaultValue: "{{label}} must use the required value.",
+              values: { label: displayLabel },
+            },
       editorTarget: createEditorTarget(ref, rule.path),
     });
   });
@@ -443,7 +467,7 @@ function evaluateCanvasWithImageService(
   rule: Extract<SpecificationRule, { type: "iiif:canvas-with-image-service" }>,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault
 ): SpecificationReportItem {
   const canvases = resources.filter((item) => item.ref.type === "Canvas");
   const expected = getExpectedServiceIds(rule);
@@ -462,21 +486,34 @@ function evaluateCanvasWithImageService(
       : expected.length
         ? `A canvas must contain one of the required image services: ${expected.join(", ")}.`
         : "A canvas must contain a painting body with an image service.",
-    editorTarget: matchingCanvas
-      ? createEditorTarget(matchingCanvas.ref, ["items"])
-      : undefined,
+    messageReference: matchingCanvas
+      ? {
+          namespace: "shell",
+          key: "specification.servicePresent",
+          defaultValue: "A canvas contains the required image service.",
+        }
+      : expected.length
+        ? {
+            namespace: "shell",
+            key: "specification.serviceList",
+            defaultValue: "A canvas must contain one of the required image services: {{services}}.",
+            values: { services: expected.join(", ") },
+          }
+        : {
+            namespace: "shell",
+            key: "specification.serviceRequired",
+            defaultValue: "A canvas must contain a painting body with an image service.",
+          },
+    editorTarget: matchingCanvas ? createEditorTarget(matchingCanvas.ref, ["items"]) : undefined,
   });
 }
 
 function evaluateThumbnailFromBodyService(
   specification: ManifestEditorSpecification,
-  rule: Extract<
-    SpecificationRule,
-    { type: "iiif:thumbnail-from-body-service" }
-  >,
+  rule: Extract<SpecificationRule, { type: "iiif:thumbnail-from-body-service" }>,
   ruleIndex: number,
   resources: CollectedResource[],
-  vault: Vault,
+  vault: Vault
 ): SpecificationReportItem[] {
   const entityType = rule.entityType || "Canvas";
   const targets = resources.filter((item) => item.ref.type === entityType);
@@ -487,6 +524,12 @@ function evaluateThumbnailFromBodyService(
         status: "not-applicable",
         displayLabel: "Thumbnail",
         message: `No ${entityType} resources were found for thumbnail checks.`,
+        messageReference: {
+          namespace: "shell",
+          key: "specification.noThumbnails",
+          defaultValue: "No {{type}} resources were found for thumbnail checks.",
+          values: { type: entityType },
+        },
       }),
     ];
   }
@@ -496,15 +539,9 @@ function evaluateThumbnailFromBodyService(
       entityType === "Manifest"
         ? resources
             .filter((item) => item.ref.type === "Canvas")
-            .flatMap((item) =>
-              getCanvasPaintingServiceIds(item.resource, vault),
-            )
+            .flatMap((item) => getCanvasPaintingServiceIds(item.resource, vault))
         : getCanvasPaintingServiceIds(resource, vault);
-    const thumbnailMatches = thumbnailUsesBodyService(
-      resource,
-      bodyServiceIds,
-      vault,
-    );
+    const thumbnailMatches = thumbnailUsesBodyService(resource, bodyServiceIds, vault);
     const hasThumbnail = hasMeaningfulValue(resource.thumbnail);
 
     return createReportItem(specification, rule, ruleIndex, {
@@ -519,12 +556,7 @@ function evaluateThumbnailFromBodyService(
             : rule.requireThumbnail === false
               ? "not-applicable"
               : "missing",
-      displayLabel: getTerminologyLabel(
-        [specification],
-        ref.type,
-        ["thumbnail"],
-        "Thumbnail",
-      ),
+      displayLabel: getTerminologyLabel([specification], ref.type, ["thumbnail"], "Thumbnail"),
       expected: bodyServiceIds,
       actual: resource.thumbnail,
       message: thumbnailMatches
@@ -534,6 +566,29 @@ function evaluateThumbnailFromBodyService(
           : hasThumbnail
             ? "Thumbnail does not use the same image service as the painting content."
             : "Thumbnail must be created from the painting image service.",
+      messageReference: thumbnailMatches
+        ? {
+            namespace: "shell",
+            key: "specification.thumbnailMatches",
+            defaultValue: "Thumbnail uses the same image service as the painting content.",
+          }
+        : !bodyServiceIds.length
+          ? {
+              namespace: "shell",
+              key: "specification.noPaintingService",
+              defaultValue: "No painting image service was found to compare against.",
+            }
+          : hasThumbnail
+            ? {
+                namespace: "shell",
+                key: "specification.thumbnailMismatch",
+                defaultValue: "Thumbnail does not use the same image service as the painting content.",
+              }
+            : {
+                namespace: "shell",
+                key: "specification.thumbnailRequired",
+                defaultValue: "Thumbnail must be created from the painting image service.",
+              },
       editorTarget: createEditorTarget(ref, ["thumbnail"]),
     });
   });
@@ -543,7 +598,7 @@ function evaluateValidRights(
   specification: ManifestEditorSpecification,
   rule: Extract<SpecificationRule, { type: "iiif:valid-rights" }>,
   ruleIndex: number,
-  resources: CollectedResource[],
+  resources: CollectedResource[]
 ): SpecificationReportItem[] {
   const entityType = rule.entityType || "Manifest";
   const targets = resources.filter((item) => item.ref.type === entityType);
@@ -552,24 +607,13 @@ function evaluateValidRights(
   return targets.map(({ ref, resource }) => {
     const value = resource.rights;
     const hasValue = hasMeaningfulValue(value);
-    const valid =
-      typeof value === "string" &&
-      allowed.map(normaliseRights).includes(normaliseRights(value));
+    const valid = typeof value === "string" && allowed.map(normaliseRights).includes(normaliseRights(value));
 
     return createReportItem(specification, rule, ruleIndex, {
       target: ref,
       path: ["rights"],
-      status: valid
-        ? "satisfied"
-        : !hasValue && rule.required !== false
-          ? "missing"
-          : "invalid",
-      displayLabel: getTerminologyLabel(
-        [specification],
-        ref.type,
-        ["rights"],
-        "Rights",
-      ),
+      status: valid ? "satisfied" : !hasValue && rule.required !== false ? "missing" : "invalid",
+      displayLabel: getTerminologyLabel([specification], ref.type, ["rights"], "Rights"),
       expected: allowed,
       actual: value,
       message: valid
@@ -577,6 +621,15 @@ function evaluateValidRights(
         : !hasValue && rule.required !== false
           ? "Rights must use an allowed URI."
           : "Rights is not one of the allowed URIs.",
+      messageReference: valid
+        ? { namespace: "shell", key: "specification.rightsValid", defaultValue: "Rights uses an allowed URI." }
+        : !hasValue && rule.required !== false
+          ? { namespace: "shell", key: "specification.rightsRequired", defaultValue: "Rights must use an allowed URI." }
+          : {
+              namespace: "shell",
+              key: "specification.rightsInvalid",
+              defaultValue: "Rights is not one of the allowed URIs.",
+            },
       editorTarget: createEditorTarget(ref, ["rights"]),
     });
   });
@@ -586,7 +639,7 @@ function evaluateRequiredStatement(
   specification: ManifestEditorSpecification,
   rule: Extract<SpecificationRule, { type: "iiif:required-statement" }>,
   ruleIndex: number,
-  resources: CollectedResource[],
+  resources: CollectedResource[]
 ): SpecificationReportItem[] {
   const entityType = rule.entityType || "Manifest";
   const targets = resources.filter((item) => item.ref.type === entityType);
@@ -605,18 +658,8 @@ function evaluateRequiredStatement(
     return createReportItem(specification, rule, ruleIndex, {
       target: ref,
       path: ["requiredStatement"],
-      status:
-        labelMatches && valueMatches
-          ? "satisfied"
-          : hasStatement
-            ? "invalid"
-            : "missing",
-      displayLabel: getTerminologyLabel(
-        [specification],
-        ref.type,
-        ["requiredStatement"],
-        "Required statement",
-      ),
+      status: labelMatches && valueMatches ? "satisfied" : hasStatement ? "invalid" : "missing",
+      displayLabel: getTerminologyLabel([specification], ref.type, ["requiredStatement"], "Required statement"),
       expected: rule.value || rule.label,
       actual: requiredStatement,
       message:
@@ -625,6 +668,24 @@ function evaluateRequiredStatement(
           : hasStatement
             ? "Required statement does not match the specification."
             : "Required statement must be filled in.",
+      messageReference:
+        labelMatches && valueMatches
+          ? {
+              namespace: "shell",
+              key: "specification.statementComplete",
+              defaultValue: "Required statement is complete.",
+            }
+          : hasStatement
+            ? {
+                namespace: "shell",
+                key: "specification.statementInvalid",
+                defaultValue: "Required statement does not match the specification.",
+              }
+            : {
+                namespace: "shell",
+                key: "specification.statementRequired",
+                defaultValue: "Required statement must be filled in.",
+              },
       editorTarget: createEditorTarget(ref, ["requiredStatement"]),
     });
   });
@@ -634,7 +695,7 @@ function evaluateMetadataTemplate(
   specification: ManifestEditorSpecification,
   rule: Extract<SpecificationRule, { type: "iiif:metadata-template" }>,
   ruleIndex: number,
-  resources: CollectedResource[],
+  resources: CollectedResource[]
 ): SpecificationReportItem[] {
   const entityType = rule.entityType || "Manifest";
   const targets = resources.filter((item) => item.ref.type === entityType);
@@ -644,20 +705,14 @@ function evaluateMetadataTemplate(
     const metadata = Array.isArray(resource.metadata) ? resource.metadata : [];
 
     rule.items.forEach((template, itemIndex) => {
-      const matchingItem = metadata.find((item: any) =>
-        textValueMatches(item?.label, template.label),
-      );
+      const matchingItem = metadata.find((item: any) => textValueMatches(item?.label, template.label));
       const hasRequiredValue = template.value
         ? textValueMatches(matchingItem?.value, template.value)
         : template.valueRequired
           ? hasMeaningfulValue(matchingItem?.value)
           : true;
       const status: SpecificationReportStatus =
-        matchingItem && hasRequiredValue
-          ? "satisfied"
-          : matchingItem && template.value
-            ? "invalid"
-            : "missing";
+        matchingItem && hasRequiredValue ? "satisfied" : matchingItem && template.value ? "invalid" : "missing";
       const label = textValueToDisplay(template.label);
 
       results.push(
@@ -675,8 +730,29 @@ function evaluateMetadataTemplate(
               : matchingItem
                 ? `${label || "Metadata"} needs a value.`
                 : `${label || "Metadata"} metadata must be added.`,
+          messageReference:
+            matchingItem && hasRequiredValue
+              ? {
+                  namespace: "shell",
+                  key: "specification.metadataPresent",
+                  defaultValue: "{{label}} is present.",
+                  values: { label: label || "Metadata" },
+                }
+              : matchingItem
+                ? {
+                    namespace: "shell",
+                    key: "specification.metadataValue",
+                    defaultValue: "{{label}} needs a value.",
+                    values: { label: label || "Metadata" },
+                  }
+                : {
+                    namespace: "shell",
+                    key: "specification.metadataRequired",
+                    defaultValue: "{{label}} metadata must be added.",
+                    values: { label: label || "Metadata" },
+                  },
           editorTarget: createEditorTarget(ref, ["metadata"]),
-        }),
+        })
       );
     });
   }
@@ -695,10 +771,11 @@ function createReportItem(
     status: SpecificationReportStatus;
     displayLabel: string;
     message: string;
+    messageReference?: MessageReference;
     expected?: SpecificationReportItem["expected"];
     actual?: unknown;
     editorTarget?: SpecificationEditorTarget;
-  },
+  }
 ): SpecificationReportItem {
   const ruleId = rule.id || `${rule.type}-${ruleIndex}`;
   const suffix = options.idSuffix ? `-${options.idSuffix}` : "";
@@ -716,16 +793,14 @@ function createReportItem(
     status: options.status,
     displayLabel: options.displayLabel,
     message: rule.message || options.message,
+    messageReference: rule.messageReference || (rule.message ? undefined : options.messageReference),
     expected: options.expected,
     actual: options.actual,
     editorTarget: options.editorTarget,
   };
 }
 
-function createEditorTarget(
-  resource: Reference,
-  propertyPath: SpecificationPropertyPath,
-): SpecificationEditorTarget {
+function createEditorTarget(resource: Reference, propertyPath: SpecificationPropertyPath): SpecificationEditorTarget {
   const firstProperty = propertyPath[0];
   return {
     resource,
@@ -739,9 +814,7 @@ function createEditorTarget(
   };
 }
 
-function countResults(
-  results: SpecificationReportItem[],
-): Record<SpecificationReportStatus, number> {
+function countResults(results: SpecificationReportItem[]): Record<SpecificationReportStatus, number> {
   const counts = { ...emptyCounts };
   for (const result of results) {
     counts[result.status] += 1;
@@ -805,14 +878,8 @@ function getResourceChildren(resource: any): unknown[] {
   return children;
 }
 
-function getExpectedServiceIds(rule: {
-  serviceId?: string;
-  serviceIds?: string[];
-}) {
-  return [
-    ...(rule.serviceIds || []),
-    ...(rule.serviceId ? [rule.serviceId] : []),
-  ].filter(Boolean);
+function getExpectedServiceIds(rule: { serviceId?: string; serviceIds?: string[] }) {
+  return [...(rule.serviceIds || []), ...(rule.serviceId ? [rule.serviceId] : [])].filter(Boolean);
 }
 
 function serviceMatches(actual: string[], expected: string[]) {
@@ -828,9 +895,7 @@ function getCanvasPaintingServiceIds(canvas: any, vault: Vault): string[] {
   for (const page of pages) {
     const annotations = resolveReferenceList(vault, page?.items);
     for (const annotation of annotations) {
-      const motivation = Array.isArray(annotation?.motivation)
-        ? annotation.motivation
-        : [annotation?.motivation];
+      const motivation = Array.isArray(annotation?.motivation) ? annotation.motivation : [annotation?.motivation];
       if (!motivation.includes("painting")) continue;
       for (const body of normaliseBodies(annotation?.body, vault)) {
         serviceIds.push(...getImageServiceIds(body));
@@ -841,11 +906,7 @@ function getCanvasPaintingServiceIds(canvas: any, vault: Vault): string[] {
   return Array.from(new Set(serviceIds));
 }
 
-function thumbnailUsesBodyService(
-  resource: any,
-  bodyServiceIds: string[],
-  vault: Vault,
-) {
+function thumbnailUsesBodyService(resource: any, bodyServiceIds: string[], vault: Vault) {
   const thumbnails = resolveReferenceList(vault, resource?.thumbnail);
   if (!thumbnails.length || !bodyServiceIds.length) return false;
 
@@ -853,11 +914,7 @@ function thumbnailUsesBodyService(
     const thumbnailServiceIds = getImageServiceIds(thumbnail);
     const thumbnailId = typeof thumbnail?.id === "string" ? thumbnail.id : "";
 
-    if (
-      thumbnailServiceIds.some((serviceId) =>
-        bodyServiceIds.includes(serviceId),
-      )
-    ) {
+    if (thumbnailServiceIds.some((serviceId) => bodyServiceIds.includes(serviceId))) {
       return true;
     }
 
@@ -872,14 +929,9 @@ function thumbnailUsesBodyService(
 function normaliseBodies(body: any, vault: Vault): any[] {
   const resolved = resolveResource(vault, body);
   if (!resolved) return [];
-  if (Array.isArray(resolved))
-    return resolved.flatMap((item) => normaliseBodies(item, vault));
-  if (resolved.type === "SpecificResource")
-    return normaliseBodies(resolved.source, vault);
-  if (resolved.type === "Choice")
-    return (
-      resolved.items?.flatMap((item: any) => normaliseBodies(item, vault)) || []
-    );
+  if (Array.isArray(resolved)) return resolved.flatMap((item) => normaliseBodies(item, vault));
+  if (resolved.type === "SpecificResource") return normaliseBodies(resolved.source, vault);
+  if (resolved.type === "Choice") return resolved.items?.flatMap((item: any) => normaliseBodies(item, vault)) || [];
   return [resolved];
 }
 
@@ -918,10 +970,7 @@ function normaliseRights(value: string) {
   return value.replace(/^https:/, "http:").replace(/\/?$/, "/");
 }
 
-function textValueMatches(
-  actual: unknown,
-  expected: SpecificationTextValue,
-): boolean {
+function textValueMatches(actual: unknown, expected: SpecificationTextValue): boolean {
   if (typeof expected === "string") {
     return textValues(actual).some((value) => value === expected);
   }

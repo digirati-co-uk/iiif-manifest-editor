@@ -1,11 +1,9 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useEffect, useState } from "react";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { LightBox } from "../../../atoms/LightBox";
 import { CheckboxInput, Input, InputLabel } from "../../../editors/Input";
-import {
-  FlexContainerColumn,
-  FlexContainerRow,
-} from "../../layout/FlexContainer";
+import { FlexContainerColumn, FlexContainerRow } from "../../layout/FlexContainer";
 import { Accordian } from "../Accordian/Accordian";
 
 type Target = {
@@ -13,13 +11,9 @@ type Target = {
   annotationID: string;
 };
 
-export const CanvasTargetEditor: React.FC<Target> = ({
-  canvasTarget,
-  annotationID,
-}) => {
-  const [target, setTarget] = useState<string[]>(
-    canvasTarget.split("#xywh=")[1].split(","),
-  );
+export const CanvasTargetEditor: React.FC<Target> = ({ canvasTarget, annotationID }) => {
+  const t = useTranslations("ui");
+  const [target, setTarget] = useState<string[]>(canvasTarget.split("#xywh=")[1].split(","));
   const canvas = canvasTarget.split("#xywh=")[0];
 
   const vault = useVault();
@@ -57,7 +51,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({
         />
       </FlexContainerColumn>
       <FlexContainerColumn>
-        <InputLabel>width</InputLabel>
+        <InputLabel>{t("canvas.width")}</InputLabel>
         <Input
           type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
@@ -66,7 +60,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({
         />
       </FlexContainerColumn>
       <FlexContainerColumn>
-        <InputLabel>height</InputLabel>
+        <InputLabel>{t("canvas.height")}</InputLabel>
         <Input
           type={"number"}
           style={{ minWidth: "3rem", padding: "unset" }}
@@ -79,6 +73,7 @@ export const CanvasTargetEditor: React.FC<Target> = ({
 };
 
 export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
+  const t = useTranslations("ui");
   const [showEditor, setShowEditor] = useState(false);
   const canvas = useCanvas();
   const vault = useVault();
@@ -87,8 +82,7 @@ export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
   const isWhole =
     canvasTarget.includes("#xywh=") &&
     canvasTarget.split("#xywh=")[1] &&
-    canvasTarget.split("#xywh=")[1] ===
-      `0,0,${canvas?.width},${canvas?.height}`;
+    canvasTarget.split("#xywh=")[1] === `0,0,${canvas?.width},${canvas?.height}`;
 
   function changeToFullCanvas() {
     if (!canvas || !canvas.id) return;
@@ -99,7 +93,7 @@ export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
 
   return (
     <InputLabel>
-      Target
+      {t("annotation.target")}
       <LightBox>
         <InputLabel $inline={true}>
           <CheckboxInput
@@ -107,19 +101,14 @@ export function AnnotationTarget({ canvasTarget, annotationID }: Target) {
             defaultChecked={isWhole || targetNotSpecified}
             onChange={() => changeToFullCanvas()}
           />
-          Target whole canvas
+          {t("annotation.wholeCanvas")}
         </InputLabel>
         {!(isWhole || targetNotSpecified || showEditor) && (
-          <CanvasTargetEditor
-            canvasTarget={canvasTarget}
-            annotationID={annotationID}
-          />
+          <CanvasTargetEditor canvasTarget={canvasTarget} annotationID={annotationID} />
         )}
         {showEditor && (
           <CanvasTargetEditor
-            canvasTarget={
-              canvasTarget + `#xywh=0,0,${canvas?.width},${canvas?.height}`
-            }
+            canvasTarget={canvasTarget + `#xywh=0,0,${canvas?.width},${canvas?.height}`}
             annotationID={annotationID}
           />
         )}

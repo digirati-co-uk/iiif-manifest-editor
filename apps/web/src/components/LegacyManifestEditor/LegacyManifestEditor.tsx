@@ -1,9 +1,13 @@
 "use client";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
+import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
+
+import { useTranslations } from "@manifest-editor/i18n";
 
 import * as collectionEditorApp from "@manifest-editor/collection-preset";
 import * as manifestEditorApp from "@manifest-editor/manifest-preset";
 import { ProjectProvider, useOptionalCurrentProject, useProjectCreators } from "@manifest-editor/projects";
-import { Layout, MultiAppProvider, mapApp, type PreviewConfiguration, ShellProvider } from "@manifest-editor/shell";
+import { Layout, MultiAppProvider, mapApp, type PreviewConfiguration } from "@manifest-editor/shell";
 import { useState } from "react";
 import * as aboutApp from "./apps/About";
 import * as splashApp from "./apps/Splash";
@@ -64,6 +68,7 @@ const previews: PreviewConfiguration[] = [
     id: "iiif-preview",
     type: "iiif-preview-service",
     label: "IIIF Preview",
+    labelMessage: { namespace: "web", key: "preview.iiif" },
     config: {
       url: "/api/iiif/store",
     },
@@ -72,6 +77,7 @@ const previews: PreviewConfiguration[] = [
     id: "raw-manifest",
     type: "external-manifest-preview",
     label: "Raw Manifest",
+    labelMessage: { namespace: "web", key: "preview.rawManifest" },
     config: {
       url: "{manifestId}",
     },
@@ -93,6 +99,8 @@ export default function LegacyManifestEditor() {
 }
 
 function InternalEditor() {
+  const webT = useTranslations("web");
+
   const { createBlankManifest } = useProjectCreators();
   const project = useOptionalCurrentProject();
   const [loading, setIsLoading] = useState(false);
@@ -100,9 +108,10 @@ function InternalEditor() {
   if (!project) {
     return (
       <div className="m-auto text-center">
-        <h4 className={`text-3xl text-center text-slate-700 mb-8`}>Welcome to Manifest editor</h4>
+        <HeaderLanguageMenu />
+        <h4 className={`text-3xl text-center text-slate-700 mb-8`}>{webT("legacy.welcome")}</h4>
         {loading ? (
-          <div className={`text-2xl text-center text-slate-500 mb-8`}>Loading...</div>
+          <div className={`text-2xl text-center text-slate-500 mb-8`}>{webT("feedback.loading")}</div>
         ) : (
           <button
             className="bg-me-primary-500 text-white py-2 px-4 rounded"
@@ -111,7 +120,7 @@ function InternalEditor() {
               createBlankManifest();
             }}
           >
-            Get started
+            {webT("launcher.start")}
           </button>
         )}
       </div>

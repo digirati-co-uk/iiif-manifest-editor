@@ -30,7 +30,7 @@ import { ManifestEditor } from "manifest-editor";
 import "manifest-editor/index.css";
 ```
 
-`manifest-editor/reset.css` is an optional global reset. Import it **before** `index.css` if your host application needs it. The editor is browser UI: in an SSR framework, mount it in a client-only boundary with server rendering disabled for the editor.
+`manifest-editor/reset.css` is an optional global reset. Import it **before** `index.css` if your host application needs it. The editor is browser UI: in an SSR framework, mount it in a client component boundary. Server/task code should import the public i18n `/core` entry rather than the React/CSS facade. Native renderer and dependency SSR support must be checked by the host.
 
 ### Embed in a React application
 
@@ -76,7 +76,9 @@ export default function App() {
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <header><button onClick={exportManifest}>Export JSON to console</button></header>
+      <header>
+        <button onClick={exportManifest}>Export JSON to console</button>
+      </header>
       <div style={{ flex: 1, minHeight: 0 }}>
         <ManifestEditor vault={vault} resource={resource} />
       </div>
@@ -87,9 +89,86 @@ export default function App() {
 
 Edits live in the Vault. Persist exported JSON through your application's own save mechanism; there is no `onSave` or `onChange` component prop in this release. The optional `data` prop supplies a Manifest or Collection you already have instead of fetching it.
 
+## Interface localisation
+
+`localisation?: ShellLocalisation` forwards public `EditorI18nOptions` unchanged to
+ShellProvider. English is the default. Declare `@manifest-editor/i18n` as a direct
+host dependency when importing its providers, types or optional catalogs. Register both fallback and selected-locale
+metadata; a locale allow-list constrains choices but does not load translations.
+The optional public Dutch entry contains the currently reviewed catalogs:
+
+```tsx
+import { ManifestEditor, type ShellLocalisation } from "manifest-editor";
+import { defaultLocales, dutchLocale } from "@manifest-editor/i18n/core";
+import { dutchCatalogs, dutchPlain } from "@manifest-editor/i18n/nl";
+
+// Keep resource option identity stable between renders.
+const localisation = {
+  locales: [...defaultLocales, dutchLocale],
+  catalogs: dutchCatalogs,
+  profiles: { plain: dutchPlain },
+} satisfies ShellLocalisation;
+
+<ManifestEditor
+  resource="https://example.org/manifest"
+  localisation={localisation}
+  config={{
+    uiI18n: { defaultLocale: "nl", availableLocales: ["nl"], defaultProfile: "plain" },
+    i18n: { defaultLanguage: "cy", availableLanguages: ["cy"], advancedLanguageMode: true },
+  }}
+/>;
+```
+
+`config.uiI18n` is JSON-compatible UI policy, distinct from authored content
+`config.i18n`. Keep catalogs, loaders and callbacks in local runtime/provider
+options, outside saved configuration, IIIF exports and worker payloads. Switching
+UI locale/profile never changes authored InternationalString values or IDs.
+The facade adds no new messages or standalone locale chunks; plain wording falls
+back per message and catalog coverage alone does not establish whole-UI coverage.
+Exhibition terminology belongs in an explicitly composed exhibition host.
+
+For controlled selection, wrap the editor in the public `EditorI18nProvider`:
+
+```tsx
+<EditorI18nProvider
+  instance={hostRuntime}
+  locale={locale}
+  profile={profile}
+  onLocaleChange={setLocale}
+  onProfileChange={setProfile}
+>
+  <ManifestEditor resource={resource} localisation={localisation} />
+</EditorI18nProvider>
+```
+
+Create `hostRuntime` once with `createEditorI18n(localisation)`. Host callbacks
+remain authoritative, including rejected requests. Shell intersects host and
+preset policy. When an override/preset creates an effective runtime, forward all
+host resources, including fallback metadata; an arbitrary inherited instance does
+not expose its input catalogs. With no override, Shell retains the original actual
+provider instance. Never pass the spread `useEditorI18n()` snapshot as `instance`.
+Keep each editor's Vault and React position stable; do not key it by locale/profile.
+Selection updates use the current runtime. Replacing resource/configuration options
+replaces the effective runtime without remounting editor state and retains allowed
+selection. An explicit host runtime replacement uses `instance={newRuntime}`.
+
+Lazy locale bundles use `localisation.resourceLoaders`, an ordered array of
+`{ locale, load }` entries returning `catalogs`, `profiles`, `presets` and/or
+`presetProfiles` stores for that locale. This also works for built-in namespaces;
+no duplicate namespace registration is necessary. See the
+[runtime examples](../i18n/README.md). Lazy plugin namespaces use `localisation.registrations` (public catalog contracts and
+locale-to-loader functions) and `requiredNamespaces`. Loaders must return message
+maps and can import host assets or the public `@manifest-editor/i18n/nl` chunk;
+there is no private authoring-package import in consumer code. Registration/loading
+uses the effective Shell runtime, including plugins and independently mounted
+editors. SSR hydration requires matching synchronous resources and selection on
+server/client; async-only resources load after mount. The React facade is browser
+UI, not a server/task factory. `@manifest-editor/i18n/core` and `/nl` are server-safe
+source entries; emitted ESM/CJS/RSC behavior remains a release check.
+
 ## Use the CDN browser runtime
 
-The browser runtime is a classic script plus CSS, published under `dist/browser/`. The examples below target **2.2.1** (available once this release is published); use an exact published version with the runtime API, and keep script and stylesheet versions together.
+The browser runtime is a classic script plus CSS, published under `dist/browser/`. The examples below target **2.2.1** (available once this release is published); use an exact published version with runtime API 2, and keep script and stylesheet versions together.
 
 ### Automatically load React
 
@@ -99,24 +178,44 @@ Save this as an HTML file and serve it over HTTP. No bundler or JSX transformati
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Manifest Editor</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/manifest-editor@2.2.1/dist/browser/runtime.css" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/manifest-editor@2.2.1/dist/browser/runtime.css"
+      crossorigin="anonymous"
+    />
     <style>
-      html, body { margin: 0; height: 100%; }
-      body { display: flex; flex-direction: column; }
-      header { padding: 12px; border-bottom: 1px solid #ddd; font: 16px system-ui; }
-      #editor { flex: 1; min-height: 0; }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        font: 16px system-ui;
+      }
+      #editor {
+        flex: 1;
+        min-height: 0;
+      }
     </style>
   </head>
   <body>
     <header>Manifest Editor</header>
     <main id="editor"></main>
-    <script src="https://cdn.jsdelivr.net/npm/manifest-editor@2.2.1/dist/browser/runtime.js" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/manifest-editor@2.2.1/dist/browser/runtime.js"
+      crossorigin="anonymous"
+    ></script>
     <script type="module">
-      const { React, ReactDOMClient, ManifestEditor, Vault } =
-        await window.ManifestEditor.automaticRuntime();
+      const { React, ReactDOMClient, ManifestEditor, Vault } = await window.ManifestEditor.automaticRuntime();
       const vault = new Vault();
       const resource = {
         id: "https://wellcomelibrary.org/iiif/b18035723/manifest",
@@ -131,14 +230,14 @@ Save this as an HTML file and serve it over HTTP. No bundler or JSX transformati
 </html>
 ```
 
-`automaticRuntime()` asynchronously imports the runtime's pinned React 19 dependencies from esm.sh, caches the result, and returns the editor exports plus `React`, `ReactDOM`, and `ReactDOMClient`. Use this for a standalone editor page. In an existing React app, inject that app's React environment instead, so there is one React instance.
+`automaticRuntime()` asynchronously imports the runtime's pinned React 19 and public i18n 2.2.1 dependencies from esm.sh, caches the result, and returns the editor exports plus `React`, `ReactDOM`, and `ReactDOMClient`. Use this for a standalone editor page. In an existing React app, inject that app's React environment instead, so there is one React instance.
 
 ### Inject an existing React environment
 
 Keep the runtime script and CSS tags above. In your application's bundled client module:
 
 ```sh
-npm install react@19.2.8 react-dom@19.2.8 react-reconciler@0.33.0
+npm install react@19.2.8 react-dom@19.2.8 react-reconciler@0.33.0 @manifest-editor/i18n@2.2.1
 ```
 
 ```tsx
@@ -148,11 +247,15 @@ import * as ReactDOMClient from "react-dom/client";
 import * as ReactDOMServer from "react-dom/server";
 import * as jsxRuntime from "react/jsx-runtime";
 import ReactReconciler from "react-reconciler";
+import * as I18n from "@manifest-editor/i18n";
+import * as I18nCore from "@manifest-editor/i18n/core";
 // Optional types when manifest-editor is installed:
 // import type {} from "manifest-editor/remote";
 
 // Run after the runtime.js script has loaded.
 const { ManifestEditor, Vault } = window.ManifestEditor.createRuntime({
+  I18n,
+  I18nCore,
   React,
   ReactDOM,
   ReactDOMClient,
@@ -173,7 +276,46 @@ ReactDOMClient.createRoot(document.getElementById("editor")!).render(
 );
 ```
 
-All six dependencies are required by `createRuntime()` in runtime API 1. `ReactDOMServer` is used in the browser to serialize rich-text content; it does not mean a Node server is required. `ReactReconciler` supports the Atlas canvas renderer. Keep the reconciler compatible with the React version you supply. If using TypeScript, the `manifest-editor/remote` entry point declares the browser runtime types (including `window.ManifestEditor`); it can be included with `import type {} from "manifest-editor/remote"` when the package is installed.
+All eight dependencies are required by `createRuntime()` in runtime API 2 (including `I18n` and `I18nCore`). API 1 scripts are incompatible with this loader; regenerate release descriptors for API 2. `ReactDOMServer` is used in the browser to serialize rich-text content; it does not mean a Node server is required. `ReactReconciler` supports the Atlas canvas renderer. Keep the reconciler compatible with the React version you supply. If using TypeScript, the `manifest-editor/remote` entry point declares the browser runtime types (including `window.ManifestEditor`); it can be included with `import type {} from "manifest-editor/remote"` when the package is installed.
+
+### Browser/remote localisation and updates
+
+The browser build externalizes `@manifest-editor/i18n` and `/core`, exactly like
+React. Inject the same public modules used by your host/plugins; returned `i18n`
+and `i18nCore` namespaces preserve their identities. `automaticRuntime()` imports
+the pinned public modules from esm.sh; use the returned `i18n` for its provider and
+hooks rather than loading another context. The pinned public i18n release must be
+published before this automatic path can work; no CDN availability is claimed here.
+Fetch optional Dutch resources from the matching public `/nl` entry, then pass
+locale metadata/catalogs/profiles as in the React example above.
+
+The automatic path imports the public React entry once and supplies its reexported
+core factories to both dependency keys. This preserves identity even when a CDN
+bundles subpaths separately. Injected and remote hosts reject mismatched root/core
+factories before initializing; npm root/core imports share those factories naturally.
+
+There is no separate mount/update transport API. Retain one React root, Vault,
+resource reference and captured runtime, and call `root.render` with the same
+`ManifestEditor` component type and updated `localisation`/`config` props. For
+interactive selection use the runtime's shared provider/hooks. Do not recreate a
+factory/root or serialize runtime objects/functions to a worker or saved config.
+The remote loader accepts the same module identities under the explicit
+`RuntimeHost` keys `"@manifest-editor/i18n"` and `"@manifest-editor/i18n/core"`.
+Reuse the host object to reuse its cached factory result; distinct host environments
+are isolated even when React happens to be the same module. Release script/CSS
+loading does not carry or persist editor/localisation state.
+
+The browser build captures exact installed i18n, React and Atlas reconciler versions
+in `release.json.dependencies` and in its automatic import URLs. Dependency pins are
+included in the build ID, so a pin change produces a new trusted descriptor.
+
+Distribution diagnostics are available on demand through `pnpm i18n:artifacts`,
+using existing package/browser builds to check packed consumers, shared runtime
+identity, plugin integration and Chromium integrity handling. This uses local
+modules for unpublished dependencies and does not prove live CDN availability.
+For an exact published version, `pnpm i18n:cdn <version>` checks the real
+jsDelivr/esm.sh assets. These commands are optional diagnostics, not additional
+pull-request or release workflows.
 
 ### Integrity and version selection
 
@@ -192,7 +334,7 @@ import * as translation from "@manifest-editor/translation";
   resource="https://wellcomelibrary.org/iiif/b18035723/manifest"
   plugins={[translation]}
   enabledPlugins={["@manifest-editor/translation"]}
-/>
+/>;
 ```
 
 Install the plugin separately. Plugin-specific service/runtime settings may also be required. The manifest preset already includes annotations and the canvas-label generator; enable or disable those by ID without registering duplicates.
@@ -203,35 +345,36 @@ For custom layouts or the exhibition preset, compose the providers from `manifes
 
 ### Component props
 
-| Prop | Purpose |
-| --- | --- |
-| `resource` | Required manifest URL or `{ id, type: "Manifest" \| "Collection" }`. |
-| `data` | Optional source JSON to load instead of fetching. |
-| `vault` | Host-owned Vault; otherwise the component uses an existing context or its fallback Vault. |
-| `config`, `saveConfig` | Editor preferences and their persistence callback. |
-| `plugins` | Additional plugin modules or mapped/lazy plugin inputs. |
-| `enabledPlugins`, `disabledPlugins` | Plugin IDs to enable or disable. |
-| `globalPluginConfig`, `saveGlobalPluginConfig` | Shared plugin settings and persistence callback. |
-| `layoutMode` | `"default"` or `"focused"`. |
+| Prop                                           | Purpose                                                                                                  |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `resource`                                     | Required manifest URL or `{ id, type: "Manifest" \| "Collection" }`.                                     |
+| `data`                                         | Optional source JSON to load instead of fetching.                                                        |
+| `vault`                                        | Host-owned Vault; otherwise the component uses an existing context or its fallback Vault.                |
+| `localisation`                                 | Public Shell UI resources, locale metadata, loaders and runtime options; separate from persisted config. |
+| `config`, `saveConfig`                         | Editor preferences and their persistence callback.                                                       |
+| `plugins`                                      | Additional plugin modules or mapped/lazy plugin inputs.                                                  |
+| `enabledPlugins`, `disabledPlugins`            | Plugin IDs to enable or disable.                                                                         |
+| `globalPluginConfig`, `saveGlobalPluginConfig` | Shared plugin settings and persistence callback.                                                         |
+| `layoutMode`                                   | `"default"` or `"focused"`.                                                                              |
 
 ### Package entry points
 
-| Import | Exports |
-| --- | --- |
-| `manifest-editor` | `ManifestEditor`, its props, and selected config/plugin types. |
-| `manifest-editor/shell` | Providers, layouts, plugin APIs, and host configuration. |
-| `manifest-editor/components` | Reusable UI components and icons. |
-| `manifest-editor/editor-api`, `manifest-editor/creator-api` | Editing and resource-creation APIs. |
-| `manifest-editor/editors`, `manifest-editor/creators` | Built-in editor and creator definitions. |
-| `manifest-editor/manifest-preset` | Manifest preset module; use `mapApp` for shell composition. |
-| `manifest-editor/collection-preset`, `manifest-editor/exhibition-preset` | Mapped collection/exhibition app definitions. |
-| `manifest-editor/vault` | `react-iiif-vault` providers and hooks. |
-| `manifest-editor/helpers` | `@iiif/helpers`, including `Vault`. |
-| `manifest-editor/parser` | `@iiif/parser` exports. |
-| `manifest-editor/remote` | Release catalog, resolver, integrity loader, and browser runtime types. |
-| `manifest-editor/index.css`, `manifest-editor/reset.css` | Editor stylesheet and optional global reset. |
+| Import                                                                   | Exports                                                                 |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `manifest-editor`                                                        | `ManifestEditor`, its props, and selected config/plugin types.          |
+| `manifest-editor/shell`                                                  | Providers, layouts, plugin APIs, and host configuration.                |
+| `manifest-editor/components`                                             | Reusable UI components and icons.                                       |
+| `manifest-editor/editor-api`, `manifest-editor/creator-api`              | Editing and resource-creation APIs.                                     |
+| `manifest-editor/editors`, `manifest-editor/creators`                    | Built-in editor and creator definitions.                                |
+| `manifest-editor/manifest-preset`                                        | Manifest preset module; use `mapApp` for shell composition.             |
+| `manifest-editor/collection-preset`, `manifest-editor/exhibition-preset` | Mapped collection/exhibition app definitions.                           |
+| `manifest-editor/vault`                                                  | `react-iiif-vault` providers and hooks.                                 |
+| `manifest-editor/helpers`                                                | `@iiif/helpers`, including `Vault`.                                     |
+| `manifest-editor/parser`                                                 | `@iiif/parser` exports.                                                 |
+| `manifest-editor/remote`                                                 | Release catalog, resolver, integrity loader, and browser runtime types. |
+| `manifest-editor/index.css`, `manifest-editor/reset.css`                 | Editor stylesheet and optional global reset.                            |
 
-The CDN runtime returns `ManifestEditor`, `Vault`, `runtimeApiVersion`, and namespaces named `shell`, `components`, `creators`, `creatorApi`, `editorApi`, `manifestPreset`, `collectionPreset`, `exhibitionPreset`, and `vault`. Its namespace layout differs from npm subpath imports.
+The CDN runtime returns `ManifestEditor`, `Vault`, `runtimeApiVersion`, `i18n`, `i18nCore`, and namespaces named `shell`, `components`, `creators`, `creatorApi`, `editorApi`, `manifestPreset`, `collectionPreset`, `exhibitionPreset`, and `vault`. Its namespace layout differs from npm subpath imports.
 
 ![Manifest Editor screenshot](https://raw.githubusercontent.com/digirati-co-uk/iiif-manifest-editor/main/apps/docs/content/img/manifest-editor.png)
 

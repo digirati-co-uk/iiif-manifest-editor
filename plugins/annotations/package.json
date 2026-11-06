@@ -45,7 +45,8 @@
     "@manifest-editor/shell": "workspace:*",
     "react": "catalog:",
     "react-iiif-vault": "catalog:",
-    "zustand": "catalog:"
+    "zustand": "catalog:",
+    "@manifest-editor/i18n": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "catalog:",

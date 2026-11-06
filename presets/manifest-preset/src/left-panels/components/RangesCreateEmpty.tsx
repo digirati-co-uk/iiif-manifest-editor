@@ -1,7 +1,9 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, AddIcon, Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useInlineCreator, useManifestEditor } from "@manifest-editor/shell";
 
 export function RangeCreateEmpty() {
+  const t = useTranslations("manifest");
   const { ref, structural } = useManifestEditor();
   const creator = useInlineCreator();
 
@@ -18,7 +20,7 @@ export function RangeCreateEmpty() {
       },
       {
         rootId: ref().id,
-      },
+      }
     );
 
     creator.create(
@@ -33,18 +35,18 @@ export function RangeCreateEmpty() {
           property: "structures",
           resource: ref(),
         },
-      },
+      }
     );
   };
 
   return (
     <Sidebar>
       <SidebarHeader
-        title="Ranges"
+        title={t("panels.ranges")}
         actions={[
           {
             icon: <AddIcon className="text-2xl" />,
-            title: "Add range",
+            title: t("workflow.addRange"),
             disabled: true,
             onClick: () => void 0,
           },
@@ -52,13 +54,10 @@ export function RangeCreateEmpty() {
       />
       <SidebarContent>
         <div className="flex flex-col items-center justify-center p-4">
-          <div className="p-4 opacity-50 text-center">
-            This manifest does not yet have a range(s). If you want to offer navigation, such as a table of contents,
-            you can create a range.
-          </div>
+          <div className="p-4 opacity-50 text-center">{t("workflow.createRangeHelp")}</div>
 
           <ActionButton large primary onPress={() => createTopLevelRange()}>
-            <AddIcon className="text-xl" /> Create new range
+            <AddIcon className="text-xl" /> {t("workflow.createNewRange")}
           </ActionButton>
         </div>
       </SidebarContent>

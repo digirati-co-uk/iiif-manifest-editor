@@ -1,3 +1,5 @@
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import type { ReactNode } from "react";
 import { canvasSizePresets } from "@manifest-editor/editor-api";
 
@@ -18,6 +20,7 @@ export function CanvasImageMode({
   onSwitchToSingle: () => void;
   children: ReactNode;
 }) {
+  const t = useTranslations("editors");
   const linkStyle = {
     color: PRIMARY,
     outlineColor: PRIMARY,
@@ -38,9 +41,9 @@ export function CanvasImageMode({
           className={`${focusRing} self-start text-sm font-medium hover:underline`}
           style={linkStyle}
         >
-          Switch to multi-image layout
+          {t("ui.switchToMultiimageLayout")}
         </button>
-        <p style={noteStyle}>Shrinks and centres the image so more images can share this canvas.</p>
+        <p style={noteStyle}>{t("ui.shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas")}</p>
       </div>
     );
   }
@@ -56,9 +59,9 @@ export function CanvasImageMode({
             className={`${focusRing} self-start text-sm font-medium hover:underline`}
             style={linkStyle}
           >
-            Switch to single image
+            {t("ui.switchToSingleImage")}
           </button>
-          <p style={noteStyle}>Fits the canvas to the image and clears empty placeholders.</p>
+          <p style={noteStyle}>{t("ui.fitsTheCanvasToTheImageAndClearsEmptyPlaceholders")}</p>
         </div>
       ) : null}
     </div>
@@ -72,18 +75,20 @@ export function CanvasShapePicker({
   aspectRatio: number;
   onChange: (preset: { columns: number; rows: number; label: string }) => void;
 }) {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   return (
-    <fieldset aria-label="Canvas shape" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+    <fieldset aria-label={t("ui.canvasShape")} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
       {canvasSizePresets.map((preset) => {
         const active = Math.abs(preset.columns / preset.rows - aspectRatio) < 0.01;
         const w = preset.columns >= preset.rows ? 28 : Math.round((28 * preset.columns) / preset.rows);
         const h = preset.columns >= preset.rows ? Math.round((28 * preset.rows) / preset.columns) : 28;
         return (
           <button
-            key={preset.label}
+            key={apiLabel(preset)}
             type="button"
-            title={preset.label}
-            aria-label={preset.label}
+            title={apiLabel(preset)}
+            aria-label={apiLabel(preset)}
             aria-pressed={active}
             onClick={() => onChange(preset)}
             className={`${focusRing} flex flex-col items-center`}

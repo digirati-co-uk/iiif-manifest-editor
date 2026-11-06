@@ -1,0 +1,569 @@
+[
+  {
+    "id": "02-editor-api",
+    "path": "packages/editor-api",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 43,
+      "linesScanned": 3685,
+      "candidateOccurrences": 80,
+      "distinctCandidateTexts": 80,
+      "filesWithCandidates": 7,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 44,
+      "linesScanned": 4063,
+      "candidateOccurrences": 81,
+      "distinctCandidateTexts": 81,
+      "filesWithCandidates": 8,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "03-creator-api",
+    "path": "packages/creator-api",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 10,
+      "linesScanned": 1417,
+      "candidateOccurrences": 8,
+      "distinctCandidateTexts": 7,
+      "filesWithCandidates": 3,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 10,
+      "linesScanned": 1417,
+      "candidateOccurrences": 8,
+      "distinctCandidateTexts": 7,
+      "filesWithCandidates": 3,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "04-components",
+    "path": "packages/components",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 103,
+      "linesScanned": 4520,
+      "candidateOccurrences": 23,
+      "distinctCandidateTexts": 23,
+      "filesWithCandidates": 17,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 107,
+      "linesScanned": 4732,
+      "candidateOccurrences": 104,
+      "distinctCandidateTexts": 54,
+      "filesWithCandidates": 21,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "05-ui",
+    "path": "packages/ui",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 210,
+      "linesScanned": 10301,
+      "candidateOccurrences": 184,
+      "distinctCandidateTexts": 145,
+      "filesWithCandidates": 46,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 214,
+      "linesScanned": 10489,
+      "candidateOccurrences": 205,
+      "distinctCandidateTexts": 165,
+      "filesWithCandidates": 50,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "06-shell",
+    "path": "packages/shell",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 96,
+      "linesScanned": 17688,
+      "candidateOccurrences": 208,
+      "distinctCandidateTexts": 190,
+      "filesWithCandidates": 30,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 110,
+      "linesScanned": 20492,
+      "candidateOccurrences": 291,
+      "distinctCandidateTexts": 239,
+      "filesWithCandidates": 42,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "07-editors",
+    "path": "packages/editors",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 169,
+      "linesScanned": 16270,
+      "candidateOccurrences": 400,
+      "distinctCandidateTexts": 291,
+      "filesWithCandidates": 77,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 182,
+      "linesScanned": 17228,
+      "candidateOccurrences": 425,
+      "distinctCandidateTexts": 314,
+      "filesWithCandidates": 83,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "08-creators",
+    "path": "packages/creators",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 58,
+      "linesScanned": 4314,
+      "candidateOccurrences": 116,
+      "distinctCandidateTexts": 92,
+      "filesWithCandidates": 45,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 59,
+      "linesScanned": 4379,
+      "candidateOccurrences": 116,
+      "distinctCandidateTexts": 92,
+      "filesWithCandidates": 45,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "09-projects",
+    "path": "packages/projects",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 20,
+      "linesScanned": 1424,
+      "candidateOccurrences": 13,
+      "distinctCandidateTexts": 13,
+      "filesWithCandidates": 5,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 20,
+      "linesScanned": 1424,
+      "candidateOccurrences": 13,
+      "distinctCandidateTexts": 13,
+      "filesWithCandidates": 5,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "10-manifest-preset",
+    "path": "presets/manifest-preset",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 45,
+      "linesScanned": 12718,
+      "candidateOccurrences": 440,
+      "distinctCandidateTexts": 356,
+      "filesWithCandidates": 35,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 49,
+      "linesScanned": 13154,
+      "candidateOccurrences": 445,
+      "distinctCandidateTexts": 360,
+      "filesWithCandidates": 38,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "11-collection-preset",
+    "path": "presets/collection-preset",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 8,
+      "linesScanned": 622,
+      "candidateOccurrences": 27,
+      "distinctCandidateTexts": 23,
+      "filesWithCandidates": 7,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 8,
+      "linesScanned": 622,
+      "candidateOccurrences": 27,
+      "distinctCandidateTexts": 23,
+      "filesWithCandidates": 7,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "12-exhibition-preset",
+    "path": "presets/exhibition-preset",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 78,
+      "linesScanned": 16160,
+      "candidateOccurrences": 573,
+      "distinctCandidateTexts": 423,
+      "filesWithCandidates": 54,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 100,
+      "linesScanned": 18385,
+      "candidateOccurrences": 588,
+      "distinctCandidateTexts": 430,
+      "filesWithCandidates": 58,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "13-plugin-annotations",
+    "path": "plugins/annotations",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 15,
+      "linesScanned": 2201,
+      "candidateOccurrences": 60,
+      "distinctCandidateTexts": 50,
+      "filesWithCandidates": 12,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 18,
+      "linesScanned": 3071,
+      "candidateOccurrences": 63,
+      "distinctCandidateTexts": 53,
+      "filesWithCandidates": 14,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "14-plugin-canvas-label-generator",
+    "path": "plugins/canvas-label-generator",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 5,
+      "linesScanned": 1645,
+      "candidateOccurrences": 67,
+      "distinctCandidateTexts": 63,
+      "filesWithCandidates": 5,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 7,
+      "linesScanned": 2042,
+      "candidateOccurrences": 69,
+      "distinctCandidateTexts": 65,
+      "filesWithCandidates": 6,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "15-plugin-ocr-classification",
+    "path": "plugins/ocr-classification",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 9,
+      "linesScanned": 1050,
+      "candidateOccurrences": 38,
+      "distinctCandidateTexts": 37,
+      "filesWithCandidates": 6,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 11,
+      "linesScanned": 1471,
+      "candidateOccurrences": 49,
+      "distinctCandidateTexts": 39,
+      "filesWithCandidates": 8,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "16-plugin-ocr-docling",
+    "path": "plugins/ocr-docling",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 20,
+      "linesScanned": 3337,
+      "candidateOccurrences": 55,
+      "distinctCandidateTexts": 51,
+      "filesWithCandidates": 10,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 25,
+      "linesScanned": 4454,
+      "candidateOccurrences": 66,
+      "distinctCandidateTexts": 60,
+      "filesWithCandidates": 13,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "17-plugin-specifications",
+    "path": "plugins/specifications",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 1,
+      "linesScanned": 594,
+      "candidateOccurrences": 32,
+      "distinctCandidateTexts": 26,
+      "filesWithCandidates": 1,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 1,
+      "linesScanned": 594,
+      "candidateOccurrences": 32,
+      "distinctCandidateTexts": 26,
+      "filesWithCandidates": 1,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "18-plugin-translation",
+    "path": "plugins/translation",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 22,
+      "linesScanned": 5293,
+      "candidateOccurrences": 216,
+      "distinctCandidateTexts": 185,
+      "filesWithCandidates": 9,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 29,
+      "linesScanned": 6583,
+      "candidateOccurrences": 236,
+      "distinctCandidateTexts": 197,
+      "filesWithCandidates": 13,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "19-manifest-editor",
+    "path": "packages/manifest-editor",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 21,
+      "linesScanned": 642,
+      "candidateOccurrences": 26,
+      "distinctCandidateTexts": 25,
+      "filesWithCandidates": 5,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 23,
+      "linesScanned": 807,
+      "candidateOccurrences": 28,
+      "distinctCandidateTexts": 27,
+      "filesWithCandidates": 6,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "20-web",
+    "path": "apps/web",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 73,
+      "linesScanned": 6683,
+      "candidateOccurrences": 326,
+      "distinctCandidateTexts": 244,
+      "filesWithCandidates": 39,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 80,
+      "linesScanned": 6981,
+      "candidateOccurrences": 340,
+      "distinctCandidateTexts": 258,
+      "filesWithCandidates": 43,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "21-vite-example",
+    "path": "apps/vite-example",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 2,
+      "linesScanned": 24,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 2,
+      "linesScanned": 24,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "22-storybook",
+    "path": "packages/storybook",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 0,
+      "linesScanned": 0,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 36,
+      "linesScanned": 3398,
+      "candidateOccurrences": 320,
+      "distinctCandidateTexts": 311,
+      "filesWithCandidates": 32,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "23-playwright",
+    "path": "packages/playwright",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 0,
+      "linesScanned": 0,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 14,
+      "linesScanned": 1988,
+      "candidateOccurrences": 4,
+      "distinctCandidateTexts": 4,
+      "filesWithCandidates": 3,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "24-client-vault",
+    "path": "packages/client-vault",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 5,
+      "linesScanned": 290,
+      "candidateOccurrences": 1,
+      "distinctCandidateTexts": 1,
+      "filesWithCandidates": 1,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 5,
+      "linesScanned": 290,
+      "candidateOccurrences": 1,
+      "distinctCandidateTexts": 1,
+      "filesWithCandidates": 1,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "25-server-vault",
+    "path": "packages/server-vault",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 3,
+      "linesScanned": 317,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 3,
+      "linesScanned": 317,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "26-iiif-preview-server",
+    "path": "packages/iiif-preview-server",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 10,
+      "linesScanned": 763,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 10,
+      "linesScanned": 763,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "27-docs",
+    "path": "apps/docs",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 0,
+      "linesScanned": 0,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 10,
+      "linesScanned": 294,
+      "candidateOccurrences": 26,
+      "distinctCandidateTexts": 26,
+      "filesWithCandidates": 6,
+      "parseErrors": 0
+    }
+  },
+  {
+    "id": "28-typescript-config",
+    "path": "internal-packages/typescript-config",
+    "revision": "66de064a5d217b7847db924db925b092b36a0eed",
+    "primary": {
+      "filesScanned": 0,
+      "linesScanned": 0,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    },
+    "includingSupportingSource": {
+      "filesScanned": 0,
+      "linesScanned": 0,
+      "candidateOccurrences": 0,
+      "distinctCandidateTexts": 0,
+      "filesWithCandidates": 0,
+      "parseErrors": 0
+    }
+  }
+]

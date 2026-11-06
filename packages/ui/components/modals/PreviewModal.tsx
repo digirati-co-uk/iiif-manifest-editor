@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Input, InputLabel } from "../../editors/Input";
 import { Button, CalltoButton } from "../../atoms/Button";
 import { CloseIcon } from "../../icons/CloseIcon";
@@ -19,33 +20,31 @@ export const PreviewModal: React.FC<{
   value: boolean;
   link: string;
 }> = ({ manifest, onChange, close, value, link }) => {
+  const t = useTranslations("ui");
   return (
     <>
       <ModalBackground />
       <ModalContainer>
         <FlexContainerColumn justify={"flex-start"}>
           <FlexContainerRow justify={"space-between"}>
-            <h3>Preview IIIF Manifest</h3>
-            <Button aria-label="close" onClick={close}>
+            <h3>{t("preview.title")}</h3>
+            <Button aria-label={t("actions.close")} onClick={close}>
               <CloseIcon />
             </Button>
           </FlexContainerRow>
-          <p>A preview of this Manifest is now available at: </p>
+          <p>{t("preview.available")}</p>
           <CopyURL manifest={manifest} link={link} />
           <p>
-            <small>
-              This preview will expire in 48 hours. For a permanent version, select Permalink from the File / Save As
-              menu option.
-            </small>
+            <small>{t("preview.expiry")}</small>
           </p>
           <FlexContainerRow justify={"space-between"}>
             <InputLabel>
               <Input type={"checkbox"} checked={value} onChange={(e: any) => onChange(e.target.value)} />
-              <span>Don't show this again</span>
+              <span>{t("preview.hide")}</span>
             </InputLabel>
-            <CalltoButton aria-label="preview">
+            <CalltoButton aria-label={t("preview.action")}>
               <Link href={link} target={"_blank"} rel="noreferrer" onClick={close}>
-                PREVIEW
+                {t("preview.action")}
               </Link>
             </CalltoButton>
           </FlexContainerRow>

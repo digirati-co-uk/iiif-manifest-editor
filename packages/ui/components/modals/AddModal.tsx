@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Input } from "../../editors/Input";
 import { Button } from "../../atoms/Button";
 import { CloseIcon } from "../../icons/CloseIcon";
@@ -12,6 +13,7 @@ export const AddModal: React.FC<{
   // onChange: any;
   close: any;
 }> = ({ manifest, close }) => {
+  const t = useTranslations("ui");
   const [inputValue, setInputValue] = useState(manifest);
 
   const onChange = () => {
@@ -22,12 +24,12 @@ export const AddModal: React.FC<{
     <>
       <ModalBackground />
       <ModalContainer>
-        <h2>Something</h2>
+        <h2>{t("load.manifest")}</h2>
         <Input placeholder={manifest} onChange={(e: any) => setInputValue(e.target.value)} />
-        <Button aria-label="load manifest" onClick={() => onChange()}>
-          Load Manifest
+        <Button aria-label={t("load.manifest")} onClick={() => onChange()}>
+          {t("load.manifest")}
         </Button>
-        <Button aria-label="close icon" onClick={close}>
+        <Button aria-label={t("actions.close")} onClick={close}>
           <CloseIcon />
         </Button>
       </ModalContainer>

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
@@ -47,13 +48,15 @@ export async function createProvider(data: CreateProviderPayload, ctx: CreatorFu
 }
 
 export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const initialData = props.options.initialData as Partial<CreateProviderPayload>;
   const [url, setUrl] = useState(initialData.url || "");
   const [label, setLabel] = useState(initialData.label || ({ en: [""] } as InternationalString));
   const [homepage, setHomepage] = useState(initialData.homepage || "");
   const [logo, setLogo] = useState(initialData.logo || "");
   const [homepageLabel, setHomepageLabel] = useState(
-    initialData.homepageLabel || ({ en: [""] } as InternationalString),
+    initialData.homepageLabel || ({ en: [""] } as InternationalString)
   );
 
   const onSubmit = () => {
@@ -72,13 +75,13 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
         <LanguageFieldEditor
           containerId={"label"}
           focusId={"label_"}
-          label={"Label"}
+          label={property("fields.label")}
           fields={label}
           onSave={(e: any) => setLabel(e.toInternationalString())}
         />
 
         <InputContainer $fluid>
-          <InputLabel htmlFor="provider-logo">Logo</InputLabel>
+          <InputLabel htmlFor="provider-logo">{property("fields.logo")}</InputLabel>
           <Input
             placeholder="https://example.org/logo.png"
             type="text"
@@ -89,7 +92,7 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
         </InputContainer>
 
         <InputContainer $fluid>
-          <InputLabel htmlFor="provider-homepage">Homepage</InputLabel>
+          <InputLabel htmlFor="provider-homepage">{property("fields.homepage")}</InputLabel>
           <Input
             placeholder="https://example.org/homepage"
             type="text"
@@ -104,7 +107,7 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
             <LanguageFieldEditor
               containerId={"homepageLabel"}
               focusId={"homepageLabel_"}
-              label={"Homepage label"}
+              label={t("form.homepageLabel")}
               fields={homepageLabel}
               onSave={(e: any) => setHomepageLabel(e.toInternationalString())}
             />
@@ -113,11 +116,9 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
 
         <InputContainer $fluid>
           <InputLabel $margin={false} htmlFor="provider-url">
-            Provider ID
+            {t("form.providerId")}
           </InputLabel>
-          <span className="text-gray-500 text-sm mb-2">
-            Will be generated if not specified, this is not a URL that the user can follow
-          </span>
+          <span className="text-gray-500 text-sm mb-2">{t("form.providerIdHelp")}</span>
           <Input
             placeholder="https://id.loc.gov/authorities/abc123"
             type="text"
@@ -128,7 +129,7 @@ export function CreateProviderForm(props: CreatorContext<CreateProviderPayload>)
         </InputContainer>
 
         <ActionButton primary large type="button" onPress={onSubmit}>
-          Add provider
+          {t("form.addProvider")}
         </ActionButton>
       </div>
     </PaddedSidebarContainer>

@@ -1,3 +1,4 @@
+import { manifestMessage } from "./i18n";
 import { useInStack } from "@manifest-editor/editors";
 import {
   type BackgroundPanel,
@@ -19,6 +20,7 @@ import { getSearchParam, replaceSearchParam } from "./query-string-state";
 export const queryStringTask: BackgroundPanel = {
   id: "manifest-query-string",
   label: "Query string",
+  labelMessage: manifestMessage("workflow.queryString"),
   render: () => <QueryStringBackgroundTask />,
 };
 
@@ -26,25 +28,14 @@ function QueryStringBackgroundTask() {
   const manifest = useManifest();
   const canvas = useInStack("Canvas");
   const { leftPanel, rightPanel } = useLayoutState();
-  const {
-    edit,
-    leftPanel: leftPanelActions,
-    rightPanel: rightPanelActions,
-  } = useLayoutActions();
+  const { edit, leftPanel: leftPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const { centerPanels, leftPanels } = useAvailableLayouts();
   const { canvasActions, open } = useEditCanvasItems();
-  const {
-    urlState,
-    editorFeatureFlags: {
-      rememberCanvasId = true,
-      rememberLeftPanelId = false,
-    } = {},
-  } = useConfig();
+  const { urlState, editorFeatureFlags: { rememberCanvasId = true, rememberLeftPanelId = false } = {} } = useConfig();
   const lastCanvas = useRef<string | null>(null);
   const lastLeftPanel = useRef<string | null>(null);
   const isLeftPanelOpen = leftPanel.open;
-  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] =
-    useState(false);
+  const [wasLeftPanelOpenedAutomatically, setWasLeftPanelOpenedAutomatically] = useState(false);
 
   useEffect(() => {
     if (isLeftPanelOpen) {
@@ -138,11 +129,7 @@ function QueryStringBackgroundTask() {
 
     const shouldOpenRightPanel = leftPanel.current !== rangesPanel.id;
 
-    if (
-      !rightPanel.open &&
-      shouldOpenRightPanel &&
-      wasLeftPanelOpenedAutomatically
-    ) {
+    if (!rightPanel.open && shouldOpenRightPanel && wasLeftPanelOpenedAutomatically) {
       rightPanelActions.open();
       setWasLeftPanelOpenedAutomatically(false);
     }

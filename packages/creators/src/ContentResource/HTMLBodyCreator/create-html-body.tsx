@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { InputContainer, InputLabel, RichTextLanguageField } from "@manifest-editor/editors";
@@ -20,6 +21,7 @@ export async function createHtmlBody(data: CreateHTMLBodyPayload, ctx: CreatorFu
 }
 
 export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>) {
+  const common = useTranslations("common");
   const { i18n } = useConfig();
   const [body, setBodyValue] = useState<string>(props.options.initialData?.body ?? "<p></p>");
   const [language, setLang] = useState<string>(props.options.initialData?.language ?? i18n.defaultLanguage);
@@ -36,7 +38,7 @@ export function CreateHTMLBodyForm(props: CreatorContext<CreateHTMLBodyPayload>)
       <HTMLEditor value={body} onChange={(newValue) => setBodyValue(newValue)} />
 
       <ActionButton primary large type="button" onPress={onSubmit}>
-        Create
+        {common("actions.create")}
       </ActionButton>
     </PaddedSidebarContainer>
   );

@@ -13,7 +13,9 @@ declare module "@manifest-editor/creator-api" {
 export const imageUrlListCreator = defineCreator({
   id: "@manifest-editor/image-url-list",
   label: "Multiple images",
+  labelMessage: { namespace: "creators", key: "definitions.imageList.label" },
   summary: "Add several images using one direct image link per line.",
+  summaryMessage: { namespace: "creators", key: "definitions.imageList.summary" },
   create: createImageUrlList,
   icon: <ImageListIcon />,
   render(ctx) {

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   type BoxSelector,
   createPaintingAnnotationsHelper,
@@ -41,11 +42,16 @@ export function LazyThumbnail({
 }) {
   return (
     <LazyLoadComponent>
-      <ErrorBoundary fallback={<div />}>
+      <ErrorBoundary fallback={<ThumbnailError />}>
         <LazyThumbnailOuter cover={cover} fade={fade} region={region} singleImage={singleImage} />
       </ErrorBoundary>
     </LazyLoadComponent>
   );
+}
+
+function ThumbnailError() {
+  const t = useTranslations("components");
+  return <div className="text-black/60">{t("errors.thumbnail")}</div>;
 }
 
 const renderCache = new Map<string, string>();
@@ -62,10 +68,8 @@ export function useCanvasRenderingStrategy() {
   const helper = useMemo(() => createPaintingAnnotationsHelper(vault), [vault]);
   const paintables = useMemo(
     () =>
-      helper.getPaintables(
-        annotations.filter((annotation) => paintingAnnotationTargetsCanvas(annotation, canvas?.id)),
-      ),
-    [annotations, canvas?.id, helper],
+      helper.getPaintables(annotations.filter((annotation) => paintingAnnotationTargetsCanvas(annotation, canvas?.id))),
+    [annotations, canvas?.id, helper]
   );
 
   return useMemo(
@@ -77,7 +81,7 @@ export function useCanvasRenderingStrategy() {
         loadImageService,
         vault,
       }),
-    [canvas, loadImageService, paintables, vault],
+    [canvas, loadImageService, paintables, vault]
   );
 }
 
@@ -120,7 +124,7 @@ function isValidImageApiRegion(region: unknown) {
 export function shouldUseComplexCanvasThumbnail(
   strategy: any,
   resolveBody: (body: any) => any = (body) => body,
-  region?: ThumbnailRegion,
+  region?: ThumbnailRegion
 ) {
   if (strategy.type !== "images") return false;
   if (strategy.images.length > 1 || region) return true;
@@ -178,7 +182,7 @@ function LazyThumbnailOuter({
   const useComplexThumbnail = shouldUseComplexCanvasThumbnail(
     strategy,
     (body) => (body?.id ? vault.get(body, { skipSelfReturn: false } as any) : body) || body,
-    region,
+    region
   );
 
   if (useComplexThumbnail) {
@@ -235,7 +239,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
         }
       }
     },
-    [isCached],
+    [isCached]
   );
 
   return (
@@ -255,7 +259,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
         <div
           className={twMerge(
             "absolute inset-0 flex items-center justify-center bg-me-gray-100 text-2xl z-10",
-            fade && "animate-fadeIn",
+            fade && "animate-fadeIn"
           )}
         >
           <Spinner />
@@ -266,6 +270,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
 }
 
 function ThumbnailFallback() {
+  const t = useTranslations("components");
   const strategy = useCanvasRenderingStrategy();
 
   if (strategy.type === "textual-content") {
@@ -278,7 +283,7 @@ function ThumbnailFallback() {
 
   return (
     <div className="text-black/60 flex items-center justify-center h-full bg-me-gray-100 animate-fadeInDelayed absolute inset-0">
-      No thumbnail
+      {t("empty.thumbnail")}
     </div>
   );
 }
@@ -345,7 +350,7 @@ function ComplexCanvasThumbnail({
         !shouldUseComplexCanvasThumbnail(
           strategy,
           (body) => (body?.id ? vault.get(body, { skipSelfReturn: false } as any) : body) || body,
-          region,
+          region
         )
       ) {
         return;
@@ -428,7 +433,7 @@ function ComplexCanvasThumbnail({
       <div
         className={twMerge(
           "absolute inset-0 flex items-center justify-center bg-me-gray-100 text-2xl z-10",
-          fade && "animate-fadeIn",
+          fade && "animate-fadeIn"
         )}
       >
         <Spinner />
@@ -460,7 +465,7 @@ function ComplexCanvasThumbnail({
                   left: `${((image.target.spatial.x - (state.region?.x || 0)) / (state.region?.width || canvas.width)) * 100}%`,
                 }}
               >
-                <img className="w-full h-full object-cover select-none" src={image.image.id} />
+                <img alt="" className="w-full h-full object-cover select-none" src={image.image.id} />
               </div>
             );
           })

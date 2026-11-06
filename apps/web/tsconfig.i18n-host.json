@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.i18n.json",
+  "include": [
+    "cloudflare-env.d.ts",
+    "src/i18n/policy.ts",
+    "src/i18n/resources.ts",
+    "src/i18n/WebI18nProvider.tsx",
+    "src/components/site/LanguageMenu.tsx",
+    "src/components/site/HeaderLanguageMenu.tsx",
+    "test/WebI18n.test.tsx",
+    "test/LanguageMenu.test.tsx",
+    "test/AdditionalLanguages.test.tsx",
+    "test/LazyResources.test.tsx",
+    "test/HostUI.test.tsx"
+  ]
+}

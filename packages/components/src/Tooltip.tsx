@@ -1,3 +1,4 @@
+import { EditorI18nScope } from "@manifest-editor/i18n";
 import type { Placement, UseInteractionsReturn } from "@floating-ui/react";
 import {
   autoUpdate,
@@ -158,16 +159,18 @@ export const TooltipContent = React.forwardRef<
 
   return (
     <FloatingPortal root={rootEl}>
-      <div className="manifest-editor">
-        <div
-          ref={ref}
-          style={{
-            ...context.floatingStyles,
-            ...style,
-          }}
-          {...context.getFloatingProps(props)}
-        />
-      </div>
+      <EditorI18nScope>
+        <div className="manifest-editor">
+          <div
+            ref={ref}
+            style={{
+              ...context.floatingStyles,
+              ...style,
+            }}
+            {...context.getFloatingProps(props)}
+          />
+        </div>
+      </EditorI18nScope>
     </FloatingPortal>
   );
 });

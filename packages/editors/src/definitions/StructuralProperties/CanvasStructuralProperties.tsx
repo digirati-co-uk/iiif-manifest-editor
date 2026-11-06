@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { CanvasCaptions } from "../../components/CanvasCaptions/CanvasCaptions";
 import { ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
@@ -7,6 +8,8 @@ import { PaintingAnnotationList } from "../../components/PaintingAnnotationList/
 import { createAppActions } from "../../helpers/create-app-actions";
 
 export function CanvasStructuralProperties() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const resource = useEditingResource();
   const { technical, structural } = useEditor();
   const { items, annotations } = structural;
@@ -20,7 +23,7 @@ export function CanvasStructuralProperties() {
   return (
     <PaddedSidebarContainer>
       {unsupported ? (
-        <ErrorMessage className="mb-2">Multiple painting annotation pages are not supported.</ErrorMessage>
+        <ErrorMessage className="mb-2">{t("ui.multiplePaintingAnnotationPagesAreNotSupported")}</ErrorMessage>
       ) : null}
       <CanvasContext canvas={technical.id.get()}>
         <AnnotationPageContext annotationPage={page.id}>
@@ -31,13 +34,13 @@ export function CanvasStructuralProperties() {
 
         <LinkingPropertyList
           containerId={annotations.containerId()}
-          label="Annotations"
+          label={t("ui.annotations")}
           property="annotations"
           items={annotations.get()}
           reorder={(ctx) => annotations.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(annotations)}
+          createActions={createAppActions(annotations, undefined, t, commonT)}
           creationType="AnnotationPage"
-          emptyLabel="No annotations"
+          emptyLabel={t("ui.noAnnotations")}
           parent={resource?.resource}
         />
       </CanvasContext>

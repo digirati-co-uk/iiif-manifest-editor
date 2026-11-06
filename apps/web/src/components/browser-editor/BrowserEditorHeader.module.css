@@ -3,7 +3,7 @@
   width: 100%;
   min-height: 176px;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 56px 56px 64px;
+  grid-template-rows: 56px 56px minmax(64px, auto);
   align-items: center;
 }
 
@@ -26,6 +26,7 @@
   grid-column: 1;
   grid-row: 3;
   min-width: 0;
+  padding-block: 8px;
 }
 
 @media (min-width: 1024px) {
@@ -45,6 +46,7 @@
   .actions {
     grid-column: 3;
     grid-row: 1;
+    padding-block: 0;
   }
 }
 
@@ -53,6 +55,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* These controls also appear outside the header with their own spacing. */
@@ -63,8 +66,7 @@
 }
 
 .actionButtons > button,
-.actionButtons > div > button[aria-label="Actions menu"],
-.actionButtons > div > button[aria-label="Download manifest"] {
+.actionButtons > div > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -79,8 +81,7 @@
 }
 
 .actionButtons > button > svg,
-.actionButtons > div > button[aria-label="Actions menu"] > svg,
-.actionButtons > div > button[aria-label="Download manifest"] > svg {
+.actionButtons > div > button > svg {
   display: block;
   width: 22px;
   height: 22px;

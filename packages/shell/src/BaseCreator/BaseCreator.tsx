@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { NotebookCreatorSources } from "../Notebook/ProjectNotebook";
 import { toRef } from "@iiif/parser";
 import {
@@ -18,6 +19,7 @@ import {
   type CreatableResource,
   type CreatorDefinition,
   type CreatorOptions,
+  type CreatorValidationMessage,
   type CreatorResourceProbeHelpers,
   type CreatorResourceProbeResult,
   getCreatorConfigKey,
@@ -49,10 +51,14 @@ export const RenderCreator = memo(function RenderCreator(props: {
   /** The parent shows the summary; no-form creators render just their action. */
   compact?: boolean;
 }) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const vault = useVault();
   const { edit, modal, open } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | CreatorValidationMessage | null>(null);
   const creator = useInlineCreator();
   const config = useConfig();
   const isCreatingRef = useRef(false);
@@ -106,7 +112,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
               },
       });
     } catch (err: any) {
-      setError(err?.message || "Unknown error");
+      setError(
+        props.creator.validationErrorMessage?.(err, { payload, vault }) ||
+          err?.message || { message: { namespace: "shell", key: "creator.unknownError" } }
+      );
     } finally {
       setIsCreating(false);
       isCreatingRef.current = false;
@@ -130,7 +139,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const spinner = (
     <div className="flex flex-col items-center py-8">
       <div className="flex gap-2 items-center">
-        <Spinner /> <span>Loading</span>
+        <Spinner /> <span>{t("creator.loading")}</span>
       </div>
     </div>
   );
@@ -140,10 +149,12 @@ export const RenderCreator = memo(function RenderCreator(props: {
     if (props.compact) {
       return (
         <>
-          {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+          {error ? (
+            <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+          ) : null}
           <div className="flex justify-end">
             <ActionButton primary onPress={() => runCreate({})}>
-              {props.creator.actionButton || "Create"}
+              {resolveMessage(props.creator?.actionButtonMessage, props.creator.actionButton) || t("creator.create")}
             </ActionButton>
           </div>
         </>
@@ -151,9 +162,13 @@ export const RenderCreator = memo(function RenderCreator(props: {
     }
     return (
       <>
-        {error ? <ErrorMessage>{error}</ErrorMessage> : <EmptyState>No options available</EmptyState>}
+        {error ? (
+          <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+        ) : (
+          <EmptyState>{t("creator.noOptions")}</EmptyState>
+        )}
         <ActionButton primary onPress={() => runCreate({})}>
-          {props.creator.actionButton || "Create"}
+          {resolveMessage(props.creator?.actionButtonMessage, props.creator.actionButton) || t("creator.create")}
         </ActionButton>
       </>
     );
@@ -163,11 +178,15 @@ export const RenderCreator = memo(function RenderCreator(props: {
     <>
       {isCreating ? spinner : null}
       <div hidden={isCreating}>
-        {props.creator.summary && !props.compact && !props.creator.hideSummary ? (
+        {resolveMessage(props.creator.helpMessage || props.creator.summaryMessage, props.creator.summary) &&
+        !props.compact &&
+        !props.creator.hideSummary ? (
           <div className="flex justify-end px-4">
             <Tooltip>
               <TooltipTrigger
-                aria-label={`Help for ${props.creator.label}`}
+                aria-label={t("creator.help", {
+                  name: resolveMessage(props.creator.labelMessage, props.creator.label),
+                })}
                 className="rounded p-1 text-gray-500 focus-visible:outline focus-visible:outline-2"
               >
                 <InfoIcon className="h-5 w-5" />
@@ -176,15 +195,18 @@ export const RenderCreator = memo(function RenderCreator(props: {
                 className="max-w-xs"
                 root={document.getElementById("headlessui-portal-root") || undefined}
               >
-                {props.creator.summary}
+                {resolveMessage(props.creator.helpMessage || props.creator.summaryMessage, props.creator.summary)}
               </DefaultTooltipContent>
             </Tooltip>
           </div>
         ) : null}
-        {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+        {error ? (
+          <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+        ) : null}
         <Suspense fallback={spinner}>
           {props.creator.render({
             vault,
+            i18n: { resolveMessage },
             runCreate,
             validate,
             options,
@@ -197,6 +219,10 @@ export const RenderCreator = memo(function RenderCreator(props: {
 });
 
 export function BaseCreator(props: BaseCreatorProps) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const config = useConfig();
   const vault = useVault();
@@ -260,11 +286,11 @@ export function BaseCreator(props: BaseCreatorProps) {
   const current = supported.find((t) => t.id === currentId);
 
   useEffect(() => {
-    set?.(current?.label || "Add content");
+    set?.(resolveMessage(current?.labelMessage, current?.label) || t("creator.add"));
   });
 
   if (supported.length === 0) {
-    return <EmptyState>Not currently supported</EmptyState>;
+    return <EmptyState>{t("creator.unsupported")}</EmptyState>;
   }
 
   const selectCreator = (creator: CreatorDefinition, initialData?: Record<string, any>) => {
@@ -311,7 +337,7 @@ export function BaseCreator(props: BaseCreatorProps) {
             const result = await creator.supportsResource!(value, helpers, { vault, resource: props.resource });
             return result ? { creator, initialData: normaliseProbeResult(value, result).initialData } : null;
           } catch {
-            return { creator, error: "Could not check this link" };
+            return { creator, error: t("creator.probeFailed") };
           }
         };
         return Promise.race([probe(), timeout]);
@@ -337,10 +363,10 @@ export function BaseCreator(props: BaseCreatorProps) {
     setShowAll(true);
     setProbeError(
       timedOut
-        ? "Checking took too long. Try again or choose a content type."
+        ? "creator.timeout"
         : requestFailed || results.some(isProbeError)
-          ? "We couldn’t check this link. Try again or choose a content type."
-          : "We couldn’t identify content from this link. Try another link or choose a content type."
+          ? "creator.requestFailed"
+          : "creator.unrecognised"
     );
   };
 
@@ -348,7 +374,7 @@ export function BaseCreator(props: BaseCreatorProps) {
     <ModalBackSlot>
       <IconButton
         root={document.getElementById("headlessui-portal-root") || undefined}
-        label="Back to Add content options"
+        label={t("creator.back")}
         className="group"
         placement="right"
         onPress={() => {
@@ -393,8 +419,8 @@ export function BaseCreator(props: BaseCreatorProps) {
       compact={compact}
       items={items.map((item) => ({
         id: item.id,
-        title: item.label,
-        description: item.summary || "",
+        title: resolveMessage(item?.labelMessage, item.label),
+        description: resolveMessage(item?.summaryMessage, item.summary) || "",
         icon: item.icon,
         onClick: () => selectCreator(item, initialDataByCreator.get(item.id)),
       }))}
@@ -419,9 +445,9 @@ export function BaseCreator(props: BaseCreatorProps) {
             }}
           />
           <div role="status" aria-live="polite" className="text-sm text-gray-600">
-            {isProbing ? <span className="sr-only">Checking link</span> : null}
-            {probeError ? <p className="mt-3">{probeError}</p> : null}
-            {probeMatches && !allVisible ? <p className="mt-3">Choose how to use this link</p> : null}
+            {isProbing ? <span className="sr-only">{t("creator.checking")}</span> : null}
+            {probeError ? <p className="mt-3">{t(probeError)}</p> : null}
+            {probeMatches && !allVisible ? <p className="mt-3">{t("creator.chooseLink")}</p> : null}
           </div>
           {!resourceValue ? (
             <NotebookCreatorSources
@@ -434,12 +460,10 @@ export function BaseCreator(props: BaseCreatorProps) {
       ) : null}
       <div id={gridId}>
         {gridItems.length
-          ? renderGrid(gridItems, probeMatches && !allVisible ? "Matching content types" : "Select a type")
+          ? renderGrid(gridItems, probeMatches && !allVisible ? t("creator.matches") : t("creator.selectType"))
           : null}
       </div>
-      {linkFirst && !allVisible && manualCreators.length
-        ? renderGrid(manualCreators, "Create without a link", true)
-        : null}
+      {linkFirst && !allVisible && manualCreators.length ? renderGrid(manualCreators, t("creator.noLink"), true) : null}
       {canProbe && (linkFirst || probeMatches) ? (
         <div className="px-4 pb-4">
           <Button
@@ -451,7 +475,7 @@ export function BaseCreator(props: BaseCreatorProps) {
               setShowAll(!showAll);
             }}
           >
-            {showAll ? "Show fewer options" : "Choose a content type instead"}
+            {showAll ? t("creator.fewer") : t("creator.chooseType")}
           </Button>
         </div>
       ) : null}

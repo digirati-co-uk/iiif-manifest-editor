@@ -37,7 +37,8 @@
     "storybook": "storylite dev --port 7007 --host",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsdown"
+    "prepack": "tsdown",
+    "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
     "@atlas-viewer/atlas": "catalog:",
@@ -47,6 +48,7 @@
     "@iiif/helpers": "catalog:",
     "@iiif/parser": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
+    "@manifest-editor/i18n": "workspace:*",
     "@mdxeditor/editor": "^4.0.4",
     "@react-aria/collections": "3.0.0-alpha.4",
     "@react-aria/toast": "^3.0.7",
@@ -75,6 +77,10 @@
     "zustand": "catalog:"
   },
   "devDependencies": {
+    "@codemirror/commands": "6.8.0",
+    "@codemirror/search": "6.5.8",
+    "@codemirror/state": "6.5.2",
+    "@codemirror/view": "6.36.2",
     "@storylite/renderer-react": "^1.5.4",
     "@storylite/storylite": "^1.5.4",
     "@tsdown/css": "catalog:",
@@ -82,9 +88,11 @@
     "@types/react-dom": "catalog:",
     "@types/react-lazy-load-image-component": "^1.6.4",
     "@types/showdown": "^2.0.6",
+    "jsdom": "26.1.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

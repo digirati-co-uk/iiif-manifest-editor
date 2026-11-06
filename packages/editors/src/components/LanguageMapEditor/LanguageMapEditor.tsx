@@ -1,3 +1,5 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
 import { useVault } from "react-iiif-vault";
 import invariant from "tiny-invariant";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
@@ -20,6 +22,7 @@ export function LanguageMapEditor({
   id,
   disallowHTML,
 }: LanguageMapEditorProps) {
+  const apiLabel = useDisplayLabel();
   const resource = useResource<Partial<DescriptiveProperties>>();
   const vault = useVault();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +47,7 @@ export function LanguageMapEditor({
       {resource && (
         <ErrorBoundary>
           <LanguageFieldEditor
-            label={dispatchType}
+            label={apiLabel(propertyLabels[dispatchType])!}
             fields={resource[dispatchType] || {}}
             onSave={changeHandler}
             guidanceReference={guidanceReference}

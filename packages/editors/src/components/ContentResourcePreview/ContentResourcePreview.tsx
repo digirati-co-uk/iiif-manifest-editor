@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ThumbnailImg } from "@manifest-editor/ui/atoms/Thumbnail";
 import { ThumbnailContainer } from "@manifest-editor/ui/atoms/ThumbnailContainer";
 import { getValue } from "@iiif/helpers/i18n";
@@ -15,12 +16,13 @@ export function ContentResourcePreview({
   onClick?: () => void;
   margin?: boolean;
 }) {
+  const t = useTranslations("editors");
   const resource = useContentResource({ id: id });
   const thumbnail = useContentResourceThumbnail({ resourceId: id });
 
   invariant(resource, `ContentResource "${id}" not found`);
 
-  const label = getValue((resource as any).label, { defaultText: "Thumbnail" });
+  const label = getValue((resource as any).label, { defaultText: t("fields.thumbnail") });
 
   // Image
   // Text
@@ -44,7 +46,7 @@ export function ContentResourcePreview({
         }
         link={id}
         label={(resource as any)?.format || resource?.type}
-        iconLabel="Icon label"
+        iconLabel={t("messages.iconLabel")}
         onClick={
           onClick
             ? (e) => {

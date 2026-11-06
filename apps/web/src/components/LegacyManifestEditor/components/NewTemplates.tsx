@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useEffect, useState } from "react";
 import {
   TemplateCardContainer,
@@ -15,18 +16,26 @@ interface NewTemplatesProps {
 }
 
 function TemplateCard({ manifestUrl, changeManifest }: { manifestUrl: string; changeManifest: (id: string) => void }) {
-  const vault = new Vault();
+  const webT = useTranslations("web");
+  const [vault] = useState(() => new Vault());
+  const [failed, setFailed] = useState(false);
 
   const [manifest, setManifest] = useState<any>();
 
   useEffect(() => {
     const waitData = async () => {
-      const data = await vault.loadManifest(manifestUrl || "");
-      setManifest(data);
+      try {
+        const data = await vault.loadManifest(manifestUrl || "");
+        setManifest(data);
+      } catch {
+        setFailed(true);
+      }
     };
     waitData();
-  }, [manifestUrl]);
+  }, [manifestUrl, vault]);
 
+  if (failed) return <p role="alert">{webT("feedback.projectFailed")}</p>;
+  if (!manifest) return <output>{webT("feedback.loading")}</output>;
   return (
     <TemplateCardContainer onClick={() => changeManifest(window.location.href + manifest.id)}>
       <TemplateCardNew>
@@ -38,9 +47,11 @@ function TemplateCard({ manifestUrl, changeManifest }: { manifestUrl: string; ch
 }
 
 export function NewTemplates({ newTemplates, changeManifest }: NewTemplatesProps) {
+  const webT = useTranslations("web");
+
   return (
     <RecentFilesWidget>
-      <WidgetHeader>Start from template</WidgetHeader>
+      <WidgetHeader>{webT("legacy.fromTemplate")}</WidgetHeader>
 
       <RecentThumbnails>
         {newTemplates &&

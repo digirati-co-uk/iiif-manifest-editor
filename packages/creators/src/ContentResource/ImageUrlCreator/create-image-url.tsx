@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { ImageService } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
@@ -15,7 +16,7 @@ export interface CreateImageUrlPayload {
 
 export async function createImageUrl(
   data: CreateImageUrlPayload,
-  ctx: CreatorFunctionContext,
+  ctx: CreatorFunctionContext
 ): Promise<CreatorResource> {
   if (!data.height || !data.width) {
     const dimensions = await getImageDimensions(data.url);
@@ -36,6 +37,8 @@ export async function createImageUrl(
 }
 
 export function CreateImageUrlForm(props: CreatorContext) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const initialData = props.options.initialData as Partial<CreateImageUrlPayload>;
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -51,12 +54,12 @@ export function CreateImageUrlForm(props: CreatorContext) {
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
-          <InputLabel htmlFor="url">Link to image</InputLabel>
+          <InputLabel htmlFor="url">{t("form.imageUrl")}</InputLabel>
           <Input type="url" id="url" name="url" defaultValue={initialData.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">
-          Create
+          {common("actions.create")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

@@ -14,11 +14,23 @@ const postcss = require("postcss");
 const postcssImport = require("postcss-import");
 const pkg = JSON.parse(await readFile(resolve(packageDir, "package.json"), "utf8"));
 const version = process.env.ME_BROWSER_VERSION || pkg.version;
+const dependencies = {
+  i18n: require("@manifest-editor/i18n/package.json").version,
+  react: require("react/package.json").version,
+  reconciler: createRequire(require.resolve("@atlas-viewer/atlas"))("react-reconciler/package.json").version,
+};
+if (require("react-dom/package.json").version !== dependencies.react)
+  throw new Error("Browser runtime requires matching React and ReactDOM versions");
+if (Number(dependencies.react.split(".")[0]) !== 19) throw new Error("Browser runtime requires React 19");
+if (Object.values(dependencies).some((value) => !isExactVersion(value)))
+  throw new Error("Browser runtime dependencies must have exact published versions");
 if (!isExactVersion(version)) throw new Error("Invalid ME_BROWSER_VERSION");
 if (!process.argv.includes("--local") && version !== pkg.version) {
   throw new Error("Published runtime version must match package.json; version overrides are local fixtures only");
 }
 const externals = [
+  "@manifest-editor/i18n",
+  "@manifest-editor/i18n/core",
   "react",
   "react-dom",
   "react-dom/client",
@@ -64,6 +76,15 @@ const bundle = await rolldown({
 const { output } = await bundle.generate({ format: "cjs", codeSplitting: false, minify: true });
 await bundle.close();
 const chunks = output.filter((item) => item.type === "chunk");
+if (
+  Object.keys(chunks[0].modules).some(
+    (id) =>
+      /(?:packages\/i18n|internal-packages\/languages)\//.test(id) ||
+      /node_modules\/@manifest-editor\/(?:i18n|languages)\//.test(id)
+  )
+) {
+  throw new Error("Public i18n runtime and private catalogs must not be bundled into the browser facade");
+}
 if (Object.keys(chunks[0].modules).some((id) => /node_modules\/(react|react-dom|react-reconciler)\//.test(id))) {
   throw new Error("React and its renderers must come from the host, not the runtime bundle");
 }
@@ -73,7 +94,7 @@ if (
   chunks[0].imports.some((id) => !externals.includes(id))
 ) {
   throw new Error(
-    "Browser runtime must contain one script with only host React imports: " +
+    "Browser runtime must contain one script with only host React/i18n imports: " +
       JSON.stringify(chunks.map(({ fileName, imports, dynamicImports }) => ({ fileName, imports, dynamicImports })))
   );
 }
@@ -116,16 +137,17 @@ for (const filename of [...orderedCss.slice(0, 2), ...orderedCss.slice(2).sort()
   css += result.css + "\n";
 }
 const buildId = createHash("sha256")
-  .update(version + registerRuntime.toString() + chunks[0].code + css)
+  .update(version + JSON.stringify(dependencies) + registerRuntime.toString() + chunks[0].code + css)
   .digest("hex")
   .slice(0, 32);
-const code = `(${registerRuntime.toString()})(globalThis, ${JSON.stringify(buildId)}, ${JSON.stringify(version)}, function(host) {\nconst exports = {}; const module = { exports };\nconst require = (id) => { if (!Object.hasOwn(host, id)) throw new Error("Missing host dependency: " + id); return host[id]; };\n${chunks[0].code}\nreturn module.exports;\n});\n`;
+const code = `(${registerRuntime.toString()})(globalThis, ${JSON.stringify(buildId)}, ${JSON.stringify(version)}, function(host) {\nconst exports = {}; const module = { exports };\nconst require = (id) => { if (!Object.hasOwn(host, id)) throw new Error("Missing host dependency: " + id); return host[id]; };\n${chunks[0].code}\nreturn module.exports;\n}, undefined, ${JSON.stringify(dependencies)});\n`;
 const integrity = (value) => `sha384-${createHash("sha384").update(value).digest("base64")}`;
 const descriptor = (base) => ({
   version,
   buildId,
-  runtimeApiVersion: 1,
+  runtimeApiVersion: 2,
   reactMajor: 19,
+  dependencies,
   script: { url: `${base}/runtime.js`, integrity: integrity(code) },
   stylesheet: { url: `${base}/runtime.css`, integrity: integrity(css) },
 });

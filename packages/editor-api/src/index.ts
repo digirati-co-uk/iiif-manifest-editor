@@ -21,3 +21,5 @@ export * from "./canvas-layout/geometry";
 export * from "./canvas-layout/layout";
 
 export * from "./canvas-layout/colors";
+export * from "./meta/display";
+export * from "./meta/labels";

@@ -1,3 +1,4 @@
+import { useReorderAccessibility } from "../../hooks/useReorderAccessibility";
 import { ResourceProvider } from "react-iiif-vault";
 import { type ReactNode, useCallback } from "react";
 import { ReorderListItem } from "../ReorderListItem/ReorderListItem.dndkit";
@@ -10,11 +11,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import {
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
+import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 
@@ -43,11 +40,12 @@ export function ReorderList<T extends { id: string; type?: string }>({
   grid,
   list,
 }: ReorderListProps<T>) {
+  const accessibility = useReorderAccessibility(items);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const onDragEnd = useCallback(
@@ -60,7 +58,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
         });
       }
     },
-    [items, reorder],
+    [items, reorder]
   );
 
   const enabled = items.length > 0;
@@ -91,6 +89,7 @@ export function ReorderList<T extends { id: string; type?: string }>({
 
   return (
     <DndContext
+      accessibility={accessibility}
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragEnd={onDragEnd}

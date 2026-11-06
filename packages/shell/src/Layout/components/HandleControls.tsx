@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import {
   DefaultTooltipContent,
@@ -132,6 +133,8 @@ export const HandleControls = forwardRef<
     reset?: () => void;
   }
 >(function HandleControls({ dir, open, actions, reset }, ref) {
+  const t = useTranslations("shell");
+
   const [showDragTooltip, setShowDragToolTip] = useState(true);
   const dragTooltipMt = "mt-[calc(50vh+8px)]";
   const dragTooltipClasses = dir === "left" ? `${dragTooltipMt} ml-[13px]` : `${dragTooltipMt} ml-[3px]`;
@@ -141,14 +144,14 @@ export const HandleControls = forwardRef<
         {!open ? (
           <Tooltip placement={dir === "left" ? "right" : "left"}>
             <TooltipTrigger
-              aria-label={`Open ${dir} panel`}
+              aria-label={t(dir === "left" ? "panels.openLeft" : "panels.openRight")}
               as={OpenControl}
               $dir={dir}
               onClick={(e) => actions.open()}
             >
               <DownIcon aria-hidden="true" className="text-2xl" rotate={dir === "right" ? 90 : 270} />
             </TooltipTrigger>
-            <DefaultTooltipContent>Open</DefaultTooltipContent>
+            <DefaultTooltipContent>{t("actions.open")}</DefaultTooltipContent>
           </Tooltip>
         ) : null}
       </UnscaledContainer>
@@ -158,7 +161,11 @@ export const HandleControls = forwardRef<
             <InnerHandleContainer ref={ref} $open={open} $dir={dir} className="group">
               {open ? (
                 <Tooltip placement={dir === "left" ? "right" : "left"}>
-                  <TooltipTrigger aria-label={`Close ${dir} panel`} as={IconHandle} onPress={() => actions.close()}>
+                  <TooltipTrigger
+                    aria-label={t(dir === "left" ? "panels.closeLeft" : "panels.closeRight")}
+                    as={IconHandle}
+                    onPress={() => actions.close()}
+                  >
                     <div
                       onMouseOut={() => {
                         setShowDragToolTip(true);
@@ -170,12 +177,16 @@ export const HandleControls = forwardRef<
                       <CloseIcon aria-hidden="true" />
                     </div>
                   </TooltipTrigger>
-                  <DefaultTooltipContent>Close</DefaultTooltipContent>
+                  <DefaultTooltipContent>{t("actions.close")}</DefaultTooltipContent>
                 </Tooltip>
               ) : null}
               {reset && open ? (
                 <Tooltip placement={dir === "left" ? "right" : "left"}>
-                  <TooltipTrigger aria-label={`Reset ${dir} panel size`} as={IconHandle} onPress={() => reset()}>
+                  <TooltipTrigger
+                    aria-label={t(dir === "left" ? "panels.resetLeft" : "panels.resetRight")}
+                    as={IconHandle}
+                    onPress={() => reset()}
+                  >
                     <div
                       onMouseOut={() => {
                         setShowDragToolTip(true);
@@ -187,7 +198,7 @@ export const HandleControls = forwardRef<
                       <ResetIcon aria-hidden="true" />
                     </div>
                   </TooltipTrigger>
-                  <DefaultTooltipContent>Reset</DefaultTooltipContent>
+                  <DefaultTooltipContent>{t("actions.reset")}</DefaultTooltipContent>
                 </Tooltip>
               ) : null}
               {open ? (
@@ -201,16 +212,18 @@ export const HandleControls = forwardRef<
                         setShowDragToolTip(false);
                       }}
                     >
-                      <ResizeHandle aria-label="Resize panel" />
+                      <ResizeHandle aria-label={t("panels.resize")} />
                     </div>
                   </TooltipTrigger>
-                  <DefaultTooltipContent>Resize panel</DefaultTooltipContent>
+                  <DefaultTooltipContent>{t("panels.resize")}</DefaultTooltipContent>
                 </Tooltip>
               ) : null}
             </InnerHandleContainer>
           </div>
         </TooltipTrigger>
-        {showDragTooltip && <DefaultTooltipContent className={dragTooltipClasses}>Resize panel</DefaultTooltipContent>}
+        {showDragTooltip && (
+          <DefaultTooltipContent className={dragTooltipClasses}>{t("panels.resize")}</DefaultTooltipContent>
+        )}
       </Tooltip>
     </HandleContainer>
   );

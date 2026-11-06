@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   autoUpdate,
   FloatingFocusManager,
@@ -38,6 +39,7 @@ interface AppDropdownProps {
 }
 
 export function AppDropdown({ as, items, children, "aria-label": ariaLabel, style, ...props }: AppDropdownProps) {
+  const t = useTranslations("editors");
   const Comp: any = as || Button;
 
   const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
@@ -102,7 +104,7 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
                 role="menu"
-                aria-label={ariaLabel ? `${ariaLabel} options` : "Actions"}
+                aria-label={ariaLabel ? t("messages.fieldOptions", { label: ariaLabel }) : t("messages.actions")}
                 className="absolute bg-white border border-gray-300 shadow-lg rounded-md p-1 list-none m-0 min-w-0"
                 ref={refs.setFloating}
                 style={{
@@ -145,7 +147,9 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                           <button
                             type="button"
                             {...(itemProps as any)[key]}
-                            aria-label={`${item.isRunning ? "Pause" : "Run"} ${item.label}`}
+                            aria-label={t(item.isRunning ? "messages.pauseNamed" : "messages.runNamed", {
+                              label: item.label,
+                            })}
                             onClick={item.action}
                             className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit flex items-center py-2.5 px-2.5 rounded-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-2 focus:outline-[#bfd1ed]"
                           >
@@ -162,7 +166,11 @@ export function AppDropdown({ as, items, children, "aria-label": ariaLabel, styl
                           {item.actionLink ? (
                             <button
                               type="button"
-                              aria-label={`${item.actionLinkLabel || "View"} ${item.label}`}
+                              aria-label={
+                                item.actionLinkLabel
+                                  ? t("messages.actionNamed", { action: item.actionLinkLabel, label: item.label })
+                                  : t("messages.viewNamed", { label: item.label })
+                              }
                               onClick={item.actionLink}
                               className="border-none outline-none bg-transparent m-0 p-0 text-inherit cursor-pointer hover:text-inherit text-blue-700 underline px-2 focus:outline-2 focus:outline-[#bfd1ed]"
                             >

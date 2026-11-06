@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import SortableList, { SortableItem, SortableKnob } from "react-easy-sort";
 import { useManifest, useVault, CanvasContext, useResourceContext } from "react-iiif-vault";
 import { useManifestEditor } from "../../../apps/ManifestEditorLegacy/ManifestEditor.context";
@@ -18,6 +19,7 @@ export const GridList: React.FC<{
   strip?: boolean;
   canvasIds?: Array<Reference | string>;
 }> = ({ handleChange: _handleChange, handleChangeDouble, canvasIds }) => {
+  const t = useTranslations("ui");
   const ctx = useResourceContext();
   const manifestId = ctx.manifest;
   const canvases = useCanvasSubset(canvasIds);
@@ -74,7 +76,7 @@ export const GridList: React.FC<{
           <TemplateCardNew>
             <AddIcon />
           </TemplateCardNew>
-          <RecentLabel>Add</RecentLabel>
+          <RecentLabel>{t("actions.add")}</RecentLabel>
         </TemplateCardContainer>
       </FlexContainer>
     );

@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import { createRangeHelper } from "@iiif/helpers";
 import {
   ActionButton,
@@ -12,12 +14,7 @@ import {
 import { type LayoutPanel, useLayoutActions } from "@manifest-editor/shell";
 import { useEffect, useMemo, useState } from "react";
 import { useManifest, useVault } from "react-iiif-vault";
-import {
-  ArrowBackwardIcon,
-  CardsViewIcon,
-  RangesIcon,
-  SplitRangeIcon,
-} from "../icons";
+import { ArrowBackwardIcon, CardsViewIcon, RangesIcon, SplitRangeIcon } from "../icons";
 import { useRangeSplittingStore } from "../store/range-splitting-store";
 import { CanvasListingIcon } from "./canvas-listing";
 import { RangeCardView } from "./components/RangeCardView";
@@ -29,6 +26,7 @@ import { VirtualRangeSidebar } from "./components/VirtualRangeSidebar";
 export const rangesPanel: LayoutPanel = {
   id: "@manifest-editor/ranges-listing",
   label: "Ranges",
+  labelMessage: manifestMessage("panels.ranges"),
   icon: <RangesIcon />,
   focusedMode: {
     onSelect: ({ actions }) => {
@@ -41,6 +39,7 @@ export const rangesPanel: LayoutPanel = {
 };
 
 export function RangeLeftPanel() {
+  const t = useTranslations("manifest");
   const vault = useVault();
   const manifest = useManifest();
   const { edit } = useLayoutActions();
@@ -54,19 +53,16 @@ export function RangeLeftPanel() {
   const topLevelRange = useMemo(
     () =>
       helper.rangesToTableOfContentsTree(
-        selectedTopLevelRange
-          ? [vault.get(selectedTopLevelRange)]
-          : vault.get(manifest!.structures || []),
+        selectedTopLevelRange ? [vault.get(selectedTopLevelRange)] : vault.get(manifest!.structures || []),
         undefined,
         {
           showNoNav: true,
-        },
+        }
       ),
-    [selectedTopLevelRange, manifest?.structures],
+    [selectedTopLevelRange, manifest?.structures]
   );
   const { isSplitting, splitEffect, setIsSplitting } = useRangeSplittingStore();
-  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } =
-    useRangeTreeOptions();
+  const { showCanvases, toggleShowCanvases, isEditing, toggleIsEditing } = useRangeTreeOptions();
 
   useEffect(() => {
     return splitEffect();
@@ -77,11 +73,7 @@ export function RangeLeftPanel() {
       return null;
     }
 
-    return helper.isContiguous(
-      (manifest!.structures || [])[0]!,
-      manifest!.items,
-      { detail: true },
-    );
+    return helper.isContiguous((manifest!.structures || [])[0]!, manifest!.items, { detail: true });
   }, [manifest, helper]);
 
   if (!topLevelRange) {
@@ -91,23 +83,19 @@ export function RangeLeftPanel() {
   return (
     <Sidebar>
       <SidebarHeader
-        title={topLevelRange.label || "Untitled range"}
+        title={topLevelRange.label || t("workflow.untitledRange")}
         actions={[
           {
             id: "card-view",
-            title: isCardView ? "Tree view" : "Card view",
-            icon: isCardView ? (
-              <CanvasListingIcon className="text-xl" />
-            ) : (
-              <CardsViewIcon className="text-xl" />
-            ),
+            title: isCardView ? t("workflow.treeView") : t("workflow.cardView"),
+            icon: isCardView ? <CanvasListingIcon className="text-xl" /> : <CardsViewIcon className="text-xl" />,
             onClick: () => {
               setIsCardView(!isCardView);
             },
           },
           {
             id: "edit-ranges",
-            title: "Edit range",
+            title: t("workflow.editRange"),
             icon: <ListEditIcon className="text-xl" />,
             toggled: isEditing,
             onClick: toggleIsEditing,
@@ -115,23 +103,18 @@ export function RangeLeftPanel() {
           },
           {
             id: "split-range",
-            title: "Split range",
+            title: t("workflow.splitRange"),
             icon: <SplitRangeIcon className="text-xl" />,
             onClick: () => setIsSplitting(!isSplitting),
             toggled: isSplitting,
-            disabled:
-              topLevelRange?.isVirtual ||
-              (topLevelRange?.items?.length ?? 0) <= 1,
+            disabled: topLevelRange?.isVirtual || (topLevelRange?.items?.length ?? 0) <= 1,
           },
         ]}
       />
       <SidebarContent className="p-2" id="range-listing-sidebar">
         {selectedTopLevelRange ? (
-          <ActionButton
-            className="mb-4"
-            onClick={() => setSelectedTopLevelRange(null)}
-          >
-            <ArrowBackwardIcon /> Back to Range List
+          <ActionButton className="mb-4" onClick={() => setSelectedTopLevelRange(null)}>
+            <ArrowBackwardIcon /> {t("workflow.backToRangeList")}
           </ActionButton>
         ) : null}
         {topLevelRange.isVirtual ? (
@@ -145,9 +128,7 @@ export function RangeLeftPanel() {
         ) : (
           <>
             {!isContiguous ? (
-              <WarningMessage className="mb-2">
-                Warning: Non-contiguous range
-              </WarningMessage>
+              <WarningMessage className="mb-2">{t("workflow.warningNonContiguousRange")}</WarningMessage>
             ) : null}
 
             {isSplitting ? (
@@ -155,10 +136,7 @@ export function RangeLeftPanel() {
             ) : isCardView ? (
               <RangeCardView />
             ) : (
-              <RangeTree
-                selectedTopLevelRange={selectedTopLevelRange}
-                hideCanvases={!showCanvases}
-              />
+              <RangeTree selectedTopLevelRange={selectedTopLevelRange} hideCanvases={!showCanvases} />
             )}
           </>
         )}

@@ -1,5 +1,7 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import React, { type ReactElement, type ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import styled from "styled-components";
 import {
   InnerModalContainer,
   ModalBackground,
@@ -13,6 +15,16 @@ import {
 } from "./Modal";
 
 export { ModalCloseIcon } from "./Modal";
+
+const ModalAction = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+`;
 
 export const ModalButton: React.FC<{
   ref?: any;
@@ -59,6 +71,8 @@ export const ModalButton: React.FC<{
   },
   ref
 ) {
+  const t = useTranslations("ui");
+  const { locale, direction } = useEditorI18n();
   const portalEl = useRef<HTMLElement | undefined>(undefined);
   const [ready, setIsReady] = useState(openByDefault);
   const [expanded, setIsExpanded] = useState(false);
@@ -92,6 +106,8 @@ export const ModalButton: React.FC<{
             <>
               <ModalBackground />
               <ModalContainer
+                lang={locale}
+                dir={direction}
                 ref={containerRef}
                 onClick={(e) => {
                   if (e.target !== containerRef.current) {
@@ -103,8 +119,16 @@ export const ModalButton: React.FC<{
                 <InnerModalContainer $expanded={expanded} size={modalSize} data-cy="modal">
                   <ModalHeader>
                     <ModalHeaderTitle>{title}</ModalHeaderTitle>
-                    <ModalResizeIcon onClick={() => setIsExpanded((e) => !e)} />
-                    <ModalCloseIcon onClick={closeModal} />
+                    <ModalAction
+                      type="button"
+                      aria-label={t(expanded ? "modal.shrink" : "modal.expand")}
+                      onClick={() => setIsExpanded((e) => !e)}
+                    >
+                      <ModalResizeIcon aria-hidden="true" />
+                    </ModalAction>
+                    <ModalAction type="button" aria-label={t("actions.close")} onClick={closeModal}>
+                      <ModalCloseIcon aria-hidden="true" />
+                    </ModalAction>
                   </ModalHeader>
                   <ModalBody>{render({ close: closeModal })}</ModalBody>
                   {renderFooter ? (

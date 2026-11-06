@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import {
@@ -33,6 +34,7 @@ interface TreeCanvasItemProps extends Partial<TreeItemProps> {
 }
 
 export function TreeCanvasItem(props: TreeCanvasItemProps) {
+  const t = useTranslations("manifest");
   const canvas = useCanvas();
   const vault = useVault();
   const manifestEditor = useManifestEditor();
@@ -76,7 +78,7 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
       className={twMerge(
         "react-aria-TreeItem relative hover:bg-gray-100 flex items-center gap-2 overflow-x-clip px-1.5",
         "data-[dragging]:opacity-50",
-        isActive && "pt-8 react-aria-TreeItem-active",
+        isActive && "pt-8 react-aria-TreeItem-active"
       )}
       textValue={getValue(canvas.label)}
       id={id}
@@ -90,12 +92,14 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
               className={twMerge(
                 `flex flex-1 min-w-0 truncate whitespace-nowrap items-center gap-2 flex-shrink-0 pl-4`,
                 isActive && "pl-4",
-                isDragging ? "cursor-grabbing opacity-50" : "cursor-pointer",
+                isDragging ? "cursor-grabbing opacity-50" : "cursor-pointer"
               )}
             >
               {selectionMode === "multiple" && <SelectionCheckbox alwaysVisible />}
               <AddImageIcon className="text-xl flex-shrink-0 text-gray-400" />
-              <LocaleString defaultText={(<span className="text-gray-500">Untitled canvas</span>) as any}>
+              <LocaleString
+                defaultText={(<span className="text-gray-500">{t("workflow.untitledCanvas")}</span>) as any}
+              >
                 {canvas.label}
               </LocaleString>
             </div>
@@ -110,11 +114,11 @@ export function TreeCanvasItem(props: TreeCanvasItemProps) {
                 <Menu>
                   <MenuItem
                     onAction={() =>
-                      window.confirm("Are you sure you want to remove this canvas?") && removeCanvasFromRange()
+                      window.confirm(t("workflow.removeCanvasConfirm")) && removeCanvasFromRange()
                     }
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                   >
-                    <DeleteForeverIcon /> Remove canvas
+                    <DeleteForeverIcon /> {t("workflow.removeCanvas")}
                   </MenuItem>
                 </Menu>
               </Popover>

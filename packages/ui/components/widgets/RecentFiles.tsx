@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { RecentLabel, RecentManifestCard, RecentThumbnails } from "@/atoms/RecentFilesWidget";
 import { ErrorBoundary } from "@/atoms/ErrorBoundary";
@@ -7,6 +8,7 @@ import { SecondaryButton } from "@/atoms/Button";
 import { EditorProject } from "@/shell/ProjectContext/ProjectContext.types";
 
 export const RecentFiles: React.FC = () => {
+  const t = useTranslations("ui");
   const { editProject } = useApps();
   const { allProjects, actions } = useProjectContext();
 
@@ -17,7 +19,7 @@ export const RecentFiles: React.FC = () => {
 
   return (
     <>
-      <h4>Recently opened </h4>
+      <h4>{t("load.recent")}</h4>
       <RecentThumbnails>
         {allProjects.map((project) => {
           return (

@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { Reference } from "@iiif/presentation-3";
 import { ArrowRightIcon, BackIcon } from "@manifest-editor/components";
@@ -19,6 +20,9 @@ type CanvasOption = {
 };
 
 export function ManifestPaginationNavigation({ className, variant = "light" }: ManifestPaginationNavigationProps) {
+  const t = useTranslations("shell");
+  const { locale, profile } = useEditorI18n();
+
   const manifest = useManifest();
   const vault = useVault();
   const { edit } = useLayoutActions();
@@ -33,7 +37,7 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
     findCanvasId(currentEditingResource) || editingStack.map(findCanvasId).find(Boolean) || items[0]?.id || "";
   const currentIndex = Math.max(
     0,
-    items.findIndex((item) => item.id === currentCanvasId),
+    items.findIndex((item) => item.id === currentCanvasId)
   );
   const selectedCanvasId = items[currentIndex]?.id || "";
   const currentPage = currentIndex + 1;
@@ -44,10 +48,10 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
       return {
         id: item.id,
         pageNumber: index + 1,
-        labelText: getValue(canvas?.label as any) || `Page ${index + 1}`,
+        labelText: getValue(canvas?.label as any) || t("navigation.page", { number: index + 1 }),
       };
     });
-  }, [items, vault]);
+  }, [items, vault, t, locale, profile]);
 
   const goToCanvas = (canvasId: string) => {
     const index = items.findIndex((item) => item.id === canvasId);
@@ -64,7 +68,7 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
         property: "items",
         index,
       },
-      { forceOpen: false },
+      { forceOpen: false }
     );
   };
 
@@ -78,17 +82,17 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
 
   return (
     <nav
-      aria-label="Manifest pagination"
+      aria-label={t("navigation.title")}
       className={cx(
         "inline-flex shrink-0 items-center gap-1 rounded-full border px-1.5 py-1",
         "focus-within:ring-2 focus-within:ring-me-primary-500/40",
         isRev && "flex-row-reverse",
         dark ? "border-white/20 bg-white/10 text-white" : "border-me-gray-300 bg-white text-me-gray-900",
-        className,
+        className
       )}
     >
       <NavigationButton
-        ariaLabel="Previous canvas"
+        ariaLabel={t("navigation.previous")}
         disabled={!previousCanvas}
         onClick={() => previousCanvas && goToCanvas(previousCanvas.id)}
         dark={dark}
@@ -105,7 +109,7 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
           "focus-within:outline-none focus-within:ring-2 focus-within:ring-me-primary-500/40",
           dark
             ? "border-white/20 bg-white/10 text-white hover:bg-white/15"
-            : "border-me-gray-300 bg-me-gray-100 text-me-gray-900 hover:bg-me-primary-50",
+            : "border-me-gray-300 bg-me-gray-100 text-me-gray-900 hover:bg-me-primary-50"
         )}
       >
         <span>
@@ -114,21 +118,21 @@ export function ManifestPaginationNavigation({ className, variant = "light" }: M
         <ArrowDownIcon className={cx("shrink-0 text-base", dark ? "text-white/60" : "text-me-gray-500")} />
         <select
           id="manifest-pagination-page-select"
-          aria-label="Jump to canvas"
+          aria-label={t("navigation.jump")}
           value={selectedCanvasId}
           onChange={(event) => goToCanvas(event.target.value)}
           className="absolute inset-0 cursor-pointer appearance-none border-0 bg-white opacity-0"
         >
           {canvasOptions.map((canvas) => (
             <option key={canvas.id} value={canvas.id}>
-              Page {canvas.pageNumber} - {canvas.labelText}
+              {t("navigation.option", { number: canvas.pageNumber, label: canvas.labelText })}
             </option>
           ))}
         </select>
       </label>
 
       <NavigationButton
-        ariaLabel="Next canvas"
+        ariaLabel={t("navigation.next")}
         disabled={!nextCanvas}
         onClick={() => nextCanvas && goToCanvas(nextCanvas.id)}
         dark={dark}
@@ -147,7 +151,7 @@ function findCanvasId(
         };
       }
     | null
-    | undefined,
+    | undefined
 ) {
   const source = resource?.resource?.source;
   return source?.type === "Canvas" ? source.id : null;
@@ -178,7 +182,7 @@ function NavigationButton({
         dark
           ? "text-white hover:bg-white/15 disabled:text-white/40 disabled:hover:bg-transparent"
           : "text-me-gray-900 hover:bg-me-primary-50 disabled:text-me-gray-500 disabled:hover:bg-transparent",
-        "disabled:cursor-not-allowed",
+        "disabled:cursor-not-allowed"
       )}
     >
       {children}

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -97,6 +98,8 @@ export async function createYoutubeBody(data: CreateYouTubeBodyPayload, ctx: Cre
 }
 
 export function YouTubeForm(props: CreatorContext) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const initialData = props.options.initialData as Partial<CreateYouTubeBodyPayload>;
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -112,12 +115,12 @@ export function YouTubeForm(props: CreatorContext) {
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
-          <InputLabel htmlFor="youtubeUrl">Link to YouTube</InputLabel>
+          <InputLabel htmlFor="youtubeUrl">{t("form.youtubeUrl")}</InputLabel>
           <Input type="url" id="youtubeUrl" name="youtubeUrl" defaultValue={initialData.youtubeUrl || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">
-          Create
+          {common("actions.create")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

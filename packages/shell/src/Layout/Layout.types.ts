@@ -64,7 +64,7 @@ export interface LayoutActions {
       stacked?: boolean | undefined;
       selectedTab?: string;
       forceOpen?: boolean;
-    },
+    }
   ): void;
   create(resource: CreatableResource): Promise<any>;
 
@@ -132,24 +132,27 @@ export type LayoutFunction = (
     transition?: TransitionStatus;
     isModal?: boolean;
   } & LayoutContext,
-  app: AppState,
+  app: AppState
 ) => ReactNode;
 
 export interface AnnotationPanel {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   render: () => React.ReactNode | null;
 }
 
 export interface BackgroundPanel {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   render: () => React.ReactNode | null;
 }
 
 export interface LayoutPanel {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   divide?: boolean;
   separator?: boolean;
   icon?: null | string | ReactNode; // SVG?
@@ -164,7 +167,7 @@ export interface LayoutPanel {
   onMount?: (
     state: any,
     ctx: { current: PanelActions; vault?: Vault } & LayoutContext,
-    app: AppState,
+    app: AppState
   ) => (() => void) | void;
   defaultState?: any;
   requiresState?: boolean;
@@ -208,6 +211,7 @@ export interface PinnedLayoutPanel<T = any> extends LayoutPanel {
 export interface CanvasEditorDefinition {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   supports: {
     strategy: (strategy: RenderingStrategy, resource: EditableResource, vault: Vault) => boolean;
   };
@@ -217,6 +221,7 @@ export interface CanvasEditorDefinition {
 export interface EditorDefinition {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   tabs?: {
     showTitle?: boolean;
     hide?: boolean;
@@ -239,6 +244,7 @@ export interface EditorDefinition {
 export interface ResourceDefinition {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   resourceType: string;
   auto: boolean;
   editors: EditorDefinition[];

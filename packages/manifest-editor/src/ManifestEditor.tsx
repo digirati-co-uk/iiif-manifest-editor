@@ -10,10 +10,10 @@ import {
   type PluginInput,
   PluginProvider,
   ShellProvider,
+  type ShellLocalisation,
 } from "@manifest-editor/shell";
 import { useRef } from "react";
 import { useExistingVault, VaultProvider } from "react-iiif-vault";
-import invariant from "tiny-invariant";
 
 const manifestEditor = mapApp(manifestEditorPreset);
 
@@ -22,6 +22,8 @@ export interface ManifestEditorProps {
   data?: Manifest | Collection;
   vault?: Vault;
   config?: Partial<Config>;
+  /** UI resources/loaders and runtime options; never persisted with Config. */
+  localisation?: ShellLocalisation;
   saveConfig?: (config: Partial<Config>) => void;
   globalPluginConfig?: Config["plugins"];
   saveGlobalPluginConfig?: (config: Config["plugins"]) => void | Promise<void>;
@@ -44,15 +46,14 @@ function configInvariant(
    * Can provide a string, or a function that returns a string for cases where
    * the message takes a fair amount of effort to compute
    */
-  message?: string | (() => string),
+  message?: string | (() => string)
 ): asserts condition {
   if (condition) {
     return;
   }
   const prefix: string = "Configuration Error";
 
-  const provided: string | undefined =
-    typeof message === "function" ? message() : message;
+  const provided: string | undefined = typeof message === "function" ? message() : message;
   const value: string = provided ? `${prefix}: ${provided}` : prefix;
   throw new Error(value);
 }
@@ -67,13 +68,10 @@ export function ManifestEditor(props: ManifestEditorProps) {
     props.resource,
     `Prop resource is required. Usage example:
   <ManifestEditor resource="https://example.org/manifest" />
-`,
+`
   );
 
-  const resource =
-    typeof props.resource === "string"
-      ? { id: props.resource, type: "Manifest" }
-      : props.resource;
+  const resource = typeof props.resource === "string" ? { id: props.resource, type: "Manifest" } : props.resource;
 
   if (!vault.requestStatus(resource.id)) {
     if (props.data) {
@@ -118,6 +116,7 @@ export function ManifestEditor(props: ManifestEditorProps) {
         <VaultProvider vault={vault}>
           <ShellProvider
             resource={resource}
+            localisation={props.localisation}
             config={props.config}
             saveConfig={props.saveConfig}
           >

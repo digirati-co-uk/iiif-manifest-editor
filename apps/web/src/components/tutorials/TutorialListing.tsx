@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations, useEditorI18n } from "@manifest-editor/i18n";
+
 /* eslint-disable next/no-img-element -- Tutorial thumbnails are external IIIF resources. */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +11,9 @@ import { NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
 import { tutorials, type Tutorial } from "./tutorials";
 
 export function TutorialListing() {
+  const webT = useTranslations("web");
+  const i18n = useEditorI18n();
+
   const router = useRouter();
   const queryClient = useQueryClient();
   const projects = useQuery({ queryKey: ["browser-projects"], queryFn: listBrowserProjects });
@@ -16,8 +21,8 @@ export function TutorialListing() {
   const start = useMutation({
     mutationFn: (tutorial: Tutorial) =>
       createNotebookProject({
-        markdown: tutorial.markdown,
-        noteTitle: tutorial.title,
+        markdown: i18n.resolveMessage(tutorial.messages?.markdown, tutorial.markdown),
+        noteTitle: i18n.resolveMessage(tutorial.messages?.title, tutorial.title),
         noteId: tutorial.id,
         source: { id: tutorial.source.url, type: "Tutorial" },
         extraData: { tutorial: { id: tutorial.id, title: tutorial.title, source: tutorial.source } },
@@ -30,12 +35,10 @@ export function TutorialListing() {
 
   return (
     <div className="pb-10">
-      <p className="mb-5 max-w-2xl text-sm leading-relaxed text-gray-600">
-        Start with a blank project and follow the steps in its notebook. Each tutorial includes the resources you need.
-      </p>
+      <p className="mb-5 max-w-2xl text-sm leading-relaxed text-gray-600">{webT("tutorials.intro")}</p>
       {start.error || projects.isError ? (
         <p role="alert" className="mb-4 text-sm text-red-700">
-          We couldn’t load the tutorial. Please try again.
+          {webT("tutorials.failed")}
         </p>
       ) : null}
       <div className="grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,8 +61,14 @@ export function TutorialListing() {
                 ) : null}
               </div>
               <div className="flex flex-1 flex-col p-5">
-                <p className="mb-2 text-xs text-gray-500">{tutorial.duration} · No experience needed</p>
-                <h2 className="mb-2 text-lg font-medium text-gray-900">{tutorial.title}</h2>
+                <p className="mb-2 text-xs text-gray-500">
+                  {webT("tutorials.duration", {
+                    duration: i18n.resolveMessage(tutorial.messages?.duration, tutorial.duration),
+                  })}
+                </p>
+                <h2 className="mb-2 text-lg font-medium text-gray-900">
+                  {i18n.resolveMessage(tutorial.messages?.title, tutorial.title)}
+                </h2>
                 {project ? (
                   <p className="mb-3 flex items-center gap-1.5 text-xs text-gray-600">
                     <svg
@@ -73,10 +82,12 @@ export function TutorialListing() {
                     >
                       <path d="m5 12 4 4L19 6" />
                     </svg>
-                    Started
+                    {webT("tutorials.started")}
                   </p>
                 ) : null}
-                <p className="mb-4 text-sm leading-relaxed text-gray-600">{tutorial.description}</p>
+                <p className="mb-4 text-sm leading-relaxed text-gray-600">
+                  {i18n.resolveMessage(tutorial.messages?.description, tutorial.description)}
+                </p>
                 <div className="mt-auto flex flex-wrap items-center gap-3">
                   <button
                     type="button"
@@ -86,10 +97,10 @@ export function TutorialListing() {
                     className="rounded-md bg-me-primary-500 px-4 py-2 text-sm font-medium text-white hover:bg-me-primary-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-me-primary-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {start.isPending && start.variables?.id === tutorial.id
-                      ? "Starting…"
+                      ? webT("tutorials.starting")
                       : project
-                        ? "Continue tutorial"
-                        : "Start tutorial"}
+                        ? webT("tutorials.continue")
+                        : webT("tutorials.start")}
                   </button>
                   <a
                     href={tutorial.source.url}
@@ -97,7 +108,7 @@ export function TutorialListing() {
                     rel="noreferrer"
                     className="text-xs text-gray-500 underline-offset-2 hover:text-gray-700 hover:underline"
                   >
-                    Cookbook recipe
+                    {webT("tutorials.recipe")}
                   </a>
                 </div>
               </div>

@@ -1,8 +1,11 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useApps } from "@manifest-editor/shell";
 import { FeaturedCard } from "../FeaturedCard/FeaturedCard";
 import { useProjectContext } from "@manifest-editor/projects";
 
 export function MyProjects() {
+  const webT = useTranslations("web");
+
   const { allProjects, loadingStatus, actions } = useProjectContext();
   const { changeApp } = useApps();
   const editProject = (project: any) => {
@@ -15,7 +18,7 @@ export function MyProjects() {
   };
 
   if (loadingStatus && loadingStatus.loading) {
-    return <div>Loading...</div>;
+    return <div>{webT("feedback.loading")}</div>;
   }
 
   return (
@@ -30,7 +33,7 @@ export function MyProjects() {
               editProject(project);
             }}
             thumbnail={<img src={project.thumbnail} alt="" />}
-            actionLabel="Open project"
+            actionLabel={webT("legacy.openProject")}
           />
         );
       })}

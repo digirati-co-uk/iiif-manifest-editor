@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { toRef } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useCreator, useEditingResource, useEditor } from "@manifest-editor/shell";
@@ -9,6 +10,8 @@ import { useToggleList } from "../../helpers";
 import { createAppActions } from "../../helpers/create-app-actions";
 
 export function RangeStructuralProperties() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const resource = useEditingResource();
   const { structural, notAllowed } = useEditor();
   const [toggled, toggle] = useToggleList();
@@ -27,14 +30,14 @@ export function RangeStructuralProperties() {
           <InputContainer $wide>
             {!items.get()?.length ? (
               <>
-                <InputLabel>Ranges</InputLabel>
+                <InputLabel>{t("ui.ranges")}</InputLabel>
                 <EmptyState $noMargin $box>
-                  No ranges
+                  {t("ui.noRanges")}
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                Ranges
+                {t("ui.ranges")}
                 <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
               </InputLabel>
             )}
@@ -46,11 +49,11 @@ export function RangeStructuralProperties() {
               onSelect={(item, idx) =>
                 toRef(item)?.type === "Canvas" ? canvasActions.edit(item) : rangeActions.edit(item)
               }
-              createActions={createAppActions(items)}
+              createActions={createAppActions(items, undefined, t, commonT)}
             />
           </InputContainer>
-          {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>Add canvas</Button> : null}
-          {canCreateRange ? <Button onClick={() => rangeActions.create()}>Add range</Button> : null}
+          {canCreateCanvas ? <Button onClick={() => canvasActions.create()}>{t("canvas.add")}</Button> : null}
+          {canCreateRange ? <Button onClick={() => rangeActions.create()}>{t("ui.addRange")}</Button> : null}
         </>
       ) : null}
     </PaddedSidebarContainer>

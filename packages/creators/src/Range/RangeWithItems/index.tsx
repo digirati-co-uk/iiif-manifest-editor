@@ -14,7 +14,9 @@ export const rangeWithItems = defineCreator({
   id: "@manifest-editor/range-with-items",
   create: createRangeWithItems,
   label: "Range",
+  labelMessage: { namespace: "editor-api", key: "resources.range" },
   summary: "Group canvases or other ranges into a section.",
+  summaryMessage: { namespace: "creators", key: "definitions.range.summary" },
   icon: <RangesIcon />,
   render(ctx) {
     return <RangeWithItemsCreatorForm {...ctx} />;

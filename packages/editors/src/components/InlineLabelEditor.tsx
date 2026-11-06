@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString, Reference, SpecificResource } from "@iiif/presentation-3";
 import { ActionButton } from "@manifest-editor/components";
 import { useGenericEditor } from "@manifest-editor/shell";
@@ -19,6 +20,8 @@ export function InlineLabelEditor(props: {
   onCancel?: () => void;
   hideCancel?: boolean;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const editor = useGenericEditor(props.resource, props.ctx);
   const originalValue = useMemo(() => editor.descriptive.label.get(), [props.resource?.id]);
   const cancelRef = useRef<boolean>(false);
@@ -60,11 +63,11 @@ export function InlineLabelEditor(props: {
         disallowHTML={true}
       />
       <ActionButton primary type="submit">
-        {props.actionLabel || "Save"}
+        {props.actionLabel || commonT("actions.save")}
       </ActionButton>
       {!props.hideCancel ? (
         <ActionButton type="button" onClick={onCancel}>
-          Cancel
+          {commonT("actions.cancel")}
         </ActionButton>
       ) : null}
     </form>

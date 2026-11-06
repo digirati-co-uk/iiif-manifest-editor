@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import styled from "styled-components";
 
 const Load = styled.div`
@@ -91,8 +92,11 @@ const Load = styled.div`
   }
 `;
 
-export const Loading = () => (
-  <Load>
-    <div className="loader"></div>
-  </Load>
-);
+export const Loading = () => {
+  const t = useTranslations("ui");
+  return (
+    <Load as="output" style={{ display: "block" }} aria-label={t("loading.title")}>
+      <div className="loader"></div>
+    </Load>
+  );
+};

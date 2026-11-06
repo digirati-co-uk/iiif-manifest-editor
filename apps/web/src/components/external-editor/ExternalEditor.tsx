@@ -1,4 +1,10 @@
 "use client";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
+
+import { useWebExhibitionResources } from "../../i18n/WebResources";
+import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
+
+import { useTranslations } from "@manifest-editor/i18n";
 
 import { Vault } from "@iiif/helpers";
 import { ActionButton, ManifestEditorLogo } from "@manifest-editor/components";
@@ -18,7 +24,6 @@ import {
   type MappedApp,
   mapApp,
   PluginProvider,
-  ShellProvider,
   useDecayState,
   useSaveVault,
 } from "@manifest-editor/shell";
@@ -41,6 +46,9 @@ const presets: Record<string, MappedApp> = {
 const externalDefaultEnabledPlugins = ["@manifest-editor/av-ranges"];
 
 export default function ExternalEditor({ manifest, preset }: { manifest: string; preset?: string }) {
+  const webT = useTranslations("web");
+  const webExhibitionResources = useWebExhibitionResources();
+
   const vaultRef = useRef<{ key: string; vault: Vault } | null>(null);
   const vaultKey = `${manifest}\0${preset || ""}`;
   if (vaultRef.current?.key !== vaultKey) {
@@ -61,6 +69,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
           divide: true,
           id: "config",
           label: "Config",
+          labelMessage: { namespace: "web", key: "settings.title" },
           icon: <SettingsIcon />,
           render: () => <ConfigEditor />,
         } satisfies LayoutPanel,
@@ -73,7 +82,11 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const lastSavedJson = useRef("");
 
-  const { data: manifestData, isLoading } = useQuery({
+  const {
+    data: manifestData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["manifest-extenrnal", { manifest }],
     refetchOnMount: false,
     refetchInterval: false,
@@ -103,7 +116,7 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
         vault.toPresentation3({
           id: loaded.id,
           type: "Manifest",
-        }),
+        })
       );
 
       return {
@@ -131,7 +144,11 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
 
   useSaveVault(vault, onVaultSave, 1000, !!manifestData);
 
-  const { mutate, isPending } = useMutation({
+  const {
+    mutate,
+    isPending,
+    isError: saveFailed,
+  } = useMutation({
     mutationFn: async (data: any) => {
       const postUrl = manifestData?.postUrl;
       if (!postUrl) {
@@ -161,35 +178,48 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
   });
 
   // 4. Load the editor
-  if (isLoading || !manifestData) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading)
+    return (
+      <div>
+        <HeaderLanguageMenu />
+        {webT("feedback.loading")}
+      </div>
+    );
+  if (isError || !manifestData)
+    return (
+      <div role="alert">
+        <HeaderLanguageMenu />
+        {webT("feedback.projectFailed")}
+      </div>
+    );
 
   const header = (
-    <header className="h-[64px] flex w-full gap-12 px-4 items-center shadow">
-      <Link href="/" target="_blank" className="w-96 flex justify-start">
+    <header className="min-h-[64px] flex flex-wrap w-full gap-3 p-3 items-center shadow">
+      <Link href="/" target="_blank" className="min-w-0 flex justify-start">
         <ManifestEditorLogo />
       </Link>
       <div className="flex-1 flex flex-col items-center">
         <div className="bg-gray-100 py-2 px-4 rounded flex gap-2">
-          <span className="text-black/50">Remote resource:</span>
+          <span className="text-black/50">{webT("external.resource")}</span>
           <a className="text-me-primary-500 font-semibold underline" href={manifest}>
             {manifest}
           </a>
         </div>
       </div>
       <div className="flex items-center justify-center gap-5">
+        <HeaderLanguageMenu />
         <div className="flex items-center gap-2">
-            <BackgroundActionsMenu />
+          <BackgroundActionsMenu />
           <a
             target="_blank"
             href={`https://theseusviewer.org?iiif-content=${manifest}`}
             className="px-3 py-2 gap-3 disabled:text-white/50 text-sm underline"
             rel="noreferrer"
           >
-            Open in Theseus
+            {webT("external.openTheseus")}
           </a>
 
+          {saveFailed ? <p role="alert">{webT("feedback.saveFailed")}</p> : null}
           <ActionButton
             className="px-3 py-2 gap-3 disabled:text-white/50"
             primary
@@ -197,7 +227,15 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
             onPress={() => mutate({})}
           >
             <CloudIcon className="text-xl translate-y-0 transition-transform" saved={saved} saving={isPending} />{" "}
-            {isPending ? "Saving..." : unsavedChanges ? "Save changes" : saved ? "Saved" : "No changes"}
+            {webT(
+              isPending
+                ? "actions.saving"
+                : unsavedChanges
+                  ? "actions.save"
+                  : saved
+                    ? "actions.saved"
+                    : "actions.noChanges"
+            )}
           </ActionButton>
         </div>
       </div>
@@ -210,7 +248,11 @@ export default function ExternalEditor({ manifest, preset }: { manifest: string;
         <PluginProvider plugins={manifestPreset.plugins} enabled={externalDefaultEnabledPlugins}>
           <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={manifest}>
             <VaultProvider vault={vault}>
-              <ShellProvider resource={manifestData.ref} config={mergedConfig}>
+              <ShellProvider
+                localisation={preset?.startsWith("exhibition") ? webExhibitionResources : undefined}
+                resource={manifestData.ref}
+                config={mergedConfig}
+              >
                 <Layout header={header} />
               </ShellProvider>
             </VaultProvider>

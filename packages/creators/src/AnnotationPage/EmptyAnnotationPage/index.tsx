@@ -16,7 +16,7 @@ export const emptyAnnotationPage = defineCreator({
     data: {
       label?: InternationalString;
     },
-    ctx,
+    ctx
   ) => {
     return ctx.embed({
       id: ctx.generateId("annotations"),
@@ -26,7 +26,9 @@ export const emptyAnnotationPage = defineCreator({
     });
   },
   label: "Empty annotation page",
+  labelMessage: { namespace: "creators", key: "definitions.annotationPage.label" },
   summary: "Create an empty page to organise annotations.",
+  summaryMessage: { namespace: "creators", key: "definitions.annotationPage.summary" },
   icon: <ThumbnailStripIcon />,
   resourceType: "AnnotationPage",
   resourceFields: ["id", "type", "items"],

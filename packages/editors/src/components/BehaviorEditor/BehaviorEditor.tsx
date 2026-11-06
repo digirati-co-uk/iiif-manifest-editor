@@ -1,3 +1,5 @@
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import { AccordionContainer, AccordionItem, type AccordionItemRef } from "@manifest-editor/ui/atoms/Accordion";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -19,6 +21,9 @@ export interface BehaviorEditorProps {
 }
 
 export function BehaviorEditor(props: BehaviorEditorProps) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const [showNew, setShowNew] = useState(false);
 
   const [parsedConfig, totalConfigs] = useMemo(() => {
@@ -42,7 +47,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
       {totalConfigs > 0 ? (
         <>
           <PaddedSidebarContainer>
-            <InputLabel>Built-in behaviors</InputLabel>
+            <InputLabel>{t("ui.builtinBehaviors")}</InputLabel>
           </PaddedSidebarContainer>
           <AccordionContainer>
             {Object.values(parsedConfig).map(({ ref, config }) => (
@@ -50,7 +55,7 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
                 key={config.id}
                 initialOpen={config.initialOpen}
                 ref={ref}
-                label={<LocaleString>{config.label}</LocaleString>}
+                label={<LocaleString>{apiLabel(config) ?? config.label}</LocaleString>}
               >
                 <RenderCustomBehaviorEditor behaviors={props.behavior} setBehaviors={props.onChange} config={config} />
               </AccordionItem>
@@ -59,38 +64,42 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
         </>
       ) : null}
       <PaddedSidebarContainer>
-        <InputLabel>Behaviors</InputLabel>
+        <InputLabel>{t("ui.behaviors")}</InputLabel>
         <InputContainer $fluid key={filtered.length}>
-          {filtered.map((t, k) =>
-            t.hasConfig ? (
+          {filtered.map((entry, k) =>
+            entry.hasConfig ? (
               <ComposableInput.Container
-                key={t.value}
+                key={entry.value}
                 $button
                 onClick={() => {
-                  const found = parsedConfig[t.configId];
+                  const found = parsedConfig[entry.configId];
                   if (found) {
                     found.ref.current?.open();
                     found.ref.current?.open();
                   }
                 }}
               >
-                <ComposableInput.ReadOnly>{t.value}</ComposableInput.ReadOnly>
+                <ComposableInput.ReadOnly>{entry.value}</ComposableInput.ReadOnly>
                 <div style={{ display: "flex", alignItems: "center", color: "#666" }}>
-                  edit <RightArrow style={{ margin: "0 0.4em", width: "1.2em" }} />
+                  {commonT("actions.edit")}
+                  <RightArrow style={{ margin: "0 0.4em", width: "1.2em" }} />
                 </div>
               </ComposableInput.Container>
             ) : (
               <ComposableInput.Container key={k}>
                 <ComposableInput.Text
-                  aria-label={`Custom behavior ${k + 1}`}
-                  value={t.value}
-                  onChange={(e) => changeBehaviorValue(t.value, e.currentTarget.value)}
+                  aria-label={t("messages.customBehavior", { number: k + 1 })}
+                  value={entry.value}
+                  onChange={(e) => changeBehaviorValue(entry.value, e.currentTarget.value)}
                 />
-                <Button aria-label={`Remove ${t.value} behavior`} onClick={() => changeBehaviorValue(t.value, "")}>
+                <Button
+                  aria-label={t("messages.removeBehavior", { value: entry.value })}
+                  onClick={() => changeBehaviorValue(entry.value, "")}
+                >
                   <CloseIcon aria-hidden />
                 </Button>
               </ComposableInput.Container>
-            ),
+            )
           )}
         </InputContainer>
 
@@ -108,17 +117,17 @@ export function BehaviorEditor(props: BehaviorEditorProps) {
               }
             }}
           >
-            <InputLabel htmlFor="custom_behavior">Add custom behavior</InputLabel>
+            <InputLabel htmlFor="custom_behavior">{t("ui.addCustomBehavior")}</InputLabel>
             <ComposableInput.Container>
               <ComposableInput.Text name="behavior" id="custom_behavior" list="behaviors" autoFocus />
             </ComposableInput.Container>
             <ActionButton center primary type="submit">
-              <AddIcon /> Add
+              <AddIcon /> {commonT("actions.add")}
             </ActionButton>
           </form>
         ) : (
           <ActionButton onPress={() => setShowNew(true)}>
-            <AddIcon /> Add custom behavior
+            <AddIcon /> {t("ui.addCustomBehavior")}
           </ActionButton>
         )}
       </PaddedSidebarContainer>
