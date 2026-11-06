@@ -31,6 +31,7 @@ export type EditingStackActionCreators =
     }
   | { type: "updateCurrent"; payload: { resource: EditableResource } }
   | { type: "syncRemoval"; payload: { resource: EditableResource } }
+  | { type: "reconcile"; payload: { valid: (resource: EditableResource) => boolean } }
   | { type: "back" }
   | { type: "setStack"; payload: { resources: EditableResource[] } }
   | {

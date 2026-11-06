@@ -40,19 +40,22 @@
     "dev": "tsdown src/index.ts --watch",
     "lint": "publint",
     "typecheck": "tsc --noEmit",
-    "prepack": "tsdown src/index.ts"
+    "prepack": "tsdown src/index.ts",
+    "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
     "@iiif/helpers": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "uuid": "^9.0.1",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "@manifest-editor/client-vault": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/uuid": "^9.0.8",
     "@types/ws": "8.5.10",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

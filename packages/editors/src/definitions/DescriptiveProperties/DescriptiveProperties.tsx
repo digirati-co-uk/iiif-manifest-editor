@@ -55,7 +55,7 @@ export function DescriptiveProperties() {
           focusId={label.focusId()}
           label={apiLabel(propertyLabels.label)!}
           fields={label.get()}
-          onSave={(e: any) => label.set(e.toInternationalString())}
+          onSave={(e: any, _index, _property, scoped) => label.withVault(scoped!).set(e.toInternationalString())}
         />
       ) : null}
       {!notAllowed.includes("summary") ? (
@@ -65,7 +65,7 @@ export function DescriptiveProperties() {
           label={apiLabel(propertyLabels.summary)!}
           disallowHTML={false}
           fields={summary.get()}
-          onSave={(e: any) => summary.set(e.toInternationalString())}
+          onSave={(e: any, _index, _property, scoped) => summary.withVault(scoped!).set(e.toInternationalString())}
         />
       ) : null}
 
@@ -227,14 +227,18 @@ export function RequiredStatementField() {
             focusId={`${requiredStatement.focusId()}_label`}
             label={apiLabel(propertyLabels.label)!}
             fields={requiredStatement.get()?.label || { none: [] }}
-            onSave={(e: any) => requiredStatement.updateLabel(e.toInternationalString())}
+            onSave={(e: any, _index, _property, scoped) =>
+              requiredStatement.withVault(scoped!).updateLabel(e.toInternationalString())
+            }
           />
           <LanguageFieldEditor
             focusId={`${requiredStatement.focusId()}_value`}
             label={t("metadata.value")}
             disallowHTML={false}
             fields={requiredStatement.get()?.value || { none: [] }}
-            onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
+            onSave={(e: any, _index, _property, scoped) =>
+              requiredStatement.withVault(scoped!).update(e.toInternationalString())
+            }
           />
         </InputFieldset>
       )}

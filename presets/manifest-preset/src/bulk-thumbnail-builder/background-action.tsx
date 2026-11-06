@@ -963,6 +963,7 @@ function addThumbnailToResource(ctx: BackgroundActionRunContext, input: Thumbnai
     height: thumbnail.height,
   };
 
+  ctx.signal?.throwIfAborted();
   ctx.vault.dispatch(
     batchActions({
       actions: [

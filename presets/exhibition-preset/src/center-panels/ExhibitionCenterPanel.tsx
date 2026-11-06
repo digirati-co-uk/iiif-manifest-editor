@@ -9,21 +9,10 @@ import {
 } from "@manifest-editor/shell";
 import { DelftExhibition } from "exhibition-viewer";
 import { type EditorHooks, EditorHooksProvider } from "exhibition-viewer/library";
-import {
-  type CSSProperties,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type CSSProperties, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button } from "react-aria-components";
 import { CanvasContext, useManifest, useVault } from "react-iiif-vault";
-import {
-  getThemeConfigFromServices,
-  getThemeCssVariables,
-  resolveThemeConfig,
-} from "../theme/theme-service";
+import { getThemeConfigFromServices, getThemeCssVariables, resolveThemeConfig } from "../theme/theme-service";
 
 export const exhibitionCenterPanel: LayoutPanel = {
   id: "@exhibitions/center-panel", // We are overriding the default canvas listing panel
@@ -47,11 +36,7 @@ function ExhibitionCenterPanel() {
       return null;
     }
 
-    return resolveThemeConfig(
-      getThemeConfigFromServices(
-        (manifest as any).service || (manifest as any).services,
-      ),
-    );
+    return resolveThemeConfig(getThemeConfigFromServices((manifest as any).service || (manifest as any).services));
   }, [manifest]);
 
   const hooks = useMemo(() => {
@@ -88,21 +73,29 @@ function ExhibitionCenterPanel() {
   }, []);
 
   useEffect(() => {
-    for (const canvasRef of manifest?.items || []) {
-      const canvas = vault.get(canvasRef as any) as any;
-      if (canvas && !Array.isArray(canvas.items)) {
-        vault.modifyEntityField(canvas, "items", []);
-      }
+    const context = vault.beginInteraction({ history: "ignore" });
+    const scoped = context.vault;
+    try {
+      scoped.batch(() => {
+        for (const canvasRef of manifest?.items || []) {
+          const canvas = scoped.get(canvasRef as any) as any;
+          if (canvas && !Array.isArray(canvas.items)) {
+            scoped.modifyEntityField(canvas, "items", []);
+          }
 
-      for (const pageRef of [
-        ...(canvas?.items || []),
-        ...(canvas?.annotations || []),
-      ]) {
-        const page = vault.get(pageRef as any) as any;
-        if (page && !Array.isArray(page.items)) {
-          vault.modifyEntityField(page, "items", []);
+          for (const pageRef of [
+            ...(Array.isArray(canvas?.items) ? canvas.items : []),
+            ...(Array.isArray(canvas?.annotations) ? canvas.annotations : []),
+          ]) {
+            const page = scoped.get(pageRef as any) as any;
+            if (page && !Array.isArray(page.items)) {
+              scoped.modifyEntityField(page, "items", []);
+            }
+          }
         }
-      }
+      });
+    } finally {
+      context.finish();
     }
   }, [manifest, vault]);
 
@@ -120,11 +113,7 @@ function ExhibitionCenterPanel() {
     <div
       ref={wrapperRef}
       className="overflow-y-auto delft-exhibition exhibition-viewer"
-      style={
-        resolvedTheme
-          ? (getThemeCssVariables(resolvedTheme) as CSSProperties)
-          : undefined
-      }
+      style={resolvedTheme ? (getThemeCssVariables(resolvedTheme) as CSSProperties) : undefined}
     >
       <EditorHooksProvider hooks={hooks}>
         <DelftExhibition

@@ -1,5 +1,19 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Bearbeitungsverlauf",
+    undo: "Rückgängig",
+    redo: "Wiederholen",
+    redoOperation: "{{label}} wiederholen",
+    undoOperation: "{{label}} rückgängig machen",
+    disabled: "Für dieses Dokument ist kein Verlauf verfügbar.",
+    empty: "Es gibt keine Änderungen zum Rückgängigmachen.",
+    open: "Schließen Sie die aktuelle Bearbeitung ab, bevor Sie eine Änderung rückgängig machen.",
+    busy: "Die aktuelle Änderung wird noch abgeschlossen.",
+    syncConflict:
+      "Eine gleichzeitige Bearbeitung hat das Speichern dieser Änderung verhindert. Das aktuelle Dokument wurde neu geladen.",
+    conflict: "Diese Änderung kann nicht rückgängig gemacht werden, da der betroffene Inhalt geändert wurde.",
+  },
   project: {
     open: "Projekt öffnen",
     export: "Export",

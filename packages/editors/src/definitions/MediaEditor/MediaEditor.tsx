@@ -185,7 +185,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
         focusId={label.focusId()}
         label={apiLabel(propertyLabels.label)!}
         fields={label.get()}
-        onSave={(e: any) => label.set(e.toInternationalString())}
+        onSave={(e: any, _index, _property, scoped) => label.withVault(scoped!).set(e.toInternationalString())}
       />
 
       <LanguageFieldEditor
@@ -193,7 +193,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
         label={apiLabel(propertyLabels.summary)!}
         disallowHTML={false}
         fields={summary.get()}
-        onSave={(e: any) => summary.set(e.toInternationalString())}
+        onSave={(e: any, _index, _property, scoped) => summary.withVault(scoped!).set(e.toInternationalString())}
       />
     </>
   );
@@ -203,11 +203,11 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
       <InputContainer $wide>
         <DimensionsTriplet
           width={width.get() || 0}
-          changeWidth={(v) => width.set(v)}
+          changeWidth={(v, scoped) => width.withVault(scoped!).set(v)}
           height={height.get() || 0}
-          changeHeight={(v) => height.set(v)}
+          changeHeight={(v, scoped) => height.withVault(scoped!).set(v)}
           duration={duration.get() || 0}
-          changeDuration={type.get() !== "Image" ? (v) => duration.set(v) : undefined}
+          changeDuration={type.get() !== "Image" ? (v, scoped) => duration.withVault(scoped!).set(v) : undefined}
         />
       </InputContainer>
 

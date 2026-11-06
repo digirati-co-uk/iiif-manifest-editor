@@ -1,4 +1,6 @@
 "use client";
+
+import { createManifestEditorVault } from "@manifest-editor/client-vault";
 import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { useTranslations, useEditorI18n } from "@manifest-editor/i18n";
@@ -21,7 +23,7 @@ export default function LocalEditor() {
   const { locale } = useEditorI18n();
   const [file, setFile] = useState<FileWithHandle | null>(null);
   const [manifest, setManifest] = useState<any | null>(null);
-  const [vault] = useState(() => new Vault());
+  const [vault, setVault] = useState(() => createManifestEditorVault());
   const [lastModified, setLastModified] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +52,10 @@ export default function LocalEditor() {
                 setError("local.upgradeFailed");
                 return;
               }
-              vault.loadManifestSync(upgraded.id, upgraded);
+              const nextVault = createManifestEditorVault();
+              nextVault.loadManifestSync(upgraded.id, upgraded);
+              vault.history?.dispose();
+              setVault(nextVault);
               setFile(selectedFile);
               setManifest(upgraded);
               setLastModified(selectedFile.lastModified);

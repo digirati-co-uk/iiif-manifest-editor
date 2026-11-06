@@ -33,7 +33,7 @@ catalog:
   styled-components: 6.1.8
   zustand: 4.5.2
   "@iiif/parser": 4.0.1
-  "@iiif/helpers": 4.0.0
+  "@iiif/helpers": 4.0.4
   # "iiif-browser": 2.2.4
   iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef
   "@atlas-viewer/atlas": 3.3.4
@@ -52,10 +52,13 @@ minimumReleaseAgeExclude:
   - '@atlas-viewer/atlas@3.3.4'
   - react-iiif-vault@4.0.3
   - polygon-editor@1.0.0
+  - '@iiif/helpers@4.0.4'
 
 blockExoticSubdeps: false
 
 overrides:
+  "@iiif/parser": 4.0.1
+  "@iiif/helpers": 4.0.4
   # Notebook and descriptive editors must share ProseMirror node/fragment instances.
   prosemirror-model: 1.25.12
   "@atlas-viewer/atlas": 3.3.4

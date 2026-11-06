@@ -211,6 +211,8 @@ export interface BackgroundActionLifecycle {
 }
 
 export interface BackgroundActionRunContext extends BackgroundActionContext, BackgroundActionLifecycle {
+  /** Apply one prepared result synchronously through an explicit history scope. */
+  commitResult?<T>(label: string, apply: (vault: Vault) => T): T;
   i18n: Pick<EditorI18n, "resolveMessage" | "translate">;
   signal: AbortSignal;
   prepareData?: unknown;

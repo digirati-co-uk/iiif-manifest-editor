@@ -33,48 +33,50 @@ export function BulkActionsWorkbench() {
         <div className="flex gap-2 mb-8">
           <ActionButton
             onPress={async () => {
-              const rangeEditor = new EditorInstance({
-                reference: { id: range.id, type: "Range" },
-                vault,
+              return vault.interaction({ label: "Move into a new range" }, async (vault) => {
+                const rangeEditor = new EditorInstance({
+                  reference: { id: range.id, type: "Range" },
+                  vault,
+                });
+                const items = rangeEditor.structural.items.getWithoutTracking();
+
+                // Create sub range.
+                const createdRange = (await creator.withVault(vault).create(
+                  "@manifest-editor/range-with-items",
+                  {
+                    type: "Range",
+                    label: { en: ["Range 1"] },
+                    items: [],
+                  },
+                  {
+                    parent: {
+                      property: "items",
+                      resource: { id: range.id, type: "Range" },
+                      atIndex: 0,
+                    },
+                  }
+                )) as { id: string; type: "Range" };
+
+                vault.dispatch(
+                  moveEntities({
+                    subjects: {
+                      type: "slice",
+                      startIndex: 1,
+                      length: items.length,
+                    },
+                    from: {
+                      id: range.id,
+                      type: "Range",
+                      key: "items",
+                    },
+                    to: {
+                      id: createdRange.id,
+                      type: "Range",
+                      key: "items",
+                    },
+                  })
+                );
               });
-              const items = rangeEditor.structural.items.getWithoutTracking();
-
-              // Create sub range.
-              const createdRange = (await creator.create(
-                "@manifest-editor/range-with-items",
-                {
-                  type: "Range",
-                  label: { en: ["Range 1"] },
-                  items: [],
-                },
-                {
-                  parent: {
-                    property: "items",
-                    resource: { id: range.id, type: "Range" },
-                    atIndex: 0,
-                  },
-                }
-              )) as { id: string; type: "Range" };
-
-              vault.dispatch(
-                moveEntities({
-                  subjects: {
-                    type: "slice",
-                    startIndex: 1,
-                    length: items.length,
-                  },
-                  from: {
-                    id: range.id,
-                    type: "Range",
-                    key: "items",
-                  },
-                  to: {
-                    id: createdRange.id,
-                    type: "Range",
-                    key: "items",
-                  },
-                })
-              );
             }}
           >
             {t("workflow.moveIntoNewSubRange")}

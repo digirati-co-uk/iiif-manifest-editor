@@ -7,6 +7,8 @@ import { VaultProvider } from "react-iiif-vault";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { EditorI18nProvider } from "@manifest-editor/i18n";
 import { createEditorI18n, defaultLocales } from "@manifest-editor/i18n/core";
+import { useVaultEditSession as actualEditSession } from "../../shell/src/History/use-edit-session";
+import { useDecayState as actualDecayState } from "../../shell/src/hooks/use-decay-state";
 import { RangeOverview } from "../src/definitions/RangeOverview/RangeOverview";
 
 const shell = vi.hoisted(() => ({
@@ -20,7 +22,8 @@ vi.mock("@manifest-editor/shell", () => ({
   useEditingResource: () => ({ resource: { source: { id: "urn:range", type: "Range" } } }),
   useCreator: () => [true, { edit: shell.edit, create: shell.create }],
   useConfig: () => ({ i18n: { defaultLanguage: "en", availableLanguages: ["en"], advancedLanguageMode: false } }),
-  useDecayState: () => [false, { start: () => undefined }],
+  useDecayState: (time: number) => actualDecayState(time),
+  useVaultEditSession: (...args: Parameters<typeof actualEditSession>) => actualEditSession(...args),
 }));
 vi.mock("react-iiif-vault", async (importOriginal) => ({
   ...(await importOriginal<typeof import("react-iiif-vault")>()),

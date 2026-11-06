@@ -266,7 +266,12 @@ export function useProjectLoader<T extends Storage = any>(
   useEffect(() => {
     // @todo migrate this into the storage class.
     if (vault && storage.shouldUpdateWithVault()) {
-      return vault.subscribe(debounceSaveChanges, true);
+      const stop = vault.subscribe(debounceSaveChanges, true);
+      const stopHistory = vault.history?.subscribe(() => debounceSaveChanges());
+      return () => {
+        stop();
+        stopHistory?.();
+      };
     }
   }, [debounceSaveChanges, storage, vault]);
 

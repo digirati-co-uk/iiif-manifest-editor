@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { EditorI18nBoundary } from "../EditorI18nBridge";
 import { useOptionalEditorI18nInstance, useTranslations } from "@manifest-editor/i18n";
 import {
@@ -47,6 +48,7 @@ import {
   AuthProvider,
   CanvasContext,
   CanvasPanel,
+  ReactVaultContext,
   useAnnotation,
   useCanvas,
   useCanvasChoices,
@@ -109,7 +111,24 @@ export interface CanvasPanelViewerProps {
   forceAnnotationTools?: boolean;
 }
 
-export function CanvasPanelViewer({
+export function CanvasPanelViewer(props: CanvasPanelViewerProps) {
+  const sourceVault = useVault();
+  const inherited = useContext(ReactVaultContext);
+  const [draftVault, setDraftVault] = useState<Vault | null>(null);
+  const context = useMemo(
+    () => ({ ...inherited, vault: props.moveMode && draftVault ? draftVault : sourceVault }),
+    [inherited, draftVault, sourceVault, props.moveMode]
+  );
+  return (
+    <ReactVaultContext.Provider value={context}>
+      <CanvasPanelViewerScene {...props} sourceVault={sourceVault} onDraftVault={setDraftVault} />
+    </ReactVaultContext.Provider>
+  );
+}
+
+function CanvasPanelViewerScene({
+  sourceVault,
+  onDraftVault,
   moveMode = false,
   enableAddMedia = false,
   asFallback,
@@ -122,12 +141,12 @@ export function CanvasPanelViewer({
   onControlledEditModeChange,
   editingAnnotationId,
   forceAnnotationTools = false,
-}: CanvasPanelViewerProps) {
+}: CanvasPanelViewerProps & { sourceVault: Vault; onDraftVault: (vault: Vault | null) => void }) {
   const t = useTranslations("editors");
   const i18nInstance = useOptionalEditorI18nInstance();
   const app = useApp();
   const vault = useVault();
-  const addImage = useAddCanvasImage();
+  const addImage = useAddCanvasImage(sourceVault);
   const [resizing, setResizing] = useState(false);
   const { state } = useAppState();
   const runtime = useRef<Runtime | undefined>(undefined);
@@ -425,6 +444,8 @@ export function CanvasPanelViewer({
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
                     <InternalRenderCanvas
+                      sourceVault={sourceVault}
+                      onDraftVault={onDraftVault}
                       moveMode={moveMode}
                       resizing={resizing}
                       onResizeDone={() => setResizing(false)}

@@ -1,3 +1,4 @@
+import { HistoryProvider } from "../History/History";
 import { ShellI18nBoundary, type ShellLocalisation } from "../i18n/ShellI18n";
 import { useApp } from "../AppContext/AppContext";
 import { ProjectNotebookSync } from "../Notebook/ProjectNotebook";
@@ -120,28 +121,30 @@ export function ShellProvider({
                   <PluginConfigBridge config={mergedConfig} />
                   <PluginI18nBridge />
                   <ProjectNotebookSync />
-                  <EditingStack>
-                    <LayoutProvider>
-                      <BackgroundActionsProvider
-                        persistence={backgroundActionPersistence}
-                        persistenceKey={backgroundActionPersistenceKey}
-                      >
-                        <ContextMenuProvider>
-                          <ToastProvider>
-                            {/* @todo swap these out for (config?.previews || []) */}
-                            <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
-                              <PreviewWindowProvider>
-                                <AtlasStoreProvider>
-                                  <AnnotationRequestCleanup />
-                                  {children}
-                                </AtlasStoreProvider>
-                              </PreviewWindowProvider>
-                            </PreviewProvider>
-                          </ToastProvider>
-                        </ContextMenuProvider>
-                      </BackgroundActionsProvider>
-                    </LayoutProvider>
-                  </EditingStack>
+                  <HistoryProvider>
+                    <EditingStack>
+                      <LayoutProvider>
+                        <BackgroundActionsProvider
+                          persistence={backgroundActionPersistence}
+                          persistenceKey={backgroundActionPersistenceKey}
+                        >
+                          <ContextMenuProvider>
+                            <ToastProvider>
+                              {/* @todo swap these out for (config?.previews || []) */}
+                              <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
+                                <PreviewWindowProvider>
+                                  <AtlasStoreProvider>
+                                    <AnnotationRequestCleanup />
+                                    {children}
+                                  </AtlasStoreProvider>
+                                </PreviewWindowProvider>
+                              </PreviewProvider>
+                            </ToastProvider>
+                          </ContextMenuProvider>
+                        </BackgroundActionsProvider>
+                      </LayoutProvider>
+                    </EditingStack>
+                  </HistoryProvider>
                 </ShellI18nBoundary>
               </ConfigProvider>
             </ThemeProvider>

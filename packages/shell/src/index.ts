@@ -80,3 +80,11 @@ export * from "./Notebook/notebook";
 
 export * from "./i18n/ShellI18n";
 export * from "./BackgroundTasks/BackgroundActionMessages";
+
+export { createManifestEditorVault, EDITOR_HISTORY_METADATA } from "@manifest-editor/client-vault";
+
+export * from "./History/History";
+
+export * from "./History/use-edit-session";
+
+export { runVaultCommand, finishVaultEditSessions } from "@manifest-editor/editor-api";

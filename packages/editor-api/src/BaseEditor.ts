@@ -17,6 +17,11 @@ export class BaseEditor<T> {
     return this.config.vault.get(ref, { skipSelfReturn: false });
   }
 
+  withVault(vault: Vault = this.config.vault): this {
+    const Constructor = this.constructor as new (config: EditorConfig, property?: string) => this;
+    return new Constructor({ ...this.config, vault }, (this as any).property);
+  }
+
   ref = (): Reference => {
     return this.config.reference;
   };
@@ -39,14 +44,14 @@ export class BaseEditor<T> {
   protected _observe(
     selector: (resource: T, context: any, vault: Vault) => any,
     cb: (selected: any, resource: T, context: any) => void,
-    skipInitial = true,
+    skipInitial = true
   ) {
     return this.config.vault.subscribe(
       () => selector(this.entity(), this.config.context, this.config.vault),
       (selected) => {
         cb(selected, this.entity(), this.config.context);
       },
-      skipInitial,
+      skipInitial
     );
   }
 }

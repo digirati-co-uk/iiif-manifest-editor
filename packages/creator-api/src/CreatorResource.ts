@@ -34,10 +34,7 @@ export class CreatorResource {
 
     for (const key of properties) {
       // These properties are NOT references and can be just included normally.
-      if (
-        references.inlineProperties.includes(key as any) ||
-        !references.all.includes(key as any)
-      ) {
+      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
         continue;
       }
 
@@ -95,10 +92,7 @@ export class CreatorResource {
       }
 
       // This property SHOULD already be in the Vault OR an instance of creator resource.
-      if (
-        references.externalProperties.includes(key as any) ||
-        references.internalProperties.includes(key as any)
-      ) {
+      if (references.externalProperties.includes(key as any) || references.internalProperties.includes(key as any)) {
         const _items = (data[key] || []) as any[];
         const items = Array.isArray(_items) ? _items : [_items];
         const newItems: any[] = [];
@@ -127,10 +121,7 @@ export class CreatorResource {
           const exists = this.vault.get(item, { skipSelfReturn: true });
           if (exists) {
             const type = resolveType(item.type);
-            const newItem = new ReferencedResource(
-              { id: item.id, type },
-              vault,
-            );
+            const newItem = new ReferencedResource({ id: item.id, type }, vault);
             this.references.push(newItem);
             newItems.push(newItem);
           } else {
@@ -152,9 +143,7 @@ export class CreatorResource {
 
   getSpecificResource() {
     const reference = this.ref();
-    return isSpecificResource(reference)
-      ? reference
-      : { type: "SpecificResource", source: reference };
+    return isSpecificResource(reference) ? reference : { type: "SpecificResource", source: reference };
   }
 
   ref() {
@@ -188,10 +177,7 @@ export class CreatorResource {
 
     for (const key of properties) {
       // Skip these, they are just normal inline values.
-      if (
-        references.inlineProperties.includes(key as any) ||
-        !references.all.includes(key as any)
-      ) {
+      if (references.inlineProperties.includes(key as any) || !references.all.includes(key as any)) {
         newResource[key] = resource[key];
         continue;
       }
@@ -246,8 +232,8 @@ export class CreatorResource {
     }
 
     if (this.partOf) {
-      newResource[HAS_PART] = newResource[HAS_PART] || [];
-      newResource[HAS_PART].push(this.partOf);
+      // Existing normalized resources may share this array with history snapshots.
+      newResource[HAS_PART] = [...(newResource[HAS_PART] || []), this.partOf];
     }
 
     return newResource;

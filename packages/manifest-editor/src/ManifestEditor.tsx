@@ -3,6 +3,7 @@ import type { Collection, Manifest } from "@iiif/presentation-3";
 import { collectionPreset } from "@manifest-editor/collection-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import {
+  createManifestEditorVault,
   AppProvider,
   type Config,
   Layout,
@@ -12,8 +13,8 @@ import {
   ShellProvider,
   type ShellLocalisation,
 } from "@manifest-editor/shell";
-import { useRef } from "react";
-import { useExistingVault, VaultProvider } from "react-iiif-vault";
+import { useContext, useEffect, useMemo, useRef } from "react";
+import { ReactVaultContext, VaultProvider } from "react-iiif-vault";
 
 const manifestEditor = mapApp(manifestEditorPreset);
 
@@ -59,10 +60,28 @@ function configInvariant(
 }
 
 export function ManifestEditor(props: ManifestEditorProps) {
-  const existingVault = useExistingVault(props.vault);
-  const fallbackVault = useRef(existingVault);
-  const vault = props.vault || fallbackVault.current;
-  const didLoad = useRef("");
+  const resourceKey =
+    typeof props.resource === "string" ? `Manifest:${props.resource}` : `${props.resource.type}:${props.resource.id}`;
+  const inherited = useContext(ReactVaultContext).vault;
+  const hostVault = props.vault || (inherited?.presentationVersion === 3 ? inherited : undefined);
+  const ownedVault = useMemo(() => (hostVault ? null : createManifestEditorVault()), [hostVault, resourceKey]);
+  const vault = hostVault || ownedVault!;
+  const lifetimes = useRef(new Map<Vault, number>());
+  useEffect(() => {
+    if (!ownedVault) return;
+    const generation = (lifetimes.current.get(ownedVault) || 0) + 1;
+    lifetimes.current.set(ownedVault, generation);
+    return () => {
+      ownedVault.history?.clear();
+      queueMicrotask(() => {
+        if (lifetimes.current.get(ownedVault) === generation) {
+          ownedVault.history?.dispose();
+          lifetimes.current.delete(ownedVault);
+        }
+      });
+    };
+  }, [ownedVault]);
+  const didLoad = useRef<{ vault: Vault; id: string } | null>(null);
 
   configInvariant(
     props.resource,
@@ -77,9 +96,9 @@ export function ManifestEditor(props: ManifestEditorProps) {
     if (props.data) {
       vault.loadManifestSync(resource.id, props.data);
     } else {
-      if (didLoad.current !== resource.id) {
+      if (didLoad.current?.vault !== vault || didLoad.current.id !== resource.id) {
         vault.load(resource);
-        didLoad.current = resource.id;
+        didLoad.current = { vault, id: resource.id };
       }
     }
   }

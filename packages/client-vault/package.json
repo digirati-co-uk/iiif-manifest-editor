@@ -34,13 +34,15 @@
     "dev": "tsdown src/index.ts --watch",
     "typecheck": "tsc --noEmit",
     "lint": "publint",
-    "prepack": "tsdown src/index.ts"
+    "prepack": "tsdown src/index.ts",
+    "test": "vitest run --config ../server-vault/vitest.config.ts"
   },
   "dependencies": {
     "@iiif/helpers": "catalog:"
   },
   "devDependencies": {
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

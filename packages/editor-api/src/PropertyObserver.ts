@@ -31,7 +31,8 @@ export class PropertyObserver implements TrackerState {
         const props = [];
         for (const prop of this.observed) {
           props.push(prop);
-          const value = entity[prop];
+          // The entity disappears when its creation is undone.
+          const value = entity?.[prop];
           if (Array.isArray(value)) {
             props.push(...value);
           } else {

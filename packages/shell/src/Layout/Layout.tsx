@@ -1,3 +1,4 @@
+import { HistoryHeader } from "../History/History";
 import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { ProjectNotebookHeader } from "../Notebook/ProjectNotebook";
 import { Modal, PanelSideMenu } from "@manifest-editor/components";
@@ -59,7 +60,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
   const rootResource = useAppResource();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
-  const vault = _vault || undefined;
+  const vault = _vault?.presentationVersion === 3 ? _vault : undefined;
   const vaultState = useVaultSelector((state) => state.iiif);
   const leftPanelRef = useRef<HTMLDivElement | null>(null);
   const rightPanelRef = useRef<HTMLDivElement | null>(null);
@@ -457,7 +458,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       <L.OuterWrapper>
         {props.hideHeader ? null : (
           <L.Header>
-            {props.header || <ProjectNotebookHeader />}
+            <HistoryHeader>{props.header || <ProjectNotebookHeader />}</HistoryHeader>
             {props.menu ? <menu>{props.menu}</menu> : null}
           </L.Header>
         )}
@@ -554,7 +555,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     >
       {props.hideHeader ? null : (
         <L.Header>
-          {props.header || <ProjectNotebookHeader />}
+          <HistoryHeader>{props.header || <ProjectNotebookHeader />}</HistoryHeader>
           {props.menu ? <menu>{props.menu}</menu> : null}
         </L.Header>
       )}

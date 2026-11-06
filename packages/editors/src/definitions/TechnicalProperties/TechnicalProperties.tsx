@@ -34,10 +34,10 @@ export function TechnicalProperties() {
                     <DimensionsTriplet
                       widthId={width.containerId()}
                       width={width.get() || 0}
-                      changeWidth={(value) => width.set(value)}
+                      changeWidth={(value, scoped) => width.withVault(scoped!).set(value)}
                       heightId={height.containerId()}
                       height={height.get() || 0}
-                      changeHeight={(value) => height.set(value)}
+                      changeHeight={(value, scoped) => height.withVault(scoped!).set(value)}
                     />
                   }
                 />
@@ -46,13 +46,13 @@ export function TechnicalProperties() {
               <DimensionsTriplet
                 widthId={width.containerId()}
                 width={width.get() || 0}
-                changeWidth={(v) => width.set(v)}
+                changeWidth={(v, scoped) => width.withVault(scoped!).set(v)}
                 heightId={height.containerId()}
                 height={height.get() || 0}
-                changeHeight={(v) => height.set(v)}
+                changeHeight={(v, scoped) => height.withVault(scoped!).set(v)}
                 durationId={duration.containerId()}
                 duration={duration.get() || 0}
-                changeDuration={(v) => duration.set(v)}
+                changeDuration={(v, scoped) => duration.withVault(scoped!).set(v)}
               />
             )}
             {technical.type === "Canvas" && !notAllowed.includes("duration") && (

@@ -1,80 +1,62 @@
-import { createServer, IncomingMessage, Server } from "http";
-import { Socket } from "net";
+import { createServer, type IncomingMessage, type Server } from "node:http";
+import type { Duplex } from "node:stream";
 import { ServerVault } from "./server-vault";
+import type { VaultIdentity } from "./authority";
+
+export interface MultiVaultServerOptions {
+  /** Return a trusted identity after checking the host's credentials and document access. */
+  authenticate?: (request: IncomingMessage, vaultId: string) => VaultIdentity | null | Promise<VaultIdentity | null>;
+}
 
 export class MultiVaultServer {
-  server: Server;
-  vaults: Map<string, ServerVault> = new Map();
-  constructor(server?: Server) {
+  readonly server: Server;
+  readonly vaults = new Map<string, ServerVault>();
+  constructor(
+    server?: Server,
+    private options: MultiVaultServerOptions = {}
+  ) {
     this.server = server || createServer();
     this.server.on("upgrade", this.handleUpgrade);
     this.server.on("request", this.handleRequest);
   }
-
   listen(port: number, hostname?: string, backlog?: number, listeningListener?: () => void) {
     this.server.listen(port, hostname, backlog, listeningListener);
   }
-
   handleRequest = (request: IncomingMessage, response: any) => {
     if (request.url === "/vault") {
-      // Need to respond with a JSON body with a list of available vaults.
-      const vaults = Array.from(this.vaults.keys());
-      const json = JSON.stringify({ vaults });
-
-      response.writeHead(200, {
-        "Content-Length": Buffer.byteLength(json),
-        "Content-Type": "application/json",
-      });
-      response.write(json);
+      const json = JSON.stringify({ vaults: [...this.vaults.keys()] });
+      response.writeHead(200, { "Content-Length": Buffer.byteLength(json), "Content-Type": "application/json" });
+      response.end(json);
+    } else {
+      response.writeHead(404);
       response.end();
-      return;
     }
-
-    // If the pathname is not recognised, destroy the socket and send 404.
-    response.writeHead(404);
-    response.end();
   };
-
-  handleUpgrade = (request: IncomingMessage, socket: Socket, head: Buffer) => {
-    console.log("ws.url", request.url);
-    const pathname = request.url;
-
-    // @todo some logic for handling the pathname. For now, just let any incoming be an ID.
-    if (pathname && (pathname as string).startsWith("/vault")) {
-      // Get the vault ID from the URL.
-      const vaultId = (pathname as string).replace("/vault/", "");
-
-      let vault = this.vaults.get(vaultId);
-
-      // If no vault exists for this ID, create one.
+  handleUpgrade = async (request: IncomingMessage, socket: Duplex, head: Buffer) => {
+    try {
+      const pathname = new URL(request.url || "", "http://vault.local").pathname;
+      if (!pathname.startsWith("/vault/") || pathname.length === 7) {
+        socket.end("HTTP/1.1 404 Not Found\r\n\r\n");
+        return;
+      }
+      const id = pathname.slice(7);
+      // Without host authentication, isolate authors by a server-assigned connection identity.
+      const identity = this.options.authenticate
+        ? await this.options.authenticate(request, id)
+        : { actorId: crypto.randomUUID(), sessionId: crypto.randomUUID() };
+      if (!identity) {
+        socket.end("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        return;
+      }
+      let vault = this.vaults.get(id);
       if (!vault) {
-        const newVault = new ServerVault();
-        console.log("new vault", vaultId);
-        this.vaults.set(vaultId, newVault);
-        vault = newVault;
+        vault = new ServerVault({ onClose: () => this.vaults.delete(id) });
+        this.vaults.set(id, vault);
       }
-
-      if (vault) {
-        const theVault = vault;
-        // If it exists, add the socket to the vault.
-        theVault.ws.handleUpgrade(request, socket, head, (ws) => {
-          console.log("new client", vaultId);
-          theVault.ws.emit("connection", ws, request);
-          theVault.ws.on("close", () => {
-            if (theVault.ws.clients.size === 0) {
-              console.log("destroying vault", vaultId);
-              this.vaults.delete(vaultId);
-            }
-          });
-        });
-      } else {
-        socket.destroy();
-      }
-      return;
+      const room = vault;
+      room.ws.handleUpgrade(request, socket, head, (ws) => room.ws.emit("connection", ws, request, identity));
+    } catch {
+      socket.destroy();
     }
-
-    // If the pathname is not recognised, destroy the socket and send 404.
-    socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
-    socket.destroy();
   };
 }

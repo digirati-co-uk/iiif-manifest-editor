@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { propertyLabels } from "@manifest-editor/editor-api";
 import { useReorderAccessibility } from "../../hooks/useReorderAccessibility";
 import { useTranslations } from "@manifest-editor/i18n";
@@ -138,8 +139,8 @@ function MetadataRow({
   onEdit: () => void;
   onMoveToEnd: () => void;
   onMoveToStart: () => void;
-  onSaveLabel: (label: InternationalString) => void;
-  onSaveValue: (value: InternationalString) => void;
+  onSaveLabel: (label: InternationalString, vault?: Vault) => void;
+  onSaveValue: (value: InternationalString, vault?: Vault) => void;
 }) {
   const commonT = useTranslations("common");
   const t = useTranslations("editors");
@@ -233,7 +234,7 @@ function MetadataRow({
             focusId={item.id}
             label={t("fields.label")}
             labelMessage={propertyLabels.label.labelMessage}
-            onSave={(label: any) => onSaveLabel(label.toInternationalString())}
+            onSave={(label: any, _index, _property, scoped) => onSaveLabel(label.toInternationalString(), scoped)}
           />
           <LanguageFieldEditor
             fields={item.value || emptyLanguageMap}
@@ -241,7 +242,7 @@ function MetadataRow({
             label={t("metadata.value")}
             labelMessage={propertyLabels.value.labelMessage}
             disallowHTML={false}
-            onSave={(value: any) => onSaveValue(value.toInternationalString())}
+            onSave={(value: any, _index, _property, scoped) => onSaveValue(value.toInternationalString(), scoped)}
           />
         </div>
       ) : null}
@@ -254,7 +255,7 @@ export function Metadata() {
   const { descriptive } = useEditor();
   const [editingId, setEditingId] = useState<string>();
   const [pendingNewItemCount, setPendingNewItemCount] = useState<number>();
-  const editingIndexRef = useRef<number>();
+  const editingIndexRef = useRef<number | undefined>(undefined);
   const items = descriptive.metadata.getSortable() as SortableMetadataItem[];
   const itemCount = items.length;
   const accessibility = useReorderAccessibility(items);
@@ -301,22 +302,22 @@ export function Metadata() {
   );
 
   const saveLabel = useCallback(
-    (id: string, label: InternationalString) => {
+    (id: string, label: InternationalString, scoped?: Vault) => {
       const { index, item } = findItemById(id);
 
       if (item) {
-        descriptive.metadata.update(index, label, item.value);
+        (scoped ? descriptive.metadata.withVault(scoped) : descriptive.metadata).update(index, label, item.value);
       }
     },
     [descriptive.metadata, findItemById]
   );
 
   const saveValue = useCallback(
-    (id: string, value: InternationalString) => {
+    (id: string, value: InternationalString, scoped?: Vault) => {
       const { index, item } = findItemById(id);
 
       if (item) {
-        descriptive.metadata.update(index, item.label, value);
+        (scoped ? descriptive.metadata.withVault(scoped) : descriptive.metadata).update(index, item.label, value);
       }
     },
     [descriptive.metadata, findItemById]
@@ -406,8 +407,8 @@ export function Metadata() {
               }}
               onMoveToEnd={() => moveToEnd(item.id)}
               onMoveToStart={() => moveToStart(item.id)}
-              onSaveLabel={(label) => saveLabel(item.id, label)}
-              onSaveValue={(value) => saveValue(item.id, value)}
+              onSaveLabel={(label, scoped) => saveLabel(item.id, label, scoped)}
+              onSaveValue={(value, scoped) => saveValue(item.id, value, scoped)}
             />
           ))}
         </SortableContext>

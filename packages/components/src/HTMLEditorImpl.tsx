@@ -11,11 +11,13 @@ export function HTMLEditor({
   value,
   onChange,
   disabled,
+  registerFlush,
 }: {
   className?: string;
   value: string;
   disabled?: boolean;
   onChange: (text: string) => void;
+  registerFlush?: (flush: () => void) => () => void;
 }) {
   const editorRef = useRef<MDXEditorMethods>(null);
   const lastEmittedHtml = useRef(value);
@@ -35,12 +37,21 @@ export function HTMLEditor({
     }
   }, []);
   const debounceSave = useDebounce(internalOnChange, 400);
+  useEffect(
+    () =>
+      registerFlush?.(() => {
+        debounceSave.cancel();
+        internalOnChange();
+      }),
+    [registerFlush, debounceSave, internalOnChange]
+  );
   const markdown = useMemo(() => {
     return htmlToMarkdown(value);
   }, [value]);
 
   useEffect(() => {
     if (value === lastEmittedHtml.current) return;
+    debounceSave.cancel();
     lastEmittedHtml.current = value;
     editorRef.current?.setMarkdown(markdown);
   }, [markdown, value]);

@@ -1,3 +1,4 @@
+import { EditorState } from "@tiptap/pm/state";
 import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { LanguageIcon } from "@manifest-editor/ui/icons/LanguageIcon";
@@ -23,6 +24,8 @@ export interface TiptapRichTextLanguageFieldProps {
   value: string;
   disableMultiline?: boolean;
   onUpdate: (value: string) => void;
+  resetKey?: number;
+  registerFlush?: (flush: () => void) => () => void;
   onRemove?: () => void;
   languages?: string[];
   onUpdateLanguage?: (lang: string) => void;
@@ -111,8 +114,10 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const currentMode = useRef(mode);
   currentMode.current = mode;
   const latestValue = useRef(value);
+  const composing = useRef(false);
   const savedValue = useRef(value);
   const previousValue = useRef(props.value);
+  const previousReset = useRef(props.resetKey);
   const onUpdate = useRef(props.onUpdate);
   onUpdate.current = props.onUpdate;
   const ariaLabel =
@@ -128,6 +133,7 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const hasOptions = canEditHtml || canChangeLanguage || !!props.onRemove;
 
   const saveChanges = useCallback(() => {
+    if (composing.current) return;
     if (latestValue.current !== savedValue.current) {
       if (currentMode.current === "source") latestValue.current = sanitizeHtml(latestValue.current);
       if (latestValue.current !== savedValue.current) {
@@ -137,6 +143,14 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
     }
   }, []);
   const debounceSave = useDebounce(saveChanges, 100);
+  useEffect(
+    () =>
+      props.registerFlush?.(() => {
+        debounceSave.cancel();
+        saveChanges();
+      }),
+    [props.registerFlush, debounceSave, saveChanges]
+  );
 
   const changeValue = (nextValue: string) => {
     latestValue.current = nextValue;
@@ -146,20 +160,22 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   };
 
   useLayoutEffect(() => {
-    if (props.value !== previousValue.current) {
+    if (props.value !== previousValue.current || props.resetKey !== previousReset.current) {
+      const reset = props.resetKey !== previousReset.current;
+      previousReset.current = props.resetKey;
       previousValue.current = props.value;
       // Ignore our own saves echoing back, including HTML collapsed to plain text.
       const isOwnValue =
         props.value === latestValue.current ||
         (currentMode.current !== "text" && props.value === htmlToStoredValue(latestValue.current));
-      if (!isOwnValue) {
+      if (reset || !isOwnValue) {
         debounceSave.cancel();
         latestValue.current = savedValue.current = props.value || "";
         setValue(latestValue.current);
         setMode(isHtmlValue(latestValue.current) ? "rich" : "text");
       }
     }
-  }, [props.value, props.disallowHTML, mode, debounceSave]);
+  }, [props.value, props.resetKey, props.disallowHTML, mode, debounceSave]);
 
   useEffect(
     () => () => {
@@ -232,7 +248,15 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   );
 
   return (
-    <S.Container>
+    <S.Container
+      onCompositionStart={() => {
+        composing.current = true;
+      }}
+      onCompositionEnd={() => {
+        composing.current = false;
+        saveChanges();
+      }}
+    >
       <S.FieldShell
         onKeyDown={(event) => {
           if (event.key === "Escape" && showOptions) setShowOptions(false);
@@ -457,6 +481,10 @@ function RichEditor(props: RichEditorProps) {
   useEffect(() => {
     if (editor && props.value !== editor.getHTML()) {
       editor.commands.setContent(sanitizeHtml(props.value), { emitUpdate: false });
+      const state = editor.state;
+      editor.view.updateState(
+        EditorState.create({ schema: state.schema, doc: state.doc, plugins: state.plugins, selection: state.selection })
+      );
     }
   }, [editor, props.value]);
 

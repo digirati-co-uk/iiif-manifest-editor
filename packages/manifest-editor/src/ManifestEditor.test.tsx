@@ -1,9 +1,9 @@
-import { act, useState } from "react";
+import { act, StrictMode, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, expect, test, vi } from "vitest";
 import { Vault } from "@iiif/helpers";
 import type { Manifest, Collection } from "@iiif/presentation-3";
-import { useVault, useResourceContext } from "react-iiif-vault";
+import { VaultProvider, useVault, useResourceContext } from "react-iiif-vault";
 import {
   EditorI18nProvider,
   useEditorI18n,
@@ -284,4 +284,47 @@ test("collection mounting inherits the exact actual provider when no preset/host
   expect(onLocaleChange).toHaveBeenCalledWith("nl");
   expect(api.locale).toBe("en-GB");
   expect(node.querySelector("input")).toBe(input);
+});
+
+test("owned document Vaults retain history across rerenders and replace it on a root switch", async () => {
+  const first = mount();
+  const render = (manifest = data, localisation?: ManifestEditorProps["localisation"]) => (
+    <StrictMode>
+      <ManifestEditor resource={manifest.id} data={manifest} localisation={localisation} />
+    </StrictMode>
+  );
+  await act(async () => first.root.render(render()));
+  const original = currentVault;
+  expect(original.history?.getState().undo).toHaveLength(0);
+  await act(async () => original.modifyEntityField(data, "label", { en: ["Authored"] }));
+  await act(async () => first.root.render(render(data, webUiResources)));
+  expect(currentVault).toBe(original);
+  expect(original.history?.getState().undo).toHaveLength(1);
+  const second = mount();
+  await act(async () => second.root.render(<ManifestEditor resource={data.id} data={data} />));
+  expect(currentVault).not.toBe(original);
+  expect(currentVault.history?.getState().undo).toHaveLength(0);
+  const stale = original.beginInteraction({ label: "Old document" });
+  const replacement = { ...data, id: "https://example.org/other" };
+  await act(async () => first.root.render(render(replacement)));
+  expect(currentVault).not.toBe(original);
+  expect(currentVault.history?.getState().undo).toHaveLength(0);
+  expect(() => stale.vault.modifyEntityField(data, "label", { en: ["Late"] })).toThrow();
+});
+
+test("inherits a host Vault and leaves its history owned by the host", async () => {
+  const vault = new Vault({ history: true });
+  const { root } = mount();
+  await act(async () =>
+    root.render(
+      <VaultProvider vault={vault}>
+        <ManifestEditor resource={data.id} data={data} />
+      </VaultProvider>
+    )
+  );
+  expect(currentVault).toBe(vault);
+  await act(async () => vault.modifyEntityField(data, "label", { en: ["Host edit"] }));
+  await act(async () => root.render(null));
+  expect(vault.undo().ok).toBe(true);
+  expect(vault.get(data).label).toEqual(data.label);
 });

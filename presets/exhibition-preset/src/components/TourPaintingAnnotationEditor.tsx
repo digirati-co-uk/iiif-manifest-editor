@@ -1,3 +1,4 @@
+import { runVaultCommand } from "@manifest-editor/editor-api";
 import { ActionButton, DeleteIcon, EditTextIcon } from "@manifest-editor/components";
 import { useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
 import { useRef, useState } from "react";
@@ -66,15 +67,17 @@ export function TourPaintingAnnotationEditor({
     return true;
   };
   const saveStepText = () => {
-    if (!annotation) return;
-    vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "label", {
-      en: [labelRef.current],
+    return runVaultCommand(vault, "Edit tour text", (vault) => {
+      if (!annotation) return;
+      vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "label", {
+        en: [labelRef.current],
+      });
+      vault.modifyEntityField(
+        { id: annotation.id, type: "Annotation" },
+        "summary",
+        normalizeSummaryForSave({ en: [summaryRef.current] })
+      );
     });
-    vault.modifyEntityField(
-      { id: annotation.id, type: "Annotation" },
-      "summary",
-      normalizeSummaryForSave({ en: [summaryRef.current] }),
-    );
   };
 
   return (
@@ -153,7 +156,7 @@ export function TourPaintingAnnotationEditor({
                     index: annotationIndex,
                   }
                 : undefined,
-              { forceOpen: true },
+              { forceOpen: true }
             );
           }}
         >

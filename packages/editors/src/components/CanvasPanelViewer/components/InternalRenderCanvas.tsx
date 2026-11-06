@@ -1,3 +1,4 @@
+import type { Vault } from "@iiif/helpers/vault";
 import { useEditorsI18nInstance } from "../../../editor-i18n-context";
 import { EditorI18nBoundary } from "../../EditorI18nBridge";
 import { CanvasComposition } from "./CanvasComposition";
@@ -49,6 +50,8 @@ interface InternalRenderCanvasProps {
 }
 
 export function InternalRenderCanvas({
+  sourceVault,
+  onDraftVault,
   moveMode = false,
   resizing = false,
   onResizeDone = () => {},
@@ -63,7 +66,7 @@ export function InternalRenderCanvas({
   children,
   svgTheme,
   annotationPopup,
-}: InternalRenderCanvasProps) {
+}: InternalRenderCanvasProps & { sourceVault: Vault; onDraftVault: (vault: Vault | null) => void }) {
   const i18nInstance = useEditorsI18nInstance();
   const strategy = useStrategy();
   const keepCanvasScale = true;
@@ -103,7 +106,14 @@ export function InternalRenderCanvas({
         <RenderAnnotationEditing theme={svgTheme}>
           <EditorI18nBoundary instance={i18nInstance}>{annotationPopup || <AnnotationPopupTools />}</EditorI18nBoundary>
         </RenderAnnotationEditing>
-        {moveMode && <CanvasComposition resizing={resizing} onResizeDone={onResizeDone} />}
+        {moveMode && (
+          <CanvasComposition
+            sourceVault={sourceVault}
+            onDraftVault={onDraftVault}
+            resizing={resizing}
+            onResizeDone={onResizeDone}
+          />
+        )}
         <RenderCurrentContextMenuItem />
         {children}
       </CanvasWorldObject>

@@ -1,5 +1,19 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Cronologia delle modifiche",
+    undo: "Annulla",
+    redo: "Ripeti",
+    redoOperation: "Ripeti {{label}}",
+    undoOperation: "Annulla {{label}}",
+    disabled: "La cronologia non è disponibile per questo documento.",
+    empty: "Non ci sono modifiche da annullare.",
+    open: "Completa la modifica attuale prima di annullare.",
+    busy: "In attesa del completamento della modifica attuale.",
+    syncConflict:
+      "Una modifica simultanea ha impedito il salvataggio di questa modifica. Il documento attuale è stato ricaricato.",
+    conflict: "Questa modifica non può essere annullata perché il contenuto interessato è cambiato.",
+  },
   project: {
     open: "Apri progetto",
     export: "Esportare",

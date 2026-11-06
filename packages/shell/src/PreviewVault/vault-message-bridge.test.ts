@@ -1,3 +1,4 @@
+import { parseVaultMessage } from "@manifest-editor/client-vault";
 import { Vault } from "@iiif/helpers/vault";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import { describe, expect, test, vi } from "vitest";
@@ -43,14 +44,11 @@ describe("createIframeVaultBridge", () => {
     });
 
     const port = new TestPort();
-    const cleanup = createIframeVaultBridge(
-      source,
-      port as unknown as MessagePort,
-    );
+    const cleanup = createIframeVaultBridge(source, port as unknown as MessagePort);
     port.receive(JSON.stringify({ _type: "init-request" }));
 
     const receiving = new Vault();
-    const init = JSON.parse(port.messages.shift()!);
+    const init = parseVaultMessage(port.messages.shift()!);
     receiving.getStore().setState(init.data);
 
     source.loadSync(secondCanvasId, {
@@ -65,14 +63,13 @@ describe("createIframeVaultBridge", () => {
         type: "Manifest",
         key: "items",
         reference: { id: secondCanvasId, type: "Canvas" },
-      }),
+      })
     );
     flushMirroredActions(port, receiving);
-    expect(
-      receiving
-        .get({ id: manifestId, type: "Manifest" })
-        .items.map((item: { id: string }) => item.id),
-    ).toEqual([firstCanvasId, secondCanvasId]);
+    expect(receiving.get({ id: manifestId, type: "Manifest" }).items.map((item: { id: string }) => item.id)).toEqual([
+      firstCanvasId,
+      secondCanvasId,
+    ]);
 
     source.dispatch(
       entityActions.reorderEntityField({
@@ -81,14 +78,13 @@ describe("createIframeVaultBridge", () => {
         key: "items",
         startIndex: 1,
         endIndex: 0,
-      }),
+      })
     );
     flushMirroredActions(port, receiving);
-    expect(
-      receiving
-        .get({ id: manifestId, type: "Manifest" })
-        .items.map((item: { id: string }) => item.id),
-    ).toEqual([secondCanvasId, firstCanvasId]);
+    expect(receiving.get({ id: manifestId, type: "Manifest" }).items.map((item: { id: string }) => item.id)).toEqual([
+      secondCanvasId,
+      firstCanvasId,
+    ]);
 
     source.dispatch(
       entityActions.removeReference({
@@ -97,14 +93,12 @@ describe("createIframeVaultBridge", () => {
         key: "items",
         reference: { id: secondCanvasId, type: "Canvas" },
         index: 0,
-      }),
+      })
     );
     flushMirroredActions(port, receiving);
-    expect(
-      receiving
-        .get({ id: manifestId, type: "Manifest" })
-        .items.map((item: { id: string }) => item.id),
-    ).toEqual([firstCanvasId]);
+    expect(receiving.get({ id: manifestId, type: "Manifest" }).items.map((item: { id: string }) => item.id)).toEqual([
+      firstCanvasId,
+    ]);
 
     cleanup();
   });
@@ -112,9 +106,39 @@ describe("createIframeVaultBridge", () => {
 
 function flushMirroredActions(port: TestPort, receiving: Vault) {
   for (const message of port.messages.splice(0)) {
-    const parsed = JSON.parse(message);
+    const parsed = parseVaultMessage(message);
     if (parsed._type === "vault-action") {
       receiving.dispatch(parsed.action);
     }
   }
 }
+
+test("mirrors nested batches, undo and redo once, then releases the subscription", () => {
+  const source = new Vault({ history: true }),
+    port = new TestPort(),
+    receiving = new Vault();
+  source.loadSync("c", { id: "c", type: "Canvas", width: 100, height: 100 });
+  const dispatch = source.dispatch;
+  const close = createIframeVaultBridge(source, port as unknown as MessagePort);
+  port.receive({ _type: "init-request" });
+  receiving.getStore().setState(parseVaultMessage(port.messages.shift()!).data);
+  source.batch(() => {
+    source.modifyEntityField({ id: "c", type: "Canvas" }, "width", 300);
+    source.batch(() => source.modifyEntityField({ id: "c", type: "Canvas" }, "height", 400));
+  });
+  expect(port.messages).toHaveLength(1);
+  flushMirroredActions(port, receiving);
+  expect(source.undo().ok).toBe(true);
+  expect(port.messages).toHaveLength(1);
+  flushMirroredActions(port, receiving);
+  expect(receiving.get({ id: "c", type: "Canvas" }).width).toBe(100);
+  expect(source.redo().ok).toBe(true);
+  flushMirroredActions(port, receiving);
+  expect(receiving.get({ id: "c", type: "Canvas" }).height).toBe(400);
+  expect(source.dispatch).toBe(dispatch);
+  source.getStore().setState({ iiif: source.getState().iiif });
+  expect(parseVaultMessage(port.messages.shift()!)._type).toBe("init-response");
+  close();
+  source.modifyEntityField({ id: "c", type: "Canvas" }, "width", 500);
+  expect(port.messages).toHaveLength(0);
+});

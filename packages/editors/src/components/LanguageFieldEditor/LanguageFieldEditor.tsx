@@ -1,6 +1,6 @@
 import { useEditorI18n, useTranslations, type MessageReference } from "@manifest-editor/i18n";
 import { ControlButton, OpaqueControls } from "@manifest-editor/components";
-import { useConfig, useDecayState } from "@manifest-editor/shell";
+import { useConfig, useDecayState, useEditingResource, useVaultEditSession } from "@manifest-editor/shell";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { LanguageIcon } from "@manifest-editor/ui/icons/LanguageIcon";
@@ -30,9 +30,10 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
   const { resolveMessage } = useEditorI18n();
+  const resource = useEditingResource();
   return (
     <LanguageFieldEditorFields
-      key={props.focusId || props.containerId}
+      key={`${resource?.resource.source.id || ""}:${props.focusId || props.containerId || ""}`}
       {...props}
       label={props.labelMessage ? resolveMessage(props.labelMessage, props.label) : props.label}
     />
@@ -40,6 +41,11 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
 }
 
 function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
+  const resource = useEditingResource();
+  const session = useVaultEditSession(
+    `Edit ${props.label}`,
+    `${resource?.resource.source.id || ""}:${props.focusId || props.containerId || props.label}:${props.index ?? ""}:${props.property || ""}`
+  );
   const commonT = useTranslations("common");
   const t = useTranslations("editors");
   const { locale } = useEditorI18n();
@@ -53,7 +59,13 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
     changeLanguage,
     saveChanges,
     removeItem,
-  } = useMetadataEditor(props);
+  } = useMetadataEditor({
+    ...props,
+    resetKey: session.epoch,
+    onSave: (data, index, property) => {
+      session.run((scoped) => props.onSave?.(data, index, property, scoped));
+    },
+  });
   const [active, activeState] = useDecayState(2000);
   const [isReorderMode, setIsReorderMode] = useState(false);
   const {
@@ -123,12 +135,15 @@ function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
                   language={field.language}
                   value={field.value}
                   languages={languages}
+                  resetKey={session.epoch}
+                  registerFlush={(callback) => session.onFlush(callback)}
                   onFocus={() => {
                     activeState.set();
                   }}
                   onBlur={() => {
                     activeState.clear();
                     saveChanges(props.index, props.property);
+                    session.finish();
                   }}
                   onUpdateLanguage={(lang) => {
                     changeLanguage(key, lang);

@@ -1,23 +1,9 @@
-import {
-  type BoxStyle,
-  parseCssToBoxStyleMap,
-  parseSelector,
-  type SupportedSelectors,
-} from "@iiif/helpers";
-import type {
-  Selector,
-  SpecificResource,
-  Stylesheet,
-} from "@iiif/presentation-3";
+import { type BoxStyle, parseCssToBoxStyleMap, parseSelector, type SupportedSelectors } from "@iiif/helpers";
+import type { Selector, SpecificResource, Stylesheet } from "@iiif/presentation-3";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import type { InputShape } from "polygon-editor";
 import { BasePropertyEditor } from "./BasePropertyEditor";
-import {
-  boxStyleMapToCss,
-  generateStyleClass,
-  getStylesheetCss,
-  mergeBoxStyle,
-} from "./helpers/box-style";
+import { boxStyleMapToCss, generateStyleClass, getStylesheetCss, mergeBoxStyle } from "./helpers/box-style";
 import type { EditorConfig } from "./types";
 
 function hasInvalidSelectorNumbers(selector: Selector | Selector[]) {
@@ -28,14 +14,11 @@ function hasInvalidSelectorNumbers(selector: Selector | Selector[]) {
       item.type === "SvgSelector" &&
       "value" in item &&
       typeof item.value === "string" &&
-      /\b(?:NaN|Infinity|undefined)\b/.test(item.value),
+      /\b(?:NaN|Infinity|undefined)\b/.test(item.value)
   );
 }
 
-export class AnnotationTargetEditor extends BasePropertyEditor<
-  AnnotationNormalized,
-  SpecificResource
-> {
+export class AnnotationTargetEditor extends BasePropertyEditor<AnnotationNormalized, SpecificResource> {
   constructor(config: EditorConfig) {
     super(config, "target");
   }
@@ -80,9 +63,7 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
   setSvgSelector(shape: InputShape, canvas: { width: number; height: number }) {
     if (
       !shape.points.length ||
-      shape.points.some((point) =>
-        point.some((coordinate) => !Number.isFinite(coordinate)),
-      )
+      shape.points.some((point) => point.some((coordinate) => !Number.isFinite(coordinate)))
     ) {
       return;
     }
@@ -100,16 +81,9 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
     }
   }
 
-  setPosition(position: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) {
+  setPosition(position: { x: number; y: number; width: number; height: number }) {
     if (
-      ![position.x, position.y, position.width, position.height].every(
-        Number.isFinite,
-      ) ||
+      ![position.x, position.y, position.width, position.height].every(Number.isFinite) ||
       position.width <= 0 ||
       position.height <= 0
     ) {
@@ -170,7 +144,7 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
     this.config.vault.modifyEntityField(
       this.config.reference as any,
       "stylesheet",
-      value ? ({ type: "CssStylesheet", value } as Stylesheet) : null,
+      value ? ({ type: "CssStylesheet", value } as Stylesheet) : null
     );
   }
 
@@ -193,38 +167,42 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
    * removes it.
    */
   setBoxStyle(changes: Partial<BoxStyle>) {
-    const existingClass = this.getStyleClass();
-    const map = parseCssToBoxStyleMap(this.getStylesheetCss());
-    const current = (existingClass && map[existingClass]) || {};
-    const next = mergeBoxStyle(current, changes);
-    const hasStyles = Object.keys(next).length > 0;
+    return this.config.vault.batch(() => {
+      const existingClass = this.getStyleClass();
+      const map = parseCssToBoxStyleMap(this.getStylesheetCss());
+      const current = (existingClass && map[existingClass]) || {};
+      const next = mergeBoxStyle(current, changes);
+      const hasStyles = Object.keys(next).length > 0;
 
-    if (!hasStyles) {
-      if (existingClass) {
-        delete map[existingClass];
-        this.setStyleClass(undefined);
+      if (!hasStyles) {
+        if (existingClass) {
+          delete map[existingClass];
+          this.setStyleClass(undefined);
+        }
+        this.setStylesheetCss(boxStyleMapToCss(map));
+        return;
       }
-      this.setStylesheetCss(boxStyleMapToCss(map));
-      return;
-    }
 
-    let styleClass = existingClass;
-    if (!styleClass) {
-      styleClass = generateStyleClass(this.getId());
-      this.setStyleClass(styleClass);
-    }
-    map[styleClass] = next;
-    this.setStylesheetCss(boxStyleMapToCss(map));
+      let styleClass = existingClass;
+      if (!styleClass) {
+        styleClass = generateStyleClass(this.getId());
+        this.setStyleClass(styleClass);
+      }
+      map[styleClass] = next;
+      this.setStylesheetCss(boxStyleMapToCss(map));
+    });
   }
 
   /** Remove all styling (both the `styleClass` and the stylesheet rule). */
   clearBoxStyle() {
-    const existingClass = this.getStyleClass();
-    if (!existingClass) return;
-    const map = parseCssToBoxStyleMap(this.getStylesheetCss());
-    delete map[existingClass];
-    this.setStyleClass(undefined);
-    this.setStylesheetCss(boxStyleMapToCss(map));
+    return this.config.vault.batch(() => {
+      const existingClass = this.getStyleClass();
+      if (!existingClass) return;
+      const map = parseCssToBoxStyleMap(this.getStylesheetCss());
+      delete map[existingClass];
+      this.setStyleClass(undefined);
+      this.setStylesheetCss(boxStyleMapToCss(map));
+    });
   }
 
   // Convenience helpers for the supported box style properties.

@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "編集履歴",
+    undo: "元に戻す",
+    redo: "やり直す",
+    redoOperation: "{{label}}をやり直す",
+    undoOperation: "{{label}}を元に戻す",
+    disabled: "このドキュメントの履歴は利用できません。",
+    empty: "元に戻せる変更はありません。",
+    open: "元に戻す前に現在の編集を完了してください。",
+    busy: "現在の変更が完了するのを待っています。",
+    syncConflict: "同時に行われた編集により、この変更を保存できませんでした。現在のドキュメントを再読み込みしました。",
+    conflict: "対象のコンテンツが変更されたため、この変更を元に戻すことはできません。",
+  },
   project: {
     open: "プロジェクトを開く",
     export: "輸出",
