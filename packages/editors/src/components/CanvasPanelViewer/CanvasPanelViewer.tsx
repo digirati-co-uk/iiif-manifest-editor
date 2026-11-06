@@ -48,6 +48,7 @@ import {
   AuthProvider,
   CanvasContext,
   CanvasPanel,
+  ControlsReactContext,
   ReactVaultContext,
   useAnnotation,
   useCanvas,
@@ -144,6 +145,17 @@ function CanvasPanelViewerScene({
 }: CanvasPanelViewerProps & { sourceVault: Vault; onDraftVault: (vault: Vault | null) => void }) {
   const t = useTranslations("editors");
   const i18nInstance = useOptionalEditorI18nInstance();
+  const inheritedControls = useContext(ControlsReactContext);
+  const moveModeControls = useMemo(
+    () => ({
+      ...inheritedControls,
+      mediaControlsDeps: inheritedControls?.mediaControlsDeps ?? [],
+      complexTimelineControlsDeps: inheritedControls?.complexTimelineControlsDeps ?? [],
+      viewControlsDeps: [],
+      renderViewerControls: undefined,
+    }),
+    [inheritedControls],
+  );
   const app = useApp();
   const vault = useVault();
   const addImage = useAddCanvasImage(sourceVault);
@@ -500,12 +512,14 @@ function CanvasPanelViewerScene({
                 // The exhibition viewer owns its own Atlas runtime and move/resize handles are positioned in
                 // unrotated space, so rotation is left out here.
                 showRotate={false}
+                actions={<CanvasViewerFlagButton canvasId={canvasId} />}
                 style={{ top: 12, right: 12 }}
                 onHome={() => runtime.current?.world.goHome()}
                 onZoomIn={() => runtime.current?.world.zoomTo(0.4)}
                 onZoomOut={() => runtime.current?.world.zoomTo(1 / 0.4)}
                 extraControls={
                   <>
+                    <CanvasChoiceControls canvasId={canvasId} />
                     {/* Add media is hidden for now; flip SHOW_ADD_MEDIA to bring it back. */}
                     {SHOW_ADD_MEDIA && enableAddMedia && (
                       <CanvasViewerButton
@@ -546,8 +560,13 @@ function CanvasPanelViewerScene({
     </ModeProvider>
   );
 
+  // Move mode owns its controls even when a fallback inherits another strategy provider.
+  const viewer = moveMode ? (
+    <ControlsReactContext.Provider value={moveModeControls}>{innerViewer}</ControlsReactContext.Provider>
+  ) : innerViewer;
+
   if (asFallback) {
-    return innerViewer;
+    return viewer;
   }
 
   return (
@@ -579,7 +598,7 @@ function CanvasPanelViewerScene({
           </EditorI18nBoundary>
         )}
       >
-        <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>
+        <NonAtlasStrategyRenderer>{viewer}</NonAtlasStrategyRenderer>
       </CustomStrategyProvider>
     </ErrorBoundary>
   );

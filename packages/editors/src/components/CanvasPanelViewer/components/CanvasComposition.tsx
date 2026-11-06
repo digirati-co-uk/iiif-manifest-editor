@@ -270,11 +270,10 @@ export function CanvasComposition({
   });
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
-      if (
-        event.target instanceof HTMLElement &&
-        event.target.closest("input,textarea,select,[contenteditable]:not([contenteditable='false'])")
-      )
-        return;
+      const isEditing = (target: EventTarget | null) =>
+        target instanceof HTMLElement &&
+        (target.isContentEditable || !!target.closest('input, textarea, select, button, a[href], [role="textbox"]'));
+      if (event.defaultPrevented || event.isComposing || isEditing(event.target) || isEditing(document.activeElement)) return;
       shiftHeld.current = event.shiftKey;
       if (event.type === "keyup" && event.key !== "Shift") return;
       if (draft.current && (event.key === "Escape" || event.key === "Enter")) {

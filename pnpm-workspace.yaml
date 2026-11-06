@@ -69,6 +69,7 @@ overrides:
   react-reconciler: 0.33.0
 
 patchedDependencies:
+  '@atlas-viewer/atlas@3.3.4': patches/@atlas-viewer__atlas@3.3.4.patch
   'leaflet-draw@1.0.4': patches/leaflet-draw@1.0.4.patch
   '@mdxeditor/editor@4.0.4': patches/@mdxeditor__editor@4.0.4.patch
   'iiif-browser@2.2.6': patches/iiif-browser@2.2.6.patch
