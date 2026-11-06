@@ -10,6 +10,7 @@ export const InputLabel = styled.label<{
 }>`
   position: sticky;
   top: 0;
+  z-index: 2;
   background: #fff;
   font-weight: 500;
   line-height: 2.4em;

@@ -48,6 +48,7 @@ import {
   AuthProvider,
   CanvasContext,
   CanvasPanel,
+  ControlsReactContext,
   useAnnotation,
   useCanvas,
   useCanvasChoices,
@@ -121,6 +122,17 @@ export function CanvasPanelViewer({
   editingAnnotationId,
   forceAnnotationTools = false,
 }: CanvasPanelViewerProps) {
+  const inheritedControls = useContext(ControlsReactContext);
+  const moveModeControls = useMemo(
+    () => ({
+      ...inheritedControls,
+      mediaControlsDeps: inheritedControls?.mediaControlsDeps ?? [],
+      complexTimelineControlsDeps: inheritedControls?.complexTimelineControlsDeps ?? [],
+      viewControlsDeps: [],
+      renderViewerControls: undefined,
+    }),
+    [inheritedControls]
+  );
   const app = useApp();
   const vault = useVault();
   const addImage = useAddCanvasImage();
@@ -515,6 +527,8 @@ export function CanvasPanelViewer({
                 >
                   <PlusIcon />
                 </CanvasViewerButton>
+                <CanvasChoiceControls canvasId={canvasId} />
+                <CanvasViewerFlagButton canvasId={canvasId} />
               </div>
             )}
             {(!moveMode || otherRequest) && (
@@ -529,8 +543,14 @@ export function CanvasPanelViewer({
     </ModeProvider>
   );
 
+  // Fallback viewers inherit the parent's controls. In move mode the toolbar
+  // above owns the viewer, so suppress inherited controls before bridging into Atlas.
+  const viewer = moveMode ? (
+    <ControlsReactContext.Provider value={moveModeControls}>{innerViewer}</ControlsReactContext.Provider>
+  ) : innerViewer;
+
   if (asFallback) {
-    return innerViewer;
+    return viewer;
   }
 
   return (
@@ -568,7 +588,7 @@ export function CanvasPanelViewer({
         viewControlsDeps={[editMode, createMode, createAnnotation, annotation, onNextCanvas, onPreviousCanvas]}
         renderMediaControls={() => <MediaControls />}
       >
-        <NonAtlasStrategyRenderer>{innerViewer}</NonAtlasStrategyRenderer>
+        <NonAtlasStrategyRenderer>{viewer}</NonAtlasStrategyRenderer>
       </CustomStrategyProvider>
     </ErrorBoundary>
   );
