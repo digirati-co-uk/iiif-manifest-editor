@@ -230,6 +230,10 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   });
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
+      const isEditing = (target: EventTarget | null) =>
+        target instanceof HTMLElement &&
+        (target.isContentEditable || !!target.closest('input, textarea, select, button, a[href], [role="textbox"]'));
+      if (event.defaultPrevented || event.isComposing || isEditing(event.target) || isEditing(document.activeElement)) return;
       shiftHeld.current = event.shiftKey;
       if (current.current.resizing && (event.key === "Escape" || event.key === "Enter")) {
         if (event.key === "Escape") discard();
