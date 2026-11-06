@@ -1,7 +1,7 @@
 import type { Vault, VaultCommit } from "@iiif/helpers/vault";
 import { parseVaultMessage, stringifyVaultMessage } from "./wire";
 
-type Target = { port: MessagePort; initialized: boolean };
+type Target = { port: MessagePort; initialized: boolean; protocol: 1 | 2 };
 type Registry = { targets: Set<Target>; stop: () => void; lastId: string };
 const registries = new WeakMap<object, Registry>();
 
@@ -14,7 +14,7 @@ export function createReadOnlyVaultBridge(vault: Vault, port: MessagePort) {
     const stopCommits = vault.subscribeCommits((commit: VaultCommit) => {
       const previous = entry.lastId;
       entry.lastId = commit.id;
-      const message = stringifyVaultMessage({
+      const message = {
         _type: "vault-action",
         _id: commit.id,
         _lastActionId: previous,
@@ -23,22 +23,21 @@ export function createReadOnlyVaultBridge(vault: Vault, port: MessagePort) {
           payload: { actions: commit.actions.map(({ type, payload }) => ({ type, payload })) },
         },
         options: commit.options,
-      });
-      for (const target of entry.targets) if (target.initialized) target.port.postMessage(message);
+      };
+      for (const target of entry.targets) {
+        if (!target.initialized) continue;
+        // Older helpers cannot apply the new history action. Resync their document instead.
+        if (target.protocol === 1 && commit.actions.some((action) => action.type === "@iiif/APPLY_HISTORY")) {
+          sendInitialState(target, vault, entry.lastId);
+        } else {
+          send(target, message);
+        }
+      }
     });
     const stopReset = key.onReset((phase) => {
       if (phase !== "after") return;
       entry.lastId = "@genesis";
-      for (const target of entry.targets)
-        if (target.initialized)
-          target.port.postMessage(
-            stringifyVaultMessage({
-              _type: "init-response",
-              _lastActionId: entry.lastId,
-              data: { iiif: vault.getState().iiif },
-              readOnly: true,
-            })
-          );
+      for (const target of entry.targets) if (target.initialized) sendInitialState(target, vault, entry.lastId);
     });
     entry.stop = () => {
       stopCommits();
@@ -48,7 +47,7 @@ export function createReadOnlyVaultBridge(vault: Vault, port: MessagePort) {
     registries.set(key, registry);
   }
   const current = registry;
-  const target: Target = { port, initialized: false };
+  const target: Target = { port, initialized: false, protocol: 1 };
   const listener = (event: MessageEvent) => {
     let message: any;
     try {
@@ -57,24 +56,17 @@ export function createReadOnlyVaultBridge(vault: Vault, port: MessagePort) {
       return;
     }
     if (message?._type === "init-request") {
+      // A legacy viewer sends a plain init-request without a protocol version.
+      target.protocol = message.protocol === 2 ? 2 : 1;
       target.initialized = true;
-      port.postMessage(
-        stringifyVaultMessage({
-          _type: "init-response",
-          _lastActionId: current.lastId,
-          data: { iiif: vault.getState().iiif },
-          readOnly: true,
-        })
-      );
+      sendInitialState(target, vault, current.lastId);
     } else if (message?._id) {
-      port.postMessage(
-        stringifyVaultMessage({
-          _type: "vault-action-rejection",
-          _id: message._id,
-          action: message._id,
-          reason: "read-only",
-        })
-      );
+      send(target, {
+        _type: "vault-action-rejection",
+        _id: message._id,
+        action: message._id,
+        reason: "read-only",
+      });
     }
   };
   current.targets.add(target);
@@ -89,4 +81,17 @@ export function createReadOnlyVaultBridge(vault: Vault, port: MessagePort) {
     }
     port.close();
   };
+}
+
+function send(target: Target, message: unknown) {
+  target.port.postMessage(target.protocol === 2 ? stringifyVaultMessage(message) : JSON.stringify(message));
+}
+
+function sendInitialState(target: Target, vault: Vault, lastId: string) {
+  send(target, {
+    _type: "init-response",
+    _lastActionId: lastId,
+    data: { iiif: vault.getState().iiif },
+    readOnly: true,
+  });
 }
