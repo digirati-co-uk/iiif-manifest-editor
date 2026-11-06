@@ -87,7 +87,14 @@ export function SVGAnnotationEditor(props: CreateCustomShapeProps) {
   }, [helper]);
 
   useEffect(() => {
-    const handler = (e: any) => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target;
+      const active = document.activeElement;
+      const isEditing = (element: EventTarget | null) =>
+        element instanceof HTMLElement &&
+        (element.isContentEditable || !!element.closest('input, textarea, select, button, a[href], [role="textbox"]'));
+      if (e.defaultPrevented || e.isComposing || isEditing(target) || isEditing(active)) return;
+      if (!atlas?.canvas?.closest(".atlas-container")?.contains(active)) return;
       helper.key.down(e.key);
     };
 
@@ -95,7 +102,7 @@ export function SVGAnnotationEditor(props: CreateCustomShapeProps) {
     return () => {
       document.removeEventListener("keydown", handler);
     };
-  }, [helper]);
+  }, [atlas, helper]);
 
   useEffect(() => {
     const wrapperClasses: Array<`atlas-cursor-${string}`> = [];
