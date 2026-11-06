@@ -56,7 +56,7 @@ export function ExhibitionTourStepsPanel({ mode = "advanced" }: { mode?: Editing
 
   return (
     <Sidebar>
-      <SidebarContent padding>
+      <SidebarContent padding className="pb-3">
         <ExhibitionTourStepsContent mode={mode} />
       </SidebarContent>
     </Sidebar>

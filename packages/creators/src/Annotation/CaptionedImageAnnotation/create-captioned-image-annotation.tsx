@@ -1,9 +1,9 @@
 import type { InternationalString } from "@iiif/presentation-3";
-import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
+import { ActionButton } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
-import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
+import { Input, InputLabel } from "@manifest-editor/editors";
 import { useAnnotationCreatorState } from "@manifest-editor/shell";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useId } from "react";
 
 export interface CreateCaptionedImageAnnotationPayload {
   label?: InternationalString;
@@ -99,12 +99,20 @@ export async function createCaptionedImageAnnotation(
   }
 }
 
+// The body is shared with the HTML tab, so show any HTML as its plain text.
+function toPlainText(value: string) {
+  if (!value.trim().startsWith("<")) return value;
+  return new DOMParser().parseFromString(value, "text/html").body.textContent || "";
+}
+
 export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
     initialValue: props.options.initialData?.body || { en: [""] },
     requestId: props.options.initialData?.requestId,
   });
+
+  const id = useId();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -118,33 +126,33 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <>
-        <InputContainer $wide>
-          <InputLabel htmlFor="url">URL to Image</InputLabel>
-          <Input
-            id="url"
-            name="url"
-            defaultValue={props.options.initialData?.imageUrl || ""}
-            placeholder="https://example.org/image.jpg"
-          />
-        </InputContainer>
-
-        <InputContainer $wide>
-          <InputLabel htmlFor="caption">Caption</InputLabel>
-          <Input
-            id="caption"
-            name="caption"
-            placeholder="Enter a caption"
-            onChange={(e: any) => setBody({ en: [e.target.value] })}
-            value={body.en?.[0] || ""}
-          />
-        </InputContainer>
-
+    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <div>
+        <InputLabel htmlFor={`${id}-url`}>Image URL</InputLabel>
+        <Input
+          id={`${id}-url`}
+          name="url"
+          type="url"
+          required
+          defaultValue={props.options.initialData?.imageUrl || ""}
+          placeholder="https://example.org/image.jpg"
+        />
+      </div>
+      <div>
+        <InputLabel htmlFor={`${id}-caption`}>Caption</InputLabel>
+        <Input
+          id={`${id}-caption`}
+          name="caption"
+          placeholder="Describe the image"
+          onChange={(e: any) => setBody({ en: [e.target.value] })}
+          value={toPlainText(body.en?.[0] || "")}
+        />
+      </div>
+      <div className="flex justify-end">
         <ActionButton primary type="submit">
           Create
         </ActionButton>
-      </>
+      </div>
     </form>
   );
 }

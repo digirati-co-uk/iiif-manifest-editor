@@ -58,6 +58,7 @@ export function DescriptiveProperties() {
           containerId={summary.containerId()}
           focusId={summary.focusId()}
           label={"Summary"}
+          disallowHTML={false}
           fields={summary.get()}
           onSave={(e: any) => summary.set(e.toInternationalString())}
         />
@@ -139,6 +140,7 @@ export function DescriptiveProperties() {
               <LanguageFieldEditor
                 focusId={`${requiredStatement.focusId()}_value`}
                 label="Value"
+                disallowHTML={false}
                 fields={requiredStatement.get()?.value || { none: [] }}
                 onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
               />

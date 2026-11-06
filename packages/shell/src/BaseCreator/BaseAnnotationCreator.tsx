@@ -1,5 +1,5 @@
 import { useVault } from "react-iiif-vault";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   type CreatableResource,
   matchBasedOnResource,
@@ -16,7 +16,6 @@ interface BaseAnnotationCreatorProps {
 }
 
 export function BaseAnnotationCreator(props: BaseAnnotationCreatorProps) {
-  const {} = props;
   const vault = useVault();
   const app = useApp();
   const supported = useMemo(
@@ -26,35 +25,56 @@ export function BaseAnnotationCreator(props: BaseAnnotationCreatorProps) {
       }),
     [props.resource, app.layout.creators, vault],
   );
+  const [selected, setSelected] = useState<string | number | null>(null);
+  const current = supported.find((item) => item.id === selected) || supported[0];
 
   if (supported.length === 0) {
-    return <div>No supported creators found</div>;
+    return <div className="p-4 text-sm text-gray-500">No supported creators found</div>;
   }
 
   return (
-    <div>
-      <Tabs className="w-full flex-1 overflow-hidden flex flex-col">
+    <Tabs className="flex w-full flex-col" selectedKey={current?.id} onSelectionChange={setSelected}>
+      {supported.length > 1 ? (
         <TabList
-          className="flex-1 overflow-hidden w-full flex text-sm whitespace-nowrap"
+          aria-label="Annotation type"
+          className="mx-3 mt-3 flex gap-0.5 rounded-md bg-gray-100 p-0.5 text-sm"
           items={supported}
         >
-          {(item) => <Tab id={item.id}>{item.label}</Tab>}
+          {(item) => (
+            <Tab
+              id={item.id}
+              className={({ isSelected, isFocusVisible }) =>
+                [
+                  "flex min-w-0 flex-auto items-center justify-center gap-1.5 rounded border-b-0 px-2 py-1 font-medium",
+                  isSelected ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900",
+                  isFocusVisible ? "bg-white ring-2 ring-me-primary-500" : "",
+                ].join(" ")
+              }
+            >
+              <span aria-hidden className="flex flex-none text-base [&>svg]:h-4 [&>svg]:w-4">
+                {item.icon}
+              </span>
+              <span className="truncate">{item.label}</span>
+            </Tab>
+          )}
         </TabList>
-        {supported.map((item) => {
-          return (
-            <TabPanel key={item.id} id={item.id} className="p-2">
-              <ThemeProvider theme={defaultTheme}>
-                <RenderCreator
-                  creator={item}
-                  resource={props.resource}
-                  onCreate={props.onCreate}
-                  skipEditingOnCreate
-                />
-              </ThemeProvider>
-            </TabPanel>
-          );
-        })}
-      </Tabs>
-    </div>
+      ) : null}
+      {current?.summary ? <p className="mx-4 mt-2 text-xs text-gray-500">{current.summary}</p> : null}
+      {supported.map((item) => {
+        return (
+          <TabPanel key={item.id} id={item.id} className="p-3 pt-2 outline-none">
+            <ThemeProvider theme={defaultTheme}>
+              <RenderCreator
+                creator={item}
+                resource={props.resource}
+                onCreate={props.onCreate}
+                skipEditingOnCreate
+                compact
+              />
+            </ThemeProvider>
+          </TabPanel>
+        );
+      })}
+    </Tabs>
   );
 }

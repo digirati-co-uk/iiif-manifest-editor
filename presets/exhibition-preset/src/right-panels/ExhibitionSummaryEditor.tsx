@@ -88,6 +88,7 @@ export function ExhibitionRequiredStatementEditor() {
         <LanguageFieldEditor
           focusId={`${requiredStatement.focusId()}_value`}
           label="Value"
+          disallowHTML={false}
           fields={statement?.value || { none: [] }}
           onSave={(e: any) => requiredStatement.update(e.toInternationalString())}
         />
@@ -119,6 +120,7 @@ export function ExhibitionHtmlSummaryEditor({
     <TiptapLanguageFieldEditor
       key={resource.id}
       label="summary"
+      disallowHTML={false}
       metadataKey="summary"
       fields={fields}
       onSave={saveSummary}

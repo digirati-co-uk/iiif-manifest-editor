@@ -1,21 +1,21 @@
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { LanguageIcon } from "@manifest-editor/ui/icons/LanguageIcon";
 import { Extension } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
-import Underline from "@tiptap/extension-underline";
 import { Placeholder } from "@tiptap/extensions/placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
-import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import DOMPurify from "dompurify";
 import type React from "react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useId, useMemo, useRef, useState } from "react";
 import Textarea from "react-textarea-autosize";
 import { useDebounce } from "tiny-use-debounce";
 import * as S from "./TiptapLanguageFieldEditor.styles";
+import { htmlToStoredValue, isHtmlValue, textToHtml } from "./text-to-html";
 
 export interface TiptapRichTextLanguageFieldProps {
+  ariaLabel?: string;
   id?: string;
   language: string;
   value: string;
@@ -31,25 +31,14 @@ export interface TiptapRichTextLanguageFieldProps {
   allowedBlocks?: Array<"h1" | "h2" | "h3" | "bulletList" | "orderedList" | "blockquote" | "image">;
 }
 
-type EditorMode = "text" | "rich";
-
-function isHtmlValue(value: string) {
-  return (value || "").trimStart()[0] === "<";
-}
-
-function textToHtml(value: string) {
-  const escaped = DOMPurify.sanitize(value || "", { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-  return escaped
-    .split(/\n{2,}/)
-    .map((paragraph) => `<p>${paragraph.replace(/\n/g, "<br>") || "<br>"}</p>`)
-    .join("");
-}
+type EditorMode = "text" | "rich" | "source";
 
 function stripHtml(value: string) {
-  return DOMPurify.sanitize((value || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>\s*<p/gi, "</p>\n<p"), {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [],
-  });
+  const element = document.createElement("div");
+  element.innerHTML = sanitizeHtml(value)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, "\n");
+  return (element.textContent || "").replace(/\n$/, "");
 }
 
 // Toolbar icons – inline SVGs so we control size and currentColor inheritance
@@ -81,27 +70,6 @@ function LinkIcon() {
     </svg>
   );
 }
-function BulletListIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden>
-      <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z" />
-    </svg>
-  );
-}
-function OrderedListIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden>
-      <path d="M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z" />
-    </svg>
-  );
-}
-function BlockquoteIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden>
-      <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
-    </svg>
-  );
-}
 function ImageIcon() {
   return (
     <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden>
@@ -109,10 +77,10 @@ function ImageIcon() {
     </svg>
   );
 }
-function ParagraphIcon() {
+function SourceIcon() {
   return (
     <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden>
-      <path d="M13 4a4 4 0 0 1 0 8H9v4H7V4h6zm0 6a2 2 0 0 0 0-4H9v4h4z" />
+      <path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
     </svg>
   );
 }
@@ -123,27 +91,258 @@ function sanitizeHtml(value: string) {
   });
 }
 
+// Whether converting this HTML to plain text would drop more than paragraphs and line breaks.
+function hasFormatting(value: string) {
+  return /<(?!\/?(p|br)\b)[a-z]/i.test(value);
+}
+
 export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldProps) {
-  const initialValue = props.value || "";
-  const initialMode: EditorMode = props.disallowHTML ? "text" : "rich";
-  const initialHtml = isHtmlValue(initialValue) ? sanitizeHtml(initialValue) : textToHtml(initialValue);
-  const [mode] = useState<EditorMode>(initialMode);
-  const [textState, setTextStateInternal] = useState(initialValue);
-  const [focus, setFocus] = useState(false);
-  const [showLinkForm, setShowLinkForm] = useState(false);
-  const [showImageForm, setShowImageForm] = useState(false);
+  const [mode, setMode] = useState<EditorMode>(() => (isHtmlValue(props.value || "") ? "rich" : "text"));
+  const [value, setValue] = useState(props.value || "");
+  const [showOptions, setShowOptions] = useState(false);
+  const [focusOnModeChange, setFocusOnModeChange] = useState(false);
+  const optionsId = useId();
   const textRef = useRef<HTMLTextAreaElement | HTMLInputElement>(null);
-  const latestValueRef = useRef(props.disallowHTML ? stripHtml(initialValue) : initialHtml);
-  const onUpdateRef = useRef(props.onUpdate);
-  onUpdateRef.current = props.onUpdate;
+  const currentMode = useRef(mode);
+  currentMode.current = mode;
+  const latestValue = useRef(value);
+  const savedValue = useRef(value);
+  const previousValue = useRef(props.value);
+  const onUpdate = useRef(props.onUpdate);
+  onUpdate.current = props.onUpdate;
+  const ariaLabel = props.ariaLabel || (props.language === "none" ? "Text value" : `${props.language} text value`);
+  const canChangeLanguage = !!(props.onUpdateLanguage && props.languages);
+  // Imported HTML remains editable even in fields that should contain plain text.
+  // Keep the editor available for the current session until HTML is explicitly removed.
+  const canEditHtml = !props.disallowHTML || isHtmlValue(value) || mode !== "text";
+  const showConformityNote = props.disallowHTML && (isHtmlValue(value) || mode !== "text");
+  const hasOptions = canEditHtml || canChangeLanguage || !!props.onRemove;
 
   const saveChanges = useCallback(() => {
-    onUpdateRef.current(latestValueRef.current);
+    if (latestValue.current !== savedValue.current) {
+      if (currentMode.current === "source") latestValue.current = sanitizeHtml(latestValue.current);
+      if (latestValue.current !== savedValue.current) {
+        savedValue.current = latestValue.current;
+        onUpdate.current(currentMode.current === "text" ? latestValue.current : htmlToStoredValue(latestValue.current));
+      }
+    }
   }, []);
-
   const debounceSave = useDebounce(saveChanges, 100);
 
-  const { allowedBlocks } = props;
+  const changeValue = (nextValue: string) => {
+    latestValue.current = nextValue;
+    setValue(nextValue);
+    // Source markup may be incomplete while typing; sanitize and commit on blur.
+    if (mode !== "source") debounceSave();
+  };
+
+  useLayoutEffect(() => {
+    if (props.value !== previousValue.current) {
+      previousValue.current = props.value;
+      // Ignore our own saves echoing back, including HTML collapsed to plain text.
+      const isOwnValue =
+        props.value === latestValue.current ||
+        (currentMode.current !== "text" && props.value === htmlToStoredValue(latestValue.current));
+      if (!isOwnValue) {
+        debounceSave.cancel();
+        latestValue.current = savedValue.current = props.value || "";
+        setValue(latestValue.current);
+        setMode(isHtmlValue(latestValue.current) ? "rich" : "text");
+      }
+    }
+  }, [props.value, props.disallowHTML, mode, debounceSave]);
+
+  useEffect(
+    () => () => {
+      debounceSave.cancel();
+      saveChanges();
+    },
+    [debounceSave, saveChanges]
+  );
+
+  useEffect(() => {
+    if (mode !== "rich" && (props.autoFocus || focusOnModeChange)) {
+      textRef.current?.focus();
+    }
+  }, [mode, props.autoFocus, focusOnModeChange]);
+
+  const changeMode = (nextMode: EditorMode) => {
+    saveChanges();
+    setValue(latestValue.current);
+    setFocusOnModeChange(true);
+    setMode(nextMode);
+  };
+  const switchToHtml = () => {
+    if (mode !== "text" || !canEditHtml) return;
+    if (!isHtmlValue(value)) changeValue(textToHtml(value));
+    changeMode("rich");
+  };
+  const removeHtml = () => {
+    if (
+      hasFormatting(value) &&
+      !window.confirm("Switching to plain text will remove formatting such as bold, links and headings. Continue?")
+    ) {
+      return;
+    }
+    currentMode.current = "text";
+    changeValue(stripHtml(value));
+    changeMode("text");
+  };
+  const onBlur = () => {
+    saveChanges();
+    setValue(latestValue.current);
+    props.onBlur?.();
+  };
+  const onFocus = () => {
+    props.onFocus?.();
+  };
+
+  const optionsButton = hasOptions ? (
+    <S.OptionsButton
+      type="button"
+      title="Language and format"
+      aria-label={`${ariaLabel} options`}
+      aria-expanded={showOptions}
+      aria-controls={optionsId}
+      onClick={() => setShowOptions((open) => !open)}
+    >
+      <LanguageIcon aria-hidden />
+      {props.language && props.language !== "none" ? <span aria-hidden>{props.language}</span> : null}
+    </S.OptionsButton>
+  ) : null;
+
+  const sourceToggle = (
+    <S.MenuButton
+      type="button"
+      title={mode === "source" ? "Back to formatted view" : "Edit HTML source"}
+      aria-label="HTML source"
+      aria-pressed={mode === "source"}
+      $active={mode === "source"}
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={() => changeMode(mode === "source" ? "rich" : "source")}
+    >
+      <SourceIcon />
+    </S.MenuButton>
+  );
+
+  return (
+    <S.Container>
+      <S.FieldShell
+        onKeyDown={(event) => {
+          if (event.key === "Escape" && showOptions) setShowOptions(false);
+        }}
+      >
+        {mode === "rich" ? (
+          <RichEditor
+            {...props}
+            value={value}
+            ariaLabel={ariaLabel}
+            autoFocus={props.autoFocus || focusOnModeChange}
+            onUpdate={changeValue}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            trailing={optionsButton}
+            toolbarEnd={sourceToggle}
+            showToolbar={showOptions}
+          />
+        ) : (
+          <>
+            <S.FieldRow $singleLine={mode === "text" && props.disableMultiline}>
+              {mode === "text" && props.disableMultiline ? (
+                <S.SingleLineInput
+                  id={props.id}
+                  aria-label={ariaLabel}
+                  placeholder="Add value"
+                  ref={textRef as React.RefObject<HTMLInputElement>}
+                  value={value}
+                  onChange={(event) => changeValue(event.currentTarget.value)}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                />
+              ) : (
+                <S.TextInput
+                  id={props.id}
+                  aria-label={mode === "source" ? `${ariaLabel} HTML source` : ariaLabel}
+                  placeholder={mode === "source" ? "<p>HTML</p>" : "Add value"}
+                  spellCheck={mode !== "source"}
+                  ref={textRef as React.RefObject<HTMLTextAreaElement>}
+                  as={Textarea}
+                  $source={mode === "source"}
+                  value={value}
+                  onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => changeValue(event.currentTarget.value)}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                />
+              )}
+              {optionsButton}
+            </S.FieldRow>
+            {mode === "source" ? (
+              <S.FormatToolbar $visible role="toolbar" aria-label="Text formatting">
+                <S.ToolbarLabel>Editing HTML source</S.ToolbarLabel>
+                <S.ToolbarSpacer />
+                {sourceToggle}
+              </S.FormatToolbar>
+            ) : null}
+          </>
+        )}
+        {showOptions ? (
+          <S.OptionsPanel id={optionsId}>
+            {canEditHtml ? (
+              <S.Segmented role="group" aria-label="Value format">
+                <S.SegmentButton type="button" aria-pressed={mode === "text"} onClick={removeHtml}>
+                  Text
+                </S.SegmentButton>
+                <S.SegmentButton type="button" aria-pressed={mode !== "text"} onClick={switchToHtml}>
+                  HTML
+                </S.SegmentButton>
+              </S.Segmented>
+            ) : null}
+            <S.ToolbarSpacer />
+            {canChangeLanguage ? (
+              <S.LanguageLabel>
+                Language
+                <S.LanguageSelect
+                  aria-label={`${ariaLabel} language`}
+                  onFocus={onFocus}
+                  onBlur={onBlur}
+                  value={props.language}
+                  onChange={(event) => {
+                    saveChanges();
+                    props.onUpdateLanguage?.(event.currentTarget.value);
+                  }}
+                >
+                  {props.languages?.map((lang) => (
+                    <option key={lang} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </S.LanguageSelect>
+              </S.LanguageLabel>
+            ) : null}
+            {props.onRemove ? (
+              <S.RemoveButton type="button" title="Remove value" aria-label="Remove" onClick={props.onRemove}>
+                <CloseIcon />
+              </S.RemoveButton>
+            ) : null}
+          </S.OptionsPanel>
+        ) : null}
+      </S.FieldShell>
+      {showConformityNote ? <S.ConformityNote>IIIF expects plain text in this field.</S.ConformityNote> : null}
+    </S.Container>
+  );
+}
+
+interface RichEditorProps extends TiptapRichTextLanguageFieldProps {
+  trailing?: React.ReactNode;
+  toolbarEnd?: React.ReactNode;
+  showToolbar?: boolean;
+}
+
+function RichEditor(props: RichEditorProps) {
+  const [form, setForm] = useState<"link" | "image" | null>(null);
+  const { allowedBlocks, disableMultiline } = props;
+  const allows = (block: NonNullable<TiptapRichTextLanguageFieldProps["allowedBlocks"]>[number]) =>
+    !disableMultiline && (!allowedBlocks || allowedBlocks.includes(block));
 
   const ExitHeadingOnEnter = useMemo(
     () =>
@@ -168,49 +367,63 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
           };
         },
       }),
-    [],
+    []
   );
 
   const extensions = useMemo(
     () => [
       StarterKit.configure({
-        heading: allowedBlocks
-          ? {
-              levels: (["h1", "h2", "h3"] as const)
-                .filter((h): h is "h1" | "h2" | "h3" => !allowedBlocks || allowedBlocks.includes(h))
-                .map((h) => Number(h[1]) as 1 | 2 | 3),
-            }
-          : {},
+        heading:
+          allowedBlocks && !allowedBlocks.some((block) => /^h[123]$/.test(block))
+            ? false
+            : {
+                levels: (["h1", "h2", "h3"] as const)
+                  .filter((heading) => !allowedBlocks || allowedBlocks.includes(heading))
+                  .map((heading) => Number(heading[1]) as 1 | 2 | 3),
+              },
+        bulletList: allowedBlocks && !allowedBlocks.includes("bulletList") ? false : {},
+        orderedList: allowedBlocks && !allowedBlocks.includes("orderedList") ? false : {},
+        blockquote: allowedBlocks && !allowedBlocks.includes("blockquote") ? false : {},
+        link: { openOnClick: false, enableClickSelection: true, defaultProtocol: "https" },
+        // Avoid saving a stray empty paragraph after lists and headings.
+        trailingNode: false,
       }),
       ExitHeadingOnEnter,
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        enableClickSelection: true,
-        defaultProtocol: "https",
-      }),
-      Image.configure({
-        allowBase64: false,
-        HTMLAttributes: {
-          loading: "lazy",
-        },
-      }),
+      ...(!allowedBlocks || allowedBlocks.includes("image")
+        ? [
+            Image.configure({
+              allowBase64: false,
+              HTMLAttributes: {
+                loading: "lazy",
+              },
+            }),
+          ]
+        : []),
       Typography,
       Placeholder.configure({
         placeholder: "Add value",
       }),
     ],
-    [allowedBlocks, ExitHeadingOnEnter],
+    [allowedBlocks, ExitHeadingOnEnter]
   );
 
   const editor = useEditor({
     extensions,
-    content: initialMode === "rich" ? initialHtml : textToHtml(initialValue),
+    content: sanitizeHtml(props.value),
+    shouldRerenderOnTransaction: true,
     editorProps: {
       attributes: {
         ...(props.id ? { id: props.id } : {}),
         class: "tiptap prose prose-sm max-w-none",
-        "aria-label": props.language === "none" ? "Text value" : `${props.language} text value`,
+        "aria-label": props.ariaLabel || "Text value",
+        role: "textbox",
+        "aria-multiline": String(!props.disableMultiline),
+      },
+      handlePaste: (view, event) => {
+        if (!props.disableMultiline || !event.clipboardData) return false;
+        const text = event.clipboardData.getData("text/plain").replace(/[\r\n]+/g, " ");
+        view.dispatch(view.state.tr.insertText(text));
+        return true;
       },
       handleKeyDown: (_view, event) => {
         if (props.disableMultiline && event.key === "Enter") {
@@ -221,85 +434,32 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
       },
     },
     immediatelyRender: false,
-    onUpdate: ({ editor: updatedEditor }) => {
-      latestValueRef.current = props.disallowHTML
-        ? stripHtml(updatedEditor.getHTML())
-        : sanitizeHtml(updatedEditor.getHTML());
-      debounceSave();
-    },
-    onFocus: () => setIsFocused(true),
-    onBlur: () => {
-      saveChanges();
-      setIsFocused(false);
-    },
+    onUpdate: ({ editor: updatedEditor }) => props.onUpdate(sanitizeHtml(updatedEditor.getHTML())),
+    onFocus: props.onFocus,
+    onBlur: props.onBlur,
   });
 
-  const setTextState = (value: string) => {
-    latestValueRef.current = props.disallowHTML ? stripHtml(value) : value;
-    setTextStateInternal(value);
-    debounceSave();
-  };
-
-  const setIsFocused = (value: boolean) => {
-    if (value && props.onFocus) {
-      props.onFocus();
+  useEffect(() => {
+    if (editor && props.value !== editor.getHTML()) {
+      editor.commands.setContent(sanitizeHtml(props.value), { emitUpdate: false });
     }
-
-    if (!value && props.onBlur) {
-      props.onBlur();
-    }
-
-    setFocus(value);
-  };
+  }, [editor, props.value]);
 
   useLayoutEffect(() => {
-    if (!props.id) {
-      return () => void 0;
-    }
-
+    if (!props.id) return;
     const label = document.querySelector(`label[for="${props.id}"]`);
-    if (!label) {
-      return () => void 0;
-    }
-
-    const listener = () => {
-      if (mode === "rich") {
-        editor?.commands.focus();
-      } else {
-        textRef.current?.focus();
-      }
-    };
-
-    label.addEventListener("click", listener);
-    return () => {
-      label.removeEventListener("click", listener);
-    };
-  }, [editor, mode, props.id]);
+    const focus = () => editor?.commands.focus();
+    label?.addEventListener("click", focus);
+    return () => label?.removeEventListener("click", focus);
+  }, [editor, props.id]);
 
   useEffect(() => {
-    return () => {
-      debounceSave.cancel();
-      saveChanges();
-    };
-  }, [debounceSave, saveChanges]);
-
-  useEffect(() => {
-    if (props.autoFocus) {
-      if (mode === "rich") {
-        editor?.commands.focus("end");
-      } else {
-        textRef.current?.focus();
-      }
-    }
-  }, [editor, mode, props.autoFocus]);
-
-  const currentUrl = editor?.getAttributes("link").href || "";
+    if (props.autoFocus) editor?.commands.focus("end");
+  }, [editor, props.autoFocus]);
 
   const submitLink = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!editor) {
-      return;
-    }
+    if (!editor) return;
 
     const data = new FormData(event.currentTarget);
     const link = String(data.get("link") || "").trim();
@@ -310,354 +470,180 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
     } else {
       editor.chain().focus().extendMarkRange("link").setLink({ href: link }).run();
     }
-
-    setShowLinkForm(false);
-    debounceSave();
+    setForm(null);
   };
 
   const submitImage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!editor) {
-      return;
-    }
+    if (!editor) return;
 
     const data = new FormData(event.currentTarget);
     const src = String(data.get("src") || "").trim();
     const alt = String(data.get("alt") || "").trim();
-
     if (src) {
       editor
         .chain()
         .focus()
-        .setImage({
-          src,
-          ...(alt ? { alt } : {}),
-        })
+        .setImage({ src, ...(alt ? { alt } : {}) })
         .run();
     }
-
-    setShowImageForm(false);
-    debounceSave();
+    setForm(null);
   };
 
-  const menuButtonMouseDown = (event: React.MouseEvent) => event.preventDefault();
+  const closeForm = () => {
+    setForm(null);
+    editor?.commands.focus();
+  };
 
-  const inlineMenus =
-    editor && mode === "rich" ? (
-      <>
-        <BubbleMenu
-          editor={editor}
-          updateDelay={0}
-          options={{ placement: "top", offset: 8, flip: true, shift: true }}
-          shouldShow={({ editor: menuEditor, from, to }) => {
-            return menuEditor.isEditable && from !== to;
-          }}
-        >
-          <S.ContextMenu role="toolbar" aria-label="Text formatting">
-            {showLinkForm ? (
-              <S.MenuForm onSubmit={submitLink}>
-                <S.MenuInput type="text" name="link" defaultValue={currentUrl} placeholder="https://" autoFocus />
-                <S.MenuButton type="submit" name="_action" value="add">
-                  Add
-                </S.MenuButton>
-                <S.MenuButton type="submit" name="_action" value="remove">
-                  Remove
-                </S.MenuButton>
-              </S.MenuForm>
-            ) : (
-              <>
-                <S.MenuButton
-                  type="button"
-                  title="Bold"
-                  aria-label="Bold"
-                  $active={editor.isActive("bold")}
-                  onMouseDown={menuButtonMouseDown}
-                  onClick={() => editor.chain().focus().toggleBold().run()}
-                >
-                  <BoldIcon />
-                </S.MenuButton>
-                <S.MenuButton
-                  type="button"
-                  title="Italic"
-                  aria-label="Italic"
-                  $active={editor.isActive("italic")}
-                  onMouseDown={menuButtonMouseDown}
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                >
-                  <ItalicIcon />
-                </S.MenuButton>
-                <S.MenuButton
-                  type="button"
-                  title="Underline"
-                  aria-label="Underline"
-                  $active={editor.isActive("underline")}
-                  onMouseDown={menuButtonMouseDown}
-                  onClick={() => editor.chain().focus().toggleUnderline().run()}
-                >
-                  <UnderlineIcon />
-                </S.MenuButton>
-                <S.MenuSeparator />
-                <S.MenuButton
-                  type="button"
-                  title="Link"
-                  aria-label="Link"
-                  $active={editor.isActive("link")}
-                  onMouseDown={menuButtonMouseDown}
-                  onClick={() => setShowLinkForm(true)}
-                >
-                  <LinkIcon />
-                </S.MenuButton>
-                <S.MenuSeparator />
-                <S.MenuButton
-                  type="button"
-                  title="Paragraph"
-                  aria-label="Paragraph"
-                  $active={editor.isActive("paragraph")}
-                  onMouseDown={menuButtonMouseDown}
-                  onClick={() => editor.chain().focus().setParagraph().run()}
-                >
-                  <ParagraphIcon />
-                </S.MenuButton>
-                {(!allowedBlocks || allowedBlocks.includes("h1")) && (
-                  <S.MenuButton
-                    type="button"
-                    title="Heading 1"
-                    aria-label="Heading 1"
-                    $active={editor.isActive("heading", { level: 1 })}
-                    onMouseDown={menuButtonMouseDown}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                  >
-                    H1
-                  </S.MenuButton>
-                )}
-                {(!allowedBlocks || allowedBlocks.includes("h2")) && (
-                  <S.MenuButton
-                    type="button"
-                    title="Heading 2"
-                    aria-label="Heading 2"
-                    $active={editor.isActive("heading", { level: 2 })}
-                    onMouseDown={menuButtonMouseDown}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                  >
-                    H2
-                  </S.MenuButton>
-                )}
-                {(!allowedBlocks || allowedBlocks.includes("h3")) && (
-                  <S.MenuButton
-                    type="button"
-                    title="Heading 3"
-                    aria-label="Heading 3"
-                    $active={editor.isActive("heading", { level: 3 })}
-                    onMouseDown={menuButtonMouseDown}
-                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                  >
-                    H3
-                  </S.MenuButton>
-                )}
-                {(!allowedBlocks || allowedBlocks.includes("blockquote")) && (
-                  <S.MenuButton
-                    type="button"
-                    title="Quote"
-                    aria-label="Quote"
-                    $active={editor.isActive("blockquote")}
-                    onMouseDown={menuButtonMouseDown}
-                    onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                  >
-                    <BlockquoteIcon />
-                  </S.MenuButton>
-                )}
-              </>
-            )}
-          </S.ContextMenu>
-        </BubbleMenu>
-        {!props.disableMultiline ? (
-          <FloatingMenu
-            editor={editor}
-            updateDelay={100}
-            options={{ placement: "left-start", offset: 8, flip: true, shift: true }}
-            shouldShow={({ editor: menuEditor, state }) => {
-              const { selection } = state;
-              const { $from } = selection;
-              return (
-                menuEditor.isEditable && selection.empty && $from.parent.isTextblock && $from.parent.content.size === 0
-              );
-            }}
-          >
-            <S.ContextMenu role="toolbar" aria-label="Insert block">
-              {showImageForm ? (
-                <S.MenuForm onSubmit={submitImage}>
-                  <S.MenuInput type="url" name="src" placeholder="Image URL" autoFocus />
-                  <S.MenuInput type="text" name="alt" placeholder="Alt text" />
-                  <S.MenuButton type="submit">Insert</S.MenuButton>
-                </S.MenuForm>
-              ) : (
-                <>
-                  <S.MenuButton
-                    type="button"
-                    title="Paragraph"
-                    aria-label="Paragraph"
-                    onMouseDown={menuButtonMouseDown}
-                    onClick={() => editor.chain().focus().setParagraph().run()}
-                  >
-                    <ParagraphIcon />
-                  </S.MenuButton>
-                  {(!allowedBlocks || allowedBlocks.includes("h1")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Heading 1"
-                      aria-label="Heading 1"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                    >
-                      H1
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks || allowedBlocks.includes("h2")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Heading 2"
-                      aria-label="Heading 2"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                    >
-                      H2
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks || allowedBlocks.includes("h3")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Heading 3"
-                      aria-label="Heading 3"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                    >
-                      H3
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks ||
-                    allowedBlocks.includes("bulletList") ||
-                    !allowedBlocks ||
-                    allowedBlocks.includes("orderedList") ||
-                    !allowedBlocks ||
-                    allowedBlocks.includes("blockquote")) && <S.MenuSeparator />}
-                  {(!allowedBlocks || allowedBlocks.includes("bulletList")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Bullet list"
-                      aria-label="Bullet list"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleBulletList().run()}
-                    >
-                      <BulletListIcon />
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks || allowedBlocks.includes("orderedList")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Numbered list"
-                      aria-label="Numbered list"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                    >
-                      <OrderedListIcon />
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks || allowedBlocks.includes("blockquote")) && (
-                    <S.MenuButton
-                      type="button"
-                      title="Quote"
-                      aria-label="Quote"
-                      onMouseDown={menuButtonMouseDown}
-                      onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                    >
-                      <BlockquoteIcon />
-                    </S.MenuButton>
-                  )}
-                  {(!allowedBlocks || allowedBlocks.includes("image")) && (
-                    <>
-                      <S.MenuSeparator />
-                      <S.MenuButton
-                        type="button"
-                        title="Image"
-                        aria-label="Image"
-                        onMouseDown={menuButtonMouseDown}
-                        onClick={() => setShowImageForm(true)}
-                      >
-                        <ImageIcon />
-                      </S.MenuButton>
-                    </>
-                  )}
-                </>
-              )}
-            </S.ContextMenu>
-          </FloatingMenu>
-        ) : null}
-      </>
+  // Keep the editor selection when pressing toolbar buttons.
+  const keepFocus = (event: React.MouseEvent) => event.preventDefault();
+
+  const markButton = (name: "bold" | "italic" | "underline", label: string, icon: React.ReactNode) =>
+    editor ? (
+      <S.MenuButton
+        type="button"
+        title={label}
+        aria-label={label}
+        $active={editor.isActive(name)}
+        aria-pressed={editor.isActive(name)}
+        onMouseDown={keepFocus}
+        onClick={() => editor.chain().focus().toggleMark(name).run()}
+      >
+        {icon}
+      </S.MenuButton>
     ) : null;
 
-  return (
-    <S.Container>
-      {props.onUpdateLanguage && props.languages ? (
-        <S.TopControls>
-          <S.TopLanguageSelect
-            aria-label="Language"
-            onFocus={props.onFocus}
-            onBlur={props.onBlur}
-            value={props.language}
-            onChange={(e) => props.onUpdateLanguage?.(e.currentTarget.value)}
+  // Headings, lists and quotes are mutually exclusive block styles, so one compact select covers them all.
+  type BlockStyle = "p" | "h1" | "h2" | "h3" | "bulletList" | "orderedList" | "blockquote";
+  const blockStyles = (
+    [
+      ["h1", "Heading 1"],
+      ["h2", "Heading 2"],
+      ["h3", "Heading 3"],
+      ["bulletList", "Bullet list"],
+      ["orderedList", "Numbered list"],
+      ["blockquote", "Quote"],
+    ] as const
+  ).filter(([style]) => allows(style));
+
+  const isBlockStyle = (style: BlockStyle) =>
+    !!editor && (style[0] === "h" ? editor.isActive("heading", { level: Number(style[1]) }) : editor.isActive(style));
+  // Lists and quotes wrap paragraphs, so check them before headings.
+  const currentBlock: BlockStyle =
+    blockStyles.find(([style]) => style[0] !== "h" && isBlockStyle(style))?.[0] ||
+    blockStyles.find(([style]) => isBlockStyle(style))?.[0] ||
+    "p";
+
+  const setBlockStyle = (style: BlockStyle) => {
+    if (!editor) return;
+    const chain = editor.chain().focus().clearNodes();
+    if (style === "p") chain.setParagraph().run();
+    else if (style === "bulletList") chain.toggleBulletList().run();
+    else if (style === "orderedList") chain.toggleOrderedList().run();
+    else if (style === "blockquote") chain.toggleBlockquote().run();
+    else chain.setHeading({ level: Number(style[1]) as 1 | 2 | 3 }).run();
+  };
+
+  let toolbar: React.ReactNode = null;
+  if (editor && form === "link") {
+    toolbar = (
+      <S.MenuForm onSubmit={submitLink} onKeyDown={(event) => event.key === "Escape" && closeForm()}>
+        <S.MenuInput
+          type="text"
+          name="link"
+          aria-label="Link URL"
+          defaultValue={editor.getAttributes("link").href || ""}
+          placeholder="https://"
+          autoFocus
+        />
+        <S.TextButton type="submit" name="_action" value="add">
+          Apply
+        </S.TextButton>
+        {editor.isActive("link") ? (
+          <S.TextButton type="submit" name="_action" value="remove">
+            Unlink
+          </S.TextButton>
+        ) : null}
+        <S.TextButton type="button" onClick={closeForm}>
+          Cancel
+        </S.TextButton>
+      </S.MenuForm>
+    );
+  } else if (editor && form === "image") {
+    toolbar = (
+      <S.MenuForm onSubmit={submitImage} onKeyDown={(event) => event.key === "Escape" && closeForm()}>
+        <S.MenuInput type="url" name="src" aria-label="Image URL" placeholder="Image URL" autoFocus />
+        <S.MenuInput type="text" name="alt" aria-label="Alt text" placeholder="Alt text" />
+        <S.TextButton type="submit">Insert</S.TextButton>
+        <S.TextButton type="button" onClick={closeForm}>
+          Cancel
+        </S.TextButton>
+      </S.MenuForm>
+    );
+  } else if (editor) {
+    toolbar = (
+      <>
+        {markButton("bold", "Bold", <BoldIcon />)}
+        {markButton("italic", "Italic", <ItalicIcon />)}
+        {markButton("underline", "Underline", <UnderlineIcon />)}
+        <S.MenuButton
+          type="button"
+          title="Link"
+          aria-label="Link"
+          $active={editor.isActive("link")}
+          aria-pressed={editor.isActive("link")}
+          onMouseDown={keepFocus}
+          onClick={() => setForm("link")}
+        >
+          <LinkIcon />
+        </S.MenuButton>
+        {blockStyles.length ? (
+          <>
+            <S.MenuSeparator />
+            <S.BlockSelect
+              aria-label="Block style"
+              value={currentBlock}
+              onChange={(event) => setBlockStyle(event.currentTarget.value as BlockStyle)}
+            >
+              <option value="p">Paragraph</option>
+              {blockStyles.map(([style, label]) => (
+                <option key={style} value={style}>
+                  {label}
+                </option>
+              ))}
+            </S.BlockSelect>
+          </>
+        ) : null}
+        {allows("image") ? (
+          <S.MenuButton
+            type="button"
+            title="Image"
+            aria-label="Image"
+            onMouseDown={keepFocus}
+            onClick={() => setForm("image")}
           >
-            {props.languages.map((lang, n) => (
-              <option key={`lang_${lang}_${n}`} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </S.TopLanguageSelect>
-          {props.onRemove ? (
-            <S.TopIconButton type="button" title="Remove" aria-label="Remove" onClick={props.onRemove}>
-              <CloseIcon />
-            </S.TopIconButton>
-          ) : null}
-        </S.TopControls>
-      ) : props.onRemove ? (
-        <S.TopControls>
-          <S.TopIconButton type="button" title="Remove" aria-label="Remove" onClick={props.onRemove}>
-            <CloseIcon />
-          </S.TopIconButton>
-        </S.TopControls>
+            <ImageIcon />
+          </S.MenuButton>
+        ) : null}
+        <S.ToolbarSpacer />
+        {props.toolbarEnd}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <S.FieldRow $singleLine={props.disableMultiline}>
+        <S.EditorWrap $singleLine={props.disableMultiline}>
+          <EditorContent editor={editor} />
+        </S.EditorWrap>
+        {props.trailing}
+      </S.FieldRow>
+      {toolbar ? (
+        <S.FormatToolbar $visible={props.showToolbar || !!form} role="toolbar" aria-label="Text formatting">
+          {toolbar}
+        </S.FormatToolbar>
       ) : null}
-      <S.FieldShell $focus={focus}>
-        {mode === "rich" ? (
-          <S.EditorWrap>
-            {inlineMenus}
-            <EditorContent editor={editor} />
-          </S.EditorWrap>
-        ) : props.disableMultiline ? (
-          <S.SingleLineInput
-            id={props.id}
-            ref={textRef as React.RefObject<HTMLInputElement>}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-              saveChanges();
-              setIsFocused(false);
-            }}
-            value={textState}
-            onChange={(e) => setTextState(e.currentTarget.value)}
-          />
-        ) : (
-          <S.TextInput
-            id={props.id}
-            ref={textRef as React.RefObject<HTMLTextAreaElement>}
-            as={Textarea}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => {
-              saveChanges();
-              setIsFocused(false);
-            }}
-            value={textState}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setTextState(e.currentTarget.value)}
-          />
-        )}
-      </S.FieldShell>
-    </S.Container>
+    </>
   );
 }

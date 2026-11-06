@@ -49,7 +49,7 @@ export function LanguageMapEditor({
             onSave={changeHandler}
             guidanceReference={guidanceReference}
             disableMultiline={disableMultiline}
-            disallowHTML={disallowHTML}
+            disallowHTML={disallowHTML ?? dispatchType !== "summary"}
           />
         </ErrorBoundary>
       )}

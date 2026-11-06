@@ -183,6 +183,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
       <LanguageFieldEditor
         focusId={summary.focusId()}
         label={"Summary"}
+        disallowHTML={false}
         fields={summary.get()}
         onSave={(e: any) => summary.set(e.toInternationalString())}
       />

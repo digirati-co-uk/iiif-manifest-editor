@@ -62,6 +62,7 @@ export function PartOfReferenceEditor() {
       />
       <LanguageFieldEditor
         label="Summary"
+        disallowHTML={false}
         fields={(ref?.summary || { none: [] }) as InternationalString}
         onSave={(value: any) => update({ summary: value.toInternationalString() })}
       />

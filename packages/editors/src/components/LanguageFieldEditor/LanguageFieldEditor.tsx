@@ -2,13 +2,13 @@ import { ControlButton, OpaqueControls } from "@manifest-editor/components";
 import { useConfig, useDecayState } from "@manifest-editor/shell";
 import { SmallButton } from "@manifest-editor/ui/atoms/Button";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
+import { LanguageIcon } from "@manifest-editor/ui/icons/LanguageIcon";
 import { useMemo, useState } from "react";
 import { flushSync } from "react-dom";
-import { useDebounce } from "tiny-use-debounce";
 import { type UseMetadataEditor, useMetadataEditor } from "../../hooks/useMetadataEditor";
 import { InputGroup, InputLabel } from "../Input";
 import { RichTextLanguageField } from "../RichTextLanguageField/RichTextLanguageField";
-import { AddAnother, EmptyLanguageField } from "./LanguageFieldEditor.styles";
+import { EmptyLanguageField } from "./LanguageFieldEditor.styles";
 
 export interface LanguageFieldEditorProps extends UseMetadataEditor {
   label: string;
@@ -21,10 +21,15 @@ export interface LanguageFieldEditorProps extends UseMetadataEditor {
   guidanceReference?: string;
   disableMultiline?: boolean;
   singleValue?: boolean;
+  /** Defaults to plain text. Set false for summary, metadata values and required-statement values. */
   disallowHTML?: boolean;
 }
 
 export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
+  return <LanguageFieldEditorFields key={props.focusId || props.containerId} {...props} />;
+}
+
+function LanguageFieldEditorFields(props: LanguageFieldEditorProps) {
   const {
     // This hook does the heavily lifting on the data side.
     firstItem,
@@ -36,7 +41,6 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
     saveChanges,
     removeItem,
   } = useMetadataEditor(props);
-  const debounceSave = useDebounce(saveChanges, 200);
   const [active, activeState] = useDecayState(2000);
   const [isReorderMode, setIsReorderMode] = useState(false);
   const {
@@ -98,7 +102,7 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                   ariaLabel={`${props.label} (${field.language === "none" ? "no language" : field.language})`}
                   autoFocus={n === 0 ? props.autoFocus : undefined}
                   disableMultiline={props.disableMultiline}
-                  disallowHTML={props.disallowHTML}
+                  disallowHTML={props.disallowHTML ?? true}
                   id={n === 0 ? focusId : undefined}
                   language={field.language}
                   value={field.value}
@@ -112,10 +116,11 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
                   }}
                   onUpdateLanguage={(lang) => {
                     changeLanguage(key, lang);
+                    saveChanges(props.index, props.property);
                   }}
                   onUpdate={(value) => {
                     changeValue(key, value);
-                    debounceSave(props.index, props.property);
+                    saveChanges(props.index, props.property);
                   }}
                 />
                 {isReorderMode && fieldKeys.length > 0 ? (
@@ -171,7 +176,8 @@ export function LanguageFieldEditor(props: LanguageFieldEditorProps) {
               document.getElementById(focusId)?.focus();
             }}
           >
-            Add value
+            <span>Add value</span>
+            <LanguageIcon aria-hidden />
           </EmptyLanguageField>
         </>
       )}
