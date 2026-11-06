@@ -45,7 +45,7 @@
     "@iiif/presentation-3-normalized": "^0.9.7",
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/i18n": "workspace:*",
-    "polygon-editor": "0.0.23",
+    "polygon-editor": "1.0.0",
     "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
