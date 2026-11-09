@@ -204,14 +204,14 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await page.getByRole("button", { name: "Start building", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Start adding content", exact: true }).click();
-  await page.getByRole("option", { name: "Empty slide An empty image slide.", exact: true }).click();
+  await page.getByRole("option", { name: "Empty slide", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Title", exact: true })).toHaveCount(0);
   await page.getByRole("radio", { name: "Feature left", exact: true }).check();
   await page.getByRole("button", { name: "Create canvas", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Add content", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(3);
   await page.getByRole("button", { name: "Add image to position 1", exact: true }).click();
-  await page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true }).click();
+  await page.getByRole("option", { name: "IIIF image", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Link to image service", exact: true })
     .fill(service.id || (service as any)["@id"]);
@@ -246,7 +246,7 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
   await page.getByRole("button", { name: "Browse IIIF for position 1", exact: true }).click();
   await expect(page.locator(".iiif-browser")).toBeVisible();
-  await expect(page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("option", { name: "IIIF image", exact: true })).toHaveCount(0);
 });
 
 test("main manifest editor shares the ratio lock and expand-to-fit controls", async ({ page }) => {
@@ -254,7 +254,8 @@ test("main manifest editor shares the ratio lock and expand-to-fit controls", as
   const projectPath = new URL(page.url()).pathname.split("/").slice(0, 3).join("/");
   await page.goto(projectPath);
   await page.getByRole("button", { name: "Canvases", exact: true }).click();
-  await page.getByRole("tab", { name: "Technical", exact: true }).click();
+  await page.getByRole("button", { name: "More tabs", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Technical", exact: true }).click();
   const width = page.getByRole("spinbutton", { name: "Width (px)", exact: true });
   const height = page.getByRole("spinbutton", { name: "Height (px)", exact: true });
   await page.getByRole("button", { name: "Lock aspect ratio", exact: true }).click();
@@ -317,7 +318,7 @@ test("image controls: reversible mode, colours and clear placeholders", async ({
   expect(canvas.backgroundColor).toBe("#aaccdd");
   await expect(page.locator(".atlas-container")).toHaveCSS("background-color", "rgb(146, 175, 190)");
   await page.getByRole("button", { name: "Add media", exact: true }).first().click();
-  await expect(page.getByRole("option", { name: "IIIF Image IIIF Image service", exact: true })).toBeVisible();
+  await expect(page.getByRole("option", { name: "IIIF image", exact: true })).toBeVisible();
 });
 
 test("resize across a placeholder and discard both image and canvas changes", async ({ page }) => {

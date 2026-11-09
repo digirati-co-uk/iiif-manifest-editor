@@ -70,7 +70,7 @@ for (const [name, url, contentType, field] of [
       await page.getByRole("button", { name: "More tabs", exact: true }).click();
       await page.getByRole("menuitem", { name: "Linking", exact: true }).click();
     }
-    await page.getByRole("button", { name: "Add Rendering", exact: true }).click();
+    await page.getByRole("button", { name: "Add Alternative representation", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
     await dialog.getByRole("textbox", { name: "Paste a link", exact: true }).fill(url!);
     await dialog.getByRole("button", { name: "Use link", exact: true }).click();

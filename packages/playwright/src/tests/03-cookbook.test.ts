@@ -44,7 +44,7 @@ test("0005: create a single image-service canvas from scratch", { tag: "@cookboo
   await manifestPage.waitForPage();
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   const settings = page.getByRole("dialog", { name: "Settings", exact: true });
-  await settings.getByRole("button", { name: "IIIF Options", exact: true }).click();
+  await settings.getByRole("button", { name: "IIIF options", exact: true }).click();
   await expect(settings.getByRole("checkbox", { name: "Include sizes", exact: true })).not.toBeChecked();
   await expect(settings.getByRole("checkbox", { name: "Include tiles", exact: true })).not.toBeChecked();
   await settings.getByRole("combobox", { name: "Compact services", exact: true }).selectOption("compact");
@@ -52,8 +52,8 @@ test("0005: create a single image-service canvas from scratch", { tag: "@cookboo
   await page.reload();
   await manifestPage.waitForPage();
   await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
-  await page.getByRole("textbox", { name: "Label (en)", exact: true }).fill(recipe.label.en[0]);
-  await page.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+  await page.getByRole("textbox", { name: "Label (English)", exact: true }).fill(recipe.label.en[0]);
+  await page.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
   await expect(manifestPage.manifestHeading).toHaveText(recipe.label.en[0]);
 
   await page.getByRole("button", { name: "Start adding content", exact: true }).click();
@@ -69,8 +69,8 @@ test("0005: create a single image-service canvas from scratch", { tag: "@cookboo
   await page.getByRole("button", { name: "Canvases", exact: true }).click();
   await page.getByRole("button", { name: "Untitled canvas", exact: true }).click();
   await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
-  await page.getByRole("textbox", { name: "Label (en)", exact: true }).fill(canvas.label.en[0]);
-  await page.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+  await page.getByRole("textbox", { name: "Label (English)", exact: true }).fill(canvas.label.en[0]);
+  await page.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
 
   await expect(page.getByRole("button", { name: canvas.label.en[0], exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "Subtitles and captions", exact: true })).toHaveCount(0);

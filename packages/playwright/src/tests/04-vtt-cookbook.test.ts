@@ -24,8 +24,8 @@ test(
     const manifestPage = new ManifestPresetPage(page);
     await manifestPage.waitForPage();
     await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
-    await page.getByRole("textbox", { name: "Label (en)", exact: true }).fill(recipe.label.en[0]);
-    await page.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+    await page.getByRole("textbox", { name: "Label (English)", exact: true }).fill(recipe.label.en[0]);
+    await page.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
     await expect(manifestPage.manifestHeading).toHaveText(recipe.label.en[0]);
 
     await page.getByRole("button", { name: "Start adding content", exact: true }).click();
@@ -40,8 +40,8 @@ test(
     // The browser reports more precision than the duration published in the recipe.
     await dialog.getByRole("spinbutton", { name: /^Duration/ }).fill(String(video.duration));
     // This recipe deliberately has no Canvas label.
-    await dialog.getByRole("textbox", { name: "Label (en)", exact: true }).fill("");
-    await dialog.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+    await dialog.getByRole("textbox", { name: "Label (English)", exact: true }).fill("");
+    await dialog.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
     await dialog.getByRole("button", { name: "Add video", exact: true }).click();
     await expect(dialog).toBeHidden();
 
@@ -57,8 +57,8 @@ test(
     await expect(dialog).toBeVisible();
     expect(await url.evaluate((input: HTMLInputElement) => input.validity.valid)).toBe(false);
     await url.fill(captions.id);
-    await dialog.getByRole("textbox", { name: "Label (en)", exact: true }).fill(captions.label.en[0]);
-    await dialog.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+    await dialog.getByRole("textbox", { name: "Label (English)", exact: true }).fill(captions.label.en[0]);
+    await dialog.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
     await dialog.getByRole("textbox", { name: "Language (BCP 47 code)", exact: true }).fill(captions.language);
     await dialog.getByRole("button", { name: "Add captions", exact: true }).click();
     await expect(dialog).toBeHidden();
@@ -88,7 +88,7 @@ test(
     const captionRow = captionSection.getByRole("button", { name: `Edit ${captions.label.en[0]}`, exact: true });
     await captionRow.focus();
     await captionRow.press("Enter");
-    const captionLabel = page.getByRole("textbox", { name: "Label (en)", exact: true });
+    const captionLabel = page.getByRole("textbox", { name: "Label (English)", exact: true });
     await expect(captionLabel).toHaveValue(captions.label.en[0]);
     await captionLabel.fill("English subtitles");
     await captionLabel.blur();

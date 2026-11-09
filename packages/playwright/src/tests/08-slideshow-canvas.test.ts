@@ -36,6 +36,7 @@ for (const [creator, fromOverview] of [
       .click();
     const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
     await dialog.getByRole("option", { name: creator, exact: true }).click();
+    await dialog.getByRole("button", { name: "Create canvas", exact: true }).click();
     await expect(dialog).toBeHidden();
     const downloading = page.waitForEvent("download");
     await page.getByRole("button", { name: "Download manifest", exact: true }).click();
@@ -63,6 +64,7 @@ test("bottom create appends slides while the sidebar icon inserts below the sele
     await page.getByRole("button", { name: buttonName, exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
     await dialog.getByRole("option", { name: "Multiple images", exact: true }).click();
+    await dialog.getByRole("button", { name: "Create canvas", exact: true }).click();
     await expect(dialog).toBeHidden();
   };
   const downloadCanvasIds = async (name: string): Promise<string[]> => {
@@ -109,6 +111,7 @@ test("Slideshow format in the Exhibition editor opens an empty slide in the prev
   await page.getByRole("button", { name: "Create new slide", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Add content", exact: true });
   await dialog.getByRole("option", { name: "Multiple images with text", exact: true }).click();
+  await dialog.getByRole("button", { name: "Create canvas", exact: true }).click();
   await expect(dialog).toBeHidden();
   const toolbar = page.locator(".exhibition-slideshow-current-toolbar");
   await expect(toolbar).toBeVisible();
