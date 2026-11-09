@@ -1,4 +1,11 @@
-import { ActionButton, AddImageIcon, IIIFLogo, VideoIcon, YouTubeIcon } from "@manifest-editor/components";
+import {
+  ActionButton,
+  AddImageIcon,
+  IIIFBrowserIcon,
+  IIIFLogo,
+  VideoIcon,
+  YouTubeIcon,
+} from "@manifest-editor/components";
 import { LinkIcon } from "@manifest-editor/ui/icons/LinkIcon";
 import { type ReactNode, type RefObject, useEffect, useState } from "react";
 
@@ -8,6 +15,7 @@ export interface CreatorResourceInputProps {
   inputRef: RefObject<HTMLInputElement | null>;
   isChecking: boolean;
   rotateExamples?: boolean;
+  onBrowse?: () => void;
 }
 
 const STATIC_PLACEHOLDER = "https://example.org/manifest.json";
@@ -43,6 +51,7 @@ export function CreatorResourceInput({
   inputRef,
   isChecking,
   rotateExamples = true,
+  onBrowse,
 }: CreatorResourceInputProps) {
   const reduced = usePrefersReducedMotion();
   const [index, setIndex] = useState(0);
@@ -98,6 +107,18 @@ export function CreatorResourceInput({
             </span>
           ) : null}
         </div>
+        {onBrowse ? (
+          <button
+            type="button"
+            aria-label="Open IIIF Browser"
+            title="Open IIIF Browser"
+            disabled={isChecking}
+            onClick={onBrowse}
+            className="mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded bg-transparent text-gray-500 hover:bg-gray-100 hover:text-me-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-me-primary-500 disabled:opacity-50"
+          >
+            <IIIFBrowserIcon className="h-5 w-5" />
+          </button>
+        ) : null}
         <ActionButton
           primary
           type="submit"

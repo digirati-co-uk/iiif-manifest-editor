@@ -156,6 +156,8 @@ export interface SpecificCreatorDefinition<
   readonly id: ID;
   label: string;
   summary?: string;
+  /** Hide the form help icon when the creator supplies its own browsing interface. */
+  hideSummary?: boolean;
   icon?: any;
   dependencies?: string[];
   tags?: string[];

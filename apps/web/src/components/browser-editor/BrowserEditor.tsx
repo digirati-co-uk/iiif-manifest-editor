@@ -1,5 +1,7 @@
 "use client";
 
+import headerStyles from "./BrowserEditorHeader.module.css";
+
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
   ActionButton,
@@ -428,14 +430,14 @@ export default function BrowserEditor({
       <header
         className={
           isFocusedExhibition
-            ? `grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 border-b border-white/10 lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-6 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
-            : "grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 shadow lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-4"
+            ? `${headerStyles.header} px-3 border-b border-white/10 lg:px-6 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : `${headerStyles.header} px-3 shadow lg:px-4`
         }
       >
         <Link
           href="/"
           aria-label={`${isFocusedExhibition ? "Exhibition" : "Manifest"} Editor home`}
-          className="col-span-2 col-start-1 row-start-1 flex min-w-0 items-center justify-start gap-2 overflow-hidden whitespace-nowrap lg:col-span-1"
+          className={`${headerStyles.logo} flex items-center gap-2 overflow-hidden whitespace-nowrap`}
         >
           {isFocusedExhibition ? (
             <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
@@ -447,13 +449,13 @@ export default function BrowserEditor({
           )}
         </Link>
         <ManifestPaginationNavigation
-          className="col-span-2 col-start-1 row-start-2 justify-self-center lg:col-span-1 lg:col-start-2 lg:row-start-1"
+          className={headerStyles.pagination}
           variant={isFocusedExhibition ? "dark" : "light"}
         />
-        <div className="col-span-2 row-start-3 flex min-w-0 items-center justify-end lg:col-span-1 lg:col-start-3 lg:row-start-1">
+        <div className={`${headerStyles.actions} flex items-center justify-end`}>
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
-          <div className="flex w-full items-center justify-end gap-1 sm:gap-2 lg:w-auto">
+          <div className={headerStyles.actionButtons}>
             <ShareButton />
             <BackgroundActionsMenu />
             {isFocusedExhibition ? (

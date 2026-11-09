@@ -1,3 +1,4 @@
+import { NotebookCreatorSources } from "../Notebook/ProjectNotebook";
 import { toRef } from "@iiif/parser";
 import {
   ActionButton,
@@ -148,7 +149,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
     <>
       {isCreating ? spinner : null}
       <div hidden={isCreating}>
-        {props.creator.summary ? (
+        {props.creator.summary && !props.creator.hideSummary ? (
           <div className="flex justify-end px-4">
             <Tooltip>
               <TooltipTrigger
@@ -183,6 +184,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
 export function BaseCreator(props: BaseCreatorProps) {
   const app = useApp();
+  const config = useConfig();
   const vault = useVault();
   const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
   const [currentInitialData, setCurrentInitialData] = useState<Record<string, any> | undefined>();
@@ -209,6 +211,9 @@ export function BaseCreator(props: BaseCreatorProps) {
   );
 
   const canProbe = supported.some((creator) => creator.supportsResource);
+  const browserCreator =
+    supported.find((creator) => creator.id === config.notebook?.browserCreatorId) ??
+    supported.find((creator) => getCreatorConfigKey(creator) === "@manifest-editor/iiif-browser-creator");
   const manualCreators = supported.filter((creator) => !creator.supportsResource);
 
   useEffect(
@@ -254,9 +259,14 @@ export function BaseCreator(props: BaseCreatorProps) {
     setCurrentId(creator.id);
   };
 
-  const runResourceProbe = async (e: FormEvent) => {
-    e.preventDefault();
-    const value = resourceValue.trim();
+  const openBrowser = browserCreator
+    ? (url?: string) => selectCreator(browserCreator, { url: url ?? (resourceValue.trim() || undefined) })
+    : undefined;
+
+  const runResourceProbe = async (e?: FormEvent, source?: string) => {
+    e?.preventDefault();
+    const value = (source ?? resourceValue).trim();
+    if (source) setResourceValue(source);
     if (!value || isProbing) return;
 
     const requestId = ++probeRun.current;
@@ -380,10 +390,11 @@ export function BaseCreator(props: BaseCreatorProps) {
   return (
     <>
       {canProbe ? (
-        <form className="p-4" onSubmit={runResourceProbe} aria-busy={isProbing}>
+        <form className="p-4" onSubmit={(e) => void runResourceProbe(e)} aria-busy={isProbing}>
           <CreatorResourceInput
             inputRef={resourceInputRef}
             rotateExamples={linkFirst}
+            onBrowse={openBrowser ? () => openBrowser() : undefined}
             value={resourceValue}
             isChecking={isProbing}
             onChange={(value) => {
@@ -398,6 +409,13 @@ export function BaseCreator(props: BaseCreatorProps) {
             {probeError ? <p className="mt-3">{probeError}</p> : null}
             {probeMatches && !allVisible ? <p className="mt-3">Choose how to use this link</p> : null}
           </div>
+          {!resourceValue ? (
+            <NotebookCreatorSources
+              isDisabled={isProbing}
+              onSelect={(url) => void runResourceProbe(undefined, url)}
+              onOpenNotebook={openBrowser ? () => openBrowser("iiif://notes") : undefined}
+            />
+          ) : null}
         </form>
       ) : null}
       <div id={gridId}>

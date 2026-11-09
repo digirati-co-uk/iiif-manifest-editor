@@ -1,3 +1,4 @@
+import { ProjectNotebookHeader } from "../Notebook/ProjectNotebook";
 import { Modal, PanelSideMenu } from "@manifest-editor/components";
 // import { LayoutProps } from "./Layout.types";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
@@ -447,7 +448,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       <L.OuterWrapper>
         {props.hideHeader ? null : (
           <L.Header>
-            {props.header || null}
+            {props.header || <ProjectNotebookHeader />}
             {props.menu ? <menu>{props.menu}</menu> : null}
           </L.Header>
         )}
@@ -541,7 +542,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     >
       {props.hideHeader ? null : (
         <L.Header>
-          {props.header || null}
+          {props.header || <ProjectNotebookHeader />}
           {props.menu ? <menu>{props.menu}</menu> : null}
         </L.Header>
       )}

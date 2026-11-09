@@ -35,7 +35,7 @@ catalog:
   "@iiif/parser": 4.0.1
   "@iiif/helpers": 4.0.0
   # "iiif-browser": 2.2.4
-  iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@4934ee2
+  iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@8ac15ef
   "@atlas-viewer/atlas": 3.3.0
   "react-aria-components": ^1.12
 
@@ -55,6 +55,8 @@ minimumReleaseAgeExclude:
 blockExoticSubdeps: false
 
 overrides:
+  # Notebook and descriptive editors must share ProseMirror node/fragment instances.
+  prosemirror-model: 1.25.12
   "@atlas-viewer/atlas": 3.3.0
   react-iiif-vault: 4.0.0
   react-aria: 3.43.2

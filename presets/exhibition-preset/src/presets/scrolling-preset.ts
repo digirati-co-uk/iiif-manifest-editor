@@ -1,5 +1,6 @@
+import { exhibitionNotebookConfig } from "../notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
-import { extendApp, mapApp } from "@manifest-editor/shell";
+import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
 import {
   imageBrowserSlideCreator,
   keepIIIFBrowserNested,
@@ -42,6 +43,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
   {
     preset: exhibitionPresetConfig,
     config: {
+      notebook: exhibitionNotebookConfig,
       editorConfig: {},
     },
     leftPanels: [
@@ -49,7 +51,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
       scrollGridLeftPanel,
       exhibitionThemeLeftPanel,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["left-panel-manifest", NOTEBOOK_PANEL_ID],
     centerPanels: [
       //
     ],

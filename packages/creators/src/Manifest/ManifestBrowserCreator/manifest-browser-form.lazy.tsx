@@ -1,3 +1,4 @@
+import { useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
@@ -9,6 +10,7 @@ export interface ManifestBrowserCreatorInitialData {
 }
 
 export default function ManifestBrowserCreatorForm(props: CreatorContext) {
+  const notebookPlugins = useNotebookBrowserPlugins();
   const vault = usePreviewVault();
   const initialData: ManifestBrowserCreatorInitialData = useMemo(() => {
     return props.options.initialData || {};
@@ -19,20 +21,12 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
       {
         type: "callback",
         label: "Select",
-        supportedTypes: [
-          "Manifest",
-          "Collection",
-          "ManifestList",
-          "CollectionList",
-          "CollectionItemList",
-        ],
+        supportedTypes: ["Manifest", "Collection", "ManifestList", "CollectionList", "CollectionItemList"],
         cb: (resource) => props.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: (resource, parent, vault) => {
-            const resourcesAsArray = Array.isArray(resource)
-              ? resource
-              : [{ ...resource, parent }];
+            const resourcesAsArray = Array.isArray(resource) ? resource : [{ ...resource, parent }];
             const resources = [];
             for (const resource of resourcesAsArray) {
               resources.push({
@@ -79,7 +73,9 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
         {
           url: initialData.url,
           resource: null,
-          route: `/loading?id=${encodeURIComponent(initialData.url)}`,
+          route: initialData.url.startsWith("iiif://")
+            ? initialData.url.replace("iiif://", "/")
+            : `/loading?id=${encodeURIComponent(initialData.url)}`,
         },
       ],
     } as IIIFBrowserProps["history"];
@@ -88,12 +84,13 @@ export default function ManifestBrowserCreatorForm(props: CreatorContext) {
   return (
     <PreviewVaultBoundary>
       <IIIFBrowser
+        plugins={[...notebookPlugins, ...(initialData.iiifBrowserOptions?.plugins || [])]}
         ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"
         output={output}
         navigation={navigationOptions}
-        customPages={(initialData.iiifBrowserOptions?.customPages || {})}
+        customPages={initialData.iiifBrowserOptions?.customPages || {}}
         history={historyOptions}
       />
     </PreviewVaultBoundary>

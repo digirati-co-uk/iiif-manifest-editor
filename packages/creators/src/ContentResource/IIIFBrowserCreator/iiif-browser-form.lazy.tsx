@@ -1,3 +1,4 @@
+import { useConfig, useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
 import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
@@ -10,31 +11,30 @@ export interface IIIFBrowserCreatorInitialData {
 }
 
 export default function IIIFBrowserCreatorForm(props: CreatorContext) {
+  const notebookPlugins = useNotebookBrowserPlugins();
   const initialData: IIIFBrowserCreatorInitialData = useMemo(() => {
     return props.options.initialData || {};
   }, [props.options.initialData]);
 
   const vault = usePreviewVault();
+  const { runCreate } = props;
+  const notebookConfig = useConfig().notebook;
+  const actionLabel =
+    props.options.targetType === "Canvas" ? (notebookConfig?.canvasActionLabel ?? "Add to manifest") : "Select";
   const output = useMemo(() => {
     return [
       {
         type: "callback",
-        label: "Select",
-        supportedTypes: [
-          "Canvas",
-          "CanvasList",
-          "CanvasRegion",
-          "ImageService",
-          "ImageServiceRegion",
-        ],
-        cb: (resource) => props.runCreate({ output: resource }),
+        label: actionLabel,
+        supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
+        cb: (resource) => runCreate({ output: resource }),
         format: {
           type: "custom",
           format: formatIIIFBrowserOutput,
         },
       },
     ] as IIIFBrowserProps["output"];
-  }, [props.runCreate]);
+  }, [runCreate, actionLabel]);
 
   const navigationOptions = useMemo(() => {
     return {
@@ -59,7 +59,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   }, [initialData, props.config]);
   const historyOptions = useMemo(() => {
     const history = initialData.iiifBrowserOptions?.history || {};
-    if (!initialData.url) return history;
+    if (!initialData.url || history.initialHistory?.length) return history;
     return {
       ...history,
       restoreFromLocalStorage: false,
@@ -68,7 +68,9 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
         {
           url: initialData.url,
           resource: null,
-          route: `/loading?id=${encodeURIComponent(initialData.url)}`,
+          route: initialData.url.startsWith("iiif://")
+            ? initialData.url.replace("iiif://", "/")
+            : `/loading?id=${encodeURIComponent(initialData.url)}`,
         },
       ],
     } as IIIFBrowserProps["history"];
@@ -77,6 +79,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   return (
     <PreviewVaultBoundary>
       <IIIFBrowser
+        plugins={[...notebookPlugins, ...(initialData.iiifBrowserOptions?.plugins || [])]}
         ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"

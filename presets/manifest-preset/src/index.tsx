@@ -9,6 +9,9 @@ import {
   baseEditor,
   type LayoutPanel,
   type PluginInput,
+  ProjectNotebookPanel,
+  NotebookIcon,
+  NOTEBOOK_PANEL_ID,
 } from "@manifest-editor/shell";
 import { createBulkThumbnailBuilderBackgroundAction } from "./bulk-thumbnail-builder/background-action";
 import { manifestOverview } from "./center-panels/manifest-overview";
@@ -31,6 +34,8 @@ export default {
   projectType: "Manifest",
 };
 
+export const config = { notebook: { enabled: true } };
+
 export const centerPanels: LayoutPanel[] = [
   manifestOverview,
   {
@@ -47,6 +52,13 @@ export const leftPanels: LayoutPanel[] = [
   canvasListing,
   tagsPanel,
   rangesPanel,
+  {
+    id: NOTEBOOK_PANEL_ID,
+    label: "Notebook",
+    icon: <NotebookIcon />,
+    options: { minWidth: 360, maxWidth: 720 },
+    render: () => <ProjectNotebookPanel />,
+  },
   // @todo we will come back to the image grid
   // {
   //   id: "image-grid",
