@@ -137,7 +137,9 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   }, [store, release, vault]);
   const cancel = useCallback(() => {
     setQueued(null);
-    store.getState().cancelRequest(current.current.requestId || undefined);
+    // Cancelling consumes the hook's request id, and it only mints a new one once a request has actually run.
+    // Cancelling with nothing active (e.g. entering canvas resize) would leave every later selection without one.
+    if (current.current.isActive) store.getState().cancelRequest(current.current.requestId || undefined);
     release();
     selected.current = null;
     setActive(null);

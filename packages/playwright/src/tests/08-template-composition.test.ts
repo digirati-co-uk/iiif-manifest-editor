@@ -164,6 +164,11 @@ test("resizing reapplies the layout by default, can be undone, and can be switch
   expect(dragged.width).toBeLessThan(kept.width);
   expect(dragged.items[0].items[0].target).not.toEqual(kept.items[0].items[0].target);
   await expect(page.getByText("Custom arrangement")).toHaveCount(0);
+
+  // Images stay selectable after a canvas resize, without having to leave and re-enter edit mode.
+  await page.getByRole("button", { name: "Done", exact: true }).first().click();
+  await page.getByRole("button", { name: "Select image 2", exact: true }).click();
+  await expect(page.getByRole("toolbar", { name: "Image actions" })).toBeVisible();
 });
 
 test("the editing bar only appears after a manual move, and clicking the background confirms it", async ({ page }) => {
