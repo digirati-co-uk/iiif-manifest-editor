@@ -19,8 +19,8 @@ export const imageUrlSlideCreator = defineCreator({
   id: "@exhibitions/image-url-creator",
   create: createUrlSlide,
   tags: ["exhibition-slide", "exhibition-slideshow-slide"],
-  label: "Image from URL",
-  summary: "Image from URL",
+  label: "Image from a link",
+  summary: "Add an image slide using a direct image-file link.",
   resourceType: "Canvas",
   supports: {
     initialData: true,

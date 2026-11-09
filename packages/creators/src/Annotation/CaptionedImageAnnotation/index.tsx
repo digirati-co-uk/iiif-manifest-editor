@@ -1,5 +1,6 @@
 import { AddImageIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
+import { imageUrlCreator } from "../../ContentResource/ImageUrlCreator";
 import {
   CreateCaptionedImageAnnotation,
   createCaptionedImageAnnotation,
@@ -17,8 +18,12 @@ export const captionedImageAnnotation = defineCreator({
   id: "@manifest-editor/captioned-image-annotation",
   create: createCaptionedImageAnnotation,
   label: "Captioned image",
-  summary: "Add an image from a URL with caption",
+  summary: "Add an image from a direct link and write its caption.",
   icon: <AddImageIcon />,
+  async supportsResource(value, helpers, ctx) {
+    const result = await imageUrlCreator.supportsResource!(value, helpers, ctx);
+    return result ? { initialData: { imageUrl: value } } : false;
+  },
   render(ctx) {
     return <CreateCaptionedImageAnnotation {...ctx} />;
   },

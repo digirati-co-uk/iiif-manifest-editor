@@ -2,7 +2,7 @@ import { canvasLayouts, CANVAS_LAYOUT_META, createCanvasLayoutState } from "@man
 import { CanvasLayoutForm } from "@manifest-editor/editors";
 import { emptyAnnotationPage, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
-import { EmptyCanvasIcon } from "@manifest-editor/components";
+import { EmptyCanvasIcon, ImageListIcon } from "@manifest-editor/components";
 import { type CreatorFunctionContext, type CreatorResource, defineCreator } from "@manifest-editor/creator-api";
 
 declare module "@manifest-editor/creator-api" {
@@ -24,7 +24,7 @@ export const imageSlideCreator = defineCreator({
   create: createImageSlide,
   render: (ctx) => <CanvasLayoutForm runCreate={(data) => ctx.runCreate({ ...data, type: "default" })} />,
   label: "Empty slide",
-  summary: "An empty image slide.",
+  summary: "Create a blank slide and add content later.",
   icon: <EmptyCanvasIcon />,
   tags: ["exhibition-slide"], // No tag, so it doesn't appear, it's just called.
   resourceType: "Canvas",
@@ -39,27 +39,27 @@ export const imageSlideCreator = defineCreator({
 export const imageSlideLeftCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-left",
-  label: "Image (Left)",
+  label: "Image with text on left",
   summary: "An image with text on the left.",
-  icon: <div>IMAGE (LEFT)</div>,
+  icon: <SlideLayoutIcon position="left" />,
   create: (payload, ctx) => createImageSlide({ ...payload, type: "left" }, ctx),
 });
 
 export const imageSlideRightCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-right",
-  label: "Image (Right)",
+  label: "Image with text on right",
   summary: "An image with text on the right.",
-  icon: <div>IMAGE (RIGHT)</div>,
+  icon: <SlideLayoutIcon position="right" />,
   create: (payload, ctx) => createImageSlide({ ...payload, type: "right" }, ctx),
 });
 
 export const imageSlideBottomCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/image-slide-creator-bottom",
-  label: "Image (Bottom)",
+  label: "Image with text below",
   summary: "An image with text at the bottom.",
-  icon: <div>IMAGE (BOTTOM)</div>,
+  icon: <SlideLayoutIcon position="bottom" />,
   create: (payload, ctx) => createImageSlide({ ...payload, type: "bottom" }, ctx),
 });
 
@@ -67,7 +67,8 @@ export const slideshowImageOnlyCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/slideshow-image-only-creator",
   label: "Multiple images",
-  summary: "An empty slideshow slide",
+  icon: <ImageListIcon />,
+  summary: "Create a slide and arrange multiple images on it.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createImageSlide(
@@ -86,7 +87,8 @@ export const slideshowImageTextCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/slideshow-image-text-creator",
   label: "Multiple images with text",
-  summary: "An empty slideshow slide, with text",
+  icon: <SlideLayoutIcon position="right" />,
+  summary: "Create a slide with space for multiple images and text.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createImageSlide(
@@ -105,6 +107,7 @@ export const scrollCompactDeckCreator = defineCreator({
   ...imageSlideCreator,
   id: "@exhibitions/scroll-compact-deck-creator",
   label: "Compact image deck",
+  icon: <ImageListIcon />,
   summary: "A scrolling section with compact annotation-led image slides.",
   tags: ["exhibition-scroll-section", "exhibition-slide"],
   create: (payload, ctx) =>
@@ -237,4 +240,19 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
   const layout = canvasLayouts.find((layout) => layout.id === payload.layoutId);
   if (layout) resource.meta[CANVAS_LAYOUT_META] = { state: createCanvasLayoutState(layout) };
   return resource;
+}
+
+function SlideLayoutIcon({ position }: { position: "left" | "right" | "bottom" }) {
+  return (
+    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      {position === "bottom" ? (
+        <path d="M3 14h18M7 17h10" />
+      ) : (
+        <>
+          <path d={position === "left" ? "M11 4v16M6 9h2M6 12h2M6 15h2" : "M13 4v16M16 9h2M16 12h2M16 15h2"} />
+        </>
+      )}
+    </svg>
+  );
 }

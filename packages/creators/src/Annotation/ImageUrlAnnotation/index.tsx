@@ -22,7 +22,7 @@ export const imageUrlAnnotation = defineCreator({
   create: createImageUrlAnnotation,
   label: "Image",
   dependencies: ["@manifest-editor/image-url-creator"],
-  summary: "Image from URL",
+  summary: "Add an image using a direct image-file link.",
   tags: ["image"],
   icon: <AddImageIcon />,
   render(ctx) {

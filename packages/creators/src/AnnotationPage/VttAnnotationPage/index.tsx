@@ -15,7 +15,7 @@ export const vttAnnotationPage = defineCreator({
   id: "@manifest-editor/vtt-annotation-page",
   label: "WebVTT captions",
   tags: ["captions"],
-  summary: "Link captions to an audio or video canvas",
+  summary: "Add subtitles or captions from a WebVTT file to an audio or video canvas.",
   icon: <TextFormatIcon />,
   create: createVttAnnotationPage,
   render: (ctx) => <CreateVttAnnotationPageForm {...ctx} />,

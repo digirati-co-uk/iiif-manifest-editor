@@ -51,8 +51,8 @@ export function CreateImageUrlForm(props: CreatorContext) {
     <PaddedSidebarContainer>
       <form onSubmit={onSubmit}>
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link to Image</InputLabel>
-          <Input id="url" name="url" defaultValue={initialData.url || ""} />
+          <InputLabel htmlFor="url">Link to image</InputLabel>
+          <Input type="url" id="url" name="url" defaultValue={initialData.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

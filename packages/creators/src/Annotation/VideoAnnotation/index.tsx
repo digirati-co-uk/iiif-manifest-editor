@@ -18,7 +18,7 @@ export const videoAnnotation = defineCreator({
   id: "@manifest-editor/video-annotation",
   create: createVideoAnnotation,
   label: "Video",
-  summary: "Video annotation",
+  summary: "Add video from a direct video-file link. Use YouTube for YouTube videos.",
   icon: <VideoIcon />,
   render(ctx) {
     return <CreateVideoAnnotationForm {...ctx} />;

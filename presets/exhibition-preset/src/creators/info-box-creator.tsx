@@ -1,3 +1,4 @@
+import { TextIcon } from "@manifest-editor/components";
 import { emptyAnnotation, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
@@ -14,17 +15,9 @@ declare module "@manifest-editor/creator-api" {
 export const infoBoxCreator = defineCreator({
   id: "@exhibitions/info-box-creator",
   create: createInfoBox,
-  label: "Info box",
-  summary: "A text panel for an exhibition",
-  icon: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-      <title>Info box</title>
-      <path
-        fill="currentColor"
-        d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"
-      />
-    </svg>
-  ),
+  label: "Text panel",
+  summary: "Create a panel for text. No link is needed.",
+  icon: <TextIcon />,
   tags: ["exhibition-slide"],
   resourceType: "Canvas",
   resourceFields: ["id", "type", "label", "height", "width", "items"],
@@ -38,8 +31,8 @@ export const infoBoxCreator = defineCreator({
 export const slideshowLongEditorialCreator = defineCreator({
   ...infoBoxCreator,
   id: "@exhibitions/slideshow-long-editorial-creator",
-  label: "Long editorial",
-  summary: "A text-led slideshow slide.",
+  label: "Text slide",
+  summary: "Create a slide for longer text. No link is needed.",
   tags: ["exhibition-slideshow-slide"],
   create: (payload, ctx) =>
     createInfoBox(
@@ -49,7 +42,7 @@ export const slideshowLongEditorialCreator = defineCreator({
         height: payload.height || 1080,
         width: payload.width || 1920,
       },
-      ctx,
+      ctx
     ),
 });
 
@@ -83,7 +76,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
         language: "en",
         body: "",
       },
-      { parent: { resource: annotation, property: "body" } },
+      { parent: { resource: annotation, property: "body" } }
     ),
   ];
 
@@ -117,7 +110,7 @@ async function createInfoBox(data: InfoBoxPayload, ctx: CreatorFunctionContext) 
             resource: { id: annotationLongId, type: "Annotation" },
             property: "body",
           },
-        },
+        }
       ),
     ],
     target: {

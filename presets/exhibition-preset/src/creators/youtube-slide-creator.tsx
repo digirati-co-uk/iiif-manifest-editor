@@ -19,14 +19,14 @@ export const youtubeSlideCreator = defineCreator({
   create: createYoutube,
   tags: ["video", "exhibition-slide"],
   label: "YouTube",
-  summary: "A YouTube for an exhibition",
+  summary: "Embed a video using its YouTube link.",
 });
 
 export const slideshowYoutubeCreator = defineCreator({
   ...youtubeSlideCreator,
   id: "@exhibitions/slideshow-youtube-creator",
   label: "YouTube",
-  summary: "A YouTube slide for a slideshow exhibition.",
+  summary: "Embed a video using its YouTube link.",
   tags: ["exhibition-slideshow-slide"],
 });
 

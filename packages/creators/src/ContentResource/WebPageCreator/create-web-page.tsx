@@ -42,8 +42,8 @@ export function CreateWebPageForm(props: CreatorContext) {
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link</InputLabel>
-          <Input id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
+          <InputLabel htmlFor="url">Link</InputLabel>
+          <Input type="url" id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">

@@ -102,8 +102,8 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
       <InputContainer $wide>
-        <InputLabel htmlFor="audio-url">URL</InputLabel>
-        <Input type="text" id="audio-url" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <InputLabel htmlFor="audio-url">Link to audio file</InputLabel>
+        <Input type="url" placeholder="https://example.org/audio.mp3" id="audio-url" value={url} onChange={(e) => setUrl(e.target.value)} />
       </InputContainer>
 
       {url && !error ? (

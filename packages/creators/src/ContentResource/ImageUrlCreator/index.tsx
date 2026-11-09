@@ -16,7 +16,7 @@ export const imageUrlCreator = defineCreator({
   id: "@manifest-editor/image-url-creator",
   create: createImageUrl,
   label: "Image",
-  summary: "Image from a URL",
+  summary: "Add an image using a direct image-file link.",
   icon: <AddImageIcon />,
   tags: ["image"],
   async supportsResource(value, helpers) {

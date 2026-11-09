@@ -77,7 +77,7 @@ export function useTooltip({
       ...interactions,
       ...data,
     }),
-    [open, setOpen, interactions, data],
+    [open, setOpen, interactions, data]
   );
 }
 
@@ -95,18 +95,11 @@ const useTooltipContext = () => {
   return context;
 };
 
-export function Tooltip({
-  children,
-  ...options
-}: { children: React.ReactNode } & TooltipOptions) {
+export function Tooltip({ children, ...options }: { children: React.ReactNode } & TooltipOptions) {
   // This can accept any props as options, e.g. `placement`,
   // or other positioning options.
   const tooltip = useTooltip(options);
-  return (
-    <TooltipContext.Provider value={tooltip}>
-      {children}
-    </TooltipContext.Provider>
-  );
+  return <TooltipContext.Provider value={tooltip}>{children}</TooltipContext.Provider>;
 }
 
 export const TooltipTrigger = React.forwardRef<
@@ -117,10 +110,7 @@ export const TooltipTrigger = React.forwardRef<
     as?: any;
     $dir?: any;
   }
->(function TooltipTrigger(
-  { children, as: Component, asChild = false, ...props },
-  propRef,
-) {
+>(function TooltipTrigger({ children, as: Component, asChild = false, ...props }, propRef) {
   const context = useTooltipContext();
   const childrenRef = (children as any).ref;
   const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
@@ -134,7 +124,7 @@ export const TooltipTrigger = React.forwardRef<
         ...props,
         ...(children.props as React.HTMLAttributes<HTMLElement>),
         "data-state": context.open ? "open" : "closed",
-      } as any),
+      } as any)
     );
   }
 
@@ -161,7 +151,10 @@ export const TooltipContent = React.forwardRef<
 
   if (!context.open) return null;
 
-  const rootEl = root || document.getElementById("manifest-editor-container");
+  const reference = context.elements.reference;
+  const modalRoot =
+    reference && "closest" in reference ? reference.closest<HTMLElement>(".manifest-editor-modal") : undefined;
+  const rootEl = root || modalRoot || document.getElementById("manifest-editor-container");
 
   return (
     <FloatingPortal root={rootEl}>
@@ -179,18 +172,11 @@ export const TooltipContent = React.forwardRef<
   );
 });
 
-export function DefaultTooltipContent(props: {
-  className?: string;
-  root?: HTMLElement;
-  children: React.ReactNode;
-}) {
+export function DefaultTooltipContent(props: { className?: string; root?: HTMLElement; children: React.ReactNode }) {
   return (
     <TooltipContent
       root={props.root}
-      className={twMerge(
-        "bg-me-gray-900 text-white text-sm px-3 py-2 rounded opacity-90 z-50",
-        props.className,
-      )}
+      className={twMerge("bg-me-gray-900 text-white text-sm px-3 py-2 rounded opacity-90 z-50", props.className)}
     >
       {props.children}
     </TooltipContent>

@@ -26,7 +26,7 @@ export const emptyAnnotationPage = defineCreator({
     });
   },
   label: "Empty annotation page",
-  summary: "AnnotationPage with nothing",
+  summary: "Create an empty page to organise annotations.",
   icon: <ThumbnailStripIcon />,
   resourceType: "AnnotationPage",
   resourceFields: ["id", "type", "items"],

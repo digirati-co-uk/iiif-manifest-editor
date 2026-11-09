@@ -3,9 +3,9 @@ import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/component
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { Input, InputContainer, InputLabel, LanguageFieldEditor } from "@manifest-editor/editors";
-import { LinkIcon } from "@manifest-editor/ui/icons/LinkIcon";
+import { webPageCreator } from "@manifest-editor/creators";
 import Image from "next/image";
-import { type ClipboardEvent, useEffect, useState } from "react";
+import { type ClipboardEvent, useCallback, useEffect, useState } from "react";
 
 interface CreateBrowserWebPagePayload {
   url: string;
@@ -23,18 +23,10 @@ interface WebPagePreview {
 }
 
 export const browserWebPageCreator = defineCreator({
-  id: "@manifest-editor/web-page-creator",
+  ...webPageCreator,
   create: createBrowserWebPage,
-  label: "Web page",
-  summary: "Add link to an external web page",
-  icon: <LinkIcon />,
   render(ctx) {
     return <CreateBrowserWebPageForm {...ctx} />;
-  },
-  resourceType: "ContentResource",
-  resourceFields: ["label", "format"],
-  supports: {
-    parentFields: ["seeAlso", "rendering", "homepage"],
   },
 });
 
@@ -59,7 +51,8 @@ async function createBrowserWebPage(data: CreateBrowserWebPagePayload, ctx: Crea
 }
 
 function CreateBrowserWebPageForm(props: CreatorContext) {
-  const [url, setUrl] = useState("");
+  const initialUrl = props.options.initialData?.url || "";
+  const [url, setUrl] = useState(initialUrl);
   const [label, setLabel] = useState<InternationalString>({ en: [""] });
   const [summary, setSummary] = useState<InternationalString>({ en: [""] });
   const [thumbnail, setThumbnail] = useState("");
@@ -102,11 +95,7 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
     }
   };
 
-  const onPasteUrl = async (e: ClipboardEvent<HTMLInputElement>) => {
-    const pastedUrl = e.clipboardData.getData("text").trim();
-    if (!pastedUrl) return;
-
-    e.preventDefault();
+  const loadPreview = useCallback(async (pastedUrl: string) => {
     setUrl(pastedUrl);
     setError("");
     setManual(false);
@@ -134,6 +123,17 @@ function CreateBrowserWebPageForm(props: CreatorContext) {
     } finally {
       setLoadingPreview(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (initialUrl) void loadPreview(initialUrl);
+  }, [initialUrl, loadPreview]);
+
+  const onPasteUrl = (e: ClipboardEvent<HTMLInputElement>) => {
+    const pastedUrl = e.clipboardData.getData("text").trim();
+    if (!pastedUrl) return;
+    e.preventDefault();
+    void loadPreview(pastedUrl);
   };
 
   return (

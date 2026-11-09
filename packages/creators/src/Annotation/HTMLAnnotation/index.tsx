@@ -14,7 +14,7 @@ export const htmlAnnotation = defineCreator({
   id: "@manifest-editor/html-annotation",
   create: createHtmlAnnotation,
   label: "HTML",
-  summary: "HTML annotation",
+  summary: "Write formatted text to display on a canvas.",
   icon: <HTMLIcon />,
   render(ctx) {
     return <CreateHTMLAnnotation {...ctx} />;

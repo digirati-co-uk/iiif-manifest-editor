@@ -46,8 +46,8 @@ export function CreatePlaintextForm(props: CreatorContext) {
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="id">Link to plaintext</InputLabel>
-          <Input id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
+          <InputLabel htmlFor="url">Link to plain-text file</InputLabel>
+          <Input type="url" id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">
