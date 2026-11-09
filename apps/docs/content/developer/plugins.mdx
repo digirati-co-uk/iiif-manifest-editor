@@ -323,3 +323,84 @@ import workerUrl from "@example/plugin/worker?worker&url";
 ```
 
 Use lazy plugins for large default-disabled features, model-backed features, worker-backed features, or plugins that depend on optional third-party libraries.
+
+## Variations Timeliner
+
+The manifest preset includes the optional **Variations Timeliner** plugin, inspired by
+[IUBLibTech's Timeliner](https://github.com/IUBLibTech/timeliner). Enable it in the plugin
+manager, then choose **Variations Timeliner** in the left sidebar. Like A/V Ranges, the panel
+is only offered when the manifest has an audio or video canvas with a duration. Hosts can also
+enable it explicitly:
+
+```ts
+const config: Partial<Config> = {
+  plugins: {
+    apps: {
+      "manifest-editor": {
+        enabled: ["@manifest-editor/variations-timeliner"],
+      },
+    },
+  },
+};
+```
+
+The plugin contributes three coordinated panels, and a background task that keeps them in sync:
+
+- **Left sidebar** lists the sections (IIIF Ranges) configured so far, nested as they are
+  in the manifest. Choosing a section selects it, moves the playhead to its start and opens
+  its editor.
+- **Centre panel** draws the nested section bubbles above the transport controls, with
+  the manifest details, media player and markers below.
+- **Right panel** is the section editor: title and description, start and end times
+  (with "Set to playhead" shortcuts), bubble colour, sub-sections, split, delete, and a link to the
+  standard Manifest Editor for everything else.
+
+Open a manifest containing an audio or video painting annotation and a canvas duration. Until
+the canvas has a section, both the sidebar and the centre panel prompt you to create the
+first one — a single bubble spanning the whole recording, which is then selected so you can
+split it at the playhead. Existing Timeliner ranges using `Canvas#t=start,end` and IIIF
+temporal selectors are read from Vault; parent bubble extents follow their child ranges.
+
+- **Split at playhead** divides a simple section, preserving its metadata. The sidebar's
+  **+** adds a section in the largest uncovered stretch of the timeline.
+- Ctrl/Cmd-click adjacent sibling sections and choose **Group sections** to create a
+  nested Range. Deleting a group promotes its children.
+- Drag a boundary handle to move a shared section boundary, or focus it and press
+  Left/Right (Shift for tenths of a second).
+- Below the bubbles is a scrubber modelled on the Theseus audio player: a thin rail that thickens on
+  hover, a thumb, a time tooltip, and the playhead and pointer guide lines. The rail sits in the same
+  scrolling surface as the bubbles, so the thumb and the line running up through the bubbles always
+  share one position — including when zoomed in and scrolled. Dragging near an edge scrolls the view,
+  and playback turns the page when the playhead reaches the right edge. The selected sections are
+  highlighted on the rail.
+- Transport controls are round icon buttons with tooltips and shortcuts: `Space`/`k` play, `←`/`→` ±5s,
+  `j`/`l` ±10s, `m` mute, `↑`/`↓` volume, `0`–`9` jump, `Home`/`End`, `[`/`]` previous/next section.
+  Speed, loop, markers, split, group, delete and zoom use the same style.
+- Drag the grip under the scrubber (or focus it and press Up/Down) to resize the bubble viewport.
+  Zooming is animated and keeps the middle of the view in place; it respects `prefers-reduced-motion`.
+- **Theme** offers the original Timeliner's colour palettes, background colours, square
+  bubbles and black-and-white display. Each section can also have its own colour.
+- View preferences are kept in local storage so they survive page reloads: theme, viewport height,
+  zoom (per media canvas), speed, volume, mute and loop. Section colours are project data (see below).
+- **Add marker** creates a time-point annotation. All markers share one annotation page: the timeliner
+  uses a page that already contains point-selector annotations for the canvas (on the manifest or the
+  canvas), and only creates a `…/markers` page on the manifest when there is none. Pages that hold
+  nothing but markers, such as the one-marker-per-page data earlier versions wrote, are merged into it
+  when the next marker is added. Marker titles can be edited in the list; click a marker to seek to it.
+- Playback includes volume, speed, section looping and previous/next section. Captions
+  are included when the canvas supplies WebVTT tracks.
+
+Ranges and marker annotations live in Vault and use the normal Manifest Editor save
+and export flow. The plugin has no separate Redux store, document storage, or save
+mechanism. Playback, selection, zoom and theme belong to the view.
+
+A section's custom colour is stored as a `tl:backgroundColour` entry in the Range's
+`metadata`, because the IIIF serializer only writes known Range properties and would otherwise
+drop it on export. Multi-target ranges can be viewed and edited using the standard editor;
+splitting and boundary dragging are restricted to simple temporal leaves to preserve other targets.
+
+### Range editor
+
+The default Range editor now opens on **Overview** (previously **Structure**). For ranges, the
+Overview tab shows the label, summary and required statement together with the range's
+sub-ranges; **Structure** still manages the full list of items, including canvases and ordering.

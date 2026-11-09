@@ -13,3 +13,4 @@ export * from "./StructuralProperties/RangeStructuralProperties";
 export * from "./StructuralProperties/CanvasStructuralProperties";
 export * from "./StructuralProperties/ManifestStructuralProperties";
 export * from "./TechnicalProperties/TechnicalProperties";
+export * from "./RangeOverview/RangeOverview";
