@@ -118,12 +118,17 @@ export class AnnotationTargetEditor extends BasePropertyEditor<
 
     const existing = this.getWithoutTracking();
     if (existing && existing.source) {
+      const value = `xywh=${[Math.round(position.x), Math.round(position.y), Math.max(1, Math.round(position.width)), Math.max(1, Math.round(position.height))].join(",")}`;
+      // Keep temporal fragments when repositioning a spatial target.
+      const selectors = Array.isArray(existing.selector) ? existing.selector : [existing.selector];
+      const temporal = selectors.flatMap((selector) =>
+        selector && typeof selector === "object" && selector.type === "FragmentSelector"
+          ? selector.value.split("&").filter((part) => part.startsWith("t="))
+          : []
+      );
       this.set({
         ...existing,
-        selector: {
-          type: "FragmentSelector",
-          value: `xywh=${[~~position.x, ~~position.y, ~~position.width, ~~position.height].join(",")}`,
-        },
+        selector: { type: "FragmentSelector", value: [value, ...temporal].join("&") },
       });
     }
   }

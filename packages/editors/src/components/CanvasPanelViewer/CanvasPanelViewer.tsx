@@ -1,5 +1,12 @@
+import {
+  canResizeCanvas,
+  getCanvasOrigin,
+  canvasBackground,
+  canvasWorkspaceBackground,
+} from "@manifest-editor/editor-api";
 import { type DefaultPresetOptions, DrawBox, ModeProvider, type Runtime } from "@atlas-viewer/atlas";
-import { AtlasBanner } from "@manifest-editor/components";
+import { useAddCanvasImage } from "../CanvasLayout/useAddCanvasImage";
+import { AtlasBanner, AddImageIcon } from "@manifest-editor/components";
 import {
   FLAG_TAG,
   ManifestEditorTagIcon,
@@ -18,10 +25,23 @@ import { Loading } from "@manifest-editor/ui/atoms/Loading";
 import { PaddingComponentMedium, PaddingComponentSmall } from "@manifest-editor/ui/atoms/PaddingComponent";
 import { CanvasContainer, GhostCanvas } from "@manifest-editor/ui/components/layout/CanvasContainer";
 import { EmptyCanvasState } from "@manifest-editor/ui/EmptyCanvasState";
+import { HomeIcon } from "@manifest-editor/ui/icons/HomeIcon";
+import { MinusIcon } from "@manifest-editor/ui/icons/MinusIcon";
+import { PlusIcon } from "@manifest-editor/ui/icons/PlusIcon";
 import { BlockIcon } from "@manifest-editor/ui/icons/BlockIcon";
 import { MediaControls } from "@manifest-editor/ui/MediaControls";
 import { CanvasViewerButton, ViewControls } from "@manifest-editor/ui/ViewControls";
-import { Fragment, useCallback, useContext, useEffect, useMemo, useReducer, useRef } from "react";
+import {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
   AnnotationContext,
@@ -32,6 +52,8 @@ import {
   useCanvas,
   useCanvasChoices,
   useManifest,
+  useVault,
+  useVaultSelector,
 } from "react-iiif-vault";
 import { useTheme } from "styled-components";
 import { useStore } from "zustand";
@@ -50,6 +72,9 @@ import { ResizeCanvasOnCanvas } from "./components/ResizeCanvasOnCanvas";
 import { CustomStrategyProvider } from "./components/StrategyContext";
 
 export interface CanvasPanelViewerProps {
+  /** Enable direct positioning of painting images and layout placeholders. */
+  moveMode?: boolean;
+  enableAddMedia?: boolean;
   asFallback?: boolean;
   onEditAnnotation?: (id: string) => void;
   highlightAnnotation?: string;
@@ -83,6 +108,8 @@ export interface CanvasPanelViewerProps {
 }
 
 export function CanvasPanelViewer({
+  moveMode = false,
+  enableAddMedia = false,
   asFallback,
   onEditAnnotation,
   highlightAnnotation,
@@ -95,10 +122,28 @@ export function CanvasPanelViewer({
   forceAnnotationTools = false,
 }: CanvasPanelViewerProps) {
   const app = useApp();
+  const vault = useVault();
+  const addImage = useAddCanvasImage();
+  const [resizing, setResizing] = useState(false);
   const { state } = useAppState();
-  const runtime = useRef<Runtime>();
+  const runtime = useRef<Runtime | undefined>(undefined);
   const manifest = useManifest(); // @todo remove.
   const canvas = useCanvas();
+  const origin = useVaultSelector((_, v) => (canvas ? getCanvasOrigin(v, canvas.id) : { x: 0, y: 0 }), [canvas?.id]);
+  const fittedRuntime = useRef<Runtime | undefined>(undefined);
+  const previousOrigin = useRef({ id: canvas?.id, ...origin });
+  useLayoutEffect(() => {
+    const previous = previousOrigin.current;
+    if (runtime.current && previous.id === canvas?.id && (previous.x !== origin.x || previous.y !== origin.y)) {
+      const viewport = runtime.current.getViewport();
+      runtime.current.setViewport({
+        ...viewport,
+        x: viewport.x + origin.x - previous.x,
+        y: viewport.y + origin.y - previous.y,
+      });
+    }
+    previousOrigin.current = { id: canvas?.id, ...origin };
+  }, [canvas?.id, origin.x, origin.y]);
   const annotation = useAnnotation(highlightAnnotation ? { id: highlightAnnotation } : undefined);
   const { edit } = useLayoutActions();
   const customAnnotationComponents = useMemo(() => {
@@ -106,7 +151,51 @@ export function CanvasPanelViewer({
   }, [app.layout.annotations]);
 
   const store = useAtlasStore();
+  const onViewerCreated = useCallback(
+    (preset: { runtime: Runtime }) => {
+      runtime.current = preset.runtime;
+      store.getState().setAtlasRuntime(preset.runtime);
+    },
+    [store, canvas?.id]
+  );
+  const atlasRuntime = useStore(store, (state) => state.runtime);
+  // Fit once when this viewer has its real world size. Later resizes retain zoom and pan.
+  useEffect(() => {
+    if (!atlasRuntime || atlasRuntime !== runtime.current || !canvas) return;
+    const fit = () => {
+      if (
+        fittedRuntime.current === atlasRuntime ||
+        atlasRuntime.world.width < canvas.width ||
+        atlasRuntime.world.height < canvas.height
+      )
+        return;
+      fittedRuntime.current = atlasRuntime;
+      atlasRuntime.setHomePosition(
+        moveMode
+          ? {
+              x: -canvas.width * 0.06,
+              y: -canvas.height * 0.06,
+              width: canvas.width * 1.12,
+              height: canvas.height * 1.12,
+            }
+          : { x: 0, y: 0, width: canvas.width, height: canvas.height }
+      );
+      atlasRuntime.goHome();
+    };
+    const unsubscribe = atlasRuntime.world.addLayoutSubscriber((type) => {
+      if (type === "recalculate-world-size") fit();
+    });
+    const frame = requestAnimationFrame(fit);
+    return () => {
+      cancelAnimationFrame(frame);
+      unsubscribe();
+    };
+  }, [atlasRuntime, canvas?.id]);
   const mode = useStore(store, (state) => state.mode);
+  const otherRequest = useStore(
+    store,
+    (state) => state.tool.enabled && !state.requests[state.tool.requestId || ""]?.arguments?.canvasComposition
+  );
 
   const onNextCanvas = useMemo(() => {
     //
@@ -135,7 +224,7 @@ export function CanvasPanelViewer({
   const { editMode: internalEditMode, toggleEditMode: toggleInternalEditMode } = useEditingMode();
   const [internalCreateMode, setInternalCreateMode] = useReducer(
     (a: boolean, action?: boolean) => (typeof action === "undefined" ? !a : action),
-    false,
+    false
   );
 
   const editMode = typeof controlledEditMode === "boolean" ? controlledEditMode : internalEditMode;
@@ -157,7 +246,7 @@ export function CanvasPanelViewer({
 
       toggleInternalEditMode();
     },
-    [controlledEditMode, editMode, onControlledEditModeChange, toggleInternalEditMode],
+    [controlledEditMode, editMode, onControlledEditModeChange, toggleInternalEditMode]
   );
 
   const toggleCreateAnnotation = useCallback(
@@ -171,7 +260,7 @@ export function CanvasPanelViewer({
 
       setInternalCreateMode(nextValue);
     },
-    [controlledCreateMode, createMode, onCreateModeChange],
+    [controlledCreateMode, createMode, onCreateModeChange]
   );
   const [refreshKey, refresh] = useReducer((s) => s + 1, 0);
   const config = useMemo(
@@ -186,7 +275,7 @@ export function CanvasPanelViewer({
           },
         } as DefaultPresetOptions,
       ] as any,
-    [],
+    []
   );
   const { resources, regions } = useHighlightedImageResource();
   const { setAnnotation, annotationId: currentlyEditingAnnotation } = useAnnotationEditing();
@@ -202,12 +291,12 @@ export function CanvasPanelViewer({
     refresh();
     complete();
   });
-  const timeout = useRef<any>();
+  const timeout = useRef<any>(undefined);
   const editModeRef = useRef(editMode);
 
   useEffect(() => {
     store.getState().reset();
-  }, [canvas]);
+  }, [canvas?.id, store]);
 
   editModeRef.current = editMode;
 
@@ -233,11 +322,15 @@ export function CanvasPanelViewer({
   // }, [annotation?.id]);
 
   const canvasId = canvas?.id;
-  const canvasBackgroundColor = getCanvasBackgroundColor((canvas as any)?.backgroundColor);
+  const canvasBackgroundColor = canvasBackground((canvas as any)?.backgroundColor);
 
   const homePosition = useMemo(() => {
-    return { x: 0, y: 0, width: canvas?.width ?? 0, height: canvas?.height ?? 0 };
-  }, [canvas?.width, canvas?.height]);
+    const width = canvas?.width ?? 0;
+    const height = canvas?.height ?? 0;
+    return moveMode
+      ? { x: -width * 0.06, y: -height * 0.06, width: width * 1.12, height: height * 1.12 }
+      : { x: 0, y: 0, width, height };
+  }, [canvas?.width, canvas?.height, moveMode]);
 
   const onClickPaintingAnnotation = useCallback((id: string) => {
     if (!editModeRef.current) {
@@ -300,31 +393,40 @@ export function CanvasPanelViewer({
         --atlas-container-flex: 1 1 0px;
       }
     `}</style>
-          <S.ViewerContainer style={{ "--atlas-background": canvasBackgroundColor } as any}>
+          <S.ViewerContainer
+            style={
+              {
+                "--canvas-workspace-background": canvasWorkspaceBackground(canvasBackgroundColor),
+                "--atlas-background": canvasWorkspaceBackground(canvasBackgroundColor),
+              } as any
+            }
+          >
             {(createMode && createAnnotation && !editMode) ||
             ((currentlyEditingAnnotation || annotation) && editMode) ? (
               <AtlasBanner controlsId="atlas-controls">Draw a box or select a shape</AtlasBanner>
             ) : null}
             <AuthProvider>
               <CanvasPanel.Viewer
-                key={`${canvasId}/${canvas?.width}/${canvas?.height}`}
-                onCreated={(preset) => {
-                  runtime.current = preset.runtime as any;
-                  store.getState().setAtlasRuntime(preset.runtime);
-                }}
+                key={canvasId}
+                onCreated={onViewerCreated}
+                background={canvasWorkspaceBackground(canvasBackgroundColor)}
+                resetWorldOnChange={false}
                 renderPreset={config}
                 mode={chosenMode}
                 runtimeOptions={config[1].runtimeOptions}
-                updateViewportTimeout={500}
+                updateViewportTimeout={0}
                 homePosition={homePosition}
                 readyResetKey={canvasId}
               >
                 <AdditionalContextBridgeInner>
                   <CanvasContext canvas={canvasId}>
                     <InternalRenderCanvas
-                      backgroundStyle={{ background: canvasBackgroundColor }}
+                      moveMode={moveMode}
+                      resizing={resizing}
+                      onResizeDone={() => setResizing(false)}
+                      backgroundStyle={{ backgroundColor: canvasBackgroundColor }}
                       alwaysShowBackground
-                      onClickPaintingAnnotation={annotation ? () => void 0 : onClickPaintingAnnotation}
+                      onClickPaintingAnnotation={moveMode || annotation ? () => void 0 : onClickPaintingAnnotation}
                     >
                       {customAnnotationComponents.map((custom) => {
                         return <Fragment key={custom.id}>{custom.render()}</Fragment>;
@@ -368,9 +470,58 @@ export function CanvasPanelViewer({
                 </AdditionalContextBridgeInner>
               </CanvasPanel.Viewer>
             </AuthProvider>
-            <AnnotationEditingTools
-              forceVisible={forceAnnotationTools || editMode || createMode || Boolean(editingAnnotationId)}
-            />
+            {moveMode && (
+              <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 6, zIndex: 20 }}>
+                {enableAddMedia && (
+                  <CanvasViewerButton
+                    type="button"
+                    aria-label="Add media"
+                    title="Add media"
+                    onClick={() => void addImage()}
+                  >
+                    <AddImageIcon />
+                  </CanvasViewerButton>
+                )}
+                {canvas && canResizeCanvas(vault, canvas) && (
+                  <CanvasViewerButton
+                    type="button"
+                    aria-label="Resize canvas"
+                    aria-pressed={resizing}
+                    style={{
+                      fontSize: 13,
+                      transition: "none",
+                      background: resizing ? "#b84c74" : "white",
+                      color: resizing ? "white" : "#332f2c",
+                    }}
+                    onClick={() => setResizing((value) => !value)}
+                  >
+                    Resize canvas
+                  </CanvasViewerButton>
+                )}
+                <CanvasViewerButton type="button" aria-label="Home" onClick={() => runtime.current?.world.goHome()}>
+                  <HomeIcon />
+                </CanvasViewerButton>
+                <CanvasViewerButton
+                  type="button"
+                  aria-label="Zoom out"
+                  onClick={() => runtime.current?.world.zoomTo(1 / 0.75)}
+                >
+                  <MinusIcon />
+                </CanvasViewerButton>
+                <CanvasViewerButton
+                  type="button"
+                  aria-label="Zoom in"
+                  onClick={() => runtime.current?.world.zoomTo(0.75)}
+                >
+                  <PlusIcon />
+                </CanvasViewerButton>
+              </div>
+            )}
+            {(!moveMode || otherRequest) && (
+              <AnnotationEditingTools
+                forceVisible={forceAnnotationTools || editMode || createMode || Boolean(editingAnnotationId)}
+              />
+            )}
           </S.ViewerContainer>
         </S.Container>
         <div id="floating-ui" />
@@ -393,25 +544,27 @@ export function CanvasPanelViewer({
     >
       <CustomStrategyProvider
         strategies={["empty", "images", "media", "textual-content"]}
-        renderViewerControls={() => (
-          <ViewControls
-            refresh={refresh}
-            editIcon
-            editMode={editMode}
-            toggleEditMode={toggleEditMode}
-            createMode={createMode}
-            enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
-            onNext={onNextCanvas}
-            onPrevious={onPreviousCanvas}
-            toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
-            extraControls={
-              <>
-                <CanvasChoiceControls canvasId={canvasId} />
-                <CanvasViewerFlagButton canvasId={canvasId} />
-              </>
-            }
-          />
-        )}
+        renderViewerControls={() =>
+          moveMode ? null : (
+            <ViewControls
+              refresh={refresh}
+              editIcon
+              editMode={editMode}
+              toggleEditMode={toggleEditMode}
+              createMode={createMode}
+              enableNavigation={!!(onNextCanvas || onPreviousCanvas)}
+              onNext={onNextCanvas}
+              onPrevious={onPreviousCanvas}
+              toggleCreateAnnotation={createAnnotation ? toggleCreateAnnotation : undefined}
+              extraControls={
+                <>
+                  <CanvasChoiceControls canvasId={canvasId} />
+                  <CanvasViewerFlagButton canvasId={canvasId} />
+                </>
+              }
+            />
+          )
+        }
         viewControlsDeps={[editMode, createMode, createAnnotation, annotation, onNextCanvas, onPreviousCanvas]}
         renderMediaControls={() => <MediaControls />}
       >
@@ -419,12 +572,6 @@ export function CanvasPanelViewer({
       </CustomStrategyProvider>
     </ErrorBoundary>
   );
-}
-
-function getCanvasBackgroundColor(value: unknown) {
-  return typeof value === "string" && /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(value.trim())
-    ? value.trim()
-    : "#fff";
 }
 
 function CanvasViewerFlagButton({ canvasId }: { canvasId: string }) {

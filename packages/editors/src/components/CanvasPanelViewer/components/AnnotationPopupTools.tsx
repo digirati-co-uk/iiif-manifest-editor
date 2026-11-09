@@ -23,7 +23,7 @@ export function AnnotationPopupTools() {
   }
 
   return (
-    <div className="animate-fadeIn rounded flex gap-1">
+    <div className="manifest-editor animate-fadeIn rounded flex gap-1">
       {mode !== "sketch" && (
         <>
           <ActionButton

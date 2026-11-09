@@ -1,3 +1,4 @@
+import { targetPaintingImageRegion } from "@manifest-editor/editor-api";
 import { isImageService } from "@atlas-viewer/iiif-image-api";
 import type { ImageService } from "@iiif/presentation-3";
 import { useCustomContextMenu, useEditor, useGenericEditor, useLayoutActions } from "@manifest-editor/shell";
@@ -89,6 +90,7 @@ export function MediaEditor({ additionalSections = [] }: { additionalSections?: 
   const currentSelector = target.getParsedSelector();
 
   const moveAndResizeImage = () => {
+    if (canvas && targetPaintingImageRegion(vault, canvas, annotationEditor.ref().id)) return;
     vault.batch(() => {
       if (!canvas) {
         return;

@@ -1,3 +1,4 @@
+import { ExhibitionImagesContent } from "./ExhibitionImagesEditor";
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
 import {
@@ -27,16 +28,18 @@ import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
-type RightPanelTab = "layout" | "content" | "summary" | "tour";
+type RightPanelTab = "layout" | "images" | "content" | "summary" | "tour";
 
 const defaultTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
+  { id: "images", label: "Images" },
   { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
 ];
 
 const slideshowTabs: Array<{ id: RightPanelTab; label: string }> = [
   { id: "layout", label: "Layout" },
+  { id: "images", label: "Images" },
   { id: "content", label: "Content" },
   { id: "summary", label: "Text content" },
   { id: "tour", label: "Tour steps" },
@@ -124,7 +127,7 @@ function ExhibitionWorkbenchRightPanel({
     // Sync center panel mode with the initially selected tab on mount
     if (selectedTab === "tour") {
       setCenterPanelMode("edit");
-    } else if (selectedTab === "layout" || selectedTab === "summary") {
+    } else if (selectedTab === "summary") {
       setCenterPanelMode("preview");
     }
     // Only run on mount
@@ -138,7 +141,7 @@ function ExhibitionWorkbenchRightPanel({
       setShowTourSteps(tab === "tour");
       if (tab === "tour") {
         setCenterPanelMode("edit");
-      } else if (tab === "layout" || tab === "summary") {
+      } else if (tab === "summary") {
         setCenterPanelMode("preview");
       }
       clearRequestedTab();
@@ -163,7 +166,7 @@ function ExhibitionWorkbenchRightPanel({
     setShowTourSteps(tab === "tour");
     if (tab === "tour") {
       setCenterPanelMode("edit");
-    } else if (tab === "layout" || tab === "summary") {
+    } else if (tab === "summary") {
       setCenterPanelMode("preview");
     }
   };
@@ -190,7 +193,7 @@ function ExhibitionWorkbenchRightPanel({
           aria-label="Canvas editing sections"
           className={[
             "mt-5 grid border-b border-[#e4ddd6]",
-            tabs.length === 4 ? "grid-cols-4" : "grid-cols-3",
+            tabs.length === 5 ? "grid-cols-5" : "grid-cols-4",
           ].join(" ")}
         >
           {tabs.map((tab) => (
@@ -231,6 +234,7 @@ function ExhibitionWorkbenchRightPanel({
               />
             </>
           ) : null}
+          {selectedTab === "images" ? <ExhibitionImagesContent /> : null}
           {selectedTab === "content" ? <SlideshowContentPanel /> : null}
           {selectedTab === "summary" ? (
             mode === "simple" ? (

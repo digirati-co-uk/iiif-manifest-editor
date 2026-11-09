@@ -1,0 +1,290 @@
+{
+  "@context": "http://iiif.io/api/presentation/3/context.json",
+  "id": "https://heritage.tudelft.nl/iiif/manifests/irrigation-knowledge/manifest.json",
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "Irrigation knowledge"
+    ]
+  },
+  "homepage": [
+    {
+      "id": "https://heritage.tudelft.nl/nl/exhibitions/irrigation-knowledge",
+      "type": "Text",
+      "format": "text/html",
+      "language": [
+        "nl"
+      ]
+    },
+    {
+      "id": "https://heritage.tudelft.nl/en/exhibitions/irrigation-knowledge",
+      "type": "Text",
+      "format": "text/html",
+      "language": [
+        "en"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1",
+      "type": "Canvas",
+      "height": 1000,
+      "width": 1000,
+      "behavior": [
+        "w-8",
+        "h-8"
+      ],
+      "label": {
+        "en": [
+          "Citarum River, then and now"
+        ]
+      },
+      "items": [
+        {
+          "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/list/71c28c7e-446f-db70-1858-e4435414912c",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/annotation/82f216fc-6091-eb74-f37c-54e0649286a6",
+              "type": "Annotation",
+              "motivation": "painting",
+              "thumbnail": [
+                {
+                  "id": "https://dlc.services/thumbs/7/21/17da5645-e7b1-8870-1de4-ac34fa58420a/full/full/0/default.jpg",
+                  "type": "Image",
+                  "format": "image/jpg",
+                  "service": [
+                    {
+                      "@id": "https://dlc.services/thumbs/7/21/17da5645-e7b1-8870-1de4-ac34fa58420a",
+                      "@type": "ImageService2",
+                      "profile": "http://iiif.io/api/image/2/level0.json",
+                      "protocol": "http://iiif.io/api/image",
+                      "width": 1024,
+                      "height": 794,
+                      "sizes": [
+                        {
+                          "width": 100,
+                          "height": 78
+                        },
+                        {
+                          "width": 200,
+                          "height": 155
+                        },
+                        {
+                          "width": 400,
+                          "height": 310
+                        },
+                        {
+                          "width": 1024,
+                          "height": 794
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "target": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1#xywh=341,455,609,472",
+              "label": {
+                "en": [
+                  "Veerpont over de Tjitaroem bij Tjiandjoer"
+                ]
+              },
+              "summary": {
+                "en": [
+                  "Leiden University Libraries, KITLV A751"
+                ]
+              },
+              "body": {
+                "id": "https://dlc.services/iiif-img/7/21/17da5645-e7b1-8870-1de4-ac34fa58420a/full/full/0/default.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 4483,
+                "width": 5783,
+                "label": {
+                  "en": [
+                    "-"
+                  ]
+                },
+                "service": [
+                  {
+                    "@id": "https://dlc.services/iiif-img/7/21/17da5645-e7b1-8870-1de4-ac34fa58420a",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "protocol": "http://iiif.io/api/image",
+                    "width": 5783,
+                    "height": 4483,
+                    "tiles": [
+                      {
+                        "width": 256,
+                        "height": 256,
+                        "scaleFactors": [
+                          1,
+                          2,
+                          4,
+                          8,
+                          16,
+                          32
+                        ]
+                      }
+                    ],
+                    "sizes": [
+                      {
+                        "width": 1024,
+                        "height": 794
+                      },
+                      {
+                        "width": 400,
+                        "height": 310
+                      },
+                      {
+                        "width": 200,
+                        "height": 155
+                      },
+                      {
+                        "width": 100,
+                        "height": 78
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/annotation/7505e1bc-87e3-9d82-196d-fbb6b1485665",
+              "type": "Annotation",
+              "motivation": "painting",
+              "thumbnail": [
+                {
+                  "id": "https://dlc.services/thumbs/7/21/da557f24-cded-7360-62f5-b9eae0c2656f/full/full/0/default.jpg",
+                  "type": "Image",
+                  "format": "image/jpg",
+                  "service": [
+                    {
+                      "@id": "https://dlc.services/thumbs/7/21/da557f24-cded-7360-62f5-b9eae0c2656f",
+                      "@type": "ImageService2",
+                      "profile": "http://iiif.io/api/image/2/level0.json",
+                      "protocol": "http://iiif.io/api/image",
+                      "width": 1024,
+                      "height": 731,
+                      "sizes": [
+                        {
+                          "width": 100,
+                          "height": 71
+                        },
+                        {
+                          "width": 200,
+                          "height": 143
+                        },
+                        {
+                          "width": 400,
+                          "height": 285
+                        },
+                        {
+                          "width": 1024,
+                          "height": 731
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "target": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1#xywh=45,70,622,444",
+              "label": {
+                "en": [
+                  "Citarum River, West Java"
+                ]
+              },
+              "summary": {
+                "en": [
+                  "Shutterstock, Sony Herdinia"
+                ]
+              },
+              "body": {
+                "id": "https://dlc.services/iiif-img/7/21/da557f24-cded-7360-62f5-b9eae0c2656f/full/full/0/default.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "height": 2950,
+                "width": 4135,
+                "label": {
+                  "en": [
+                    "-"
+                  ]
+                },
+                "service": [
+                  {
+                    "@id": "https://dlc.services/iiif-img/7/21/da557f24-cded-7360-62f5-b9eae0c2656f",
+                    "@type": "ImageService2",
+                    "profile": "http://iiif.io/api/image/2/level1.json",
+                    "protocol": "http://iiif.io/api/image",
+                    "width": 4135,
+                    "height": 2950,
+                    "tiles": [
+                      {
+                        "width": 256,
+                        "height": 256,
+                        "scaleFactors": [
+                          1,
+                          2,
+                          4,
+                          8,
+                          16,
+                          32
+                        ]
+                      }
+                    ],
+                    "sizes": [
+                      {
+                        "width": 1024,
+                        "height": 731
+                      },
+                      {
+                        "width": 400,
+                        "height": 285
+                      },
+                      {
+                        "width": 200,
+                        "height": 143
+                      },
+                      {
+                        "width": 100,
+                        "height": 71
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "annotations": [
+        {
+          "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1/annotations",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1/annotations/68",
+              "type": "Annotation",
+              "motivation": "describing",
+              "target": {
+                "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/annotation/82f216fc-6091-eb74-f37c-54e0649286a6",
+                "type": "Annotation"
+              }
+            },
+            {
+              "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/canvas/eef7cb03-3fb9-60f5-8fea-0c9aafe0dee1/annotations/69",
+              "type": "Annotation",
+              "motivation": "describing",
+              "target": {
+                "id": "https://heritage.tudelft.nl/iiif/irrigation-knowledge/annotation/7505e1bc-87e3-9d82-196d-fbb6b1485665",
+                "type": "Annotation"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hss:slug": "manifests/irrigation-knowledge"
+}

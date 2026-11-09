@@ -239,7 +239,7 @@ function LazyThumbnailInner({ cover, fade = true }: { cover?: boolean; fade?: bo
   );
 
   return (
-    <div className={`w-full h-full relative`}>
+    <div className={`w-full h-full relative`} style={{ backgroundColor: (canvas as any)?.backgroundColor }}>
       {thumbnail?.id ? (
         <img
           onLoad={() => setIsLoading(false)}
@@ -441,6 +441,7 @@ function ComplexCanvasThumbnail({
       <div
         className="relative overflow-hidden max-h-full max-w-full"
         style={{
+          backgroundColor: (canvas as any)?.backgroundColor,
           aspectRatio: `${(state.region?.width || canvas.width) / (state.region?.height || canvas.height)}`,
           width: (state.region?.width || canvas.width) >= (state.region?.height || canvas.height) ? "100%" : "auto",
           height: (state.region?.width || canvas.width) >= (state.region?.height || canvas.height) ? "auto" : "100%",

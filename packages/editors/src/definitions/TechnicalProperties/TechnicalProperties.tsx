@@ -1,3 +1,5 @@
+import { CanvasContext } from "react-iiif-vault";
+import { SmartCanvasSize } from "../../components/CanvasLayout/SmartCanvasSize";
 import type { ViewingDirection } from "@iiif/presentation-3";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditor } from "@manifest-editor/shell";
@@ -20,17 +22,36 @@ export function TechnicalProperties() {
 
         {!notAllowed.includes("width") && !notAllowed.includes("height") ? (
           <InputContainer $wide>
-            <DimensionsTriplet
-              widthId={width.containerId()}
-              width={width.get() || 0}
-              changeWidth={(v) => width.set(v)}
-              heightId={height.containerId()}
-              height={height.get() || 0}
-              changeHeight={(v) => height.set(v)}
-              durationId={duration.containerId()}
-              duration={duration.get() || 0}
-              changeDuration={(v) => duration.set(v)}
-            />
+            {technical.type === "Canvas" ? (
+              <CanvasContext canvas={id.get()}>
+                <SmartCanvasSize />
+              </CanvasContext>
+            ) : (
+              <DimensionsTriplet
+                widthId={width.containerId()}
+                width={width.get() || 0}
+                changeWidth={(v) => width.set(v)}
+                heightId={height.containerId()}
+                height={height.get() || 0}
+                changeHeight={(v) => height.set(v)}
+                durationId={duration.containerId()}
+                duration={duration.get() || 0}
+                changeDuration={(v) => duration.set(v)}
+              />
+            )}
+            {technical.type === "Canvas" && !notAllowed.includes("duration") && (
+              <label htmlFor={duration.focusId()} className="mt-3 block text-sm">
+                Duration (seconds)
+                <Input
+                  id={duration.focusId()}
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={duration.get() || 0}
+                  onChange={(e) => duration.set(Number(e.target.value))}
+                />
+              </label>
+            )}
           </InputContainer>
         ) : null}
 

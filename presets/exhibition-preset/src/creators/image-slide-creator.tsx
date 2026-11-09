@@ -1,3 +1,5 @@
+import { canvasLayouts, CANVAS_LAYOUT_META, createCanvasLayoutState } from "@manifest-editor/editor-api";
+import { CanvasLayoutForm } from "@manifest-editor/editors";
 import { emptyAnnotationPage, emptyCanvas } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
@@ -20,6 +22,7 @@ declare module "@manifest-editor/creator-api" {
 export const imageSlideCreator = defineCreator({
   id: "@exhibitions/image-slide-creator",
   create: createImageSlide,
+  render: (ctx) => <CanvasLayoutForm runCreate={(data) => ctx.runCreate({ ...data, type: "default" })} />,
   label: "Empty slide",
   summary: "An empty image slide.",
   icon: <EmptyCanvasIcon />,
@@ -70,12 +73,12 @@ export const slideshowImageOnlyCreator = defineCreator({
     createImageSlide(
       {
         ...payload,
-        behavior: ["w-12", "h-8", "image"],
-        height: payload.height || 1080,
-        width: payload.width || 1920,
+        behavior: [`w-${payload.columns || 12}`, `h-${payload.rows || 8}`, "image"],
+        height: payload.height || 2000,
+        width: payload.width || 3000,
         type: "default",
       },
-      ctx,
+      ctx
     ),
 });
 
@@ -89,12 +92,12 @@ export const slideshowImageTextCreator = defineCreator({
     createImageSlide(
       {
         ...payload,
-        behavior: ["w-12", "h-8", "right"],
-        height: payload.height || 1080,
-        width: payload.width || 1920,
+        behavior: [`w-${payload.columns || 12}`, `h-${payload.rows || 8}`, "right"],
+        height: payload.height || 2000,
+        width: payload.width || 3000,
         type: "right",
       },
-      ctx,
+      ctx
     ),
 });
 
@@ -108,16 +111,19 @@ export const scrollCompactDeckCreator = defineCreator({
     createImageSlide(
       {
         ...payload,
-        behavior: ["w-12", "h-8", "compact-deck"],
-        height: payload.height || 1080,
-        width: payload.width || 1920,
+        behavior: [`w-${payload.columns || 12}`, `h-${payload.rows || 8}`, "compact-deck"],
+        height: payload.height || 2000,
+        width: payload.width || 3000,
         type: "default",
       },
-      ctx,
+      ctx
     ),
 });
 
 interface InfoBoxPayload {
+  layoutId?: string;
+  columns?: number;
+  rows?: number;
   canvasId?: string;
   label?: InternationalString;
   metadata?: any[];
@@ -153,6 +159,8 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     behavior.push(...payload.behavior);
   } else if (imageSlideBehavior) {
     behavior.push(...imageSlideBehavior);
+  } else if (payload.columns && payload.rows) {
+    behavior.push(`w-${payload.columns}`, `h-${payload.rows}`);
   } else if (payload.width && payload.height) {
     // Determine layout type to apply effective-width modifier for text panels
     const layoutType = payload.type ?? "default";
@@ -170,7 +178,7 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
 
     behavior.push(`w-${displayWidth}`, `h-${derivedHeight}`);
   } else {
-    behavior.push("w-12", "h-4");
+    behavior.push(`w-${payload.columns || 12}`, `h-${payload.rows || 8}`);
   }
 
   if (!payload.behavior) {
@@ -200,7 +208,7 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
     ...(payload.partOf ? { partOf: payload.partOf } : {}),
   };
 
-  return ctx.embed({
+  const resource = ctx.embed({
     ...emptyCanvas,
     id: canvasId,
     behavior,
@@ -226,4 +234,7 @@ function createImageSlide(payload: InfoBoxPayload, ctx: CreatorFunctionContext) 
       }),
     ],
   });
+  const layout = canvasLayouts.find((layout) => layout.id === payload.layoutId);
+  if (layout) resource.meta[CANVAS_LAYOUT_META] = { state: createCanvasLayoutState(layout) };
+  return resource;
 }

@@ -1,3 +1,4 @@
+import { CanvasComposition } from "./CanvasComposition";
 import type { BoxStyle } from "@atlas-viewer/atlas";
 import { IIIFMediaPlayer } from "@manifest-editor/components";
 import { type ReactNode, useContext } from "react";
@@ -29,6 +30,9 @@ import { RenderCurrentContextMenuItem } from "./RenderCurrentContextMenuItem";
 import { RenderImageOverlayControls } from "./RenderImageOverlayControls";
 
 interface InternalRenderCanvasProps {
+  moveMode?: boolean;
+  resizing?: boolean;
+  onResizeDone?: () => void;
   x?: number;
   y?: number;
   children?: ReactNode;
@@ -43,6 +47,9 @@ interface InternalRenderCanvasProps {
 }
 
 export function InternalRenderCanvas({
+  moveMode = false,
+  resizing = false,
+  onResizeDone = () => {},
   x,
   y,
   alwaysShowBackground,
@@ -87,10 +94,11 @@ export function InternalRenderCanvas({
         <RenderAudioStrategy />
         <RenderVideoStrategy as={IIIFMediaPlayer} />
         <RenderYouTubeStrategy />
-        <RenderImageOverlayControls />
+        {!moveMode && <RenderImageOverlayControls />}
         <RenderAnnotationEditing theme={svgTheme}>
           {annotationPopup || <AnnotationPopupTools />}
         </RenderAnnotationEditing>
+        {moveMode && <CanvasComposition resizing={resizing} onResizeDone={onResizeDone} />}
         <RenderCurrentContextMenuItem />
         {children}
       </CanvasWorldObject>

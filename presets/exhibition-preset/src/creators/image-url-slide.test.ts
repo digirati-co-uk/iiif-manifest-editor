@@ -1,3 +1,4 @@
+vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { imageUrlCreator } from "@manifest-editor/creators";
 import { describe, expect, test, vi } from "vitest";
 import { imageSlideCreator } from "./image-slide-creator";

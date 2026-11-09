@@ -106,7 +106,7 @@ export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; on
           isInfoBox ? (
             <InfoBoxPreview height={slideshowPreviewHeight} />
           ) : (
-            <div style={{ height: slideshowPreviewHeight, backgroundColor: "#303030" }}>
+            <div style={{ height: slideshowPreviewHeight, backgroundColor: (canvas as any)?.backgroundColor || "#303030" }}>
               <SlideshowSlidePreview className="pointer-events-none h-full w-full" mode="preview" />
             </div>
           )
@@ -158,8 +158,8 @@ function ScrollPreview() {
   }
 
   return (
-    <div className="min-h-0" style={{ height, backgroundColor: "#303030" }}>
-      <div className="relative h-full min-h-0 overflow-hidden" style={{ backgroundColor: "#303030" }}>
+    <div className="min-h-0" style={{ height, backgroundColor: (canvas as any)?.backgroundColor || "#303030" }}>
+      <div className="relative h-full min-h-0 overflow-hidden" style={{ backgroundColor: (canvas as any)?.backgroundColor || "#303030" }}>
         <div className="absolute inset-0">
           <LazyThumbnail cover={behavior.includes("cover") || behavior.includes("image-cover")} fade={false} />
         </div>
