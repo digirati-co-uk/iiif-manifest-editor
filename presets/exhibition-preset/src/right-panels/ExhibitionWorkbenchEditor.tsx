@@ -1,3 +1,4 @@
+import { getCanvasLayout, getPaintingImages } from "@manifest-editor/editor-api";
 import { ExhibitionImagesContent } from "./ExhibitionImagesEditor";
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import { LanguageMapEditor } from "@manifest-editor/editors";
@@ -6,7 +7,7 @@ import {
   ResourceEditingProvider,
   useLocalStorage,
 } from "@manifest-editor/shell";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "react-aria-components";
 import { useCanvas, useVault } from "react-iiif-vault";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
@@ -122,6 +123,16 @@ function ExhibitionWorkbenchRightPanel({
   const setCenterPanelMode = useSlideshowWorkbenchState(
     (state) => state.setCenterPanelMode,
   );
+
+  const initialisedCanvas = useRef<string | null>(null);
+  useEffect(() => {
+    if (!canvas || initialisedCanvas.current === canvas.id) return;
+    initialisedCanvas.current = canvas.id;
+    if (canvas && getCanvasLayout(vault, canvas.id)?.customised === false && !getPaintingImages(vault, canvas).length) {
+      setSelectedTab("images");
+      setCenterPanelMode("edit");
+    }
+  }, [canvas, vault, setCenterPanelMode]);
 
   useEffect(() => {
     // Sync center panel mode with the initially selected tab on mount

@@ -23,8 +23,9 @@ export const imageSlideCreator = defineCreator({
   id: "@exhibitions/image-slide-creator",
   create: createImageSlide,
   render: (ctx) => <CanvasLayoutForm runCreate={(data) => ctx.runCreate({ ...data, type: "default" })} />,
-  label: "Empty slide",
-  summary: "Create a blank slide and add content later.",
+  initialEditor: "@exhibition/images",
+  label: "Multiple images",
+  summary: "Choose an image layout or start with a blank canvas.",
   icon: <EmptyCanvasIcon />,
   tags: ["exhibition-slide"], // No tag, so it doesn't appear, it's just called.
   resourceType: "Canvas",

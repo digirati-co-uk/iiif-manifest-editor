@@ -2,19 +2,22 @@ import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorF
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   CanvasLayoutSection,
+  CanvasCompositionSession,
   SmartCanvasSize,
   PaintingAnnotationList,
   CanvasImageMode,
+  ActionPill,
   useAddCanvasImage,
 } from "@manifest-editor/editors";
 import {
-  resizeCanvas,
+  beginCanvasComposition,
+  isTemplateManaged,
   canResizeCanvas,
   getPaintingImages,
   targetPaintingImageRegion,
   switchToSingleImage,
 } from "@manifest-editor/editor-api";
-import { type EditorDefinition, useEditor } from "@manifest-editor/shell";
+import { type EditorDefinition, useEditor, useLayoutActions } from "@manifest-editor/shell";
 import { AnnotationPageContext, useCanvas, useVault, useVaultSelector, useAtlasStore } from "react-iiif-vault";
 import { getHeightWidthRatio, isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
@@ -43,6 +46,7 @@ export function ExhibitionImagesContent() {
   const vault = useVault();
   const add = useAddCanvasImage();
   const { technical } = useEditor();
+  const { edit } = useLayoutActions();
   const store = useAtlasStore();
   const images = useVaultSelector((_, v) => (canvas ? getPaintingImages(v, canvas) : []), [canvas]);
   const setMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
@@ -66,40 +70,50 @@ export function ExhibitionImagesContent() {
         singleImage={singleImage}
         canReturnToSingle={images.length === 1}
         onSwitchToMulti={() => {
+          beginCanvasComposition(vault, canvas);
           if (images[0]) targetPaintingImageRegion(vault, canvas, images[0].id);
           setMode("edit");
         }}
         onSwitchToSingle={() => {
           cancelSelection();
           switchToSingleImage(vault, canvas);
+          edit(canvas, undefined, { selectedTab: "@exhibition/images", forceOpen: true });
         }}
       >
-        <SmartCanvasSize>
-          {mismatch && (
-            <p>
-              Slide proportions differ.{" "}
-              <button
-                type="button"
-                className="font-semibold underline"
-                style={{ color: "#892c4e" }}
-                onClick={() =>
-                  resizeCanvas(vault, canvas, {
-                    x: 0,
-                    y: 0,
-                    width: canvas.width,
-                    height: Math.round(canvas.width / ratio),
-                  })
-                }
-              >
-                Match slide
-              </button>
-            </p>
-          )}
-        </SmartCanvasSize>
         <CanvasLayoutSection />
+        <SmartCanvasSize templateAware>
+          {({ resize }) =>
+            mismatch ? (
+              <p
+                style={{
+                  margin: 0,
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 8,
+                  padding: "8px 10px",
+                  borderRadius: 8,
+                  background: "#fffaeb",
+                  border: "1px solid #fedf89",
+                  color: "#93370d",
+                }}
+              >
+                <span>Slide proportions differ from the slide format.</span>
+                <ActionPill
+                  variant="secondary"
+                  onClick={() => resize({ x: 0, y: 0, width: canvas.width, height: Math.round(canvas.width / ratio) })}
+                >
+                  Match slide
+                </ActionPill>
+              </p>
+            ) : null
+          }
+        </SmartCanvasSize>
       </CanvasImageMode>
+      {singleImage && <CanvasCompositionSession />}
       <CanvasBackgroundColorField editor={technical.backgroundColor} />
-      {page ? (
+      {isTemplateManaged(vault, canvas) ? null : page ? (
         <AnnotationPageContext annotationPage={page.id}>
           <PaintingAnnotationList onCreate={() => void addImage()} />
         </AnnotationPageContext>

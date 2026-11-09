@@ -11,11 +11,7 @@ import { createThumbnailHelper } from "@iiif/helpers";
 import {
   ActionButton,
   DefaultTooltipContent,
-  Form,
   ManifestEditorLogo,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
   Tab,
   TabList,
   TabPanel,
@@ -24,7 +20,6 @@ import {
   TooltipTrigger,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
-import { PresetIcon } from "@manifest-editor/exhibition-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -36,7 +31,6 @@ import {
   type EditorDefinition,
   extendApp,
   Layout,
-  type LayoutPanel,
   ManifestPaginationNavigation,
   type MappedApp,
   type MappedPlugin,
@@ -396,28 +390,8 @@ export default function BrowserEditor({
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {
       leftPanels: [
-        ...(isExhibitionPreset
-          ? [
-              {
-                divide: true,
-                id: "exhibition-preset-config",
-                label: "Preset",
-                labelMessage: { namespace: "web", key: "preset.title" },
-                icon: <PresetIcon />,
-                render: () => (
-                  <ExhibitionPresetConfigEditor
-                    projectId={id}
-                    layoutMode={layoutMode}
-                    layoutPreset={presetPath}
-                    settings={exhibitionViewerSettings}
-                    saveConfig={saveProjectConfig}
-                  />
-                ),
-              } satisfies LayoutPanel,
-            ]
-          : []),
         {
-          divide: !isExhibitionPreset,
+          divide: true,
           id: "config",
           label: "Settings",
           labelMessage: { namespace: "web", key: "settings.title" },
@@ -436,7 +410,7 @@ export default function BrowserEditor({
         },
       ],
     });
-  }, [exhibitionViewerSettings, isExhibitionPreset, presetPath, project, saveProjectConfig]);
+  }, [preset, presetPath, id]);
 
   const header = (
     <>
@@ -592,190 +566,6 @@ function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {
   }, [edit, enabled, manifest, selected]);
 
   return null;
-}
-
-function ExhibitionPresetConfigEditor({
-  projectId,
-  layoutMode,
-  layoutPreset,
-  settings,
-  saveConfig,
-}: {
-  projectId: string;
-  layoutMode?: "default" | "focused";
-  layoutPreset?: string;
-  settings: Required<ExhibitionPresetViewerSettings>;
-  saveConfig: (config: Partial<Config>) => void | Promise<void>;
-}) {
-  const webT = useTranslations("web");
-
-  const [isSaving, setIsSaving] = useState(false);
-  const isSlideshow = layoutPreset === "exhibition/slideshow";
-  const editorBasePath =
-    layoutMode === "focused" ? `/editor-focused/${projectId}/exhibition` : `/editor/${projectId}/exhibition`;
-
-  const saveSettings = useCallback(
-    async (nextSettings: Required<ExhibitionPresetViewerSettings>) => {
-      setIsSaving(true);
-      try {
-        await saveConfig({
-          defaultPreview: nextSettings.defaultPreview,
-          plugins: {
-            apps: {
-              [exhibitionViewerPluginId]: {
-                settings: {
-                  [exhibitionViewerSettingsKey]: nextSettings,
-                },
-              },
-            },
-          },
-        });
-      } finally {
-        setIsSaving(false);
-      }
-    },
-    [saveConfig]
-  );
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formValues = new FormData(e.currentTarget);
-    saveSettings({
-      defaultPreview: (formValues.get("defaultPreview") ||
-        defaultExhibitionViewerSettings.defaultPreview) as Required<ExhibitionPresetViewerSettings>["defaultPreview"],
-      floatingPosition: (formValues.get("floatingPosition") ||
-        defaultExhibitionViewerSettings.floatingPosition) as Required<ExhibitionPresetViewerSettings>["floatingPosition"],
-    });
-  }
-
-  return (
-    <Sidebar>
-      <SidebarHeader title={webT("preset.configuration")} />
-      <SidebarContent className="p-4">
-        <div className="mb-6">
-          <div className="mb-3 text-sm font-semibold text-gray-700">{webT("preset.layout")}</div>
-          <div className="flex flex-col gap-2">
-            <PresetLayoutLink
-              href={editorBasePath}
-              label={webT("preset.fullPage")}
-              selected={layoutPreset === "exhibition"}
-            />
-            <PresetLayoutLink
-              href={`${editorBasePath}/slideshow`}
-              label={webT("preset.slideshow")}
-              selected={layoutPreset === "exhibition/slideshow"}
-            />
-            <PresetLayoutLink
-              href={`${editorBasePath}/scroll`}
-              label={webT("preset.scrolling")}
-              selected={layoutPreset === "exhibition/scroll"}
-            />
-          </div>
-        </div>
-
-        {isSlideshow ? (
-          <Form.Form onSubmit={onSubmit} className="flex flex-col gap-5">
-            <Form.InputContainer>
-              <Form.Label htmlFor="delft-slideshow">{webT("settings.defaultPreview")}</Form.Label>
-              <div className="flex flex-col gap-3">
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="delft-slideshow"
-                    name="defaultPreview"
-                    value="delft-slideshow"
-                    defaultChecked={settings.defaultPreview === "delft-slideshow"}
-                  />
-                  <label htmlFor="delft-slideshow">{webT("preset.delft")}</label>
-                </Form.InputContainer>
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="minimal-slideshow"
-                    name="defaultPreview"
-                    value="minimal-slideshow"
-                    defaultChecked={settings.defaultPreview === "minimal-slideshow"}
-                  />
-                  <label htmlFor="minimal-slideshow">{webT("preset.light")}</label>
-                </Form.InputContainer>
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="minimal-floating-tour"
-                    name="defaultPreview"
-                    value="minimal-floating-tour"
-                    defaultChecked={settings.defaultPreview === "minimal-floating-tour"}
-                  />
-                  <label htmlFor="minimal-floating-tour">{webT("preset.floating")}</label>
-                </Form.InputContainer>
-              </div>
-            </Form.InputContainer>
-
-            <Form.InputContainer>
-              <Form.Label htmlFor="floatingPosition">{webT("preset.position")}</Form.Label>
-              <select
-                id="floatingPosition"
-                name="floatingPosition"
-                defaultValue={settings.floatingPosition}
-                className="border border-gray-300 rounded-md px-3 py-2"
-              >
-                <option value="top-left">{webT("preset.topLeft")}</option>
-                <option value="top-right">{webT("preset.topRight")}</option>
-                <option value="bottom-left">{webT("preset.bottomLeft")}</option>
-                <option value="bottom-right">{webT("preset.bottomRight")}</option>
-              </select>
-            </Form.InputContainer>
-
-            <div>
-              <ActionButton type="submit" isDisabled={isSaving}>
-                {isSaving ? webT("actions.saving") : webT("preset.save")}
-              </ActionButton>
-            </div>
-          </Form.Form>
-        ) : (
-          <div className="text-sm text-gray-600">{webT("preset.noOptions")}</div>
-        )}
-      </SidebarContent>
-    </Sidebar>
-  );
-}
-
-function PresetLayoutLink({
-  href,
-  label,
-  selected,
-  disabled,
-}: {
-  href?: string;
-  label: string;
-  selected: boolean;
-  disabled?: boolean;
-}) {
-  const webT = useTranslations("web");
-  const className = [
-    "flex items-center justify-between rounded-md border px-3 py-2 text-sm font-medium",
-    selected ? "border-me-primary-500 bg-me-50 text-me-primary-700" : "border-gray-200 bg-white text-gray-700",
-    disabled ? "cursor-not-allowed opacity-50" : "hover:border-me-primary-300",
-  ].join(" ");
-
-  const content = (
-    <>
-      <span>{label}</span>
-      <span className="text-xs font-semibold">
-        {selected ? webT("preset.current") : disabled ? webT("preset.comingSoon") : webT("actions.open")}
-      </span>
-    </>
-  );
-
-  if (disabled || !href) {
-    return <div className={className}>{content}</div>;
-  }
-
-  return (
-    <Link href={href} className={className}>
-      {content}
-    </Link>
-  );
 }
 
 function FromQueryString({

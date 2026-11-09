@@ -57,7 +57,7 @@ catalogs:
 
 overrides:
   prosemirror-model: 1.25.12
-  '@atlas-viewer/atlas': 3.3.4
+  '@atlas-viewer/atlas': 3.3.6
   react-iiif-vault: 4.1.0
   polygon-editor: 1.0.0
   react-aria: 3.43.2
@@ -67,7 +67,6 @@ overrides:
 packageExtensionsChecksum: sha256-iuQfAFb4v+UK5Oe41b5b17X69Tg/CWtMxKwaJeJDqCg=
 
 patchedDependencies:
-  '@atlas-viewer/atlas@3.3.4': 3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea
   '@mdxeditor/editor@4.0.4': 1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340
   '@vidstack/react@1.12.12': 50787fd4f61d8b043e3e3cd991306d6c93e00f9d4c1aec86cd83e1f49501173b
   leaflet-draw@1.0.4: 912ff60d9b7c869c2b18e65a5511d2c815af4ada1105dd1c927a7e9c464740b2
@@ -225,8 +224,8 @@ importers:
   apps/web:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -304,7 +303,7 @@ importers:
         version: 2.5.1
       exhibition-viewer:
         specifier: ^1.0.14
-        version: 1.0.14(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2)
+        version: 1.0.14(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2)
       idb-keyval:
         specifier: ^6.2.1
         version: 6.2.1
@@ -331,7 +330,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -430,8 +429,8 @@ importers:
   packages/components:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -509,7 +508,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -584,8 +583,8 @@ importers:
   packages/creator-api:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -609,7 +608,7 @@ importers:
         version: 1.0.0
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -627,8 +626,8 @@ importers:
   packages/creators:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -673,7 +672,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -734,8 +733,8 @@ importers:
   packages/editors:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -858,7 +857,7 @@ importers:
         version: 14.1.0(i18next@26.5.11(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-leaflet:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -999,8 +998,8 @@ importers:
   packages/manifest-editor:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -1057,7 +1056,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@manifest-editor/ui':
         specifier: workspace:*
@@ -1123,8 +1122,8 @@ importers:
   packages/projects:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -1163,7 +1162,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1236,8 +1235,8 @@ importers:
   packages/shell:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@atlas-viewer/iiif-image-api':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1327,7 +1326,7 @@ importers:
         version: 4.0.13(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-transition-group:
         specifier: ^4.4.5
         version: 4.4.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1436,7 +1435,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@storybook/addon-a11y':
         specifier: 10.6.2
@@ -1493,8 +1492,8 @@ importers:
   packages/ui:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@floating-ui/react':
         specifier: ^0.26.13
         version: 0.26.16(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1524,7 +1523,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-select-search:
         specifier: 4.1.7
         version: 4.1.7(prop-types@15.8.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1551,8 +1550,8 @@ importers:
   plugins/annotations:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -1576,7 +1575,7 @@ importers:
         version: 19.2.8
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       zustand:
         specifier: 'catalog:'
         version: 4.5.2(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
@@ -1712,8 +1711,8 @@ importers:
   plugins/translation:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@huggingface/transformers':
         specifier: ^4.1.0
         version: 4.1.0
@@ -1740,7 +1739,7 @@ importers:
         version: 19.2.8
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -1755,8 +1754,8 @@ importers:
   presets/collection-preset:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -1798,7 +1797,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       styled-components:
         specifier: 'catalog:'
         version: 6.1.8(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1822,8 +1821,8 @@ importers:
   presets/exhibition-preset:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -1874,7 +1873,7 @@ importers:
         version: link:../../packages/shell
       exhibition-viewer:
         specifier: ^1.0.14
-        version: 1.0.14(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2)
+        version: 1.0.14(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -1886,7 +1885,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -1919,8 +1918,8 @@ importers:
   presets/manifest-preset:
     dependencies:
       '@atlas-viewer/atlas':
-        specifier: 3.3.4
-        version: 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        specifier: 3.3.6
+        version: 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers':
         specifier: 'catalog:'
         version: 4.0.5(@iiif/parser@4.0.7)
@@ -1974,7 +1973,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-iiif-vault:
         specifier: 4.1.0
-        version: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+        version: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-joyride:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2099,8 +2098,8 @@ packages:
     resolution: {integrity: sha512-hJA62OeBKUQT68DD2gDyhOqJxZxycqg8wLxbqjgqSzYttCMSDL9tiAQ9abgekBYNHudbJosm9sWOEbmCDfpX2A==}
     engines: {node: '>= 10'}
 
-  '@atlas-viewer/atlas@3.3.4':
-    resolution: {integrity: sha512-u7hokkzxzHl+pOLfij3WvqOvapXocLK2GWPHIRQNM3sKGWAMpbPzv3R1xeTugTqNPiyhTybLZ4yVM+gCkYeWiQ==}
+  '@atlas-viewer/atlas@3.3.6':
+    resolution: {integrity: sha512-J4ZBiLYKkfrVyKNE1WPU7K3Zad7UgcNhPvBEJ4EgXwdTWOZvkMGl6ugMQAr5+iuLF2QAdApIE0peOAwYWFRAXA==}
     peerDependencies:
       '@iiif/helpers': '>=1.1.0'
       react: '>=17.0'
@@ -10810,7 +10809,7 @@ packages:
   react-iiif-vault@4.1.0:
     resolution: {integrity: sha512-t44fyhrU6bhlQKB4AfRbiGNPdABzixg6oujaeMt3Ovgwl7GuBBX7NSisCEpNRyWbZ/SBmwbeORA5j+icTucdpQ==}
     peerDependencies:
-      '@atlas-viewer/atlas': 3.3.4
+      '@atlas-viewer/atlas': 3.3.6
       '@react-three/drei': 10.7.7
       '@react-three/fiber': 9.8.2
       react: ^19.2.0
@@ -12537,7 +12536,7 @@ snapshots:
       '@ast-grep/napi-win32-ia32-msvc': 0.40.5
       '@ast-grep/napi-win32-x64-msvc': 0.40.5
 
-  '@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)':
+  '@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@atlas-viewer/dna': 0.5.0
       '@atlas-viewer/iiif-image-api': 2.2.2
@@ -20582,7 +20581,7 @@ snapshots:
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
 
-  exhibition-viewer@1.0.14(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2):
+  exhibition-viewer@1.0.14(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(immer@10.1.1)(react-reconciler@0.33.0(react@19.2.8))(typescript@7.0.2):
     dependencies:
       '@headlessui/react': 1.7.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': 1.5.4(@iiif/parser@2.2.5)
@@ -20599,7 +20598,7 @@ snapshots:
       react-aria: 3.43.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
       react-i18next: 16.3.3(i18next@25.6.2(typescript@7.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@7.0.2)
-      react-iiif-vault: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@18.3.31)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-reconciler@0.33.0(react@19.2.8))(react@18.3.1)
+      react-iiif-vault: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@18.3.31)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-reconciler@0.33.0(react@19.2.8))(react@18.3.1)
       react-lazy-load-image-component: 1.6.3(react@18.3.1)
       reveal.js: 5.2.1
       tailwind-merge: 2.3.0
@@ -21198,7 +21197,7 @@ snapshots:
 
   iiif-browser@2.3.2(@mdxeditor/editor@4.0.4(patch_hash=1066ca9bee4d7fa080414ccbcd014ed49faf94cfc91308172c089eb352fce340)(@codemirror/language@6.10.8)(@lezer/highlight@1.2.1)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@10.2.2)(yjs@13.6.23))(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@tiptap/react@3.32.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@tiptap/starter-kit@3.32.0)(@types/react@19.2.18)(immer@10.1.1)(lexical@0.35.0)(react-reconciler@0.33.0(react@19.2.8)):
     dependencies:
-      '@atlas-viewer/atlas': 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+      '@atlas-viewer/atlas': 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@iiif/helpers': 4.0.5(@iiif/parser@4.0.7)
       '@iiif/parser': 4.0.7
       '@iiif/presentation-3': 2.2.3
@@ -21212,7 +21211,7 @@ snapshots:
       react-aria: 3.43.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-aria-components: 1.12.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-dom: 19.2.8(react@19.2.8)
-      react-iiif-vault: 4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+      react-iiif-vault: 4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       react-timeago: 8.3.0(react@19.2.8)
       tailwind-merge: 3.3.1
       zustand: 4.5.7(@types/react@19.2.18)(immer@10.1.1)(react@19.2.8)
@@ -23820,9 +23819,9 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       typescript: 7.0.2
 
-  react-iiif-vault@4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@18.3.31)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-reconciler@0.33.0(react@19.2.8))(react@18.3.1):
+  react-iiif-vault@4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@18.3.31)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-reconciler@0.33.0(react@19.2.8))(react@18.3.1):
     dependencies:
-      '@atlas-viewer/atlas': 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+      '@atlas-viewer/atlas': 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@floating-ui/react': 0.27.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@iiif/helpers': 4.0.5(@iiif/parser@4.0.7)
       '@iiif/parser': 4.0.7
@@ -23840,9 +23839,9 @@ snapshots:
       - '@types/react'
       - immer
 
-  react-iiif-vault@4.1.0(@atlas-viewer/atlas@3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8):
+  react-iiif-vault@4.1.0(@atlas-viewer/atlas@3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8))(@types/react@19.2.18)(immer@10.1.1)(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8):
     dependencies:
-      '@atlas-viewer/atlas': 3.3.4(patch_hash=3700ec5f869498afa04e16901303e9cd64787b93a7b75cc4db34ce96cf18cfea)(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
+      '@atlas-viewer/atlas': 3.3.6(@iiif/helpers@4.0.5(@iiif/parser@4.0.7))(react-dom@19.2.8(react@19.2.8))(react-reconciler@0.33.0(react@19.2.8))(react@19.2.8)
       '@floating-ui/react': 0.27.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@iiif/helpers': 4.0.5(@iiif/parser@4.0.7)
       '@iiif/parser': 4.0.7

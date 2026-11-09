@@ -13,6 +13,11 @@ const sourceCanvas = delft.items[0];
 const sourceImage = sourceCanvas.items[0].items[0].body;
 const service = sourceImage.service[0];
 
+async function chooseLayout(page: Page, name: string) {
+  await page.getByRole("radio", { name, exact: true }).click();
+  const apply = page.getByRole("button", { name: "Apply layout", exact: true });
+  if (await apply.isVisible()) await apply.click();
+}
 async function exportedCanvas(page: Page) {
   const pending = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download manifest", exact: true }).click();
@@ -81,8 +86,8 @@ test("Delft collage: layout, smart resize, dragging, export and reload", async (
   test.setTimeout(90_000);
   await openDelft(page);
   await page.getByRole("tab", { name: "Images", exact: true }).click();
-  await page.getByRole("radio", { name: "Feature left", exact: true }).check();
-  await expect(page.getByRole("button", { name: "Add image to position 1", exact: true })).toBeVisible();
+  await chooseLayout(page, "Feature left");
+  await expect(page.getByRole("button", { name: "Add image to position 3", exact: true })).toBeVisible();
   let canvas = await exportedCanvas(page);
   expect(canvas.items[0].items).toHaveLength(2);
   const width = page.getByRole("spinbutton", { name: "Width (px)", exact: true });
@@ -130,13 +135,13 @@ test("Delft collage: layout, smart resize, dragging, export and reload", async (
     .locator(".exhibition-slideshow-current-toolbar")
     .getByRole("button", { name: "Edit", exact: true })
     .click();
-  await expect(page.getByRole("button", { name: "Add image to position 1", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add image to position 3", exact: true })).toBeVisible();
 });
 
 test("Delft collage: resize an image, switch selection, and resize the canvas edge", async ({ page }) => {
   await openDelft(page);
   await page.getByRole("tab", { name: "Images", exact: true }).click();
-  await page.getByRole("radio", { name: "Side by side", exact: true }).check();
+  await chooseLayout(page, "Side by side");
   const original = await exportedCanvas(page);
   const region = original.items[0].items[0].target.split("xywh=")[1].split(",").map(Number);
   const button = page.getByRole("button", { name: "Select image 1", exact: true });
@@ -176,7 +181,7 @@ test("Delft collage: resize an image, switch selection, and resize the canvas ed
   await expect(page.getByRole("button", { name: "Select image 1", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Select image 2", exact: true })).toBeHidden();
   // Reapplying a layout cancels its old selection and restores the template positions.
-  await page.getByRole("radio", { name: "Side by side", exact: true }).click();
+  await chooseLayout(page, "Side by side");
   await expect(page.getByRole("button", { name: "Select image 2", exact: true })).toBeVisible();
   expect((await exportedCanvas(page)).items[0].items[0].target).toEqual(original.items[0].items[0].target);
 
@@ -204,9 +209,9 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   await page.getByRole("button", { name: "Start building", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Start adding content", exact: true }).click();
-  await page.getByRole("option", { name: "Empty slide", exact: true }).click();
+  await page.getByRole("option", { name: "Multiple images", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Title", exact: true })).toHaveCount(0);
-  await page.getByRole("radio", { name: "Feature left", exact: true }).check();
+  await chooseLayout(page, "Feature left");
   await page.getByRole("button", { name: "Create canvas", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Add content", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(3);
@@ -234,7 +239,7 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
   expect(single.items[0].items[0].target).toBe(single.id);
   await page.getByRole("button", { name: "Switch to multi-image layout", exact: true }).click();
   await expect(page.getByRole("group", { name: "Canvas shape", exact: true })).toHaveCount(0);
-  await page.getByRole("radio", { name: "Side by side", exact: true }).check();
+  await chooseLayout(page, "Side by side");
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
   await waitForSavedCanvas(page, single, "pair");
   await page.reload();
@@ -244,7 +249,7 @@ test("empty exhibition canvas: template, placeholder insertion and layout compat
     .getByRole("button", { name: "Edit", exact: true })
     .click();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(1);
-  await page.getByRole("button", { name: "Browse IIIF for position 1", exact: true }).click();
+  await page.getByRole("button", { name: "Browse IIIF for position 2", exact: true }).click();
   await expect(page.locator(".iiif-browser")).toBeVisible();
   await expect(page.getByRole("option", { name: "IIIF image", exact: true })).toHaveCount(0);
 });
@@ -310,7 +315,7 @@ test("tour drawing starts with no leftover image selection", async ({ page }) =>
 test("image controls: reversible mode, colours and clear placeholders", async ({ page }) => {
   await openDelft(page);
   await page.getByRole("tab", { name: "Images", exact: true }).click();
-  await page.getByRole("radio", { name: "Feature left", exact: true }).check();
+  await chooseLayout(page, "Feature left");
   await page.getByRole("button", { name: "Clear placeholders", exact: true }).click();
   await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(0);
   await page.getByRole("textbox", { name: "Background colour value", exact: true }).fill("#aaccdd");
@@ -324,9 +329,9 @@ test("image controls: reversible mode, colours and clear placeholders", async ({
 test("resize across a placeholder and discard both image and canvas changes", async ({ page }) => {
   await openDelft(page);
   await page.getByRole("tab", { name: "Images", exact: true }).click();
-  await page.getByRole("radio", { name: "Feature left", exact: true }).check();
+  await chooseLayout(page, "Feature left");
   const original = await exportedCanvas(page);
-  const placeholder = (await page.getByRole("button", { name: "Add image to position 1", exact: true }).boundingBox())!;
+  const placeholder = (await page.getByRole("button", { name: "Add image to position 3", exact: true }).boundingBox())!;
   await page.getByRole("button", { name: "Select image 1", exact: true }).click();
   const selection = (await page
     .locator('svg:has(> title:text-is("Annotation Editor")) > polygon')
@@ -363,7 +368,7 @@ test("resize across a placeholder and discard both image and canvas changes", as
 test("selected image handles stay usable beneath an overlapping image", async ({ page }) => {
   await openDelft(page);
   await page.getByRole("tab", { name: "Images", exact: true }).click();
-  await page.getByRole("radio", { name: "Offset pair", exact: true }).check();
+  await chooseLayout(page, "Offset pair");
   const original = await exportedCanvas(page);
   const foreground = page.getByRole("button", { name: "Select image 2", exact: true });
   const foregroundBox = (await foreground.boundingBox())!;

@@ -81,7 +81,11 @@ export function CanvasLayoutForm({ runCreate }: { runCreate: (data: CanvasLayout
       <CanvasLayoutPicker value={layout.id} onChange={setLayout} aspectRatio={size.columns / size.rows} />
 
       <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
-        <p className="text-xs text-gray-500">{t("messages.sizeLater", { width, height })}</p>
+        <p className="text-xs text-gray-500">
+          <span className="font-semibold text-gray-700">{apiLabel(layout)}</span>
+          {layout.slots.length ? ` · ${layout.slots.length} ${layout.slots.length === 1 ? "image" : "images"}` : ""}
+          <span className="block">{t("messages.sizeLater", { width, height })}</span>
+        </p>
         <button
           type="submit"
           className="rounded-md px-4 py-1.5 text-sm font-semibold"

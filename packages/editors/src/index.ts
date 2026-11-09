@@ -16,6 +16,7 @@ export * from "./components/CanvasLayout/CanvasLayoutPicker";
 export * from "./components/CanvasLayout/CanvasLayoutForm";
 export * from "./components/CanvasLayout/CanvasLayoutSection";
 export * from "./components/CanvasLayout/SmartCanvasSize";
+export { ActionPill } from "./components/CanvasLayout/ui";
 
 export { CanvasImageMode, CanvasShapePicker } from "./components/CanvasLayout/CanvasImageMode";
 export { useAddCanvasImage } from "./components/CanvasLayout/useAddCanvasImage";

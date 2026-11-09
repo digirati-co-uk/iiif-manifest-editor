@@ -2,10 +2,27 @@ import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
 import { EditorMessage } from "../../EditorMessage";
 import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
 import { IIIFBrowserIcon } from "@manifest-editor/components";
+import { useRuntime } from "@atlas-viewer/atlas";
+import {
+  ActionPill,
+  IconAction,
+  CheckIcon,
+  ReplaceIcon,
+  TrashIcon,
+  UndoIcon,
+  confirmRemoveImage,
+} from "../../CanvasLayout/ui";
 
+import { installCompositionModifiers } from "../../../helpers/composition-modifiers";
 import { CanvasResizeEdges } from "./CanvasResizeEdges";
 import {
   captureCanvasComposition,
+  beginCanvasComposition,
+  completeCanvasComposition,
+  getCanvasCompositionSnapshot,
+  getCanvasLayout,
+  customiseCanvasLayout,
+  removeCanvasImage,
   restoreCanvasComposition,
   expandedCanvasBounds,
   getAnnotationRectangle,
@@ -14,6 +31,8 @@ import {
   layoutSlotToPixels,
   movePaintingImage,
   resizeCanvas,
+  resizeCanvasLayout,
+  isTemplateManaged,
   validRectangle,
   type CanvasPlaceholder,
   type Rectangle,
@@ -77,13 +96,22 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         save(response.boundingBox);
     },
   });
-  const current = useRef({ canvas, active, isActive, requestId, resizing, onResizeDone });
-  current.current = { canvas, active, isActive, requestId, resizing, onResizeDone };
+  const runtime = useRuntime();
+  const current = useRef({ canvas, active, isActive, requestId, resizing, onResizeDone, runtime });
+  current.current = { canvas, active, isActive, requestId, resizing, onResizeDone, runtime };
 
   function save(rect: Rectangle) {
     if (!validRectangle(rect)) return;
-    if (resizing) resizeCanvas(vault, current.current.canvas, rect);
-    else if (selected.current) movePaintingImage(vault, current.current.canvas, selected.current, rect);
+    if (resizing) {
+      const target = current.current.canvas;
+      // Untouched templates follow the new size; hand-arranged slides keep every position.
+      if (isTemplateManaged(vault, target)) resizeCanvasLayout(vault, target, rect);
+      else {
+        beginCanvasComposition(vault, target);
+        customiseCanvasLayout(vault, target);
+        resizeCanvas(vault, target, rect);
+      }
+    } else if (selected.current) movePaintingImage(vault, current.current.canvas, selected.current, rect);
   }
   const release = useCallback(() => {
     const state = store.getState();
@@ -98,12 +126,15 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     helper.setBounds({ x: 0, y: 0, width: current.current.canvas.width, height: current.current.canvas.height });
   }, [store]);
   const finish = useCallback(() => {
+    // Positions are saved as each gesture ends; completing the request must not save (and re-open the session) again.
+    selected.current = null;
     store.getState().completeRequest(current.current.requestId || undefined);
     release();
+    completeCanvasComposition(vault, current.current.canvas.id);
     snapshot.current = null;
     setActive(null);
     setPreview(null);
-  }, [store, release]);
+  }, [store, release, vault]);
   const cancel = useCallback(() => {
     setQueued(null);
     store.getState().cancelRequest(current.current.requestId || undefined);
@@ -115,13 +146,16 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   const discard = useCallback(() => {
     const original = snapshot.current;
     cancel();
-    if (original) restoreCanvasComposition(vault, current.current.canvas.id, original);
+    if (getCanvasCompositionSnapshot(vault, current.current.canvas.id))
+      completeCanvasComposition(vault, current.current.canvas.id, true);
+    else if (original) restoreCanvasComposition(vault, current.current.canvas.id, original);
     snapshot.current = null;
     if (current.current.resizing) current.current.onResizeDone();
   }, [cancel, vault]);
   function select(id: string, rect: Rectangle) {
     if (busy) return;
     if (isActive) cancelRequest();
+    beginCanvasComposition(vault, current.current.canvas);
     snapshot.current = captureCanvasComposition(vault, current.current.canvas);
     selected.current = id;
     setQueued({ id, rect });
@@ -146,22 +180,53 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         selectByDefault: true,
         arguments: { canvasComposition: true, annotationId: id },
         annotationPopup: (
-          <div className="manifest-editor flex gap-2 rounded bg-white p-1 shadow">
-            <button
-              type="button"
-              className="rounded px-3 py-1 text-sm"
-              style={{ background: "#b84c74", color: "white" }}
-              onClick={finish}
-            >
-              <EditorMessage namespace="common" message="actions.done" />
-            </button>
-            <button
-              type="button"
-              onClick={discard}
-              style={{ color: "#892c4e", background: "white", padding: "4px 12px", fontSize: 13 }}
-            >
-              <EditorMessage message="ui.discardChanges" />
-            </button>
+          <div
+            className="manifest-editor rounded-xl border border-gray-200 bg-white p-1.5 shadow-lg"
+            role="toolbar"
+            aria-label="Image actions"
+          >
+            <div className="flex items-center gap-1">
+              <ActionPill variant="primary" icon={<CheckIcon />} onClick={finish} style={{ height: 32 }}>
+                <EditorMessage namespace="common" message="actions.done" />
+              </ActionPill>
+              <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-gray-200" />
+              <IconAction
+                label="Replace image"
+                icon={<ReplaceIcon />}
+                onClick={() => {
+                  const canvas = current.current.canvas;
+                  const assigned = getCanvasLayout(vault, canvas.id)?.slots.find((slot) =>
+                    slot.annotationIds?.includes(id)
+                  );
+                  const slot = {
+                    id: assigned?.id || `replacement-${id}`,
+                    bounds: {
+                      x: rect.x / canvas.width,
+                      y: rect.y / canvas.height,
+                      width: rect.width / canvas.width,
+                      height: rect.height / canvas.height,
+                    },
+                  };
+                  cancel();
+                  void createImage(slot, false, id);
+                }}
+              />
+              <IconAction label="Discard changes" icon={<UndoIcon />} onClick={discard} />
+              <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-gray-200" />
+              <IconAction
+                label="Remove image"
+                variant="danger"
+                icon={<TrashIcon />}
+                onClick={() => {
+                  const position = (getCanvasLayout(vault, current.current.canvas.id)?.slots ?? []).findIndex((slot) =>
+                    slot.annotationIds?.includes(id)
+                  );
+                  if (!confirmRemoveImage(position >= 0 ? position + 1 : undefined)) return;
+                  cancel();
+                  removeCanvasImage(vault, current.current.canvas, id);
+                }}
+              />
+            </div>
           </div>
         ),
       },
@@ -184,7 +249,12 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     canvas.height,
     finish,
     discard,
+    vault,
+    createImage,
+    cancel,
   ]);
+  useEffect(() => installCompositionModifiers(store.getState().polygons, () => current.current.isActive), [store]);
+
   useCurrentAnnotationTransition({
     requestId,
     onStart: () => {
@@ -233,8 +303,25 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
       const isEditing = (target: EventTarget | null) =>
         target instanceof HTMLElement &&
         (target.isContentEditable || !!target.closest('input, textarea, select, button, a[href], [role="textbox"]'));
-      if (event.defaultPrevented || event.isComposing || isEditing(event.target) || isEditing(document.activeElement)) return;
+      // Modifiers still apply when a canvas selection button retains focus.
       shiftHeld.current = event.shiftKey;
+      if (
+        event.key === "Shift" &&
+        current.current.isActive &&
+        !(
+          event.target instanceof HTMLElement &&
+          event.target.closest('input, textarea, select, [contenteditable="true"]')
+        )
+      ) {
+        event.stopImmediatePropagation();
+        const helper = store.getState().polygons;
+        helper.key.up("Shift");
+        if (event.type === "keydown") helper.unlockAspectRatio();
+        else helper.lockAspectRatio();
+        return;
+      }
+      if (event.defaultPrevented || event.isComposing || isEditing(event.target) || isEditing(document.activeElement))
+        return;
       if (current.current.resizing && (event.key === "Escape" || event.key === "Enter")) {
         if (event.key === "Escape") discard();
         else current.current.onResizeDone();
@@ -255,19 +342,30 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         finish();
         event.preventDefault();
       }
-      if (event.key === "Shift") {
-        event.stopImmediatePropagation();
-        const helper = store.getState().polygons;
-        helper.key.up("Shift");
-        if (event.type === "keydown") helper.unlockAspectRatio();
-        else helper.lockAspectRatio();
-      }
     };
     window.addEventListener("keydown", key, true);
     window.addEventListener("keyup", key, true);
     // Capture from the press, before the helper's drag threshold: adjacent portals can otherwise swallow the first move.
     const capture = (event: PointerEvent) => {
       if (!current.current.isActive || event.button !== 0 || !(event.target instanceof HTMLCanvasElement)) return;
+      // Pressing the viewer background, away from the selection and its handles, confirms the changes.
+      const { runtime: atlas } = current.current;
+      const annotation = selected.current ? vault.get({ id: selected.current, type: "Annotation" }) : null;
+      const selection = annotation ? getAnnotationRectangle(vault, annotation as any, current.current.canvas) : null;
+      if (atlas && selection) {
+        const box = event.target.getBoundingClientRect();
+        const point = atlas.viewerToWorld(event.clientX - box.left, event.clientY - box.top);
+        const pad = 18 / (atlas.getScaleFactor(false) || 1);
+        const inside =
+          point.x >= selection.x - pad &&
+          point.x <= selection.x + selection.width + pad &&
+          point.y >= selection.y - pad &&
+          point.y <= selection.y + selection.height + pad;
+        if (!inside) {
+          finish();
+          return;
+        }
+      }
       event.target.setPointerCapture(event.pointerId);
       setPointerDragging(true);
     };
@@ -287,7 +385,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
       window.removeEventListener("pointerup", release);
       window.removeEventListener("pointercancel", release);
     };
-  }, [store, cancel, finish, discard]);
+  }, [store, cancel, finish, discard, vault]);
   useEffect(
     () => () => {
       if (current.current.isActive) {
@@ -360,7 +458,8 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         );
       })}
       {!busy &&
-        placeholders.map((slot, index) => {
+        placeholders.map((slot) => {
+          const index = getCanvasLayout(vault, canvas.id)?.slots.findIndex((item) => item.id === slot.id) ?? 0;
           const rect = layoutSlotToPixels(slot.bounds, canvas);
           return (
             <world-object key={slot.id} x={rect.x} y={rect.y} width={rect.width} height={rect.height}>
@@ -368,7 +467,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                 target={{ x: 0, y: 0, width: rect.width, height: rect.height }}
                 relativeStyle
                 interactive={false}
-                style={{ backgroundColor: "rgba(184,76,116,0.04)", border: "1px dashed #bfa5af" }}
+                style={{ backgroundColor: "rgba(184,76,116,0.07)", border: "2px dashed #d596ae" }}
               />
               {!dragging && (
                 <HTMLPortal
@@ -380,6 +479,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                     style={{
                       display: "flex",
                       pointerEvents: "auto",
+                      position: "relative",
                       clipPath: selectionHitArea(rect, activeRect),
                       alignItems: "center",
                       justifyContent: "center",
@@ -387,6 +487,28 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
                       height: "100%",
                     }}
                   >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        position: "absolute",
+                        top: 8,
+                        left: 8,
+                        minWidth: 22,
+                        height: 22,
+                        padding: "0 6px",
+                        borderRadius: 6,
+                        background: "#b84c74",
+                        color: "white",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        pointerEvents: "none",
+                      }}
+                    >
+                      {index + 1}
+                    </span>
                     <button
                       type="button"
                       aria-label={t("messages.addImageAt", { number: index + 1 })}

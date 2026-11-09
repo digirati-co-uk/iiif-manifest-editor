@@ -123,8 +123,8 @@ const DEFAULT_CONFIG: Config = {
     enableMultiMediaCanvases: true,
     annotationPopups: false,
     rememberCanvasId: true,
-    manifestGridOptions: false,
-    rememberLeftPanelId: false,
+    manifestGridOptions: true,
+    rememberLeftPanelId: true,
   },
   uploadBackends: [],
   plugins: {

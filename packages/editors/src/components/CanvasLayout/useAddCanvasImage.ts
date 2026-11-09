@@ -1,4 +1,11 @@
-import { EditorInstance, layoutSlotToPixels, type CanvasPlaceholder } from "@manifest-editor/editor-api";
+import {
+  EditorInstance,
+  beginCanvasComposition,
+  getCanvasLayout,
+  getEmptyCanvasPlaceholders,
+  layoutSlotToPixels,
+  type CanvasPlaceholder,
+} from "@manifest-editor/editor-api";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { useCanvas, useVault } from "react-iiif-vault";
 
@@ -7,8 +14,13 @@ export function useAddCanvasImage() {
   const canvas = useCanvas();
   const vault = useVault();
   const { create } = useLayoutActions();
-  return async (slot?: CanvasPlaceholder, browser = false) => {
+  return async (slot?: CanvasPlaceholder, browser = false, replaceAnnotationId?: string) => {
     if (!canvas) return;
+    if (!slot && getCanvasLayout(vault, canvas.id)?.customised === false) {
+      slot = getEmptyCanvasPlaceholders(vault, canvas)[0];
+      if (!slot) return;
+    }
+    beginCanvasComposition(vault, canvas);
     let page = canvas.items[0];
     if (!page) {
       const id = `${canvas.id}/painting/${crypto.randomUUID()}`;
@@ -25,7 +37,12 @@ export function useAddCanvasImage() {
       filter: "image",
       initialCreator: browser ? "@manifest-editor/iiif-browser-creator" : undefined,
       placeholderPosition: slot
-        ? { canvasId: canvas.id, bounds: layoutSlotToPixels(slot.bounds, canvas), placeholderId: slot.id }
+        ? {
+            canvasId: canvas.id,
+            bounds: layoutSlotToPixels(slot.bounds, canvas),
+            placeholderId: slot.id,
+            replaceAnnotationId,
+          }
         : undefined,
       initialData: { skipEditingOnCreate: true },
     });

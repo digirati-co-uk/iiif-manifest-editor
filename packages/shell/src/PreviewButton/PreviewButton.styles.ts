@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { ButtonReset } from "@manifest-editor/ui/atoms/Button";
 
-export const ButtonContainer = styled.div`
+export const ButtonContainer = styled.div.attrs({ "data-preview-button": true })`
   display: flex;
   position: relative;
   width: 10em;

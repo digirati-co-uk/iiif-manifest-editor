@@ -21,49 +21,34 @@ export function CanvasImageMode({
   children: ReactNode;
 }) {
   const t = useTranslations("editors");
-  const linkStyle = {
-    color: PRIMARY,
-    outlineColor: PRIMARY,
-    background: "none",
-    border: 0,
-    padding: 0,
-    alignSelf: "flex-start" as const,
-    textAlign: "left" as const,
-  };
-  const noteStyle = { margin: 0, fontSize: 12, lineHeight: 1.4, color: "#6b7280" };
+  const modeButton = (label: string, note: string, onClick: () => void) => (
+    <div className="flex flex-col gap-1.5 rounded-lg border border-gray-200 bg-white p-3">
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${focusRing} self-start rounded-md border px-3 py-1.5 text-sm font-semibold transition-colors hover:bg-[#fbeff4]`}
+        style={{ color: TEXT, borderColor: "#e9b7ca", background: "#ffffff", outlineColor: PRIMARY }}
+      >
+        {label}
+      </button>
+      <p className="m-0 text-xs leading-snug text-gray-500">{note}</p>
+    </div>
+  );
 
   if (singleImage) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 4, margin: "12px 0" }}>
-        <button
-          type="button"
-          onClick={onSwitchToMulti}
-          className={`${focusRing} self-start text-sm font-medium hover:underline`}
-          style={linkStyle}
-        >
-          {t("ui.switchToMultiimageLayout")}
-        </button>
-        <p style={noteStyle}>{t("ui.shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas")}</p>
+      <div className="my-3">
+        {modeButton(t("ui.switchToMultiimageLayout"), t("ui.shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas"), onSwitchToMulti)}
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 20, margin: "12px 0" }}>
+    <div className="my-3 flex flex-col gap-4">
       {children}
-      {canReturnToSingle ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <button
-            type="button"
-            onClick={onSwitchToSingle}
-            className={`${focusRing} self-start text-sm font-medium hover:underline`}
-            style={linkStyle}
-          >
-            {t("ui.switchToSingleImage")}
-          </button>
-          <p style={noteStyle}>{t("ui.fitsTheCanvasToTheImageAndClearsEmptyPlaceholders")}</p>
-        </div>
-      ) : null}
+      {canReturnToSingle
+        ? modeButton(t("ui.switchToSingleImage"), t("ui.fitsTheCanvasToTheImageAndClearsEmptyPlaceholders"), onSwitchToSingle)
+        : null}
     </div>
   );
 }
