@@ -16,16 +16,17 @@ export default function BrowserRecents() {
   const projects = useQuery({
     queryKey: ["browser-projects"],
     queryFn: listBrowserProjects,
+    select: (projects) => projects.filter((project) => !project.extraData?.tutorial),
   });
 
   useEffect(() => {
-    if (projects.isFetched) {
+    if (projects.isFetched && !searchParams.get("tab")) {
       const newTab = !projects.data || !projects.data.length ? "examples" : "recent";
       if (searchParams.get("tab") !== newTab) {
         router.replace(`?tab=${newTab}`, { scroll: false });
       }
     }
-  }, [projects.isFetched, projects.data]);
+  }, [projects.isFetched, projects.data, router, searchParams]);
 
   return (
     <div className="grid grid-md gap-4">

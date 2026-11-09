@@ -24,7 +24,18 @@ export function TechnicalProperties() {
           <InputContainer $wide>
             {technical.type === "Canvas" ? (
               <CanvasContext canvas={id.get()}>
-                <SmartCanvasSize />
+                <SmartCanvasSize
+                  fallback={
+                    <DimensionsTriplet
+                      widthId={width.containerId()}
+                      width={width.get() || 0}
+                      changeWidth={(value) => width.set(value)}
+                      heightId={height.containerId()}
+                      height={height.get() || 0}
+                      changeHeight={(value) => height.set(value)}
+                    />
+                  }
+                />
               </CanvasContext>
             ) : (
               <DimensionsTriplet

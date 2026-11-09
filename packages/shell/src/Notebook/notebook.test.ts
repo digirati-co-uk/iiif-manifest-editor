@@ -111,3 +111,26 @@ describe("single project note", () => {
     expect(notebook.getState().notes.find((note) => note.id === "workshop")?.content.content?.[0].type).toBe("heading");
   });
 });
+
+describe("tutorial Markdown", () => {
+  test("keeps checklists, images, headings, and resource links when seeding a notebook", () => {
+    const content = parseNotebookMarkdown(
+      "# First manifest\n\n- [ ] Add the image\n- [x] Give it a label\n\n![Page image](https://example.org/page.png)\n\n[Recipe](https://example.org/recipe)"
+    );
+    const serialized = JSON.stringify(content);
+    expect(serialized).toContain('"taskList"');
+    expect(serialized).toContain('"checked":false');
+    expect(serialized).toContain('"checked":true');
+    expect(
+      content.content?.some((node) => node.type === "iiifImage" && node.attrs?.src === "https://example.org/page.png")
+    ).toBe(true);
+    const notebook = createNotebook({ storageKey: false });
+    seedProjectNotebook(notebook, "tutorial-project", {
+      initialNotes: [{ id: "tutorial", title: "Tutorial", content }],
+    });
+    expect(projectNotebookSources(notebook.getState().notes, "tutorial-project").map((source) => source.url)).toEqual([
+      "https://example.org/page.png",
+      "https://example.org/recipe",
+    ]);
+  });
+});

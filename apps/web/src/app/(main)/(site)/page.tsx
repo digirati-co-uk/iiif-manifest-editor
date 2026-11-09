@@ -1,3 +1,4 @@
+import { TutorialListing } from "../../../components/tutorials/TutorialListing";
 import { Tab, TabList, TabPanel, Tabs } from "@manifest-editor/components";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -28,6 +29,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
             <Tab className="" id="examples">
               Examples
             </Tab>
+            <Tab id="tutorials">Tutorials</Tab>
           </TabList>
           <TabPanel className="" id="recent">
             <Suspense>
@@ -36,6 +38,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
           </TabPanel>
           <TabPanel className="" id="examples">
             <ExampleListing examples={examples} />
+          </TabPanel>
+          <TabPanel id="tutorials">
+            <TutorialListing />
           </TabPanel>
         </Tabs>
       </div>
