@@ -244,7 +244,7 @@ export function clampIntervalToNeighbors(
         segment.end <= interval.start || segment.start < interval.start,
     );
   const next = sorted.find(
-    (segment) => segment.start >= interval.end || segment.end > interval.start,
+    (segment) => segment.start >= interval.end || segment.start > interval.start,
   );
   const minStart = previous ? previous.end : 0;
   const maxEnd = next ? next.start : canvasDuration;

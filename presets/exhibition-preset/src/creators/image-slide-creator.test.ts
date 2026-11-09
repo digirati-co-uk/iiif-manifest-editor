@@ -1,13 +1,12 @@
 vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { describe, expect, test, vi } from "vitest";
 import { infoBoxCreator } from "./info-box-creator";
-import {
-  imageSlideCreator,
-  slideshowImageOnlyCreator,
-  slideshowImageTextCreator,
-} from "./image-slide-creator";
+import { imageSlideCreator, slideshowImageOnlyCreator, slideshowImageTextCreator } from "./image-slide-creator";
 
-vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
+vi.mock("@manifest-editor/components", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@manifest-editor/components")>()),
+  EmptyCanvasIcon: () => null,
+}));
 
 function ctx() {
   let id = 0;
