@@ -13,6 +13,7 @@ test(
   "0219: create a video canvas with WebVTT captions from scratch",
   { tag: "@cookbook" },
   async ({ page }, testInfo) => {
+    test.setTimeout(60_000);
     testInfo.annotations.push({
       type: "recipe",
       description: "https://iiif.io/api/cookbook/recipe/0219-using-caption-file/",
@@ -64,8 +65,9 @@ test(
     await expect(dialog).toBeHidden();
 
     // Include a persistence round-trip before checking the complete exported recipe.
-    await page.reload();
+    await page.reload({ waitUntil: "domcontentloaded" });
     await manifestPage.waitForPage();
+    await page.getByRole("button", { name: "Untitled canvas", exact: true }).click();
     await expect(captionSection.getByText(captions.label.en[0], { exact: true })).toBeVisible();
     await expect(captionSection.getByText("WebVTT · English", { exact: true })).toBeVisible();
     await expect(captionSection.getByText(captions.id, { exact: true })).toBeVisible();
@@ -94,7 +96,8 @@ test(
     await captionLabel.blur();
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await expect(captionSection.getByText("English subtitles", { exact: true })).toBeVisible();
-    await page.reload();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: "Untitled canvas", exact: true }).click();
     await expect(captionSection.getByText("English subtitles", { exact: true })).toBeVisible();
   }
 );

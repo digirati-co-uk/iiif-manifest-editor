@@ -1,10 +1,9 @@
 import { getCanvasLayout, getPaintingAnnotations } from "@manifest-editor/editor-api";
 import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition } from "@manifest-editor/shell";
-import { useLocalStorage } from "@manifest-editor/shell";
 import { useEffect } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas, useVault } from "react-iiif-vault";
+import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
@@ -27,29 +26,22 @@ export const imageBlockEditor: CanvasEditorDefinition = {
 };
 
 export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingStrategy }) {
-  const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
   const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
   const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const previewPreset = useConfiguredExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
-  const vault = useVault();
   const canvasId = canvas?.resource.source?.id;
+  const emptyLayout = useVaultSelector(
+    (_, vault) => {
+      if (!canvasId) return false;
+      const resource = vault.get({ id: canvasId, type: "Canvas" });
+      return !!getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length;
+    },
+    [canvasId]
+  );
   useEffect(() => {
-    if (!canvasId) return;
-    const resource = vault.get({ id: canvasId, type: "Canvas" });
-    if (getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length) {
-      setCenterPanelMode("edit");
-      setIsPreview(false);
-    }
-  }, [canvasId, vault, setCenterPanelMode, setIsPreview]);
-
-  useEffect(() => {
-    if (centerPanelMode === "edit" && isPreview) {
-      setIsPreview(false);
-    } else if (centerPanelMode === "preview" && !isPreview) {
-      setIsPreview(true);
-    }
-  }, [centerPanelMode, isPreview, setIsPreview]);
+    if (emptyLayout) setCenterPanelMode("edit");
+  }, [canvasId, emptyLayout, setCenterPanelMode]);
 
   if (!canvas) {
     return null;
@@ -58,11 +50,10 @@ export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingS
   return (
     <CanvasContext canvas={canvas.resource.source?.id}>
       <ImageBlockEditorContent
-        isPreview={!!isPreview}
+        isPreview={centerPanelMode === "preview"}
         previewPreset={previewPreset}
         onModeChange={(nextIsPreview) => {
           setCenterPanelMode(nextIsPreview ? "preview" : "edit");
-          setIsPreview(nextIsPreview);
         }}
       />
     </CanvasContext>

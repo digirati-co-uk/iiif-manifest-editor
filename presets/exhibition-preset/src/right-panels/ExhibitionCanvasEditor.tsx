@@ -14,11 +14,7 @@ import { ExhibitionItemConversion } from "../components/ExhibitionItemConversion
 import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
 import { RescaleSingleImagePrompt } from "../components/RescaleSingleImagePrompt";
 import { isEditableExhibitionCanvas, isExhibitionItem, isInfoBoxCanvas } from "../helpers";
-import {
-  getTourStepAnnotations,
-  supportsTourSteps,
-  useSlideshowWorkbenchState,
-} from "../slideshow-content-positioning";
+import { getTourStepAnnotations, supportsTourSteps } from "../slideshow-content-positioning";
 import {
   buildLayoutPresetBehaviors,
   FloatingPositionPicker,
@@ -61,7 +57,6 @@ export function ExhibitionCanvasAdvancedPanel() {
 }
 
 export function ExhibitionCanvasAdvancedContent() {
-  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const canvas = useCanvas();
   const vault = useVault();
   const manifestEditor = useManifestEditor();
@@ -75,13 +70,9 @@ export function ExhibitionCanvasAdvancedContent() {
   const tourSupported = supportsTourSteps(vault, canvas);
   const hasTourSteps = useVaultSelector(
     (_, vaultInstance) => (canvas ? getTourStepAnnotations(vaultInstance, canvas).length > 0 : false),
-    [canvas?.id, canvas?.annotations?.[0]?.id],
+    [canvas?.id, canvas?.annotations?.[0]?.id]
   );
   const controls = useExhibitionTemplateControls(behavior, hasTourSteps);
-
-  useEffect(() => {
-    setCenterPanelMode("preview");
-  }, [setCenterPanelMode]);
 
   if (!canvas || !resource) return <div className="p-8">Canvas or resource not found</div>;
 
@@ -137,8 +128,8 @@ export function ExhibitionCanvasAdvancedContent() {
                         buildLayoutPresetBehaviors(
                           behavior,
                           option.value,
-                          canvas ? { width: canvas.width, height: canvas.height } : undefined,
-                        ),
+                          canvas ? { width: canvas.width, height: canvas.height } : undefined
+                        )
                       );
                       if (canvas) {
                         injectTextPlaceholders(vault, canvas, option.value);
@@ -154,8 +145,6 @@ export function ExhibitionCanvasAdvancedContent() {
       ) : null}
 
       {tourSupported && !isOpeningCover ? <TourStepsSummary canvas={canvas} /> : null}
-
-
     </ResourceEditingProvider>
   );
 }

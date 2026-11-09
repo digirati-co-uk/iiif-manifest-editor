@@ -105,6 +105,7 @@ test(
       await page.getByRole("menuitem", { name: "Edit range label", exact: true }).click();
       const form = workbench.locator("form");
       await form.getByRole("textbox").fill(label);
+      await form.getByRole("button", { name: /options$/ }).click();
       await form.getByRole("combobox").selectOption(language);
       await form.getByRole("button", { name: "Save", exact: true }).click();
       await expect(form).toHaveCount(0);

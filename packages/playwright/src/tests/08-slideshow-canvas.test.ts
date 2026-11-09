@@ -45,9 +45,16 @@ for (const [creator, fromOverview] of [
     const manifest = JSON.parse(await readFile(path, "utf8"));
     expect(manifest.items).toHaveLength(1);
     expect(manifest.items[0].behavior).toContain(creator === "Multiple images" ? "image" : "right");
+    const toolbar = page.locator(".exhibition-slideshow-current-toolbar");
+    await expect(page.getByRole("button", { name: "Add image to position 1", exact: true })).toBeVisible();
+    await toolbar.getByRole("button", { name: "Preview", exact: true }).click();
     const preview = page.locator(".exhibition-slideshow-current-preview");
     await expect(preview).toBeVisible();
     await expect(preview.getByText("Empty slide", { exact: true })).toBeVisible();
+    await toolbar.getByRole("button", { name: "Edit", exact: true }).click();
+    await expect(preview).toBeHidden();
+    await expect(page.getByRole("button", { name: "Add image to position 1", exact: true })).toBeVisible();
+    await toolbar.getByRole("button", { name: "Preview", exact: true }).click();
     if (creator === "Multiple images with text") {
       await expect(preview.getByText("Add editorial text", { exact: true })).toBeVisible();
     }
@@ -116,6 +123,9 @@ test("Slideshow format in the Exhibition editor opens an empty slide in the prev
   const toolbar = page.locator(".exhibition-slideshow-current-toolbar");
   await expect(toolbar).toBeVisible();
   const preview = page.locator('iframe[title="Exhibition preview"]');
+  await expect(preview).toBeHidden();
+  await expect(page.getByRole("button", { name: "Add image to position 1", exact: true })).toBeVisible();
+  await toolbar.getByRole("button", { name: "Preview", exact: true }).click();
   await expect(preview).toBeVisible();
   await toolbar.getByRole("button", { name: "Edit", exact: true }).click();
   await expect(preview).toBeHidden();

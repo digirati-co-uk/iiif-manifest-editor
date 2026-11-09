@@ -121,6 +121,8 @@ test("Manifest Editor offers the thumbnail creator for an IIIF service link", as
   await dialog.getByRole("textbox", { name: "Paste a link", exact: true }).fill(`${info.id}/info.json`);
   await dialog.getByRole("button", { name: "Use link", exact: true }).click();
   await dialog.getByRole("option", { name: "IIIF thumbnail", exact: true }).click();
-  await expect(dialog.getByRole("button", { name: `${size.width}x${size.height}`, exact: true })).toBeDisabled();
+  await expect(
+    dialog.getByRole("button", { name: `${size.width} × ${size.height} pixels`, exact: true })
+  ).toBeDisabled();
   await expect(dialog.getByRole("button", { name: "Add thumbnail", exact: true })).toBeEnabled();
 });
