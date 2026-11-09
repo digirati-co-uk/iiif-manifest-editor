@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "@manifest-editor/i18n";
+
 import { MessagePortClientVault } from "@manifest-editor/shell";
 import {
   IFRAME_PREVIEW_CONNECT,
@@ -23,6 +25,8 @@ type PreviewConnection = {
 };
 
 export default function IframePreviewRoute() {
+  const webT = useTranslations("web");
+
   const [connection, setConnection] = useState<PreviewConnection | null>(null);
   const vaultRef = useRef<MessagePortClientVault | null>(null);
 
@@ -55,22 +59,15 @@ export default function IframePreviewRoute() {
                 resource: data.resource || current.resource,
                 canvasId: data.canvasId || null,
               }
-            : current,
+            : current
         );
       }
     }
 
     window.addEventListener("message", handleWindowMessage);
     const target =
-      window.opener && !window.opener.closed
-        ? window.opener
-        : window.parent !== window
-          ? window.parent
-          : null;
-    target?.postMessage(
-      { _type: IFRAME_PREVIEW_READY },
-      window.location.origin,
-    );
+      window.opener && !window.opener.closed ? window.opener : window.parent !== window ? window.parent : null;
+    target?.postMessage({ _type: IFRAME_PREVIEW_READY }, window.location.origin);
 
     return () => {
       window.removeEventListener("message", handleWindowMessage);
@@ -82,7 +79,7 @@ export default function IframePreviewRoute() {
   if (!connection) {
     return (
       <main className="flex h-screen items-center justify-center bg-zinc-100 text-sm text-zinc-600">
-        Waiting for preview connection...
+        {webT("preview.waiting")}
       </main>
     );
   }
@@ -90,7 +87,7 @@ export default function IframePreviewRoute() {
   if (connection.resource.type !== "Manifest") {
     return (
       <main className="flex h-screen items-center justify-center bg-zinc-100 text-sm text-zinc-600">
-        Iframe preview supports manifests.
+        {webT("preview.manifestsOnly")}
       </main>
     );
   }
@@ -105,19 +102,19 @@ export default function IframePreviewRoute() {
 }
 
 function IframePreviewCanvas({ canvasId }: { canvasId: string | null }) {
+  const webT = useTranslations("web");
+
   const manifest = useManifest();
   const selectedCanvasId = useMemo(
     () =>
-      canvasId && manifest?.items.some((item) => item.id === canvasId)
-        ? canvasId
-        : manifest?.items[0]?.id || null,
-    [canvasId, manifest?.items],
+      canvasId && manifest?.items.some((item) => item.id === canvasId) ? canvasId : manifest?.items[0]?.id || null,
+    [canvasId, manifest?.items]
   );
 
   if (!manifest) {
     return (
       <main className="flex h-screen items-center justify-center bg-zinc-100 text-sm text-zinc-600">
-        Loading manifest...
+        {webT("preview.loadingManifest")}
       </main>
     );
   }
@@ -125,7 +122,7 @@ function IframePreviewCanvas({ canvasId }: { canvasId: string | null }) {
   if (!selectedCanvasId) {
     return (
       <main className="flex h-screen items-center justify-center bg-zinc-100 text-sm text-zinc-600">
-        No canvas available.
+        {webT("preview.noCanvas")}
       </main>
     );
   }

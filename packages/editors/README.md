@@ -42,3 +42,23 @@ Render the workbench inside an existing shell with a selected canvas and Vault c
 - Hooks and helpers for annotation editing, image choices, positioning, and canvas targets.
 
 See the [source exports](https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/packages/editors/src) for the complete API and TypeScript definitions.
+
+## Interface translations
+
+These editors share the host's `@manifest-editor/i18n` provider. Enable reviewed Dutch through `@manifest-editor/i18n/nl`; the standalone fallback remains English. UI locale and plain wording never choose or replace authored content languages. `LanguageFieldEditor.labelMessage` and editor/media-section definition `labelMessage` references resolve at render time, retaining the legacy label string as fallback. Definitions remain serialisable.
+
+Layout, behavior and property UI consumes the editor-api display metadata. `createAppActions(editor, callback?, editorsTranslate?, commonTranslate?)` and `getPaintingChoiceCandidates(vault, refs, editorsTranslate?)` retain their standalone English defaults; callers in a provider pass its real translators. Callbacks continue to receive the original resource references, technical strings, geometry and InternationalString values.
+
+Atlas controls cross both a custom renderer and separate DOM roots. Internal i18n boundaries transfer the actual runtime instance, preserve an inherited provider when available and never pass a spread hook snapshot as an instance. UI locale/profile changes do not key or recreate the viewer, text editor, annotation request or field state.
+
+Run checks from the repository root using the working Node runtime, without builds:
+
+```sh
+node packages/editors/node_modules/vitest/vitest.mjs run --config packages/editors/vitest.config.ts
+node node_modules/typescript/bin/tsc -p packages/editors/tsconfig.source.json
+node node_modules/typescript/bin/tsc -p packages/editors/tsconfig.test.json
+node node_modules/oxlint/bin/oxlint packages/editors/src packages/editors/test
+npm --prefix internal-packages/languages run translations:check
+```
+
+The no-emit configs use workspace source mappings and a local `allowImportingTsExtensions`; shared TS configs are unchanged. Existing source diagnostics remain visible. See [module 07](../../internal-packages/languages/implementation/modules/07-editors.md) for the exact baseline, dependency limitations and pending integrated browser/publication gates. Neither a catalog pass nor these component tests establishes whole-application translation completion.

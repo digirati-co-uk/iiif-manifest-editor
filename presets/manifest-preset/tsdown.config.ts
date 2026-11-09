@@ -2,6 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  external: [/^@manifest-editor\/i18n(?:\/|$)/],
   clean: !options.watch,
   css: {
     fileName: "index.css",

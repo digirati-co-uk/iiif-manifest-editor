@@ -1,10 +1,7 @@
 import { AudioIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { getContentType, isHttpUrl, matchesExtension } from "../../resource-probes";
-import {
-  CreateAudioAnnotationForm,
-  createAudioAnnotation,
-} from "./create-audio-annotation";
+import { CreateAudioAnnotationForm, createAudioAnnotation } from "./create-audio-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -18,7 +15,9 @@ export const audioAnnotation = defineCreator({
   id: "@manifest-editor/audio-annotation",
   create: createAudioAnnotation,
   label: "Audio",
+  labelMessage: { namespace: "creators", key: "definitions.audio.label" },
   summary: "Add audio from a direct audio-file link.",
+  summaryMessage: { namespace: "creators", key: "definitions.audio.summary" },
   icon: <AudioIcon />,
   render(ctx) {
     return <CreateAudioAnnotationForm {...ctx} />;

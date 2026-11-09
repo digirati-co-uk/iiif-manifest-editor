@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -106,6 +107,8 @@ function toPlainText(value: string) {
 }
 
 export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCaptionedImageAnnotationPayload>) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
     initialValue: props.options.initialData?.body || { en: [""] },
@@ -128,7 +131,7 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3">
       <div>
-        <InputLabel htmlFor={`${id}-url`}>Image URL</InputLabel>
+        <InputLabel htmlFor={`${id}-url`}>{t("image.fromUrl")}</InputLabel>
         <Input
           id={`${id}-url`}
           name="url"
@@ -139,18 +142,18 @@ export function CreateCaptionedImageAnnotation(props: CreatorContext<CreateCapti
         />
       </div>
       <div>
-        <InputLabel htmlFor={`${id}-caption`}>Caption</InputLabel>
+        <InputLabel htmlFor={`${id}-caption`}>{t("form.caption")}</InputLabel>
         <Input
           id={`${id}-caption`}
           name="caption"
-          placeholder="Describe the image"
+          placeholder={t("form.describeImage")}
           onChange={(e: any) => setBody({ en: [e.target.value] })}
           value={toPlainText(body.en?.[0] || "")}
         />
       </div>
       <div className="flex justify-end">
         <ActionButton primary type="submit">
-          Create
+          {common("actions.create")}
         </ActionButton>
       </div>
     </form>

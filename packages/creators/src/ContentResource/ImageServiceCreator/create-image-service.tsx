@@ -1,3 +1,5 @@
+import { useServiceRequest } from "../../use-service-request";
+import { useTranslations } from "@manifest-editor/i18n";
 import {
   canonicalServiceUrl,
   createImageServiceRequest,
@@ -80,9 +82,13 @@ export function getCanonicalUrl(url: string) {
 
 // @todo cover a lot more things - like offering size dropdown.
 export function CreateImageServerForm(props: CreatorContext<CreateImageServicePayload>) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const initialData = props.options.initialData as Partial<CreateImageServicePayload>;
   const initialUrl = initialData.url ? getCanonicalUrl(initialData.url) : "";
   const [url, setUrl] = useState(initialUrl || "");
+
+  const { load, loading, failed } = useServiceRequest();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -92,26 +98,23 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
     const url = formData.url;
 
     if (url) {
-      const info = getCanonicalUrl(url);
-
-      if (!info) {
-        throw new Error("Invalid image service request");
-      }
-
-      fetch(info)
-        .then((r) => r.json())
-        .then((service) => {
+      void load(
+        () => getCanonicalUrl(url),
+        (service) => {
           props.runCreate({ url: formData.url, service });
-        });
+        }
+      );
     }
   };
 
   return (
     <PaddedSidebarContainer>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} aria-busy={loading}>
+        {failed ? <div role="alert">{t("errors.service")}</div> : null}
+        {loading ? <output>{common("status.loading")}</output> : null}
         <div className="flex gap-2 items-center">
           <InputContainer $wide>
-            <InputLabel htmlFor="url">Link to image service</InputLabel>
+            <InputLabel htmlFor="url">{t("form.serviceUrl")}</InputLabel>
             <Input
               id="url"
               name="url"
@@ -127,16 +130,16 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
 
         <div className="relative flex z-0 my-5 h-96 min-h-0 min-w-0 overflow-hidden bg-gray-200 rounded items-center justify-center">
           {url.trim() ? (
-            <ErrorBoundary fallbackRender={() => <div>Invalid service</div>}>
+            <ErrorBoundary fallbackRender={() => <div>{t("form.invalidService")}</div>}>
               <ImageComponent key={url} src={url} />
             </ErrorBoundary>
           ) : (
-            <div className="text-grey-600">Preview</div>
+            <div className="text-grey-600">{common("actions.preview")}</div>
           )}
         </div>
         <div>
-          <ActionButton primary large type="submit" isDisabled={!url}>
-            Create
+          <ActionButton primary large type="submit" isDisabled={!url || loading}>
+            {common("actions.create")}
           </ActionButton>
         </div>
       </form>
@@ -144,16 +147,24 @@ export function CreateImageServerForm(props: CreatorContext<CreateImageServicePa
   );
 }
 
-function ImageComponent({src}: {src: string}) {
+function ImageComponent({ src }: { src: string }) {
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const image = useImage({ id: src } as any, {
-    size: { width: 512 }
-  })
+    size: { width: 512 },
+  });
 
   if (!image) {
-    return <Spinner />;
+    return (
+      <output aria-label={common("status.loading")}>
+        <Spinner />
+      </output>
+    );
   }
 
-  return <div className="h-full">
-    <img className="w-full h-full object-contain" src={image}/>
-  </div>
+  return (
+    <div className="h-full">
+      <img className="w-full h-full object-contain" src={image} alt={t("image.previewAlt")} />
+    </div>
+  );
 }

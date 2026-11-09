@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import _SelectSearch, { SelectSearchProps } from "react-select-search";
 import "react-select-search/style.css";
 import styled from "styled-components";
@@ -67,10 +68,19 @@ const SelectContainer = styled.div`
 `;
 
 export function SelectSearchField(props: SelectSearchProps) {
-  // This is the rights field.
+  const t = useTranslations("ui");
   return (
     <SelectContainer>
-      <_SelectSearch {...props} />
+      <_SelectSearch
+        className="select-search"
+        fuzzySearch
+        closeOnSelect
+        debounce={250}
+        autoComplete="on"
+        placeholder={t("search.placeholder")}
+        emptyMessage={t("search.empty")}
+        {...props}
+      />
     </SelectContainer>
   );
 }

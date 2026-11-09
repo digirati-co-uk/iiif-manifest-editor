@@ -1,4 +1,7 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
-  "include": ["src/**/*.ts", "src/**/*.tsx", "stories/**/*", ".storylite/**/*"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "stories/**/*", ".storylite/**/*"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  }
 }

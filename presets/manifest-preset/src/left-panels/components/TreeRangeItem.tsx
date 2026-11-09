@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { Reference } from "@iiif/presentation-3";
 import {
@@ -49,6 +50,7 @@ interface TreeRangeItemProps extends Partial<TreeItemProps> {
 }
 
 export function TreeRangeItem(props: TreeRangeItemProps) {
+  const t = useTranslations("manifest");
   const manifestEditor = useManifestEditor();
   const range = useInStack("Range");
   const creator = useInlineCreator();
@@ -118,7 +120,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         }
       });
     },
-    [props.parentId, manifestEditor, vault, activeId, back],
+    [props.parentId, manifestEditor, vault, activeId, back]
   );
 
   const insertEmptyRange = useCallback(
@@ -135,10 +137,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             property: "items",
             resource: { id: range.id, type: "Range" },
           },
-        },
+        }
       );
     },
-    [creator],
+    [creator]
   );
 
   const insertSequenceRange = useCallback(
@@ -158,10 +160,10 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             property: "items",
             resource: { id: range.id, type: "Range" },
           },
-        },
+        }
       );
     },
-    [creator, manifestEditor],
+    [creator, manifestEditor]
   );
 
   const getWorkbench = (idx: number | string) => {
@@ -186,7 +188,7 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
         "data-[dragging]:opacity-50 data-[drop-target]:bg-me-primary-500 data-[drop-target]:text-white",
         isMenuOpen ? "bg-me-200" : "",
         isActive ? "bg-me-primary-500 hover:bg-me-primary-600 text-white" : "",
-        isNoNav ? "opacity-40" : "",
+        isNoNav ? "opacity-40" : ""
       )}
       data-menu-open={isMenuOpen}
       data-active={isActive}
@@ -226,16 +228,16 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
             <div
               className={twMerge(
                 "flex items-center gap-2 flex-1 min-w-0",
-                !showCanvases && props.range.isRangeLeaf && "border-transparent",
+                !showCanvases && props.range.isRangeLeaf && "border-transparent"
               )}
             >
               <LocaleString
                 className={twMerge(
                   "truncate whitespace-nowrap flex-1 min-w-0 border-b border-gray-200",
-                  (isMenuOpen || isActive) && "border-transparent",
+                  (isMenuOpen || isActive) && "border-transparent"
                 )}
               >
-                {props.range.label || "Untitled range"}
+                {props.range.label || t("workflow.untitledRange")}
               </LocaleString>
 
               {!isEditing && props.range.isRangeLeaf ? (
@@ -257,28 +259,28 @@ export function TreeRangeItem(props: TreeRangeItemProps) {
                         onAction={() => insertEmptyRange(props.range)}
                         className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                       >
-                        <RangesIcon /> Insert empty range
+                        <RangesIcon /> {t("workflow.insertEmptyRange")}
                       </MenuItem>
                       <MenuItem
                         onAction={() => props.expandRangeItem(props.range, false)}
                         className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                       >
-                        <PlusIcon /> Expand all
+                        <PlusIcon /> {t("workflow.expandAll")}
                       </MenuItem>
                       <MenuItem
                         onAction={() => props.expandRangeItem(props.range, true)}
                         className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                       >
-                        <MinusIcon /> Collapse all
+                        <MinusIcon /> {t("workflow.collapseAll")}
                       </MenuItem>
 
                       <MenuItem
                         onAction={() =>
-                          window.confirm("Are you sure you want to delete this range?") && deleteRange(props.range)
+                          window.confirm(t("workflow.removeRangeConfirm")) && deleteRange(props.range)
                         }
                         className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex text-red-500 gap-2 items-center"
                       >
-                        <DeleteForeverIcon /> Delete range item
+                        <DeleteForeverIcon /> {t("workflow.deleteRangeItem")}
                       </MenuItem>
                     </Menu>
                   </Popover>

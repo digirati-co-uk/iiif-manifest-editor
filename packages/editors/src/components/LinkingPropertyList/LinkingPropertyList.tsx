@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { isSpecificResource, toRef } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
@@ -37,6 +38,7 @@ interface LinkingPropertyListProps {
 }
 
 export function LinkingPropertyList(props: LinkingPropertyListProps) {
+  const t = useTranslations("editors");
   const [canCreate_, actions] = useCreator(props.parent?.source, props.property, props.creationType);
   const [isOpen, setIsOpen] = useState(false);
   const canCreate = props.singleMode ? (props.items || []).length === 0 : canCreate_;
@@ -91,7 +93,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
                     }
                   : e,
                 { parent: toRef(props.parent?.source || props.parent) as any, property: props.property, index },
-                { selectedTab: props.editTab },
+                { selectedTab: props.editTab }
               );
             }}
             createActions={props.createActions}
@@ -111,7 +113,7 @@ export function LinkingPropertyList(props: LinkingPropertyListProps) {
       </div>
       {canCreate ? (
         <ActionButton onPress={() => actions.create(undefined, props.initialData)}>
-          <AddIcon /> Add {props.label}
+          <AddIcon /> {t("messages.addNamed", { label: props.label })}
         </ActionButton>
       ) : null}
     </div>
@@ -126,6 +128,7 @@ function ReferenceOnlyList(props: {
   createActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
   inlineActions?: (ref: Reference, index: number, item: Reference | SpecificResource) => ReactNode;
 }) {
+  const t = useTranslations("editors");
   if (props.reorder) {
     return (
       <ReorderList
@@ -142,7 +145,7 @@ function ReferenceOnlyList(props: {
   }
 
   return (
-    <ul aria-label="Part of items">
+    <ul aria-label={t("ui.partOfItems")}>
       {props.list.map((item, index) => (
         <li key={`${index}_${item.id}`} className="flex items-stretch">
           <ReferenceOnlyItem item={item} onClick={() => props.onSelect(item, index)} />
@@ -156,6 +159,7 @@ function ReferenceOnlyList(props: {
 }
 
 function ReferenceOnlyItem(props: { item: Reference | SpecificResource; onClick: () => void }) {
+  const t = useTranslations("editors");
   const ref = isSpecificResource(props.item) ? props.item.source : props.item;
   const label = getValue(ref.label) || "";
   const summary = getValue(ref.summary) || "";
@@ -174,7 +178,14 @@ function ReferenceOnlyItem(props: { item: Reference | SpecificResource; onClick:
     >
       {icon}
       <span className="min-w-0">
-        <span className="block truncate">{label || <span className="text-gray-500">Untitled {ref.type}</span>}</span>
+        <span className="block truncate">
+          {label || (
+            <span className="text-gray-500">
+              {t("ui.untitled")}
+              {ref.type}
+            </span>
+          )}
+        </span>
         {summary ? <span className="block truncate text-xs text-gray-500">{summary}</span> : null}
       </span>
     </button>
@@ -182,9 +193,10 @@ function ReferenceOnlyItem(props: { item: Reference | SpecificResource; onClick:
 }
 
 export function IIIFBrowserFromPartOfButton(props: { manifestId: string; openBrowser: (manifestId: string) => void }) {
+  const t = useTranslations("editors");
   return (
     <ActionButton
-      aria-label="IIIF Browser"
+      aria-label={t("ui.iiifBrowser")}
       className="rounded-none border-b-2 border-b-gray-200"
       onPress={() => props.openBrowser(props.manifestId)}
     >

@@ -1,3 +1,4 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
 import { TaskList, TaskItem } from "@tiptap/extension-list";
 import { IIIFImage } from "iiif-browser/tiptap";
 import { MarkdownManager } from "@tiptap/markdown";
@@ -16,6 +17,8 @@ export interface ProjectNotebookConfig {
   /** Canvas creator used when opening a saved resource, e.g. an exhibition slide creator. */
   browserCreatorId?: string;
   canvasActionLabel?: string;
+  /** UI-only display metadata; legacy custom labels remain literal fallbacks. */
+  canvasActionLabelMessage?: MessageReference;
   /** Override the project instance ID, e.g. when the host provides its own workspace. */
   projectId?: string;
   /** Stable IDs ensure workshop material is seeded once, preserving subsequent edits. */

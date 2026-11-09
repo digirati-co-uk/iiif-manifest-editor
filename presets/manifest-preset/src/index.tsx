@@ -1,3 +1,4 @@
+import { manifestMessage } from "./i18n";
 import * as annotationsPlugin from "@manifest-editor/annotations";
 import * as canvasLabelGeneratorPlugin from "@manifest-editor/canvas-label-generator";
 import { allCreators } from "@manifest-editor/creators";
@@ -30,8 +31,24 @@ import * as remoteInference from "./plugins/remote-inference";
 export default {
   id: "manifest-editor",
   title: "Manifest Editor",
+  titleMessage: manifestMessage("app.title"),
   project: true,
   projectType: "Manifest",
+};
+
+export const localisation = {
+  requiredNamespaces: [
+    "manifest",
+    "common",
+    "editor-api",
+    "shell",
+    "editors",
+    "creators",
+    "components",
+    "ui",
+    "plugin-annotations",
+    "plugin-canvas-label-generator",
+  ],
 };
 
 export const config = { notebook: { enabled: true } };
@@ -41,6 +58,7 @@ export const centerPanels: LayoutPanel[] = [
   {
     id: "current-canvas",
     label: "Current canvas",
+    labelMessage: manifestMessage("panels.currentCanvas"),
     icon: <CanvasesListIcon />,
     render: (state, { actions }) => <CanvasPanelEditor />,
   },
@@ -55,6 +73,7 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: NOTEBOOK_PANEL_ID,
     label: "Notebook",
+    labelMessage: manifestMessage("panels.notebook"),
     icon: <NotebookIcon />,
     options: { minWidth: 360, maxWidth: 720 },
     render: () => <ProjectNotebookPanel />,

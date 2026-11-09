@@ -2,6 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  external: [/^@manifest-editor\/i18n(?:\/|$)/],
   exports: {
     customExports: (exports) => {
       exports["./dist/index.css"] = "./dist/index.css";

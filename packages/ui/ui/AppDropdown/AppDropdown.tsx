@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 // import $ from "./AppDropdown.module.css";
 import cx from "classnames";
 import useDropdownMenu from "react-accessible-dropdown-menu-hook";
@@ -71,6 +72,8 @@ interface AppDropdownProps {
 }
 
 export function AppDropdown({ as, items, children, style, ...props }: AppDropdownProps) {
+  const t = useTranslations("ui");
+  const { locale, direction } = useEditorI18n();
   const Comp: any = as || Button;
 
   const { itemProps, buttonProps, isOpen, setIsOpen } = useDropdownMenu(items.length);
@@ -128,6 +131,8 @@ export function AppDropdown({ as, items, children, style, ...props }: AppDropdow
           <FloatingOverlay lockScroll style={{ zIndex: 60 }}>
             <FloatingFocusManager context={context} initialFocus={refs.floating}>
               <ul
+                lang={locale}
+                dir={direction}
                 className={$.container}
                 ref={refs.setFloating}
                 style={{
@@ -152,7 +157,11 @@ export function AppDropdown({ as, items, children, style, ...props }: AppDropdow
                         </button>
                       ) : (
                         <div className={$.splitItem}>
-                          <button onClick={item.action} className={cx($.buttonReset, $.iconAction)}>
+                          <button
+                            aria-label={item.isRunning ? t("media.pause") : t("media.play")}
+                            onClick={item.action}
+                            className={cx($.buttonReset, $.iconAction)}
+                          >
                             {item.icon || (item.isRunning ? <PauseIcon /> : <PlayIcon title="" />)}
                           </button>
                           <span className={$.itemLabel} data-running={item.isRunning}>
@@ -160,7 +169,7 @@ export function AppDropdown({ as, items, children, style, ...props }: AppDropdow
                           </span>
                           {item.actionLink ? (
                             <button onClick={item.actionLink} className={cx($.buttonReset, $.itemLink)}>
-                              {item.actionLinkLabel || "view"}
+                              {item.actionLinkLabel || t("actions.view")}
                             </button>
                           ) : null}
                           {item.hotkey ? <span className={$.itemHotkey}>{item.hotkey}</span> : null}

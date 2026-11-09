@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ItemWithHandle, MoreMenu } from "@manifest-editor/components";
@@ -34,7 +35,9 @@ export function ReorderListItem({
   grid,
   ...props
 }: ReorderListItemProps) {
+  const t = useTranslations("editors");
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
+    attributes: { roleDescription: t("reorder.roleDescription") },
     id: item.id,
     data: { ref: item },
     transition: {
@@ -57,7 +60,7 @@ export function ReorderListItem({
       <>
         {inlineActions}
         {actions?.length ? (
-          <AppDropdown aria-label="Action menu" as={HandleContainer} items={actions}>
+          <AppDropdown aria-label={t("ui.actionMenu")} as={HandleContainer} items={actions}>
             <MoreMenu />
           </AppDropdown>
         ) : null}
@@ -82,12 +85,7 @@ export function ReorderListItem({
         actions={actionControls}
         handle={
           inlineHandle ? null : (
-            <HandleContainer
-              ref={setActivatorNodeRef}
-              {...attributes}
-              aria-label="Reorder item"
-              {...listeners}
-            >
+            <HandleContainer ref={setActivatorNodeRef} {...attributes} aria-label={t("ui.reorderItem")} {...listeners}>
               <ResizeHandleIcon />
             </HandleContainer>
           )

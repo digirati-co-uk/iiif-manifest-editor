@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useRef, useState } from "react";
 import { useProjectCreators, useProjectContext } from "@manifest-editor/projects";
 import { useApps, analyse } from "@manifest-editor/shell";
@@ -12,6 +13,8 @@ import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
 import { TickIcon } from "@manifest-editor/ui/icons/TickIcon";
 
 export function ManifestOpener() {
+  const webT = useTranslations("web");
+
   const { changeApp } = useApps();
   const editProject = (project: any) => {
     if (project.resource.type === "Manifest") {
@@ -30,7 +33,7 @@ export function ManifestOpener() {
       {currentProject?.name}
       {currentProject ? (
         <Button style={{ marginLeft: 20 }} onClick={() => editProject(currentProject)}>
-          Continue editing
+          {webT("legacy.continue")}
         </Button>
       ) : null}
     </InfoMessage>
@@ -52,7 +55,7 @@ export function ManifestOpener() {
         setLoading(false);
         setSuccess(false);
         setChoice(null);
-        setError(`Unknown problem with manifest`);
+        setError("legacy.openFailed");
         return;
       }
     }
@@ -66,16 +69,23 @@ export function ManifestOpener() {
     if (data.manifest) {
       setLoading(true);
 
-      const result = await analyse(data.manifest);
+      let result;
+      try {
+        result = await analyse(data.manifest);
+      } catch {
+        setLoading(false);
+        setError("legacy.openFailed");
+        return;
+      }
 
       if (!result) {
         setLoading(false);
-        setError("Unknown manifest");
+        setError("legacy.openFailed");
         return;
       }
       if ((result.type !== "Manifest" && result.type !== "Collection") || !result.id) {
         setLoading(false);
-        setError(`Expected manifest, got ${result.type}`);
+        setError("import.invalidType");
         return;
       }
 
@@ -101,30 +111,38 @@ export function ManifestOpener() {
             }}
             ref={form}
           >
-            <Input id="manifest" name="manifest" placeholder={"Paste manifest URL or JSON"} onBlur={checkManifest} />
+            <Input
+              id="manifest"
+              name="manifest"
+              placeholder={webT("legacy.paste")}
+              aria-label={webT("legacy.paste")}
+              onBlur={checkManifest}
+            />
           </form>
         </S.InputContainer>
         <S.LoadingContainer>
           {error ? (
-            <S.ErrorBox>{error}</S.ErrorBox>
+            <S.ErrorBox>{webT(error)}</S.ErrorBox>
           ) : loading ? (
             <S.LoadingBox $loading={true}>
-              <div className="TODO-spinner" /> Loading
+              <div className="TODO-spinner" /> {webT("feedback.loadingShort")}
             </S.LoadingBox>
           ) : success && chosen ? (
             <>
               <S.LoadingBox>
-                <TickIcon /> Valid {chosen.type} (<LocaleString as="strong">{chosen.label}</LocaleString>)
+                <TickIcon /> {webT(chosen.type === "Manifest" ? "legacy.validManifest" : "legacy.validCollection")} (
+                <LocaleString as="strong">{chosen.label}</LocaleString>)
               </S.LoadingBox>
               <S.OpenManifest>
                 <Button onClick={loadChosen}>
-                  Open {chosen.type} <RightArrow />
+                  {webT(chosen.type === "Manifest" ? "browser.openManifest" : "legacy.openCollection")} <RightArrow />
                 </Button>
               </S.OpenManifest>
             </>
           ) : (
             <S.LearnMore onClick={() => changeApp({ id: "about" })}>
-              Learn more about the Manifest Editor <RightArrow />
+              {webT("legacy.learnMore")}
+              <RightArrow />
             </S.LearnMore>
           )}
         </S.LoadingContainer>

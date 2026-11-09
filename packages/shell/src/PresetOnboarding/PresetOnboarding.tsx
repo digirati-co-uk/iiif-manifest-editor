@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, Modal } from "@manifest-editor/components";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useManifest, useVault } from "react-iiif-vault";
@@ -24,7 +25,7 @@ function setDismissed(key: string) {
 
 export function getPresetOnboardingDismissalKey(
   onboarding: { id: string; mode: "global" | "per-resource" },
-  resource?: { id: string; type: string },
+  resource?: { id: string; type: string }
 ) {
   if (onboarding.mode === "global" || !resource) {
     return `preset-onboarding/${onboarding.id}`;
@@ -43,6 +44,10 @@ export function useOpenPresetOnboarding() {
 }
 
 export function PresetOnboardingButton({ className }: { className?: string }) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const onboarding = app.preset?.onboarding;
   const openOnboarding = useOpenPresetOnboarding();
@@ -51,12 +56,13 @@ export function PresetOnboardingButton({ className }: { className?: string }) {
 
   return (
     <ActionButton className={className} onPress={openOnboarding}>
-      {onboarding.openLabel || "Open guide"}
+      {resolveMessage(onboarding?.openLabelMessage, onboarding.openLabel) || t("onboarding.openGuide")}
     </ActionButton>
   );
 }
 
 export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName?: string }) {
+  const { resolveMessage } = useEditorI18n();
   const app = useApp();
   const resource = useAppResource();
   const { state, setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
@@ -67,6 +73,7 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
 
   if (custom) {
     return custom({
+      i18n: { resolveMessage },
       ...props,
       preview: app.preset?.preview,
       showOnboardingPreviewHint,
@@ -82,6 +89,10 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
 }
 
 export function PresetOnboarding() {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
@@ -94,13 +105,13 @@ export function PresetOnboarding() {
   const resolvedTemplate = resolvePresetTemplateSelection(
     templateSelection.templates,
     templateSelection.selectedTemplateId,
-    manifestBehavior,
+    manifestBehavior
   );
   const selectedTemplateIdRef = useRef<string | null>(resolvedTemplate?.id || null);
   selectedTemplateIdRef.current = resolvedTemplate?.id || null;
   const dismissalKey = useMemo(
     () => (onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null),
-    [onboarding, resource],
+    [onboarding, resource]
   );
   const [open, setOpen] = useState(false);
   const [autoOpened, setAutoOpened] = useState(false);
@@ -128,7 +139,7 @@ export function PresetOnboarding() {
 
   const dismiss = () => {
     templateSelection.setSelectedTemplateId(
-      resolvePresetTemplateSelection(templateSelection.templates, selectedTemplateIdRef.current)?.id || null,
+      resolvePresetTemplateSelection(templateSelection.templates, selectedTemplateIdRef.current)?.id || null
     );
     setDismissed(dismissalKey);
     if (autoOpened) {
@@ -162,23 +173,28 @@ export function PresetOnboarding() {
 
   return (
     <Modal
-      title={onboarding.title}
+      title={resolveMessage(onboarding?.titleMessage, onboarding.title)}
       open={open}
       onClose={dismiss}
       actions={
         <div className="flex gap-2">
-          <ActionButton onPress={dismiss}>{onboarding.dismissLabel || "Dismiss"}</ActionButton>
+          <ActionButton onPress={dismiss}>
+            {resolveMessage(onboarding?.dismissLabelMessage, onboarding.dismissLabel) || t("onboarding.close")}
+          </ActionButton>
           {resolvedTemplate ? (
             <ActionButton primary onPress={confirm}>
-              {onboarding.primaryLabel || "Continue"}
+              {resolveMessage(onboarding?.primaryLabelMessage, onboarding.primaryLabel) || t("onboarding.continue")}
             </ActionButton>
           ) : null}
         </div>
       }
     >
       <div className="flex flex-col gap-4 p-6">
-        {onboarding.summary ? <p className="text-sm text-gray-600">{onboarding.summary}</p> : null}
+        {resolveMessage(onboarding?.summaryMessage, onboarding.summary) ? (
+          <p className="text-sm text-gray-600">{resolveMessage(onboarding?.summaryMessage, onboarding.summary)}</p>
+        ) : null}
         {onboarding.renderBody({
+          i18n: { resolveMessage },
           ...templateSelection,
           selectedTemplateId: resolvedTemplate?.id || null,
           selectedTemplate: resolvedTemplate,

@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations, type MessageReference } from "@manifest-editor/i18n";
 import { MenuIcon } from "@manifest-editor/ui/icons/MenuIcon";
 import { Dropdown, DropdownDivider, DropdownLabel, DropdownMenu } from "@manifest-editor/ui/atoms/Dropdown";
 import { Button } from "@manifest-editor/ui/atoms/Button";
@@ -29,6 +30,8 @@ export const IconButton = styled.button`
 `;
 
 export function AppMenu(props: { hideMenu?: boolean }) {
+  const t = useTranslations("projects");
+  const { resolveMessage } = useEditorI18n();
   const { current: currentProject } = useProjectContext();
   const [isMenuHidden, setIsMenuHidden] = useLocalStorage("menu-hidden");
   const { apps, changeApp } = useApps();
@@ -65,11 +68,11 @@ export function AppMenu(props: { hideMenu?: boolean }) {
 
   return (
     <Dropdown>
-      <IconButton {...buttonProps}>
+      <IconButton {...buttonProps} aria-label={t("menu.toggle")}>
         <MenuIcon />
       </IconButton>
       <DropdownMenu $open={isOpen}>
-        <DropdownLabel>Apps</DropdownLabel>
+        <DropdownLabel>{t("menu.apps")}</DropdownLabel>
         <DropdownDivider />
         {filteredApps.map((app, key) => (
           <Button
@@ -80,15 +83,18 @@ export function AppMenu(props: { hideMenu?: boolean }) {
               setIsOpen(false);
             }}
           >
-            {app.metadata.title}
+            {resolveMessage(
+              (app.metadata as MappedApp["metadata"] & { titleMessage?: MessageReference }).titleMessage,
+              app.metadata.title
+            )}
           </Button>
         ))}
         {props.hideMenu ? null : (
           <>
-            <DropdownLabel>Quick Settings</DropdownLabel>
+            <DropdownLabel>{t("menu.quickSettings")}</DropdownLabel>
             <DropdownDivider />
             <Button {...(itemProps[filteredApps.length + 0] as any)} onClick={() => setIsMenuHidden(!isMenuHidden)}>
-              {isMenuHidden ? "Show menu" : "Hide menu"}
+              {t(isMenuHidden ? "menu.show" : "menu.hide")}
             </Button>
           </>
         )}

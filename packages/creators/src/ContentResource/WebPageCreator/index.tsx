@@ -15,7 +15,9 @@ export const webPageCreator = defineCreator({
   id: "@manifest-editor/web-page-creator",
   create: createWebPage,
   label: "Web page",
+  labelMessage: { namespace: "creators", key: "definitions.webpage.label" },
   summary: "Link to an external webpage.",
+  summaryMessage: { namespace: "creators", key: "definitions.webpage.summary" },
   icon: <LinkIcon />,
   async supportsResource(value, helpers) {
     if (!isHttpUrl(value)) return false;

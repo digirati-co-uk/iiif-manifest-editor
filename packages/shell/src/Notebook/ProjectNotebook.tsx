@@ -1,6 +1,7 @@
+import { useTranslations } from "@manifest-editor/i18n";
 /* eslint-disable next/no-img-element -- External IIIF thumbnails in a shared React library. */
 import { getValue } from "@iiif/helpers";
-import { BackgroundActionMenuButton, IIIFBrowserIcon } from "@manifest-editor/components";
+import { BackgroundActionMenuButton, IIIFBrowserIcon, IIIFBrowserI18nProvider } from "@manifest-editor/components";
 import { useManifest } from "react-iiif-vault";
 import styled from "styled-components";
 import type { IIIFBrowserProps } from "iiif-browser";
@@ -80,6 +81,8 @@ export function ProjectNotebookHeader() {
 }
 
 export function ProjectNotebookButton() {
+  const t = useTranslations("shell");
+
   const config = useConfig();
   const actions = useLayoutActions();
   const state = useLayoutState();
@@ -87,8 +90,8 @@ export function ProjectNotebookButton() {
   const isOpen = state.leftPanel.current === NOTEBOOK_PANEL_ID && state.leftPanel.open;
   return (
     <BackgroundActionMenuButton
-      title="Notebook: notes and saved links for this project"
-      aria-label="Project notebook"
+      title={t("notebook.hint")}
+      aria-label={t("notebook.title")}
       aria-expanded={isOpen}
       active={isOpen}
       onClick={() => (isOpen ? actions.leftPanel.close() : actions.leftPanel.open({ id: NOTEBOOK_PANEL_ID }))}
@@ -120,10 +123,13 @@ const SidebarNotebook = styled(IIIFNotebook)`
 `;
 
 export function ProjectNotebookPanel() {
+  const t = useTranslations("shell");
+
   const { notebook, projectId } = useProjectNotebook();
   const config = useConfig().notebook;
   const manifest = useManifest();
-  const title = getValue(manifest?.label) || "Untitled manifest";
+  const contentTitle = getValue(manifest?.label);
+  const title = contentTitle || t("notebook.untitled");
   const vault = usePreviewVault();
   const [noteId, setNoteId] = useState<string>();
   const { create } = useLayoutActions();
@@ -144,28 +150,32 @@ export function ProjectNotebookPanel() {
     [create, manifest, config?.browserCreatorId]
   );
   useEffect(() => {
-    setNoteId(ensureProjectNote(notebook, projectId, title, config?.initialNotes?.[0]?.id));
+    setNoteId(
+      ensureProjectNote(notebook, projectId, contentTitle || "Untitled manifest", config?.initialNotes?.[0]?.id)
+    );
     notebook.getState().setWorkspaceView(projectId, { sidebarCollapsed: true });
-  }, [notebook, projectId, title, config?.initialNotes]);
+  }, [notebook, projectId, contentTitle, config?.initialNotes]);
   return (
     <PreviewVaultBoundary>
       <div className="flex h-full min-h-0 flex-col bg-white">
         <div className="border-b border-gray-100 px-4 py-4">
           <h2 className="m-0 text-base font-medium leading-snug text-gray-800">{title}</h2>
-          <p className="mb-0 mt-1 text-xs leading-relaxed text-gray-500">Notes and saved links for this project</p>
+          <p className="mb-0 mt-1 text-xs leading-relaxed text-gray-500">{t("notebook.description")}</p>
         </div>
         <div className="min-h-0 flex-1">
           {noteId ? (
-            <SidebarNotebook
-              notebook={notebook}
-              projectId={projectId}
-              noteId={noteId}
-              height="100%"
-              defaultSidebarCollapsed
-              className="manifest-project-notebook"
-              browserProps={{ vault }}
-              onOpenResource={onOpenResource}
-            />
+            <IIIFBrowserI18nProvider>
+              <SidebarNotebook
+                notebook={notebook}
+                projectId={projectId}
+                noteId={noteId}
+                height="100%"
+                defaultSidebarCollapsed
+                className="manifest-project-notebook"
+                browserProps={{ vault }}
+                onOpenResource={onOpenResource}
+              />
+            </IIIFBrowserI18nProvider>
           ) : null}
         </div>
       </div>
@@ -190,13 +200,15 @@ export function NotebookCreatorSources({
   isDisabled: boolean;
   onOpenNotebook?: () => void;
 }) {
+  const t = useTranslations("shell");
+
   const { notebook, projectId, enabled } = useProjectNotebook();
   const notes = useStore(notebook, (state) => state.notes);
   const sources = useMemo(() => projectNotebookSources(notes, projectId), [notes, projectId]);
   if (!enabled || !sources.length) return null;
   return (
-    <section aria-label="Saved in your notebook" className="mt-4">
-      <h3 className="mb-1 text-xs font-medium text-gray-500">Saved in your notebook</h3>
+    <section aria-label={t("notebook.saved")} className="mt-4">
+      <h3 className="mb-1 text-xs font-medium text-gray-500">{t("notebook.saved")}</h3>
       <div className="flex flex-col">
         {sources.length > 4 && onOpenNotebook ? (
           <button
@@ -208,7 +220,7 @@ export function NotebookCreatorSources({
             <span className="flex h-8 w-8 shrink-0 items-center justify-center">
               <IIIFBrowserIcon className="h-5 w-5" />
             </span>
-            View all {sources.length} saved resources in IIIF Browser
+            {t("notebook.viewAll", { count: sources.length })}
           </button>
         ) : null}
         {sources.slice(0, 4).map((source) => (

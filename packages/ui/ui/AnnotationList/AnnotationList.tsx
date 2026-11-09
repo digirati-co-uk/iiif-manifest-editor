@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
 import { isSpecificResource } from "@iiif/parser";
 import { Reference, SpecificResource } from "@iiif/presentation-3";
@@ -18,11 +19,12 @@ interface AnnotationListProps {
 }
 
 export function AnnotationList(props: AnnotationListProps) {
+  const t = useTranslations("ui");
   if (props.list.length === 0) {
     return (
       <>
         <EmptyState $noMargin $box>
-          No annotations
+          {t("annotation.empty")}
         </EmptyState>
       </>
     );

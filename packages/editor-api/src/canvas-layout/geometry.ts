@@ -1,3 +1,5 @@
+import type { DisplayMessageReference } from "../meta/display";
+
 export interface Size {
   width: number;
   height: number;
@@ -47,6 +49,7 @@ export function resizeCanvasEdge(size: Size, edge: CanvasEdge, delta: number): R
 export interface CanvasLayout {
   id: string;
   label: string;
+  labelMessage?: DisplayMessageReference;
   slots: Rectangle[];
 }
 
@@ -58,25 +61,58 @@ const grid = (columns: number, rows: number) =>
 
 /** Slots are fractions of canvas dimensions; add a layout here to expose it in every picker. */
 export const canvasLayouts: CanvasLayout[] = [
-  { id: "pair", label: "Side by side", slots: grid(2, 1) },
-  { id: "triptych", label: "Three columns", slots: grid(3, 1) },
+  {
+    id: "pair",
+    label: "Side by side",
+    labelMessage: { namespace: "editor-api", key: "layout.pair" },
+    slots: grid(2, 1),
+  },
+  {
+    id: "triptych",
+    label: "Three columns",
+    labelMessage: { namespace: "editor-api", key: "layout.triptych" },
+    slots: grid(3, 1),
+  },
   {
     id: "feature-left",
     label: "Feature left",
+    labelMessage: { namespace: "editor-api", key: "layout.featureLeft" },
     slots: [slot(0.025, 0.025, 0.6, 0.95), slot(0.65, 0.025, 0.325, 0.4625), slot(0.65, 0.5125, 0.325, 0.4625)],
   },
   {
     id: "feature-top",
     label: "Feature above",
+    labelMessage: { namespace: "editor-api", key: "layout.featureAbove" },
     slots: [slot(0.025, 0.025, 0.95, 0.6), slot(0.025, 0.65, 0.4625, 0.325), slot(0.5125, 0.65, 0.4625, 0.325)],
   },
-  { id: "grid-four", label: "Four images", slots: grid(2, 2) },
-  { id: "grid-six", label: "Six images", slots: grid(3, 2) },
-  { id: "hero-inset", label: "Hero + inset", slots: [slot(0.02, 0.02, 0.96, 0.96), slot(0.62, 0.58, 0.32, 0.34)] },
-  { id: "offset-pair", label: "Offset pair", slots: [slot(0.04, 0.08, 0.58, 0.72), slot(0.49, 0.4, 0.46, 0.55)] },
+  {
+    id: "grid-four",
+    label: "Four images",
+    labelMessage: { namespace: "editor-api", key: "layout.fourImages" },
+    slots: grid(2, 2),
+  },
+  {
+    id: "grid-six",
+    label: "Six images",
+    labelMessage: { namespace: "editor-api", key: "layout.sixImages" },
+    slots: grid(3, 2),
+  },
+  {
+    id: "hero-inset",
+    label: "Hero + inset",
+    labelMessage: { namespace: "editor-api", key: "layout.heroInset" },
+    slots: [slot(0.02, 0.02, 0.96, 0.96), slot(0.62, 0.58, 0.32, 0.34)],
+  },
+  {
+    id: "offset-pair",
+    label: "Offset pair",
+    labelMessage: { namespace: "editor-api", key: "layout.offsetPair" },
+    slots: [slot(0.04, 0.08, 0.58, 0.72), slot(0.49, 0.4, 0.46, 0.55)],
+  },
   {
     id: "cascade",
     label: "Cascade",
+    labelMessage: { namespace: "editor-api", key: "layout.cascade" },
     slots: [
       slot(0.03, 0.05, 0.3, 0.55),
       slot(0.24, 0.22, 0.3, 0.55),
@@ -87,6 +123,7 @@ export const canvasLayouts: CanvasLayout[] = [
   {
     id: "stack-right",
     label: "Stacked",
+    labelMessage: { namespace: "editor-api", key: "layout.stacked" },
     slots: [
       slot(0.03, 0.05, 0.55, 0.9),
       slot(0.5, 0.08, 0.26, 0.4),
@@ -97,6 +134,7 @@ export const canvasLayouts: CanvasLayout[] = [
   {
     id: "scatter",
     label: "Scatter",
+    labelMessage: { namespace: "editor-api", key: "layout.scatter" },
     slots: [
       slot(0.03, 0.06, 0.42, 0.62),
       slot(0.36, 0.2, 0.32, 0.5),
@@ -108,6 +146,7 @@ export const canvasLayouts: CanvasLayout[] = [
   {
     id: "gallery",
     label: "Gallery wall",
+    labelMessage: { namespace: "editor-api", key: "layout.galleryWall" },
     slots: [
       slot(0.03, 0.06, 0.3, 0.54),
       slot(0.37, 0.04, 0.24, 0.38),
@@ -117,13 +156,30 @@ export const canvasLayouts: CanvasLayout[] = [
       slot(0.67, 0.62, 0.29, 0.3),
     ],
   },
-  { id: "blank", label: "Blank canvas", slots: [] },
+  { id: "blank", label: "Blank canvas", labelMessage: { namespace: "editor-api", key: "layout.blank" }, slots: [] },
 ];
-export const canvasSizePresets = [
-  { label: "12 × 8 · Landscape", columns: 12, rows: 8 },
-  { label: "12 × 6 · Wide", columns: 12, rows: 6 },
-  { label: "12 × 12 · Square", columns: 12, rows: 12 },
-  { label: "8 × 12 · Portrait", columns: 8, rows: 12 },
+export interface CanvasSizePreset {
+  label: string;
+  labelMessage?: DisplayMessageReference;
+  columns: number;
+  rows: number;
+}
+
+export const canvasSizePresets: CanvasSizePreset[] = [
+  {
+    label: "12 × 8 · Landscape",
+    labelMessage: { namespace: "editor-api", key: "sizes.landscape" },
+    columns: 12,
+    rows: 8,
+  },
+  { label: "12 × 6 · Wide", labelMessage: { namespace: "editor-api", key: "sizes.wide" }, columns: 12, rows: 6 },
+  { label: "12 × 12 · Square", labelMessage: { namespace: "editor-api", key: "sizes.square" }, columns: 12, rows: 12 },
+  {
+    label: "8 × 12 · Portrait",
+    labelMessage: { namespace: "editor-api", key: "sizes.portrait" },
+    columns: 8,
+    rows: 12,
+  },
 ];
 export function validSize(size: Size) {
   return Number.isFinite(size.width) && Number.isFinite(size.height) && size.width >= 1 && size.height >= 1;

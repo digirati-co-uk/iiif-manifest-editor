@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { moveEntities } from "@iiif/helpers/vault/actions";
 import type { InternationalString } from "@iiif/presentation-3";
@@ -15,14 +16,7 @@ import { useLayoutActions } from "@manifest-editor/shell";
 import { EditIcon } from "@manifest-editor/ui/icons/EditIcon";
 import { useRef, useState } from "react";
 import { useDrop } from "react-aria";
-import {
-  Button,
-  Menu,
-  MenuItem,
-  MenuTrigger,
-  Popover,
-  Separator,
-} from "react-aria-components";
+import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from "react-aria-components";
 import { flushSync } from "react-dom";
 import { CanvasContext, LocaleString, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
@@ -46,10 +40,7 @@ export function RangeWorkbenchSection({
 }: {
   range: RangeTableOfContentsNode;
   isSplitting: boolean;
-  onSplit: (
-    range: RangeTableOfContentsNode,
-    item: RangeTableOfContentsNode,
-  ) => void;
+  onSplit: (range: RangeTableOfContentsNode, item: RangeTableOfContentsNode) => void;
   mergeUpLabel?: InternationalString | string | null;
   onMergeUp?: (range: RangeTableOfContentsNode, empty?: boolean) => void;
   mergeDownLabel?: InternationalString | string | null;
@@ -57,12 +48,10 @@ export function RangeWorkbenchSection({
   onDelete?: (range: RangeTableOfContentsNode) => void;
   nextRangeLabel?: string;
   idx: number;
-  onPreviewCanvas?: (
-    range: RangeTableOfContentsNode,
-    canvas: RangeTableOfContentsNode,
-  ) => void;
+  onPreviewCanvas?: (range: RangeTableOfContentsNode, canvas: RangeTableOfContentsNode) => void;
   onClosePreview?: () => void;
 }) {
+  const t = useTranslations("manifest");
   const [{ size }] = useGridOptions("default-grid-size", {
     defaultGridSize: "grid-sm",
   });
@@ -70,10 +59,9 @@ export function RangeWorkbenchSection({
   const { edit } = useLayoutActions();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isEditingLabel, setIsEditingLabel] = useState(false);
-  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] =
-    useLoadMoreItems(range.items || [], {
-      batchSize: 32,
-    });
+  const [rangeItems, { intersector, isFullyLoaded, loadMore, reset }] = useLoadMoreItems(range.items || [], {
+    batchSize: 32,
+  });
 
   const vault = useVault();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -133,16 +121,14 @@ export function RangeWorkbenchSection({
             type: "Range",
             key: "items",
           },
-        }),
+        })
       );
     },
   });
 
   const isEmpty = !range.items || range.items?.length === 0;
 
-  const firstCanvasId = (range.items ?? []).find(
-    (i) => i.type === "Canvas",
-  )?.id;
+  const firstCanvasId = (range.items ?? []).find((i) => i.type === "Canvas")?.id;
 
   return (
     <>
@@ -152,20 +138,17 @@ export function RangeWorkbenchSection({
         {...dropProps}
         data-drop-target={isDropTarget}
         style={{
-          paddingInlineStart:
-            "calc(1rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
-          paddingInlineEnd:
-            "calc(1rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
+          paddingInlineStart: "calc(1rem + var(--manifest-editor-layout-left-sidebar-small, 0px))",
+          paddingInlineEnd: "calc(1rem + var(--manifest-editor-layout-right-sidebar-small, 0px))",
         }}
-        className={twMerge(
-          "w-full border-b border-b-gray-500/20 p-4 relative",
-          isDropTarget && "bg-me-primary-100",
-        )}
+        className={twMerge("w-full border-b border-b-gray-500/20 p-4 relative", isDropTarget && "bg-me-primary-100")}
       >
         <div id={`workbench-${range.id}`} className="absolute -top-16" />
         <div className="flex items-center gap-4 max-w-full">
           <Button
-            aria-label={`${isExpanded ? "Collapse" : "Expand"} ${getValue(range.label) || "untitled range"}`}
+            aria-label={t(isExpanded ? "workflow.collapseNamed" : "workflow.expandNamed", {
+              label: getValue(range.label) || t("workflow.untitledRange"),
+            })}
             className="flex items-center gap-2 min-w-0"
             onPress={() => {
               if (isExpanded) reset();
@@ -181,20 +164,19 @@ export function RangeWorkbenchSection({
             />
             {isEditingLabel ? null : (
               <LocaleString className="text-xl text-left truncate overflow-ellipsis min-w-0 flex-1">
-                {range.label || "Untitled range"}
+                {range.label || t("workflow.untitledRange")}
               </LocaleString>
             )}
           </Button>
 
           {isEditingLabel ? (
-            <InlineLabelEditor
-              resource={{ id: range.id, type: "Range" }}
-              onSubmit={() => setIsEditingLabel(false)}
-            />
+            <InlineLabelEditor resource={{ id: range.id, type: "Range" }} onSubmit={() => setIsEditingLabel(false)} />
           ) : null}
 
           <MenuTrigger>
-            <ActionButton aria-label={`Actions for ${getValue(range.label) || "untitled range"}`}>
+            <ActionButton
+              aria-label={t("workflow.actionsFor", { label: getValue(range.label) || t("workflow.untitledRange") })}
+            >
               <MoreMenuIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
             <Popover className="bg-white shadow-md rounded-md p-1">
@@ -204,7 +186,7 @@ export function RangeWorkbenchSection({
                   onAction={() => setIsEditingLabel(true)}
                 >
                   <EditIcon />
-                  Edit range label
+                  {t("workflow.editRangeLabel")}
                 </MenuItem>
                 <MenuItem
                   className="hover:bg-me-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
@@ -215,22 +197,20 @@ export function RangeWorkbenchSection({
                       {
                         forceOpen: true,
                         selectedTab: "@manifest-editor/metadata",
-                      },
+                      }
                     )
                   }
                 >
                   <ListingIcon />
-                  Edit range metadata
+                  {t("workflow.editRangeMetadata")}
                 </MenuItem>
                 {!isEmpty && onMergeUp && (
                   <MenuItem
                     onPress={() => onMergeUp(range, true)}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   >
-                    <MergeUpIcon className="text-md" /> Empty contents into
-                    <LocaleString className="font-semibold">
-                      {mergeUpLabel}
-                    </LocaleString>
+                    <MergeUpIcon className="text-md" />{" "}
+                    {t("workflow.emptyContentsInto", { label: getValue(mergeUpLabel) || t("workflow.untitledRange") })}
                   </MenuItem>
                 )}
                 {!isEmpty && onMergeDown && (
@@ -238,41 +218,31 @@ export function RangeWorkbenchSection({
                     onPress={() => onMergeDown(range, true)}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center"
                   >
-                    <MergeDownIcon className="text-md" /> Empty contents into
-                    <LocaleString className="font-semibold">
-                      {mergeDownLabel}
-                    </LocaleString>
+                    <MergeDownIcon className="text-md" />{" "}
+                    {t("workflow.emptyContentsInto", {
+                      label: getValue(mergeDownLabel) || t("workflow.untitledRange"),
+                    })}
                   </MenuItem>
                 )}
                 {!isEmpty && <Separator className="h-0.5 bg-gray-200" />}
                 {!isEmpty && onMergeUp && (
                   <MenuItem
-                    onPress={() =>
-                      window.confirm(
-                        "This range will be removed and the items will be merged into the previous range.",
-                      ) && onMergeUp(range)
-                    }
+                    onPress={() => window.confirm(t("workflow.mergePreviousConfirm")) && onMergeUp(range)}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
-                    <MergeUpIcon className="text-md" /> Merge into
-                    <LocaleString className="font-semibold">
-                      {mergeUpLabel}
-                    </LocaleString>
+                    <MergeUpIcon className="text-md" />{" "}
+                    {t("workflow.mergeInto", { label: getValue(mergeUpLabel) || t("workflow.untitledRange") })}
                   </MenuItem>
                 )}
                 {!isEmpty && onMergeDown && (
                   <MenuItem
                     onPress={() => {
-                      window.confirm(
-                        "This range will be removed and the items will be merged into the next range.",
-                      ) && onMergeDown(range);
+                      window.confirm(t("workflow.mergeNextConfirm")) && onMergeDown(range);
                     }}
                     className="hover:bg-gray-100 px-2 py-1 text-sm m-0.5 flex gap-2 items-center text-red-500"
                   >
-                    <MergeDownIcon className="text-md" /> Merge into
-                    <LocaleString className="font-semibold">
-                      {mergeDownLabel}
-                    </LocaleString>
+                    <MergeDownIcon className="text-md" />{" "}
+                    {t("workflow.mergeInto", { label: getValue(mergeDownLabel) || t("workflow.untitledRange") })}
                   </MenuItem>
                 )}
               </Menu>
@@ -280,24 +250,19 @@ export function RangeWorkbenchSection({
           </MenuTrigger>
 
           <ActionButton onPress={() => edit({ id: range.id, type: "Range" })}>
-            {range.isRangeLeaf ? "View range item" : "Edit range item"}
+            {range.isRangeLeaf ? t("workflow.viewRangeItem") : t("workflow.editRangeItem")}
             <ArrowForwardIcon className="text-xl" />
           </ActionButton>
         </div>
         {isExpanded ? (
           <>
-            {(rangeItems || []).length === 0 && (
-              <EmptyRangeMessage extraClasses="mt-4" />
-            )}
+            {(rangeItems || []).length === 0 && <EmptyRangeMessage extraClasses="mt-4" />}
             <div className={`grid pt-4 gap-3 ${size}`}>
               {(rangeItems || []).map((item) => {
                 const isFirstCanvas = item.id === firstCanvasId;
                 if (item.type !== "Canvas") {
                   return (
-                    <div
-                      key={item.id}
-                      className="items-center justify-center flex flex-col"
-                    >
+                    <div key={item.id} className="items-center justify-center flex flex-col">
                       <RangeGridThumbnail
                         range={item}
                         dragState={{
@@ -313,9 +278,7 @@ export function RangeWorkbenchSection({
                             });
 
                             // Scroll into view.
-                            const el = document.getElementById(
-                              `workbench-${String(item.id)}`,
-                            );
+                            const el = document.getElementById(`workbench-${String(item.id)}`);
                             el?.scrollIntoView({
                               behavior: "smooth",
                               block: "start",
@@ -329,16 +292,13 @@ export function RangeWorkbenchSection({
                         }}
                       />
                       <LocaleString className="truncate overflow-ellipsis max-w-full text-sm">
-                        {item.label || "Untitled range"}
+                        {item.label || t("workflow.untitledRange")}
                       </LocaleString>
                     </div>
                   );
                 }
                 return (
-                  <CanvasContext
-                    key={item.id}
-                    canvas={item.resource!.source!.id}
-                  >
+                  <CanvasContext key={item.id} canvas={item.resource!.source!.id}>
                     <CanvasThumbnailGridItem
                       aria-disabled={item.id === firstCanvasId}
                       onClick={() => {
@@ -354,12 +314,12 @@ export function RangeWorkbenchSection({
                         parent: { id: range.id },
                       }}
                       containerProps={{
-                        "aria-label": `Preview ${getValue(item.label) || "canvas"}`,
+                        "aria-label": t("workflow.previewNamed", {
+                          label: getValue(item.label) || t("workflow.untitledCanvas"),
+                        }),
                         "data-range1-label": getValue(range.label),
-                        "data-range2-label": nextRangeLabel || "Untitled range",
-                        ...(isFirstCanvas
-                          ? { "data-split-first": "true" }
-                          : {}),
+                        "data-range2-label": nextRangeLabel || t("workflow.untitledRange"),
+                        ...(isFirstCanvas ? { "data-split-first": "true" } : {}),
                       }}
                       className={isSplitting ? "split-range-highlight" : ""}
                       id={item.resource!.source!.id}
@@ -374,9 +334,7 @@ export function RangeWorkbenchSection({
                 );
               })}
             </div>
-            {!isFullyLoaded ? (
-              <ActionButton onPress={loadMore}>Load more</ActionButton>
-            ) : null}
+            {!isFullyLoaded ? <ActionButton onPress={loadMore}>{t("workflow.loadMore")}</ActionButton> : null}
           </>
         ) : null}
       </div>
@@ -387,13 +345,7 @@ export function RangeWorkbenchSection({
 
 export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
       <path
         fill="currentColor"
@@ -405,36 +357,18 @@ export function CanvasPreviewIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function MergeUpIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path
-        fill="currentColor"
-        d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"
-      />
+      <path fill="currentColor" d="m4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z" />
     </svg>
   );
 }
 
 export function MergeDownIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
       {/* Icon from Google Material Icons by Material Design Authors - https://github.com/material-icons/material-icons/blob/master/LICENSE */}
-      <path
-        fill="currentColor"
-        d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z"
-      />
+      <path fill="currentColor" d="m20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8z" />
     </svg>
   );
 }

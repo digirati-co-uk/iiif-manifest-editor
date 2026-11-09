@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { isSpecificResource } from "@iiif/parser";
 import type { Reference, SpecificResource } from "@iiif/presentation-3";
@@ -5,7 +6,7 @@ import cx from "classnames";
 import { CollectionContext, ManifestContext, useCollection, useManifest } from "react-iiif-vault";
 import type { AppDropdownItem } from "../AppDropdown/AppDropdown";
 import { ReorderList } from "../ReorderList/ReorderList.dndkit";
-import {twMerge} from 'tailwind-merge';
+import { twMerge } from "tailwind-merge";
 
 import { CollectionListItem, ManifestListItem } from "@manifest-editor/components";
 
@@ -20,36 +21,51 @@ interface CollectionItemListProps {
 }
 
 export function ManifestItem(props: { margin?: boolean; active?: boolean; onClick?: () => void }) {
+  const t = useTranslations("editors");
   const manifest = useManifest();
 
   return (
-    <div className={twMerge(cx(
-      "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
-      props.active && "bg-gray-50 text-black border-[#892c4e]",
-    ))} aria-selected={props.active} onClick={props.onClick}>
+    <div
+      className={twMerge(
+        cx(
+          "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+          props.active && "bg-gray-50 text-black border-[#892c4e]"
+        )
+      )}
+      aria-selected={props.active}
+      onClick={props.onClick}
+    >
       <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
-        {getValue(manifest?.label) || <span style={{ color: "#999" }}>Untitled manifest</span>}
+        {getValue(manifest?.label) || <span style={{ color: "#999" }}>{t("ui.untitledManifest")}</span>}
       </div>
     </div>
   );
 }
 
 export function CollectionItem(props: { margin?: boolean; active?: boolean; onClick?: () => void }) {
+  const t = useTranslations("editors");
   const collection = useCollection({} as any);
 
   return (
-    <div className={twMerge(cx(
-      "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
-      props.active && "bg-gray-50 text-black border-[#892c4e]",
-      props.margin && "block"
-    ))} aria-selected={props.active} onClick={props.onClick}>
+    <div
+      className={twMerge(
+        cx(
+          "p-1.5 cursor-pointer flex gap-1.5 bg-white border-b border-gray-200 w-full hover:bg-gray-50",
+          props.active && "bg-gray-50 text-black border-[#892c4e]",
+          props.margin && "block"
+        )
+      )}
+      aria-selected={props.active}
+      onClick={props.onClick}
+    >
       <div className="text-base text-ellipsis whitespace-nowrap overflow-hidden flex-1 min-w-0 text-start">
-        {getValue(collection?.label) || <span style={{ color: "#999" }}>Untitled collection</span>}
+        {getValue(collection?.label) || <span style={{ color: "#999" }}>{t("ui.untitledCollection")}</span>}
       </div>
     </div>
   );
 }
 export function CollectionItemList(props: CollectionItemListProps) {
+  const t = useTranslations("editors");
   if (props.reorder) {
     return (
       <ReorderList
@@ -85,7 +101,7 @@ export function CollectionItemList(props: CollectionItemListProps) {
   }
 
   return (
-    <ul aria-label="Collection items" id={props.id}>
+    <ul aria-label={t("ui.collectionItems")} id={props.id}>
       {props.list.map((item, index) => {
         const ref = isSpecificResource(item) ? item.source : item;
         return ref.type === "Manifest" ? (

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString, Reference } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext, CreatorResource } from "@manifest-editor/creator-api";
@@ -26,6 +27,8 @@ export async function createRangeWithItems(
 }
 
 export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithItemsPayload>) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const [label, setLabel] = useState<InternationalString>(props.options.initialData?.label || { en: [""] });
 
   const onSubmit = (e: FormEvent) => {
@@ -41,13 +44,13 @@ export function RangeWithItemsCreatorForm(props: CreatorContext<CreateRangeWithI
       <form onSubmit={onSubmit}>
         <LanguageFieldEditor
           focusId={"label"}
-          label={"Label"}
+          label={property("fields.label")}
           fields={label}
           onSave={(e: any) => setLabel(e.toInternationalString())}
         />
 
         <ActionButton primary type="submit">
-          Create range
+          {t("form.createRange")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

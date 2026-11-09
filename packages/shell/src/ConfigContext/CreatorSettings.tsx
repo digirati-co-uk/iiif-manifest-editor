@@ -1,8 +1,6 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { EmptyState, Form } from "@manifest-editor/components";
-import {
-  type CreatorDefinition,
-  getCreatorConfigKey,
-} from "@manifest-editor/creator-api";
+import { type CreatorDefinition, getCreatorConfigKey } from "@manifest-editor/creator-api";
 import type { FormEvent } from "react";
 import { useMemo } from "react";
 import { useApp } from "../AppContext/AppContext";
@@ -10,6 +8,10 @@ import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
 import { getCreatorSettings } from "./CreatorSettings.helpers";
 
 export function CreatorSettings() {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const config = useConfig();
   const saveConfig = useSaveConfig();
@@ -36,7 +38,7 @@ export function CreatorSettings() {
   }
 
   if (!creators.length) {
-    return <EmptyState>No creator settings available</EmptyState>;
+    return <EmptyState>{t("settings.noCreators")}</EmptyState>;
   }
 
   return (
@@ -48,8 +50,12 @@ export function CreatorSettings() {
           onChange={(e: FormEvent<HTMLFormElement>) => saveCreator(creator, e.currentTarget)}
         >
           <div className="flex flex-col gap-1">
-            <h3 className="text-base font-semibold text-gray-900">{creator.label}</h3>
-            {creator.summary ? <p className="text-sm text-gray-500">{creator.summary}</p> : null}
+            <h3 className="text-base font-semibold text-gray-900">
+              {resolveMessage(creator?.labelMessage, creator.label)}
+            </h3>
+            {resolveMessage(creator?.summaryMessage, creator.summary) ? (
+              <p className="text-sm text-gray-500">{resolveMessage(creator?.summaryMessage, creator.summary)}</p>
+            ) : null}
           </div>
 
           {creator.configuration?.fields.map((field) => {
@@ -67,8 +73,10 @@ export function CreatorSettings() {
                     defaultChecked={typeof value === "boolean" ? value : field.defaultValue || false}
                   />
                   <div className="flex flex-col gap-1">
-                    <Form.Label htmlFor={fieldId}>{field.label}</Form.Label>
-                    {field.summary ? <p className="text-sm text-gray-500">{field.summary}</p> : null}
+                    <Form.Label htmlFor={fieldId}>{resolveMessage(field?.labelMessage, field.label)}</Form.Label>
+                    {resolveMessage(field?.summaryMessage, field.summary) ? (
+                      <p className="text-sm text-gray-500">{resolveMessage(field?.summaryMessage, field.summary)}</p>
+                    ) : null}
                   </div>
                 </Form.InputContainer>
               );

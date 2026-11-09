@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { CheckIcon, Modal } from "@manifest-editor/components";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useApp, useAppInstance } from "../AppContext/AppContext";
@@ -24,7 +25,7 @@ import type {
 
 function getImage(image: MappedPlugin["metadata"]["image"]) {
   if (!image) return null;
-  return typeof image === "string" ? { src: image, alt: "" } : image;
+  return typeof image === "string" ? { src: image, alt: "", altMessage: undefined } : image;
 }
 
 function getAuthor(author: MappedPlugin["metadata"]["author"]) {
@@ -45,12 +46,13 @@ function getPluginEntryPoint(plugin: MappedPlugin) {
   return {
     id: panel.id,
     label: panel.label || "Open plugin",
+    labelMessage: panel.labelMessage,
     modal: extension.modalPanels?.some((item) => item.id === panel.id) || false,
   };
 }
 
-function getErrorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "Plugin configuration could not be saved.";
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback;
 }
 
 function ConfigureIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -94,6 +96,10 @@ function OpenArrowIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function PluginManager() {
+  const { resolveMessage, locale, profile } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
   const { appId } = useAppInstance();
   const config = useConfig();
@@ -110,7 +116,7 @@ export function PluginManager() {
 
   const activePluginIds = useMemo(
     () => new Set(getEnabledPluginsForApp(pluginState, app, appId).map((plugin) => plugin.metadata.id)),
-    [pluginState, app, appId],
+    [pluginState, app, appId]
   );
 
   const filteredPlugins = useMemo(() => {
@@ -123,9 +129,9 @@ export function PluginManager() {
       if (!normalisedQuery) return true;
 
       const haystack = [
-        plugin.metadata.label,
+        resolveMessage(plugin.metadata?.labelMessage, plugin.metadata.label),
         plugin.metadata.id,
-        plugin.metadata.description,
+        resolveMessage(plugin.metadata?.descriptionMessage, plugin.metadata.description),
         getAuthor(plugin.metadata.author),
         ...(plugin.metadata.tags || []),
       ]
@@ -135,7 +141,7 @@ export function PluginManager() {
 
       return haystack.includes(normalisedQuery);
     });
-  }, [app, appId, pluginState.plugins, query, showAll]);
+  }, [app, appId, pluginState.plugins, query, showAll, locale, profile, resolveMessage]);
 
   const selectedPlugin = selectedPluginId
     ? pluginState.plugins.find((plugin) => plugin.metadata.id === selectedPluginId) || null
@@ -160,7 +166,7 @@ export function PluginManager() {
 
   async function persistGlobalAppConfig(nextAppConfig: PluginAppConfig) {
     if (!saveGlobalPluginConfig) {
-      setError("Global plugin settings are not available in this host.");
+      setError(t("plugins.globalUnavailable"));
       return;
     }
 
@@ -178,7 +184,7 @@ export function PluginManager() {
       await saveGlobalPluginConfig(nextGlobalConfig);
     } catch (error) {
       actions.setGlobalAppConfig(appId, previousAppConfig);
-      setError(getErrorMessage(error));
+      setError(getErrorMessage(error, t("plugins.saveFailed")));
     }
   }
 
@@ -193,7 +199,12 @@ export function PluginManager() {
 
     if (nextAppConfig.blocked.length) {
       setSavingKey(null);
-      setError(`Cannot enable ${plugin.metadata.label}: ${nextAppConfig.blocked.join(", ")}.`);
+      setError(
+        t("plugins.cannotEnable", {
+          name: resolveMessage(plugin.metadata.labelMessage, plugin.metadata.label),
+          dependencies: nextAppConfig.blocked.join(", "),
+        })
+      );
       return;
     }
 
@@ -222,22 +233,22 @@ export function PluginManager() {
     <section className="flex flex-col gap-3 border-t border-gray-200 pt-4 mt-4">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-sm text-gray-900">Plugins</h3>
+          <h3 className="font-semibold text-sm text-gray-900">{t("plugins.title")}</h3>
         </div>
         <button
           type="button"
           className="rounded border border-gray-200 bg-white px-2 py-1 text-xs text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors"
           onClick={() => setShowAll((value) => !value)}
         >
-          {showAll ? "Compatible only" : "Show all"}
+          {showAll ? t("plugins.compatible") : t("plugins.showAll")}
         </button>
       </div>
 
       <input
-        aria-label="Search plugins"
+        aria-label={t("plugins.search")}
         className="rounded border border-gray-200 px-2.5 py-1.5 text-xs focus:border-me-primary-500 focus:ring-2 focus:ring-me-primary-500/20 focus:outline-none"
         type="search"
-        placeholder="Search plugins…"
+        placeholder={t("plugins.searchPlaceholder")}
         value={query}
         onChange={(event) => setQuery(event.currentTarget.value)}
       />
@@ -255,7 +266,10 @@ export function PluginManager() {
           const image = getImage(plugin.metadata.image);
           const blocked = selected && !active && !loading && !loadError;
           const compatible = isPluginCompatible(plugin, app, appId);
-          const compatibilityReason = getPluginCompatibilityReason(plugin, app, appId);
+          const compatibilityReason = getPluginCompatibilityReason(plugin, app, appId, {
+            app: t("plugins.incompatibleApp"),
+            project: t("plugins.incompatibleProject"),
+          });
           const entryPoint = getPluginEntryPoint(plugin);
           const canConfigure = !!plugin.settings;
           const isSaving = savingKey === `workspace:${plugin.metadata.id}`;
@@ -271,7 +285,10 @@ export function PluginManager() {
                 <img
                   className="h-9 w-9 rounded object-cover flex-none mt-0.5"
                   src={image.src}
-                  alt={image.alt || plugin.metadata.label}
+                  alt={
+                    resolveMessage(image.altMessage, image.alt) ||
+                    resolveMessage(plugin.metadata?.labelMessage, plugin.metadata.label)
+                  }
                 />
               ) : (
                 <div
@@ -286,10 +303,13 @@ export function PluginManager() {
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-start justify-between gap-1">
                   <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                    <span className="font-medium text-gray-900 text-xs">{plugin.metadata.label}</span>
+                    <span className="font-medium text-gray-900 text-xs">
+                      {resolveMessage(plugin.metadata?.labelMessage, plugin.metadata.label)}
+                    </span>
                     {plugin.metadata.official ? (
                       <span className="rounded-full text-me-primary-500 px-1.5 py-0 text-[9px] font-bold inline-flex items-center gap-1">
-                        <CheckIcon className="w-3 h-3" /> Verified
+                        <CheckIcon className="w-3 h-3" />
+                        {t("plugins.verified")}
                       </span>
                     ) : null}
                     {plugin.metadata.version ? (
@@ -301,8 +321,10 @@ export function PluginManager() {
                     {canConfigure ? (
                       <button
                         type="button"
-                        title="Configure plugin"
-                        aria-label={`Configure ${plugin.metadata.label}`}
+                        title={t("plugins.configure")}
+                        aria-label={t("plugins.configureNamed", {
+                          name: resolveMessage(plugin.metadata.labelMessage, plugin.metadata.label),
+                        })}
                         className="rounded p-1 text-gray-600 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                         onClick={() => setSelectedPluginId(plugin.metadata.id)}
                       >
@@ -312,8 +334,12 @@ export function PluginManager() {
                     {active && entryPoint ? (
                       <button
                         type="button"
-                        title={`Open ${entryPoint.label}`}
-                        aria-label={`Open ${entryPoint.label}`}
+                        title={t("plugins.openNamed", {
+                          name: resolveMessage(entryPoint.labelMessage, entryPoint.label),
+                        })}
+                        aria-label={t("plugins.openNamed", {
+                          name: resolveMessage(entryPoint.labelMessage, entryPoint.label),
+                        })}
                         className="rounded p-1 text-me-primary-500 hover:bg-me-primary-50 transition-colors"
                         onClick={() => openPlugin(plugin)}
                       >
@@ -327,8 +353,10 @@ export function PluginManager() {
                       className={`relative inline-flex h-5 w-9 flex-none items-center rounded-full transition-colors disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-me-primary-500/30 ${
                         selected ? "bg-me-primary-500" : "bg-gray-200"
                       }`}
-                      title={selected ? "Disable plugin" : "Enable plugin"}
-                      aria-label={`${selected ? "Disable" : "Enable"} ${plugin.metadata.label}`}
+                      title={selected ? t("plugins.disablePlugin") : t("plugins.enablePlugin")}
+                      aria-label={t(selected ? "plugins.disableNamed" : "plugins.enableNamed", {
+                        name: resolveMessage(plugin.metadata.labelMessage, plugin.metadata.label),
+                      })}
                     >
                       <span
                         className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${
@@ -339,13 +367,21 @@ export function PluginManager() {
                   </div>
                 </div>
 
-                {plugin.metadata.description ? (
-                  <p className="text-xs text-gray-500 leading-relaxed">{plugin.metadata.description}</p>
+                {resolveMessage(plugin.metadata?.descriptionMessage, plugin.metadata.description) ? (
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    {resolveMessage(plugin.metadata?.descriptionMessage, plugin.metadata.description)}
+                  </p>
                 ) : null}
 
-                {loading ? <span className="text-xs text-gray-500">Loading plugin…</span> : null}
-                {loadError ? <span className="text-xs text-red-600">{loadError}</span> : null}
-                {blocked ? <span className="text-xs text-amber-600">Waiting for required dependencies</span> : null}
+                {loading ? <span className="text-xs text-gray-500">{t("plugins.loading")}</span> : null}
+                {loadError ? (
+                  <span className="text-xs text-red-600">
+                    {t("plugins.loadFailed", {
+                      pluginName: resolveMessage(plugin.metadata.labelMessage, plugin.metadata.label),
+                    })}
+                  </span>
+                ) : null}
+                {blocked ? <span className="text-xs text-amber-600">{t("plugins.waiting")}</span> : null}
                 {!compatible && compatibilityReason ? (
                   <span className="text-xs text-gray-600">{compatibilityReason}</span>
                 ) : null}
@@ -357,13 +393,15 @@ export function PluginManager() {
 
       {!filteredPlugins.length ? (
         <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-center text-xs text-gray-500">
-          No plugins found.
+          {t("plugins.empty")}
         </div>
       ) : null}
 
       {selectedPlugin ? (
         <Modal
-          title={`Configure ${selectedPlugin.metadata.label}`}
+          title={t("plugins.configureNamed", {
+            name: resolveMessage(selectedPlugin.metadata.labelMessage, selectedPlugin.metadata.label),
+          })}
           onClose={() => setSelectedPluginId(null)}
           width="560px"
         >
@@ -387,6 +425,9 @@ function PluginSettingsEditor({
   onClose: () => void;
   canSaveGlobal?: boolean;
 }) {
+  const t = useTranslations("shell");
+
+  const { resolveMessage } = useEditorI18n();
   const api = usePluginConfigApi(plugin.metadata.id);
   const [scope, setScope] = useState<PluginConfigScope>("workspace");
   const [draft, setDraft] = useState<PluginSettingsValue>({});
@@ -419,7 +460,7 @@ function PluginSettingsEditor({
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
-      setError(getErrorMessage(error));
+      setError(getErrorMessage(error, t("plugins.saveFailed")));
     } finally {
       setSaving(false);
     }
@@ -436,7 +477,7 @@ function PluginSettingsEditor({
       }
       setDraft({});
     } catch (error) {
-      setError(getErrorMessage(error));
+      setError(getErrorMessage(error, t("plugins.saveFailed")));
     } finally {
       setSaving(false);
     }
@@ -448,7 +489,7 @@ function PluginSettingsEditor({
     <div className="flex flex-col flex-1 min-h-0">
       {showGlobal ? (
         <div className="flex items-center gap-1 px-5 pt-4 pb-3 border-b border-gray-100">
-          <span className="text-xs text-gray-500 mr-2">Scope:</span>
+          <span className="text-xs text-gray-500 mr-2">{t("plugins.scope")}</span>
           <button
             type="button"
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
@@ -456,7 +497,7 @@ function PluginSettingsEditor({
             }`}
             onClick={() => setScope("workspace")}
           >
-            This workspace
+            {t("plugins.workspace")}
           </button>
           <button
             type="button"
@@ -465,7 +506,7 @@ function PluginSettingsEditor({
             }`}
             onClick={() => setScope("global")}
           >
-            All workspaces
+            {t("plugins.global")}
           </button>
         </div>
       ) : null}
@@ -480,6 +521,7 @@ function PluginSettingsEditor({
         <div className="flex flex-col gap-3">
           {plugin.settings?.render ? (
             plugin.settings.render({
+              i18n: { resolveMessage },
               plugin,
               appId: api.appId,
               scope,
@@ -494,7 +536,7 @@ function PluginSettingsEditor({
             ))
           ) : (
             <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-center text-sm text-gray-500">
-              This plugin has no configurable settings.
+              {t("plugins.noSettings")}
             </div>
           )}
         </div>
@@ -507,17 +549,17 @@ function PluginSettingsEditor({
           disabled={saving}
           onClick={reset}
         >
-          Reset to defaults
+          {t("plugins.reset")}
         </button>
         <div className="flex items-center gap-2">
-          {saved ? <span className="text-xs text-green-600">✓ Saved</span> : null}
+          {saved ? <span className="text-xs text-green-600">{t("plugins.saved")}</span> : null}
           <button
             type="button"
             className="rounded-lg bg-me-primary-500 px-4 py-2 text-sm font-medium text-white hover:bg-me-primary-600 disabled:opacity-50 transition-colors"
             disabled={saving}
             onClick={save}
           >
-            {saving ? "Saving…" : `Save ${scope}`}
+            {saving ? t("plugins.saving") : t(scope === "workspace" ? "plugins.saveWorkspace" : "plugins.saveGlobal")}
           </button>
         </div>
       </div>
@@ -534,6 +576,10 @@ function PluginSettingsFieldControl({
   draft: PluginSettingsValue;
   setDraft: (value: PluginSettingsValue) => void;
 }) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const value = draft[field.id];
   const id = `plugin-setting-${field.id}`;
 
@@ -546,7 +592,7 @@ function PluginSettingsFieldControl({
 
   const label = (
     <label className="text-sm font-medium text-gray-900" htmlFor={id}>
-      {field.label}
+      {resolveMessage(field?.labelMessage, field.label)}
     </label>
   );
 
@@ -558,7 +604,11 @@ function PluginSettingsFieldControl({
       <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-white px-4 py-3">
         <div className="flex flex-col gap-0.5">
           {label}
-          {field.description ? <span className="text-xs text-gray-500">{field.description}</span> : null}
+          {resolveMessage(field?.descriptionMessage, field.description) ? (
+            <span className="text-xs text-gray-500">
+              {resolveMessage(field?.descriptionMessage, field.description)}
+            </span>
+          ) : null}
         </div>
         <input
           id={id}
@@ -575,12 +625,14 @@ function PluginSettingsFieldControl({
     return (
       <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white px-4 py-3">
         {label}
-        {field.description ? <span className="text-xs text-gray-500">{field.description}</span> : null}
+        {resolveMessage(field?.descriptionMessage, field.description) ? (
+          <span className="text-xs text-gray-500">{resolveMessage(field?.descriptionMessage, field.description)}</span>
+        ) : null}
         <textarea
           id={id}
           className={`${inputClasses} min-h-24 resize-y`}
           value={typeof value === "string" ? value : ""}
-          placeholder={field.placeholder}
+          placeholder={resolveMessage(field?.placeholderMessage, field.placeholder)}
           onChange={(event) => update(event.currentTarget.value)}
         />
       </div>
@@ -591,7 +643,9 @@ function PluginSettingsFieldControl({
     return (
       <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white px-4 py-3">
         {label}
-        {field.description ? <span className="text-xs text-gray-500">{field.description}</span> : null}
+        {resolveMessage(field?.descriptionMessage, field.description) ? (
+          <span className="text-xs text-gray-500">{resolveMessage(field?.descriptionMessage, field.description)}</span>
+        ) : null}
         <select
           id={id}
           className={inputClasses}
@@ -601,10 +655,10 @@ function PluginSettingsFieldControl({
             update(option ? option.value : event.currentTarget.value);
           }}
         >
-          <option value="">Default</option>
+          <option value="">{t("plugins.default")}</option>
           {(field.options || []).map((option) => (
             <option key={String(option.value)} value={String(option.value)}>
-              {option.label}
+              {resolveMessage(option?.labelMessage, option.label)}
             </option>
           ))}
         </select>
@@ -615,13 +669,15 @@ function PluginSettingsFieldControl({
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-gray-100 bg-white px-4 py-3">
       {label}
-      {field.description ? <span className="text-xs text-gray-500">{field.description}</span> : null}
+      {resolveMessage(field?.descriptionMessage, field.description) ? (
+        <span className="text-xs text-gray-500">{resolveMessage(field?.descriptionMessage, field.description)}</span>
+      ) : null}
       <input
         id={id}
         className={inputClasses}
         type={field.type === "number" ? "number" : "text"}
         value={typeof value === "string" || typeof value === "number" ? value : ""}
-        placeholder={field.placeholder}
+        placeholder={resolveMessage(field?.placeholderMessage, field.placeholder)}
         onChange={(event) => {
           update(field.type === "number" ? Number(event.currentTarget.value) : event.currentTarget.value);
         }}

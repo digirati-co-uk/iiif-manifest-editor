@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "@manifest-editor/i18n";
+
 import { Vault } from "@iiif/helpers";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -11,6 +13,8 @@ import { queryClient } from "../site/Provider";
 import { deleteBrowserProject, internal_getBrowserProjectById, listBrowserProjects } from "./browser-state";
 
 export default function BrowserRecents() {
+  const webT = useTranslations("web");
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const projects = useQuery({
@@ -28,6 +32,9 @@ export default function BrowserRecents() {
     }
   }, [projects.isFetched, projects.data, router, searchParams]);
 
+  if (projects.isPending) return <output>{webT("feedback.loading")}</output>;
+  if (projects.isError) return <p role="alert">{webT("feedback.projectFailed")}</p>;
+
   return (
     <div className="grid grid-md gap-4">
       {projects.data?.map((project) => (
@@ -39,7 +46,9 @@ export default function BrowserRecents() {
                 {project.resource.thumbnail ? (
                   <img src={project.resource.thumbnail} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-black/60">No thumbnail</div>
+                  <div className="w-full h-full flex items-center justify-center text-black/60">
+                    {webT("projects.noThumbnail")}
+                  </div>
                 )}
               </div>
               <LocaleString className="underline p-3 text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">
@@ -65,8 +74,10 @@ function MoreIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 function ProjectContextualMenu({ id }: { id: string }) {
+  const webT = useTranslations("web");
+
   function doDelete() {
-    const confirmed = confirm("Are you sure you want to delete this project?");
+    const confirmed = confirm(webT("projects.deleteConfirm"));
     if (confirmed) {
       deleteBrowserProject(id).then(() => {
         queryClient.invalidateQueries({ queryKey: ["browser-projects"] });
@@ -111,7 +122,7 @@ function ProjectContextualMenu({ id }: { id: string }) {
   return (
     <DialogTrigger>
       <Button
-        aria-label="Project actions"
+        aria-label={webT("projects.actions")}
         className="bg-me-gray-700/50 text-white/80 hover:text-white absolute right-2 top-2 p-0.5 text-2xl rounded-full"
       >
         <MoreIcon aria-hidden="true" />
@@ -122,25 +133,25 @@ function ProjectContextualMenu({ id }: { id: string }) {
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50"
             href={`/editor/${id}`}
           >
-            Open
+            {webT("actions.open")}
           </Link>
           <Button
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
             onPress={doDownloadManifest}
           >
-            Download
+            {webT("actions.download")}
           </Button>
           <Button
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
             onPress={doDownload}
           >
-            Debug download
+            {webT("projects.debugDownload")}
           </Button>
           <Button
             className="w-full hover:bg-me-primary-100/50 rounded py-1 px-2 focus-visible:bg-me-primary-100/50 text-left"
             onPress={doDelete}
           >
-            Delete
+            {webT("actions.delete")}
           </Button>
         </Dialog>
       </Popover>

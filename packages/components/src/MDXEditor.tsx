@@ -1,70 +1,14 @@
-import "@mdxeditor/editor/style.css";
-import "iiif-browser/mdx-plugins.css";
-import {
-  MDXEditor as BaseMDXEditor,
-  BlockTypeSelect,
-  BoldItalicUnderlineToggles,
-  CreateLink,
-  diffSourcePlugin,
-  headingsPlugin,
-  ListsToggle,
-  linkDialogPlugin,
-  linkPlugin,
-  listsPlugin,
-  type MDXEditorMethods,
-  type MDXEditorProps,
-  quotePlugin,
-  Separator,
-  thematicBreakPlugin,
-  toolbarPlugin,
-} from "@mdxeditor/editor";
-import { InsertIIIFBrowser, iiifBrowserPlugin } from "iiif-browser/mdxeditor";
-import { type ForwardedRef, useMemo } from "react";
+import type { MDXEditorMethods, MDXEditorProps } from "@mdxeditor/editor";
+import { lazy, Suspense, type ForwardedRef } from "react";
+import { Spinner } from "./Spinner";
 
-// Only import this to the next file
-export function MDXEditor({
-  editorRef,
-  ...props
-}: { editorRef?: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
+const Editor = lazy(() => import("./MDXEditorImpl").then((module) => ({ default: module.MDXEditor })));
+
+/** npm hosts split this chunk; the single-script CDN defers its initialization. */
+export function MDXEditor(props: { editorRef?: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
   return (
-    <BaseMDXEditor
-      plugins={useMemo(
-        () => [
-          // Example Plugin Usage
-          headingsPlugin({ allowedHeadingLevels: [2, 3] }),
-          listsPlugin(),
-          linkPlugin(),
-          quotePlugin(),
-          thematicBreakPlugin(),
-          iiifBrowserPlugin({
-            browserProps: {
-              navigation: {
-                canSelectCollection: false,
-                canSelectManifest: false,
-                canSelectCanvas: true,
-              },
-            },
-          }),
-          linkDialogPlugin(),
-          diffSourcePlugin(),
-          toolbarPlugin({
-            toolbarContents: () => (
-              <>
-                <BoldItalicUnderlineToggles />
-                <CreateLink />
-                <Separator />
-                <BlockTypeSelect />
-                <ListsToggle options={["bullet", "number"]} />
-                <Separator />
-                <InsertIIIFBrowser />
-              </>
-            ),
-          }),
-        ],
-        [],
-      )}
-      {...props}
-      ref={editorRef}
-    />
+    <Suspense fallback={<Spinner />}>
+      <Editor {...props} />
+    </Suspense>
   );
 }

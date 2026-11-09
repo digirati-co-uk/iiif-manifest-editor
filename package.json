@@ -6,6 +6,13 @@
     "url": "git+https://github.com/digirati-co-uk/iiif-manifest-editor.git"
   },
   "scripts": {
+    "i18n:coverage": "node scripts/web-i18n-coverage.mjs",
+    "i18n:coverage:write": "node scripts/web-i18n-coverage.mjs --write",
+    "i18n:artifacts": "node scripts/verify-i18n-artifacts.mjs",
+    "i18n:payload": "node scripts/measure-web-i18n.mjs",
+    "i18n:cdn": "node scripts/verify-i18n-cdn.mjs",
+    "audit:i18n": "node scripts/audit-i18n.mjs",
+    "test:audit-i18n": "node --test scripts/audit-i18n.test.mjs",
     "build": "turbo build",
     "build-packages": "turbo build --filter=@manifest-editor/* --filter=manifest-editor",
     "predev": "turbo build --filter=@manifest-editor/annotations --filter=@manifest-editor/canvas-label-generator --filter=@manifest-editor/ocr-classification --filter=@manifest-editor/ocr-docling --filter=@manifest-editor/translation",
@@ -48,19 +55,20 @@
     "@lerna-lite/publish": "^5.4.2",
     "@lerna-lite/version": "^5.4.2",
     "@repo/typescript-config": "workspace:*",
-    "pkg-pr-new": "^0.0.87",
     "lint-staged": "^16.4.0",
+    "oxc-parser": "0.127.0",
     "oxfmt": "^0.62.0",
     "oxlint": "^1.77.0",
+    "pkg-pr-new": "^0.0.87",
     "publint": "^0.3.23",
     "rolldown": "1.2.3",
+    "simple-git-hooks": "^2.13.1",
     "syncpack": "^15.3.3",
     "tailwindcss": "^3.4.3",
     "tslib": "^2.8.1",
     "turbo": "^2.10.9",
     "typescript": "catalog:",
-    "typescript-plugin-css-modules": "^5.2.0",
-    "simple-git-hooks": "^2.13.1"
+    "typescript-plugin-css-modules": "^5.2.0"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint:staged"

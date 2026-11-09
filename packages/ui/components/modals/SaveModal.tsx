@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useState } from "react";
 import { Button, CalltoButton, SecondaryButton } from "../../atoms/Button";
 import { CloseIcon } from "../../icons/CloseIcon";
@@ -18,31 +19,32 @@ export const SaveModal: React.FC<{
   saveAsChoice: number;
   setSaveAsChoice: (number: number) => void;
 }> = ({ close, save, previouslySaved, permalink, saveAsChoice, setSaveAsChoice }) => {
+  const t = useTranslations("ui");
   const [saveClicked, setSaveClicked] = useState(false);
   return (
     <>
       <ModalBackground />
       <ModalContainer>
         <FlexContainer style={{ justifyContent: "space-between" }}>
-          <ModalHeader>Permalink</ModalHeader>
-          <Button aria-label="close" onClick={close}>
+          <ModalHeader>{t("save.permalink")}</ModalHeader>
+          <Button aria-label={t("actions.close")} onClick={close}>
             <CloseIcon />
           </Button>
         </FlexContainer>
         {!previouslySaved && (
           <>
             <small>
-              <i>A new URL will be created for the Manifest on first save</i>
+              <i>{t("save.first")}</i>
             </small>
           </>
         )}
         {previouslySaved && (
           <RadioButtons
             options={[
-              { label: `Replace ${permalink}`, value: "replace" },
-              { label: "Create a new permalink", value: "create" },
+              { label: t("save.replace", { url: permalink || "" }), value: "replace" },
+              { label: t("save.create"), value: "create" },
               {
-                label: "Save to your browser's local storage",
+                label: t("save.local"),
                 value: "createLS",
               },
             ]}
@@ -55,11 +57,11 @@ export const SaveModal: React.FC<{
         <HorizontalDivider />
 
         <FlexContainer style={{ justifyContent: "flex-end" }}>
-          <SecondaryButton aria-label="cancel" onClick={() => close()}>
-            CANCEL
+          <SecondaryButton aria-label={t("actions.cancel")} onClick={() => close()}>
+            {t("actions.cancel")}
           </SecondaryButton>
           <CalltoButton
-            aria-label="save"
+            aria-label={t("actions.save")}
             onClick={() => {
               save();
               setSaveClicked(true);
@@ -68,13 +70,13 @@ export const SaveModal: React.FC<{
               }
             }}
           >
-            SAVE
+            {t("actions.save")}
           </CalltoButton>
         </FlexContainer>
         {saveClicked && saveAsChoice !== 2 && (
           <>
             <HorizontalDivider />
-            <small>The manifest has been saved to the permalink here:</small>
+            <small>{t("save.saved")}</small>
             <CopyURL manifest={permalink || ""} link={permalink || ""} />
           </>
         )}

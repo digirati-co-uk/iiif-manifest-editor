@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { Button } from "react-aria-components";
 import { LocaleString, useVault, useVaultSelector } from "react-iiif-vault";
@@ -5,6 +6,7 @@ import { ProviderImage } from "./ProviderImage";
 import { ProviderLink } from "./ProviderLink";
 
 export function ViewProvider({ resource, onPress }: { resource: { id: string; type: string }; onPress?: () => void }) {
+  const t = useTranslations("components");
   const provider = useVaultSelector((_, v) => v.get(resource));
 
   if (!provider) return null;
@@ -12,11 +14,12 @@ export function ViewProvider({ resource, onPress }: { resource: { id: string; ty
   const providerLabel = getValue(provider.label);
   const isUnknown = providerLabel === "Unknown";
   return (
-    <div
-      className="rounded p-2 border border-gray-200 text-center hover:border-me-500 shadow-sm"
-      key={provider.id}
-    >
-      <Button aria-label={`Edit ${providerLabel || "provider"}`} className="w-full rounded border-0 bg-transparent p-0 text-inherit" onPress={onPress}>
+    <div className="rounded p-2 border border-gray-200 text-center hover:border-me-500 shadow-sm" key={provider.id}>
+      <Button
+        aria-label={providerLabel ? t("provider.editNamed", { name: providerLabel }) : t("provider.edit")}
+        className="w-full rounded border-0 bg-transparent p-0 text-inherit"
+        onPress={onPress}
+      >
         {provider.logo?.length > 0 ? (
           <div>
             {provider.logo.map((logo: any, n: number) => (

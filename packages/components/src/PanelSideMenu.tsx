@@ -1,3 +1,4 @@
+import { useTranslations, type MessageReference } from "@manifest-editor/i18n";
 import { Fragment } from "react/jsx-runtime";
 import { PanelSideMenuItem } from "./PanelSideMenuItem";
 
@@ -6,6 +7,7 @@ interface PanelSideMenuProps {
     id: string;
     icon: React.ReactNode;
     label: string;
+    labelMessage?: MessageReference;
     divide?: boolean;
     separator?: boolean;
     onClick: () => void;
@@ -15,9 +17,10 @@ interface PanelSideMenuProps {
 }
 
 export function PanelSideMenu(props: PanelSideMenuProps) {
+  const t = useTranslations("components");
   return (
     <nav
-      aria-label="Editor panels"
+      aria-label={t("panels.navigation")}
       className="bg-white border-me-gray-300 border-t border-r flex flex-col w-12 pb-2 h-full"
       data-open={props.open}
     >
@@ -28,6 +31,7 @@ export function PanelSideMenu(props: PanelSideMenuProps) {
           <PanelSideMenuItem
             key={panel.id}
             label={panel.label}
+            labelMessage={panel.labelMessage}
             selected={panel.id === props.current && props.open}
             icon={panel.icon}
             onClick={panel.onClick}

@@ -1,11 +1,16 @@
+import type { MessageReference } from "@manifest-editor/i18n";
 import { ManifestStructuralProperties } from "./ManifestStructuralProperties";
 import { EditorDefinition } from "@manifest-editor/shell";
 import { CanvasStructuralProperties } from "./CanvasStructuralProperties";
 import { RangeStructuralProperties } from "./RangeStructuralProperties";
 
-export const manifestStructuralProperties: EditorDefinition = {
+export const manifestStructuralProperties: EditorDefinition & {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+} = {
   id: "@manifest-editor/manifest-structural",
   label: "Structure",
+  labelMessage: { namespace: "editors", key: "ui.structure" },
   supports: {
     edit: true,
     properties: ["items", "structures"],
@@ -13,9 +18,13 @@ export const manifestStructuralProperties: EditorDefinition = {
   },
   component: () => <ManifestStructuralProperties />,
 };
-export const rangeStructuralProperties: EditorDefinition = {
+export const rangeStructuralProperties: EditorDefinition & {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+} = {
   id: "@manifest-editor/range-structural",
   label: "Structure",
+  labelMessage: { namespace: "editors", key: "ui.structure" },
   supports: {
     edit: true,
     properties: ["items"],
@@ -24,9 +33,13 @@ export const rangeStructuralProperties: EditorDefinition = {
   component: () => <RangeStructuralProperties />,
 };
 
-export const canvasStructuralProperties: EditorDefinition = {
+export const canvasStructuralProperties: EditorDefinition & {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+} = {
   id: "@manifest-editor/canvas-structural",
   label: "Structure",
+  labelMessage: { namespace: "editors", key: "ui.structure" },
   supports: {
     edit: true,
     properties: ["items", "structures"],

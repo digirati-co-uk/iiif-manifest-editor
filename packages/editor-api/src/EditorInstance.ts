@@ -96,10 +96,6 @@ export class EditorInstance<
     return null;
   }
 
-  ref() {
-    return this.config.reference;
-  }
-
   validate() {
     const validators = this.config.validators;
     const entity = this.entity() as any;

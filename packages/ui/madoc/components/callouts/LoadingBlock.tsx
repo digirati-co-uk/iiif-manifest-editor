@@ -1,5 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import React from "react";
-// import { useTranslation } from 'react-i18next';
 import styled from "styled-components";
 import { Spinner } from "../icons/Spinner";
 
@@ -16,11 +16,11 @@ const LoadingSpinner = styled(Spinner)`
 `;
 
 export const LoadingBlock: React.FC = () => {
-  // const { t } = useTranslation();
+  const t = useTranslations("ui");
   return (
     <LoadingBlockContainer>
       <LoadingSpinner />
-      {"Loading"}
+      {t("loading.title")}
     </LoadingBlockContainer>
   );
 };

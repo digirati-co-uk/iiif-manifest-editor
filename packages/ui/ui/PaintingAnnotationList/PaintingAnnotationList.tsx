@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { useResourceContext } from "react-iiif-vault";
 import { useAnnotationPageEditor } from "@/shell/EditingStack/EditingStack";
 import { useToggleList } from "@/_editors/LinkingProperties/LinkingProperties";
@@ -10,6 +11,7 @@ import { createAppActions } from "@/_editors/LinkingProperties/LinkingProperties
 import { Button } from "@/atoms/Button";
 
 export function PaintingAnnotationList() {
+  const t = useTranslations("ui");
   const { annotationPage, canvas } = useResourceContext();
   const { structural, notAllowed } = useAnnotationPageEditor();
   const { items, annotations } = structural;
@@ -32,14 +34,14 @@ export function PaintingAnnotationList() {
           <InputContainer $wide>
             {!items.get()?.length ? (
               <>
-                <InputLabel>Media</InputLabel>
+                <InputLabel>{t("media.title")}</InputLabel>
                 <EmptyState $noMargin $box>
-                  No media
+                  {t("media.empty")}
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                Media
+                {t("media.title")}
                 <InputLabelEdit data-active={toggled.items} onClick={() => toggle("items")} />
               </InputLabel>
             )}
@@ -52,7 +54,7 @@ export function PaintingAnnotationList() {
               createActions={createAppActions(items)}
             />
           </InputContainer>
-          {canCreateAnnotation ? <Button onClick={() => annotationActions.create()}>Add media</Button> : null}
+          {canCreateAnnotation ? <Button onClick={() => annotationActions.create()}>{t("media.add")}</Button> : null}
         </div>
       ) : null}
     </>

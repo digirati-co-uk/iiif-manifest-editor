@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { CloseIcon } from "@manifest-editor/ui/icons/CloseIcon";
 import { LanguageIcon } from "@manifest-editor/ui/icons/LanguageIcon";
 import { Extension } from "@tiptap/core";
@@ -12,6 +13,7 @@ import { useCallback, useEffect, useLayoutEffect, useId, useMemo, useRef, useSta
 import Textarea from "react-textarea-autosize";
 import { useDebounce } from "tiny-use-debounce";
 import * as S from "./TiptapLanguageFieldEditor.styles";
+import { contentLanguageName } from "../../i18n";
 import { htmlToStoredValue, isHtmlValue, textToHtml } from "./text-to-html";
 
 export interface TiptapRichTextLanguageFieldProps {
@@ -97,6 +99,9 @@ function hasFormatting(value: string) {
 }
 
 export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldProps) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const { locale } = useEditorI18n();
   const [mode, setMode] = useState<EditorMode>(() => (isHtmlValue(props.value || "") ? "rich" : "text"));
   const [value, setValue] = useState(props.value || "");
   const [showOptions, setShowOptions] = useState(false);
@@ -110,7 +115,11 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const previousValue = useRef(props.value);
   const onUpdate = useRef(props.onUpdate);
   onUpdate.current = props.onUpdate;
-  const ariaLabel = props.ariaLabel || (props.language === "none" ? "Text value" : `${props.language} text value`);
+  const ariaLabel =
+    props.ariaLabel ||
+    (props.language === "none"
+      ? t("ui.textValue")
+      : t("messages.textForLanguage", { language: contentLanguageName(props.language, locale, t("language.none")) }));
   const canChangeLanguage = !!(props.onUpdateLanguage && props.languages);
   // Imported HTML remains editable even in fields that should contain plain text.
   // Keep the editor available for the current session until HTML is explicitly removed.
@@ -178,10 +187,7 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
     changeMode("rich");
   };
   const removeHtml = () => {
-    if (
-      hasFormatting(value) &&
-      !window.confirm("Switching to plain text will remove formatting such as bold, links and headings. Continue?")
-    ) {
+    if (hasFormatting(value) && !window.confirm(t("language.switchPlainConfirm"))) {
       return;
     }
     currentMode.current = "text";
@@ -200,8 +206,8 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const optionsButton = hasOptions ? (
     <S.OptionsButton
       type="button"
-      title="Language and format"
-      aria-label={`${ariaLabel} options`}
+      title={t("ui.languageAndFormat")}
+      aria-label={t("messages.fieldOptions", { label: ariaLabel })}
       aria-expanded={showOptions}
       aria-controls={optionsId}
       onClick={() => setShowOptions((open) => !open)}
@@ -214,8 +220,8 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
   const sourceToggle = (
     <S.MenuButton
       type="button"
-      title={mode === "source" ? "Back to formatted view" : "Edit HTML source"}
-      aria-label="HTML source"
+      title={mode === "source" ? t("ui.backToFormattedView") : t("ui.editHtmlSource")}
+      aria-label={t("ui.htmlSource")}
       aria-pressed={mode === "source"}
       $active={mode === "source"}
       onMouseDown={(event) => event.preventDefault()}
@@ -252,7 +258,7 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
                 <S.SingleLineInput
                   id={props.id}
                   aria-label={ariaLabel}
-                  placeholder="Add value"
+                  placeholder={t("ui.addValue")}
                   ref={textRef as React.RefObject<HTMLInputElement>}
                   value={value}
                   onChange={(event) => changeValue(event.currentTarget.value)}
@@ -262,8 +268,8 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
               ) : (
                 <S.TextInput
                   id={props.id}
-                  aria-label={mode === "source" ? `${ariaLabel} HTML source` : ariaLabel}
-                  placeholder={mode === "source" ? "<p>HTML</p>" : "Add value"}
+                  aria-label={mode === "source" ? t("messages.fieldSource", { label: ariaLabel }) : ariaLabel}
+                  placeholder={mode === "source" ? "<p>HTML</p>" : t("ui.addValue")}
                   spellCheck={mode !== "source"}
                   ref={textRef as React.RefObject<HTMLTextAreaElement>}
                   as={Textarea}
@@ -277,8 +283,8 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
               {optionsButton}
             </S.FieldRow>
             {mode === "source" ? (
-              <S.FormatToolbar $visible role="toolbar" aria-label="Text formatting">
-                <S.ToolbarLabel>Editing HTML source</S.ToolbarLabel>
+              <S.FormatToolbar $visible role="toolbar" aria-label={t("ui.textFormatting")}>
+                <S.ToolbarLabel>{t("ui.editingHtmlSource")}</S.ToolbarLabel>
                 <S.ToolbarSpacer />
                 {sourceToggle}
               </S.FormatToolbar>
@@ -288,21 +294,21 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
         {showOptions ? (
           <S.OptionsPanel id={optionsId}>
             {canEditHtml ? (
-              <S.Segmented role="group" aria-label="Value format">
+              <S.Segmented role="group" aria-label={t("ui.valueFormat")}>
                 <S.SegmentButton type="button" aria-pressed={mode === "text"} onClick={removeHtml}>
-                  Text
+                  {t("ui.text")}
                 </S.SegmentButton>
                 <S.SegmentButton type="button" aria-pressed={mode !== "text"} onClick={switchToHtml}>
-                  HTML
+                  {t("ui.html")}
                 </S.SegmentButton>
               </S.Segmented>
             ) : null}
             <S.ToolbarSpacer />
             {canChangeLanguage ? (
               <S.LanguageLabel>
-                Language
+                {t("fields.language")}
                 <S.LanguageSelect
-                  aria-label={`${ariaLabel} language`}
+                  aria-label={t("messages.fieldLanguage", { label: ariaLabel })}
                   onFocus={onFocus}
                   onBlur={onBlur}
                   value={props.language}
@@ -313,21 +319,26 @@ export function TiptapRichTextLanguageField(props: TiptapRichTextLanguageFieldPr
                 >
                   {props.languages?.map((lang) => (
                     <option key={lang} value={lang}>
-                      {lang}
+                      {contentLanguageName(lang, locale, t("language.none"))}
                     </option>
                   ))}
                 </S.LanguageSelect>
               </S.LanguageLabel>
             ) : null}
             {props.onRemove ? (
-              <S.RemoveButton type="button" title="Remove value" aria-label="Remove" onClick={props.onRemove}>
+              <S.RemoveButton
+                type="button"
+                title={t("ui.removeValue")}
+                aria-label={commonT("actions.remove")}
+                onClick={props.onRemove}
+              >
                 <CloseIcon />
               </S.RemoveButton>
             ) : null}
           </S.OptionsPanel>
         ) : null}
       </S.FieldShell>
-      {showConformityNote ? <S.ConformityNote>IIIF expects plain text in this field.</S.ConformityNote> : null}
+      {showConformityNote ? <S.ConformityNote>{t("ui.iiifExpectsPlainTextInThisField")}</S.ConformityNote> : null}
     </S.Container>
   );
 }
@@ -339,6 +350,10 @@ interface RichEditorProps extends TiptapRichTextLanguageFieldProps {
 }
 
 function RichEditor(props: RichEditorProps) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const placeholder = useRef(t("ui.addValue"));
+  placeholder.current = t("ui.addValue");
   const [form, setForm] = useState<"link" | "image" | null>(null);
   const { allowedBlocks, disableMultiline } = props;
   const allows = (block: NonNullable<TiptapRichTextLanguageFieldProps["allowedBlocks"]>[number]) =>
@@ -401,7 +416,7 @@ function RichEditor(props: RichEditorProps) {
         : []),
       Typography,
       Placeholder.configure({
-        placeholder: "Add value",
+        placeholder: () => placeholder.current,
       }),
     ],
     [allowedBlocks, ExitHeadingOnEnter]
@@ -415,7 +430,7 @@ function RichEditor(props: RichEditorProps) {
       attributes: {
         ...(props.id ? { id: props.id } : {}),
         class: "tiptap prose prose-sm max-w-none",
-        "aria-label": props.ariaLabel || "Text value",
+        "aria-label": props.ariaLabel || t("ui.textValue"),
         role: "textbox",
         "aria-multiline": String(!props.disableMultiline),
       },
@@ -517,12 +532,12 @@ function RichEditor(props: RichEditorProps) {
   type BlockStyle = "p" | "h1" | "h2" | "h3" | "bulletList" | "orderedList" | "blockquote";
   const blockStyles = (
     [
-      ["h1", "Heading 1"],
-      ["h2", "Heading 2"],
-      ["h3", "Heading 3"],
-      ["bulletList", "Bullet list"],
-      ["orderedList", "Numbered list"],
-      ["blockquote", "Quote"],
+      ["h1", t("ui.heading1")],
+      ["h2", t("ui.heading2")],
+      ["h3", t("ui.heading3")],
+      ["bulletList", t("ui.bulletList")],
+      ["orderedList", t("ui.numberedList")],
+      ["blockquote", t("ui.quote")],
     ] as const
   ).filter(([style]) => allows(style));
 
@@ -551,45 +566,45 @@ function RichEditor(props: RichEditorProps) {
         <S.MenuInput
           type="text"
           name="link"
-          aria-label="Link URL"
+          aria-label={t("ui.linkUrl")}
           defaultValue={editor.getAttributes("link").href || ""}
           placeholder="https://"
           autoFocus
         />
         <S.TextButton type="submit" name="_action" value="add">
-          Apply
+          {commonT("actions.apply")}
         </S.TextButton>
         {editor.isActive("link") ? (
           <S.TextButton type="submit" name="_action" value="remove">
-            Unlink
+            {t("ui.unlink")}
           </S.TextButton>
         ) : null}
         <S.TextButton type="button" onClick={closeForm}>
-          Cancel
+          {commonT("actions.cancel")}
         </S.TextButton>
       </S.MenuForm>
     );
   } else if (editor && form === "image") {
     toolbar = (
       <S.MenuForm onSubmit={submitImage} onKeyDown={(event) => event.key === "Escape" && closeForm()}>
-        <S.MenuInput type="url" name="src" aria-label="Image URL" placeholder="Image URL" autoFocus />
-        <S.MenuInput type="text" name="alt" aria-label="Alt text" placeholder="Alt text" />
-        <S.TextButton type="submit">Insert</S.TextButton>
+        <S.MenuInput type="url" name="src" aria-label={t("ui.imageUrl")} placeholder={t("ui.imageUrl")} autoFocus />
+        <S.MenuInput type="text" name="alt" aria-label={t("ui.altText")} placeholder={t("ui.altText")} />
+        <S.TextButton type="submit">{t("ui.insert")}</S.TextButton>
         <S.TextButton type="button" onClick={closeForm}>
-          Cancel
+          {commonT("actions.cancel")}
         </S.TextButton>
       </S.MenuForm>
     );
   } else if (editor) {
     toolbar = (
       <>
-        {markButton("bold", "Bold", <BoldIcon />)}
-        {markButton("italic", "Italic", <ItalicIcon />)}
-        {markButton("underline", "Underline", <UnderlineIcon />)}
+        {markButton("bold", t("ui.bold"), <BoldIcon />)}
+        {markButton("italic", t("ui.italic"), <ItalicIcon />)}
+        {markButton("underline", t("ui.underline"), <UnderlineIcon />)}
         <S.MenuButton
           type="button"
-          title="Link"
-          aria-label="Link"
+          title={t("ui.link")}
+          aria-label={t("ui.link")}
           $active={editor.isActive("link")}
           aria-pressed={editor.isActive("link")}
           onMouseDown={keepFocus}
@@ -601,11 +616,11 @@ function RichEditor(props: RichEditorProps) {
           <>
             <S.MenuSeparator />
             <S.BlockSelect
-              aria-label="Block style"
+              aria-label={t("ui.blockStyle")}
               value={currentBlock}
               onChange={(event) => setBlockStyle(event.currentTarget.value as BlockStyle)}
             >
-              <option value="p">Paragraph</option>
+              <option value="p">{t("ui.paragraph")}</option>
               {blockStyles.map(([style, label]) => (
                 <option key={style} value={style}>
                   {label}
@@ -617,8 +632,8 @@ function RichEditor(props: RichEditorProps) {
         {allows("image") ? (
           <S.MenuButton
             type="button"
-            title="Image"
-            aria-label="Image"
+            title={t("ui.image")}
+            aria-label={t("ui.image")}
             onMouseDown={keepFocus}
             onClick={() => setForm("image")}
           >
@@ -640,7 +655,7 @@ function RichEditor(props: RichEditorProps) {
         {props.trailing}
       </S.FieldRow>
       {toolbar ? (
-        <S.FormatToolbar $visible={props.showToolbar || !!form} role="toolbar" aria-label="Text formatting">
+        <S.FormatToolbar $visible={props.showToolbar || !!form} role="toolbar" aria-label={t("ui.textFormatting")}>
           {toolbar}
         </S.FormatToolbar>
       ) : null}

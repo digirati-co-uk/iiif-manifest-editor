@@ -18,8 +18,10 @@ export const imageUrlListAnnotation = defineCreator({
   id: "@manifest-editor/image-url-list-annotation",
   create: createImageUrlListAnnotation,
   label: "Multiple images",
+  labelMessage: { namespace: "creators", key: "definitions.imageList.label" },
   dependencies: ["@manifest-editor/image-url-annotation"],
   summary: "Add several images using one direct image link per line.",
+  summaryMessage: { namespace: "creators", key: "definitions.imageList.summary" },
   tags: ["image"],
   icon: <ImageListIcon />,
   render(ctx) {
@@ -33,11 +35,7 @@ export const imageUrlListAnnotation = defineCreator({
     parentTypes: ["AnnotationPage", "Manifest"],
     parentFields: ["items"],
   },
-  sideEffects: [
-    resizeToFitService,
-    resizeResourceToEmptyCanvas,
-    repositionMultipleImages,
-  ],
+  sideEffects: [resizeToFitService, resizeResourceToEmptyCanvas, repositionMultipleImages],
   staticFields: {
     type: "Annotation",
   },

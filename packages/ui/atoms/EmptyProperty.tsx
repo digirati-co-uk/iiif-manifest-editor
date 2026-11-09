@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { AddIcon } from "../icons/AddIcon";
 import { FlexContainer } from "../components/layout/FlexContainer";
 import { Button } from "./Button";
@@ -15,6 +16,7 @@ type NewProperty = {
 };
 
 export const EmptyProperty: React.FC<NewProperty> = ({ label, createNew, guidanceReference }) => {
+  const t = useTranslations("ui");
   return (
     <EmptyPropertyContainer>
       <FlexContainer style={{ alignItems: "center" }}>
@@ -22,7 +24,7 @@ export const EmptyProperty: React.FC<NewProperty> = ({ label, createNew, guidanc
         {guidanceReference && <InformationLink guidanceReference={guidanceReference} />}
       </FlexContainer>
       {createNew && (
-        <Button aria-label={`Add ${label}`} title={`Add ${label}`} onClick={createNew}>
+        <Button aria-label={t("property.add", { label })} title={t("property.add", { label })} onClick={createNew}>
           <AddIcon />
         </Button>
       )}

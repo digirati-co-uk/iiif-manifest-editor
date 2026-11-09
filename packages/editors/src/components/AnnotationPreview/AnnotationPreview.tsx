@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import { isSpecificResource } from "@iiif/parser";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
@@ -35,8 +36,9 @@ function AnnotationImageThumbnail() {
 }
 
 function AnnotationImageType() {
+  const t = useTranslations("editors");
   const [strategy] = useRenderingStrategy({ enableSingleAnnotation: true });
-  const [, label] = getAnnotationType(strategy);
+  const [, label] = getAnnotationType(strategy, t);
 
   return <span>{label}</span>;
 }
@@ -60,13 +62,14 @@ function ChoiceImageThumbnailInner({ resourceId }: { resourceId: string }) {
 }
 
 export function AnnotationTargetLabel({ id }: { id: string }) {
+  const t = useTranslations("editors");
   const annotation = useAnnotation({ id });
 
   if (annotation && annotation.label) {
     return <LocaleString>{annotation.label}</LocaleString>;
   }
 
-  return <>Untitled annotation</>;
+  return <>{t("ui.untitledAnnotation")}</>;
 }
 
 export function AnnotationPreview({
@@ -78,6 +81,7 @@ export function AnnotationPreview({
   margin?: boolean;
   viewport?: { width: number; height: number; x: number; y: number } | null;
 }) {
+  const t = useTranslations("editors");
   const annotation = useAnnotation();
   const vault = useVault();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
@@ -90,26 +94,20 @@ export function AnnotationPreview({
   const firstBody = (body || [])[0] as any;
   const item = isSpecificResource(firstBody) ? firstBody.source : firstBody;
 
-  const isValid =
-    item &&
-    (item.type === "Image" || item.type === "Sound" || item.type === "Video");
+  const isValid = item && (item.type === "Image" || item.type === "Sound" || item.type === "Video");
   const annotationTarget =
-    (annotation as any)?.target.source?.type === "Annotation"
-      ? (annotation as any)?.target.source?.id
-      : null;
+    (annotation as any)?.target.source?.type === "Annotation" ? (annotation as any)?.target.source?.id : null;
 
   const annoSelector = (annotation.target as any)?.selector;
-  const boxSelector =
-    annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
-  const isVisible =
-    viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
+  const boxSelector = annoSelector?.type === "BoxSelector" ? annoSelector.spatial : null;
+  const isVisible = viewport && boxSelector ? targetIntersects(viewport, boxSelector) : true;
   const choiceInfo = getChoiceBodyInfo(annotation, vault);
 
   if (choiceInfo) {
     const choiceItems = getChoiceItems(choiceInfo.choice, vault);
     const defaultChoice = choiceItems[0];
-    const title = getInternationalStringText(choiceInfo.choice.label, "Choice");
-    const defaultLabel = getInternationalStringText(defaultChoice?.resource?.label, "Default option");
+    const title = getInternationalStringText(choiceInfo.choice.label, t("ui.choice"));
+    const defaultLabel = getInternationalStringText(defaultChoice?.resource?.label, t("messages.defaultOption"));
     const itemCount = choiceItems.length;
 
     return (
@@ -119,9 +117,9 @@ export function AnnotationPreview({
         title={title}
         icon={<ChoiceImageThumbnail resourceId={defaultChoice?.ref?.id} />}
         noLink
-        link={`${itemCount} option${itemCount === 1 ? "" : "s"}`}
+        link={t("messages.options", { count: itemCount })}
         label={defaultLabel}
-        iconLabel="Choice thumbnail"
+        iconLabel={t("messages.choiceThumbnail")}
         onClick={
           onClick
             ? (e) => {
@@ -135,11 +133,7 @@ export function AnnotationPreview({
     );
   }
 
-  if (
-    !firstBody ||
-    firstBody.type === "TextualBody" ||
-    firstBody.type === "Choice"
-  ) {
+  if (!firstBody || firstBody.type === "TextualBody" || firstBody.type === "Choice") {
     return (
       <Button
         className="border border-gray-300 text-left hover:border-me-500 w-full shadow-sm rounded bg-white relative mb-2"
@@ -152,13 +146,10 @@ export function AnnotationPreview({
         }
       >
         {firstBody ? (
-          <HTMLAnnotationBodyRender
-            className="px-3 pt-3 prose-p:text-slate-600"
-            locale="en"
-          />
+          <HTMLAnnotationBodyRender className="px-3 pt-3 prose-p:text-slate-600" locale="en" />
         ) : (
           <div className="flex items-center justify-center px-4 py-6 text-gray-400 text-sm">
-            This annotation has no body.
+            {t("ui.thisAnnotationHasNoBody")}
           </div>
         )}
       </Button>
@@ -191,16 +182,9 @@ export function AnnotationPreview({
           ) : null
         }
         noLink
-        link={
-          annotationTarget
-            ? "Targets painting annotation"
-            : item?.id || annotation.id
-        }
-        label={
-          item?.format ||
-          (annotation?.motivation ? annotation.motivation : item?.type)
-        }
-        iconLabel="Icon label"
+        link={annotationTarget ? t("messages.targetsPainting") : item?.id || annotation.id}
+        label={item?.format || (annotation?.motivation ? annotation.motivation : item?.type)}
+        iconLabel={t("messages.iconLabel")}
         onClick={
           onClick
             ? (e) => {

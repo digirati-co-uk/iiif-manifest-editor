@@ -26,6 +26,7 @@ test-results/
 # Build Outputs
 .next/
 .next-e2e/
+.next-perf-*/
 out/
 build
 dist

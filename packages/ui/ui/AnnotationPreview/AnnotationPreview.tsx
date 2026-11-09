@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { AnnotationContext, useAnnotation, useRenderingStrategy } from "react-iiif-vault";
 import { useAnnotationThumbnail } from "@/hooks/useAnnotationThumbnail";
 import { RichMediaLink } from "@/components/organisms/RichMediaLink/RichMediaLink";
@@ -5,35 +6,38 @@ import { ThumbnailImg } from "@/atoms/Thumbnail";
 import { ThumbnailContainer } from "@/atoms/ThumbnailContainer";
 import { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useHoverHighlightImageResource } from "@/state/highlighted-image-resources";
-import { getAnnotationType } from "@/helpers/get-annotation-type";
+import { getAnnotationTypeMessage } from "@/helpers/get-annotation-type";
 import { isSpecificResource, toRef } from "@iiif/parser";
 import { getValue } from "@iiif/helpers";
 import { LocaleString } from "@/atoms/LocaleString";
 
 function AnnotationImageThumbnail() {
+  const t = useTranslations("ui");
   const thumbnail = useAnnotationThumbnail();
   return thumbnail ? (
     <ThumbnailContainer $size={40}>
-      <ThumbnailImg src={thumbnail.id} alt="thumbnail" />
+      <ThumbnailImg src={thumbnail.id} alt={t("thumbnail.alt")} />
     </ThumbnailContainer>
   ) : null;
 }
 
 function AnnotationImageType() {
   const [strategy] = useRenderingStrategy({ enableSingleAnnotation: true });
-  const [, label] = getAnnotationType(strategy);
+  const { resolveMessage } = useEditorI18n();
+  const label = resolveMessage(getAnnotationTypeMessage(strategy));
 
   return <span>{label}</span>;
 }
 
 export function AnnotationTargetLabel({ id }: { id: string }) {
+  const t = useTranslations("ui");
   const annotation = useAnnotation({ id });
 
   if (annotation && annotation.label) {
     return <LocaleString>{annotation.label}</LocaleString>;
   }
 
-  return <>Untitled annotation</>;
+  return <>{t("annotation.untitled")}</>;
 }
 
 export function AnnotationPreview({
@@ -43,6 +47,7 @@ export function AnnotationPreview({
   onClick?: (annotation: AnnotationNormalized) => void;
   margin?: boolean;
 }) {
+  const t = useTranslations("ui");
   const annotation = useAnnotation();
   const highlightProps = useHoverHighlightImageResource(annotation?.id);
 
@@ -70,7 +75,7 @@ export function AnnotationPreview({
           ) : item?.type || annotationTarget ? (
             <AnnotationTargetLabel id={annotationTarget} />
           ) : (
-            "Untitled annotation"
+            t("annotation.untitled")
           )
         }
         icon={
@@ -83,9 +88,9 @@ export function AnnotationPreview({
           ) : null
         }
         noLink
-        link={annotationTarget ? "Targets painting annotation" : item?.id || annotation.id}
+        link={annotationTarget ? t("annotation.targetPainting") : item?.id || annotation.id}
         label={item?.format || (annotation?.motivation ? annotation.motivation : item?.type)}
-        iconLabel="Icon label"
+        iconLabel={t("annotation.icon")}
         onClick={
           onClick
             ? (e) => {

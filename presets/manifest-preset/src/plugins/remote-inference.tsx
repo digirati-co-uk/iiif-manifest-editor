@@ -1,3 +1,6 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import { addReference, batchActions, importEntities, removeReference } from "@iiif/helpers/vault/actions";
 import { Modal } from "@manifest-editor/components";
 import {
@@ -27,9 +30,12 @@ const PLUGIN_ID = "@manifest-editor/remote-inference";
 export default {
   id: PLUGIN_ID,
   label: "Remote Inference",
+  labelMessage: manifestMessage("workflow.remoteInference"),
   description: "Run remote OCR/HTR inference jobs against a configurable server",
+  descriptionMessage: manifestMessage("workflow.inferencePluginSummary"),
   author: "Digirati",
   official: true,
+  localisation: { requiredNamespaces: ["manifest"] },
   defaultEnabled: false,
   tags: ["ocr"],
   supports: {
@@ -60,10 +66,8 @@ type RemoteInferencePluginSettings = {
   models: RemoteInferenceModelOption[];
 };
 
-function RemoteInferenceSettings({
-  value,
-  onChange,
-}: PluginSettingsRenderContext<RemoteInferencePluginSettings>) {
+function RemoteInferenceSettings({ value, onChange }: PluginSettingsRenderContext<RemoteInferencePluginSettings>) {
+  const t = useTranslations("manifest");
   const customModels = getCustomModels(value.models);
   const [key, setKey] = useState("");
   const [label, setLabel] = useState("");
@@ -73,9 +77,9 @@ function RemoteInferenceSettings({
   return (
     <div className="grid gap-3">
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 text-xs font-medium text-zinc-500">
-        <span>Key</span>
-        <span>Label</span>
-        <span className="sr-only">Actions</span>
+        <span>{t("workflow.key")}</span>
+        <span>{t("workflow.label")}</span>
+        <span className="sr-only">{t("workflow.actions")}</span>
       </div>
       {[...REMOTE_INFERENCE_MODELS, ...customModels].map((model, index) => {
         const readOnly = index < REMOTE_INFERENCE_MODELS.length;
@@ -85,19 +89,19 @@ function RemoteInferenceSettings({
             className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2"
           >
             <input
-              aria-label={`${model.label} key`}
+              aria-label={t("workflow.modelKeyFor", { label: model.label })}
               className="min-w-0 rounded border border-zinc-200 bg-zinc-50 p-2 text-sm"
               value={model.key}
               readOnly
             />
             <input
-              aria-label={`${model.key} label`}
+              aria-label={t("workflow.modelLabelFor", { key: model.key })}
               className="min-w-0 rounded border border-zinc-200 bg-zinc-50 p-2 text-sm"
               value={model.label}
               readOnly
             />
             {readOnly ? (
-              <span className="w-16 text-center text-xs text-zinc-400">Built in</span>
+              <span className="w-16 text-center text-xs text-zinc-400">{t("workflow.builtIn")}</span>
             ) : (
               <button
                 type="button"
@@ -109,7 +113,7 @@ function RemoteInferenceSettings({
                   })
                 }
               >
-                Remove
+                {t("workflow.remove")}
               </button>
             )}
           </div>
@@ -117,17 +121,17 @@ function RemoteInferenceSettings({
       })}
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 border-t border-zinc-100 pt-3">
         <input
-          aria-label="Custom model key"
+          aria-label={t("workflow.customModelKey")}
           className="min-w-0 rounded border border-zinc-300 p-2 text-sm"
           value={key}
-          placeholder="model-key"
+          placeholder={t("workflow.modelKey")}
           onChange={(event) => setKey(event.target.value)}
         />
         <input
-          aria-label="Custom model label"
+          aria-label={t("workflow.customModelLabel")}
           className="min-w-0 rounded border border-zinc-300 p-2 text-sm"
           value={label}
-          placeholder="Model label"
+          placeholder={t("workflow.modelLabel")}
           onChange={(event) => setLabel(event.target.value)}
         />
         <button
@@ -143,11 +147,11 @@ function RemoteInferenceSettings({
             setLabel("");
           }}
         >
-          Add
+          {t("workflow.add")}
         </button>
       </div>
       {key.trim() && allKeys.has(key.trim()) ? (
-        <span className="text-xs text-red-600">Model keys must be unique.</span>
+        <span className="text-xs text-red-600">{t("workflow.modelKeysMustBeUnique")}</span>
       ) : null}
     </div>
   );
@@ -156,9 +160,7 @@ function RemoteInferenceSettings({
 export const settings: PluginSettingsDefinition = {
   defaults: { models: [] },
   render: (context) => (
-    <RemoteInferenceSettings
-      {...(context as unknown as PluginSettingsRenderContext<RemoteInferencePluginSettings>)}
-    />
+    <RemoteInferenceSettings {...(context as unknown as PluginSettingsRenderContext<RemoteInferencePluginSettings>)} />
   ),
 };
 
@@ -306,8 +308,8 @@ function parseStoredStructuredFields(): StructuredOutputField[] {
       .map((field: any) =>
         createStructuredField(
           typeof field?.label === "string" ? field.label : "",
-          typeof field?.description === "string" ? field.description : "",
-        ),
+          typeof field?.description === "string" ? field.description : ""
+        )
       )
       .filter((field) => field.label.trim() || field.description.trim());
     return fields.length ? fields : [createStructuredField()];
@@ -346,13 +348,13 @@ function getStructuredFieldsResult(results: any): Record<string, string> {
 function getStructuredOutputAnnotationPages(responseCanvas: any): any[] {
   const pages: any[] = responseCanvas?.annotations || [];
   return pages.filter((page) =>
-    typeof page?.id === "string" ? page.id.includes("/annotations/qwen-structure/") : false,
+    typeof page?.id === "string" ? page.id.includes("/annotations/qwen-structure/") : false
   );
 }
 
 function parseRemoteInferenceModel(
   value: string | null | undefined,
-  models = REMOTE_INFERENCE_MODELS,
+  models = REMOTE_INFERENCE_MODELS
 ): RemoteInferenceModel | null {
   return models.some((model) => model.key === value) ? value || null : null;
 }
@@ -368,11 +370,13 @@ type RemoteInferenceCanvasResult = {
   fields?: Record<string, string>;
   sourceImage?: string;
   message?: string;
+  messageReference?: MessageReference;
 };
 
 type RemoteInferenceCanvasSkip = {
   canvasId: string;
   reason: string;
+  reasonMessage?: MessageReference;
 };
 
 type RemoteInferenceActionResult = {
@@ -444,7 +448,7 @@ function getRemoteInferenceAnnotationId(
   model: RemoteInferenceResultModel,
   pageIndex: number,
   index: number,
-  runId?: string,
+  runId?: string
 ) {
   const runSegment = runId ? `/${runId}` : "";
   return `${trimTrailingSlash(canvasId)}${REMOTE_INFERENCE_ID_SEGMENT}${model}${runSegment}/${pageIndex + 1}/${index + 1}/annotation`;
@@ -456,7 +460,7 @@ function getRemoteInferenceBodyId(
   pageIndex: number,
   annotationIndex: number,
   bodyIndex: number,
-  runId?: string,
+  runId?: string
 ) {
   return `${getRemoteInferenceAnnotationId(canvasId, model, pageIndex, annotationIndex, runId)}/body/${bodyIndex + 1}`;
 }
@@ -471,7 +475,7 @@ function normaliseBodies(
   model: RemoteInferenceResultModel,
   pageIndex: number,
   annotationIndex: number,
-  runId?: string,
+  runId?: string
 ): NormalisedRemoteInferenceBody[] {
   const bodies = Array.isArray(item?.body) ? item.body : item?.body ? [item.body] : [];
 
@@ -511,7 +515,7 @@ function writeRemoteInferenceAnnotations(
   canvasId: string,
   model: RemoteInferenceResultModel,
   responseAnnotationPages: any[],
-  options: { mode?: "replace" | "append"; runId?: string } = {},
+  options: { mode?: "replace" | "append"; runId?: string } = {}
 ): number {
   const canvas = ctx.vault.get({ id: canvasId, type: "Canvas" } as any) as any;
   if (!canvas?.id) return 0;
@@ -523,7 +527,7 @@ function writeRemoteInferenceAnnotations(
   const pageId = page?.id || `${trimTrailingSlash(canvasId)}/annotations`;
   const previousItems: any[] = page?.items || [];
   const previousRemoteItems = previousItems.filter(
-    (item: any) => isRemoteInferenceId(item?.id) || isLegacyRemoteInferenceId(canvasId, item?.id),
+    (item: any) => isRemoteInferenceId(item?.id) || isLegacyRemoteInferenceId(canvasId, item?.id)
   );
   const actions: any[] = [];
   const mode = options.mode || "replace";
@@ -541,7 +545,7 @@ function writeRemoteInferenceAnnotations(
             },
           },
         },
-      }),
+      })
     );
     actions.push(
       addReference({
@@ -552,7 +556,7 @@ function writeRemoteInferenceAnnotations(
           id: pageId,
           type: "AnnotationPage",
         },
-      }),
+      })
     );
   }
 
@@ -567,7 +571,7 @@ function writeRemoteInferenceAnnotations(
             id: item.id,
             type: "Annotation",
           },
-        }),
+        })
       );
     }
 
@@ -584,7 +588,7 @@ function writeRemoteInferenceAnnotations(
               id: item.id,
               type: "Annotation",
             },
-          }),
+          })
         );
       }
     }
@@ -628,7 +632,7 @@ function writeRemoteInferenceAnnotations(
           Annotation: annotationEntities,
           ContentResource: bodyEntities,
         },
-      }),
+      })
     );
 
     for (const annotationId of annotationIds) {
@@ -641,7 +645,7 @@ function writeRemoteInferenceAnnotations(
             id: annotationId,
             type: "Annotation",
           },
-        }),
+        })
       );
     }
   }
@@ -674,7 +678,7 @@ type RemoteInferenceConfigRequest = {
 };
 
 function requestRemoteInferenceConfig(
-  request: Omit<RemoteInferenceConfigRequest, "resolve">,
+  request: Omit<RemoteInferenceConfigRequest, "resolve">
 ): Promise<RemoteInferenceRunOptions | false> {
   return new Promise((resolve) => {
     if (request.signal?.aborted) {
@@ -695,18 +699,13 @@ function requestRemoteInferenceConfig(
     window.dispatchEvent(
       new CustomEvent<RemoteInferenceConfigRequest>(CONFIG_EVENT, {
         detail: { ...request, resolve: settle },
-      }),
+      })
     );
   });
 }
 
-function RemoteInferenceConfigModal({
-  actionId,
-  models,
-}: {
-  actionId: string;
-  models: RemoteInferenceModelOption[];
-}) {
+function RemoteInferenceConfigModal({ actionId, models }: { actionId: string; models: RemoteInferenceModelOption[] }) {
+  const t = useTranslations("manifest");
   const [request, setRequest] = useState<RemoteInferenceConfigRequest | null>(null);
   const [options, setOptions] = useState<RemoteInferenceRunOptions>(() => getDefaultRunOptions(models));
 
@@ -735,7 +734,7 @@ function RemoteInferenceConfigModal({
 
   const selectedTag = useMemo(
     () => request?.tags.find((tag) => tag.key === options.tagKey),
-    [request?.tags, options.tagKey],
+    [request?.tags, options.tagKey]
   );
   const selectedCount =
     options.scope === "selected"
@@ -780,7 +779,7 @@ function RemoteInferenceConfigModal({
 
   return (
     <Modal
-      title="Run Remote Inference"
+      title={t("workflow.runRemoteInference")}
       onClose={() => close(false)}
       className="max-w-2xl"
       actions={
@@ -790,7 +789,7 @@ function RemoteInferenceConfigModal({
             className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
             onClick={() => close(false)}
           >
-            Cancel
+            {t("workflow.cancel")}
           </button>
           <button
             type="button"
@@ -804,14 +803,14 @@ function RemoteInferenceConfigModal({
               })
             }
           >
-            Run
+            {t("workflow.run")}
           </button>
         </div>
       }
     >
       <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">Server URL</span>
+          <span className="font-medium text-zinc-900">{t("workflow.serverUrl")}</span>
           <input
             type="text"
             className="rounded border border-zinc-300 p-2 text-sm"
@@ -825,18 +824,18 @@ function RemoteInferenceConfigModal({
             }
           />
           <span className="text-xs text-zinc-500">
-            POST requests will be sent to <code>{options.serverUrl}/enrich-canvas</code>
+            {t("workflow.postEndpoint", { endpoint: `${options.serverUrl}/enrich-canvas` })}
           </span>
         </label>
 
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">API key</span>
+          <span className="font-medium text-zinc-900">{t("workflow.apiKey")}</span>
           <input
             type="password"
             className="rounded border border-zinc-300 p-2 text-sm"
             value={options.apiKey || ""}
             autoComplete="off"
-            placeholder="Optional"
+            placeholder={t("workflow.optional")}
             onChange={(event) =>
               setOptions((current) => ({
                 ...current,
@@ -844,13 +843,11 @@ function RemoteInferenceConfigModal({
               }))
             }
           />
-          <span className="text-xs text-zinc-500">
-            When provided, requests include <code>X-API-KEY</code>.
-          </span>
+          <span className="text-xs text-zinc-500">{t("workflow.apiHeader", { header: "X-API-KEY" })}</span>
         </label>
 
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">Model</span>
+          <span className="font-medium text-zinc-900">{t("workflow.model")}</span>
           <select
             className="rounded border border-zinc-300 bg-white p-2"
             value={options.model}
@@ -870,7 +867,7 @@ function RemoteInferenceConfigModal({
         </label>
 
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">Image size</span>
+          <span className="font-medium text-zinc-900">{t("workflow.imageSize")}</span>
           <select
             className="rounded border border-zinc-300 bg-white p-2"
             value={options.resolution}
@@ -883,21 +880,21 @@ function RemoteInferenceConfigModal({
           >
             {REMOTE_INFERENCE_IMAGE_SIZES.map((size) => (
               <option key={size} value={size}>
-                {size}px long edge
+                {t("workflow.imageLongEdge", { size })}
               </option>
             ))}
           </select>
         </label>
 
         <fieldset className="grid gap-2">
-          <legend className="font-medium text-zinc-900">Canvases</legend>
+          <legend className="font-medium text-zinc-900">{t("panels.canvases")}</legend>
           <label className="flex items-center gap-2">
             <input
               type="radio"
               checked={options.scope === "all"}
               onChange={() => setOptions((current) => ({ ...current, scope: "all" }))}
             />
-            <span>All canvases ({request.totalCanvases})</span>
+            <span>{t("workflow.allCanvasesCount", { count: request.totalCanvases })}</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -907,7 +904,7 @@ function RemoteInferenceConfigModal({
               onChange={() => setOptions((current) => ({ ...current, scope: "selected" }))}
             />
             <span>
-              Selected canvas
+              {t("workflow.selectedCanvas")}
               {request.selectedCanvas?.label ? ` (${request.selectedCanvas.label})` : ""}
             </span>
           </label>
@@ -924,7 +921,7 @@ function RemoteInferenceConfigModal({
                 }))
               }
             />
-            <span>Only canvases with tag</span>
+            <span>{t("workflow.onlyCanvasesWithTag")}</span>
           </label>
           <select
             className="rounded border border-zinc-300 bg-white p-2 disabled:bg-zinc-100"
@@ -958,21 +955,15 @@ function RemoteInferenceConfigModal({
             }
           />
           <span className="grid gap-1">
-            <span className="font-medium text-zinc-900">Skip canvases with existing annotations</span>
-            <span className="text-xs text-zinc-500">
-              Do not run inference on canvases where a canvas annotation page already contains an annotation.
-            </span>
+            <span className="font-medium text-zinc-900">{t("workflow.skipCanvasesWithExistingAnnotations")}</span>
+            <span className="text-xs text-zinc-500">{t("workflow.skipAnnotatedHelp")}</span>
           </span>
         </label>
 
         <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
-          {runnableCount} canvas{runnableCount === 1 ? "" : "es"} will run remote inference.
+          {t("workflow.inferenceCount", { count: runnableCount })}
           {skippedByExistingAnnotations ? (
-            <>
-              {" "}
-              {skippedByExistingAnnotations} canvas
-              {skippedByExistingAnnotations === 1 ? "" : "es"} will be skipped because they already have annotations.
-            </>
+            <> {t("workflow.skipAnnotatedCount", { count: skippedByExistingAnnotations })}</>
           ) : null}
         </div>
       </div>
@@ -983,7 +974,7 @@ function RemoteInferenceConfigModal({
 function normaliseDefaults(
   defaults: RemoteInferenceRunOptions,
   tags: RemoteInferenceTagOption[],
-  models = REMOTE_INFERENCE_MODELS,
+  models = REMOTE_INFERENCE_MODELS
 ): RemoteInferenceRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
   const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
@@ -1016,7 +1007,7 @@ type StructuredOutputConfigRequest = {
 };
 
 function requestStructuredOutputConfig(
-  request: Omit<StructuredOutputConfigRequest, "resolve">,
+  request: Omit<StructuredOutputConfigRequest, "resolve">
 ): Promise<StructuredOutputRunOptions | false> {
   return new Promise((resolve) => {
     if (request.signal?.aborted) {
@@ -1037,12 +1028,13 @@ function requestStructuredOutputConfig(
     window.dispatchEvent(
       new CustomEvent<StructuredOutputConfigRequest>(STRUCTURED_CONFIG_EVENT, {
         detail: { ...request, resolve: settle },
-      }),
+      })
     );
   });
 }
 
 function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
+  const t = useTranslations("manifest");
   const [request, setRequest] = useState<StructuredOutputConfigRequest | null>(null);
   const [options, setOptions] = useState<StructuredOutputRunOptions>(getDefaultStructuredOutputOptions());
 
@@ -1071,7 +1063,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
 
   const selectedTag = useMemo(
     () => request?.tags.find((tag) => tag.key === options.tagKey),
-    [request?.tags, options.tagKey],
+    [request?.tags, options.tagKey]
   );
   const selectedCount =
     options.scope === "selected"
@@ -1115,7 +1107,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
 
   return (
     <Modal
-      title="Run Structured Output"
+      title={t("workflow.runStructuredOutput")}
       onClose={() => close(false)}
       className="max-w-2xl"
       actions={
@@ -1125,7 +1117,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
             className="rounded border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-700"
             onClick={() => close(false)}
           >
-            Cancel
+            {t("workflow.cancel")}
           </button>
           <button
             type="button"
@@ -1144,14 +1136,14 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
               })
             }
           >
-            Run
+            {t("workflow.run")}
           </button>
         </div>
       }
     >
       <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">Server URL</span>
+          <span className="font-medium text-zinc-900">{t("workflow.serverUrl")}</span>
           <input
             type="text"
             className="rounded border border-zinc-300 p-2 text-sm"
@@ -1165,18 +1157,18 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
             }
           />
           <span className="text-xs text-zinc-500">
-            POST requests will be sent to <code>{options.serverUrl}/enrich-canvas</code>
+            {t("workflow.postEndpoint", { endpoint: `${options.serverUrl}/enrich-canvas` })}
           </span>
         </label>
 
         <label className="grid gap-1">
-          <span className="font-medium text-zinc-900">API key</span>
+          <span className="font-medium text-zinc-900">{t("workflow.apiKey")}</span>
           <input
             type="password"
             className="rounded border border-zinc-300 p-2 text-sm"
             value={options.apiKey || ""}
             autoComplete="off"
-            placeholder="Optional"
+            placeholder={t("workflow.optional")}
             onChange={(event) =>
               setOptions((current) => ({
                 ...current,
@@ -1184,20 +1176,18 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
               }))
             }
           />
-          <span className="text-xs text-zinc-500">
-            When provided, requests include <code>X-API-KEY</code>.
-          </span>
+          <span className="text-xs text-zinc-500">{t("workflow.apiHeader", { header: "X-API-KEY" })}</span>
         </label>
 
         <fieldset className="grid gap-2">
-          <legend className="font-medium text-zinc-900">Canvases</legend>
+          <legend className="font-medium text-zinc-900">{t("panels.canvases")}</legend>
           <label className="flex items-center gap-2">
             <input
               type="radio"
               checked={options.scope === "all"}
               onChange={() => setOptions((current) => ({ ...current, scope: "all" }))}
             />
-            <span>All canvases ({request.totalCanvases})</span>
+            <span>{t("workflow.allCanvasesCount", { count: request.totalCanvases })}</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -1207,7 +1197,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
               onChange={() => setOptions((current) => ({ ...current, scope: "selected" }))}
             />
             <span>
-              Selected canvas
+              {t("workflow.selectedCanvas")}
               {request.selectedCanvas?.label ? ` (${request.selectedCanvas.label})` : ""}
             </span>
           </label>
@@ -1224,7 +1214,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
                 }))
               }
             />
-            <span>Only canvases with tag</span>
+            <span>{t("workflow.onlyCanvasesWithTag")}</span>
           </label>
           <select
             className="rounded border border-zinc-300 bg-white p-2 disabled:bg-zinc-100"
@@ -1246,11 +1236,13 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
         </fieldset>
 
         <fieldset className="grid gap-2">
-          <legend className="font-medium text-zinc-900">Structured fields</legend>
+          <legend className="font-medium text-zinc-900">{t("workflow.structuredFields")}</legend>
           {options.fields.map((field, index) => (
             <div key={field.id} className="grid gap-2 rounded border border-zinc-200 bg-white p-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">Field {index + 1}</span>
+                <span className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+                  {t("workflow.fieldNumber", { number: index + 1 })}
+                </span>
                 <button
                   type="button"
                   className="text-xs text-zinc-500 disabled:opacity-50"
@@ -1262,20 +1254,20 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
                     }))
                   }
                 >
-                  Remove
+                  {t("workflow.remove")}
                 </button>
               </div>
               <input
                 type="text"
                 className="rounded border border-zinc-300 p-2 text-sm"
                 value={field.label}
-                placeholder="Label, e.g. Title"
+                placeholder={t("workflow.labelEGTitle")}
                 onChange={(event) => updateField(field.id, "label", event.target.value)}
               />
               <textarea
                 className="min-h-20 rounded border border-zinc-300 p-2 text-sm"
                 value={field.description}
-                placeholder="Description or extraction instructions"
+                placeholder={t("workflow.descriptionOrExtractionInstructions")}
                 onChange={(event) => updateField(field.id, "description", event.target.value)}
               />
             </div>
@@ -1290,13 +1282,12 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
               }))
             }
           >
-            Add field
+            {t("workflow.addField")}
           </button>
         </fieldset>
 
         <div className="rounded border border-zinc-200 bg-white p-3 text-zinc-600">
-          {selectedCount} canvas{selectedCount === 1 ? "" : "es"} will run structured output. Existing annotations will
-          be kept.
+          {t("workflow.structuredCount", { count: selectedCount })}
         </div>
       </div>
     </Modal>
@@ -1305,7 +1296,7 @@ function StructuredOutputConfigModal({ actionId }: { actionId: string }) {
 
 function normaliseStructuredDefaults(
   defaults: StructuredOutputRunOptions,
-  tags: RemoteInferenceTagOption[],
+  tags: RemoteInferenceTagOption[]
 ): StructuredOutputRunOptions {
   const fallbackTagKey = tags[0] ? getTagKey(tags[0]) : undefined;
   const hasSelectedTag = defaults.tagKey ? tags.some((tag) => tag.key === defaults.tagKey) : false;
@@ -1335,11 +1326,13 @@ function openRemoteInferenceResults(actionId: string, result: unknown) {
         actionId,
         result: result as RemoteInferenceActionResult | undefined,
       },
-    }),
+    })
   );
 }
 
 function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
+  const t = useTranslations("manifest");
+  const { resolveMessage } = useEditorI18n();
   const [activeResult, setActiveResult] = useState<RemoteInferenceActionResult | null>(null);
 
   useEffect(() => {
@@ -1356,17 +1349,19 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
   if (!activeResult) return null;
 
   return (
-    <Modal title="Remote inference results" onClose={() => setActiveResult(null)} className="max-w-3xl">
+    <Modal title={t("workflow.remoteInferenceResults")} onClose={() => setActiveResult(null)} className="max-w-3xl">
       <div className="flex min-h-0 flex-col gap-4 p-4 text-sm text-zinc-700">
         <div className="grid grid-cols-4 gap-2">
-          <ResultStat label="Selected" value={activeResult.selected} />
-          <ResultStat label="Processed" value={activeResult.processed} />
-          <ResultStat label="Annotations" value={activeResult.annotations} />
-          <ResultStat label="Skipped" value={activeResult.skipped} />
+          <ResultStat label={t("workflow.selected")} value={activeResult.selected} />
+          <ResultStat label={t("workflow.processed")} value={activeResult.processed} />
+          <ResultStat label={t("workflow.annotations")} value={activeResult.annotations} />
+          <ResultStat label={t("workflow.skipped")} value={activeResult.skipped} />
         </div>
         {activeResult.canvases.length ? (
           <div className="rounded border border-zinc-200">
-            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">Processed canvases</div>
+            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">
+              {t("workflow.processedCanvases")}
+            </div>
             <div className="max-h-72 overflow-auto">
               {activeResult.canvases.map((item) => (
                 <div
@@ -1377,7 +1372,9 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
                     <div className="truncate font-medium text-zinc-900">{item.canvasId}</div>
                     <div className="shrink-0 text-xs text-zinc-500">{item.model}</div>
                   </div>
-                  {item.message ? <div className="text-zinc-500">{item.message}</div> : null}
+                  {item.message ? (
+                    <div className="text-zinc-500">{resolveMessage(item.messageReference, item.message)}</div>
+                  ) : null}
                   {item.sourceImage ? <div className="truncate text-xs text-zinc-500">{item.sourceImage}</div> : null}
                   {item.palette?.length ? (
                     <div className="flex flex-wrap gap-2">
@@ -1409,12 +1406,14 @@ function RemoteInferenceResultsModal({ actionId }: { actionId: string }) {
         ) : null}
         {activeResult.skippedCanvases.length ? (
           <div className="rounded border border-zinc-200">
-            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">Skipped canvases</div>
+            <div className="border-b border-zinc-200 bg-zinc-50 px-3 py-2 font-medium">
+              {t("workflow.skippedCanvases")}
+            </div>
             <div className="max-h-64 overflow-auto">
               {activeResult.skippedCanvases.map((item) => (
                 <div key={item.canvasId} className="grid gap-1 border-b border-zinc-100 px-3 py-2 last:border-0">
                   <div className="truncate font-medium text-zinc-900">{item.canvasId}</div>
-                  <div className="text-zinc-500">{item.reason}</div>
+                  <div className="text-zinc-500">{resolveMessage(item.reasonMessage, item.reason)}</div>
                 </div>
               ))}
             </div>
@@ -1451,7 +1450,7 @@ function selectCanvases(ctx: BackgroundActionRunContext, canvases: any[], option
   const selectedTag = parseTagKey(options.tagKey);
   if (!selectedTag) return [];
   return canvases.filter((canvas) =>
-    ctx.tags.hasTag({ id: canvas.id, type: "Canvas" }, selectedTag.type, selectedTag.id),
+    ctx.tags.hasTag({ id: canvas.id, type: "Canvas" }, selectedTag.type, selectedTag.id)
   );
 }
 
@@ -1482,7 +1481,7 @@ function createRemoteInferencePlan(
   total: number,
   selectedCanvases: any[],
   options: RemoteInferenceRunOptions,
-  ctx?: BackgroundActionRunContext,
+  ctx?: BackgroundActionRunContext
 ): BackgroundActionPlan {
   const manifest = ctx ? (ctx.vault.get(ctx.target as any) as any) : null;
   const manifestId: string = manifest?.id || "";
@@ -1499,6 +1498,7 @@ function createRemoteInferencePlan(
         ? ({
             canvasId,
             reason: "Canvas already has annotations",
+            reasonMessage: manifestMessage("workflow.alreadyAnnotated"),
           } satisfies RemoteInferenceCanvasSkip)
         : null;
 
@@ -1514,6 +1514,7 @@ function createRemoteInferencePlan(
         input: { canvasId, manifestId },
         status: skip ? ("skipped" as const) : ("queued" as const),
         statusText: skip ? "Skipped: canvas already has annotations" : undefined,
+        statusTextMessage: skip ? manifestMessage("workflow.skippedAlreadyAnnotated") : undefined,
         result: skip ? ({ type: "skipped", skip } satisfies RemoteInferenceTaskResult) : undefined,
         completedAt: skip ? Date.now() : undefined,
       };
@@ -1525,7 +1526,7 @@ function createStructuredOutputPlan(
   total: number,
   selectedCanvases: any[],
   options: StructuredOutputRunOptions,
-  ctx?: BackgroundActionRunContext,
+  ctx?: BackgroundActionRunContext
 ): BackgroundActionPlan {
   const manifest = ctx ? (ctx.vault.get(ctx.target as any) as any) : null;
   const manifestId: string = manifest?.id || "";
@@ -1657,8 +1658,11 @@ function RemoteInferenceBackgroundActionUi({ actionId }: { actionId: string }) {
 const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   id: REMOTE_INFERENCE_ACTION_ID,
   label: "Run remote inference",
+  labelMessage: manifestMessage("workflow.runRemoteInferenceLabel"),
   summary: "Run remote inference on canvas images via a configurable server",
+  summaryMessage: manifestMessage("workflow.inferenceActionSummary"),
   section: "OCR",
+  sectionMessage: manifestMessage("workflow.ocr"),
   order: 21,
   resourceTypes: ["Manifest"],
   resumable: true,
@@ -1675,9 +1679,7 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
   prepare: async (ctx) => {
     const canvases = getManifestCanvases(ctx);
     const prepareData = ctx.prepareData as RemoteInferencePrepareData | undefined;
-    const models = getRemoteInferenceModels(
-      ctx.plugins.getSettings<RemoteInferencePluginSettings>(PLUGIN_ID).models,
-    );
+    const models = getRemoteInferenceModels(ctx.plugins.getSettings<RemoteInferencePluginSettings>(PLUGIN_ID).models);
     const defaults = getDefaultRunOptions(models);
     const requestDefaults = prepareData?.scope === "selected" ? { ...defaults, scope: "selected" as const } : defaults;
     const options = await requestRemoteInferenceConfig({
@@ -1707,10 +1709,10 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
     const endpoint = getRemoteInferenceEndpoint(serverUrl);
     const model = options.model.trim() || DEFAULT_MODEL;
 
-    ctx.setActionLabel("Running remote inference");
+    ctx.setActionLabel("Running remote inference", manifestMessage("workflow.runningRemoteInference"));
 
     if (!tasks.length) {
-      ctx.setActionStatus("running", "No canvases selected");
+      ctx.setActionStatus("running", "No canvases selected", manifestMessage("workflow.noCanvasesSelected"));
       return createEmptyResult(totalCanvases, 0);
     }
 
@@ -1719,169 +1721,77 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
         pendingTasks
           .map((task) => task.target)
           .filter(
-            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas",
+            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas"
           ),
-        "queued",
+        "queued"
       );
 
-      await ctx.tasks.runEach(
-        async (task, { index, total }) => {
-          throwIfAborted(ctx.signal);
-          const input = task.input as { canvasId: string; manifestId: string };
-          const canvasId = task.target?.id || input.canvasId || task.id;
-          const manifestId = input.manifestId || "";
+      await ctx.tasks.runEach(async (task, { index, total }) => {
+        throwIfAborted(ctx.signal);
+        const input = task.input as { canvasId: string; manifestId: string };
+        const canvasId = task.target?.id || input.canvasId || task.id;
+        const manifestId = input.manifestId || "";
 
-          ctx.appendActionLog(`Inference ${index + 1}/${total}`, "info", {
+        ctx.appendActionLog(
+          `Inference ${index + 1}/${total}`,
+          "info",
+          {
             canvasId,
             current: index + 1,
             total,
-          });
+          },
+          manifestMessage("workflow.inference", { current: index + 1, total: total })
+        );
 
-          try {
-            const startedAt = performance.now();
+        try {
+          const startedAt = performance.now();
 
-            ctx.setActionStatus("running", `Sending canvas ${index + 1}/${total} to server`);
+          ctx.setActionStatus(
+            "running",
+            `Sending canvas ${index + 1}/${total} to server`,
+            manifestMessage("workflow.sendingCanvasToServer", { current: index + 1, total: total })
+          );
 
-            const canvas = ctx.vault.toPresentation3({ id: canvasId, type: "Canvas" });
+          const canvas = ctx.vault.toPresentation3({ id: canvasId, type: "Canvas" });
 
-            const resolution = options.resolution || 1024;
+          const resolution = options.resolution || 1024;
 
-            let body: any = {
-              canvas: canvasWithoutAnnotationPages(canvas),
+          let body: any = {
+            canvas: canvasWithoutAnnotationPages(canvas),
+            config: { type: model, resolution },
+          };
+
+          if (!canvas) {
+            body = {
+              manifest_url: manifestId,
+              canvas_id: canvasId,
               config: { type: model, resolution },
             };
+          }
 
-            if (!canvas) {
-              body = {
-                manifest_url: manifestId,
-                canvas_id: canvasId,
-                config: { type: model, resolution },
-              };
-            }
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: getRequestHeaders(options),
+            body: JSON.stringify(body),
+            signal: ctx.signal,
+          });
 
-            const response = await fetch(endpoint, {
-              method: "POST",
-              headers: getRequestHeaders(options),
-              body: JSON.stringify(body),
-              signal: ctx.signal,
-            });
-
-            if (!response.ok) {
-              const text = await response.text().catch(() => response.statusText);
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: `Server responded with ${response.status}: ${text}`,
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const responseJson = await response.json();
-            const responseError = getResponseError(responseJson?.results);
-            if (responseError) {
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: responseError,
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const durationMs = performance.now() - startedAt;
-
-            if (model === "palette") {
-              const palette = Array.isArray(responseJson?.results?.palette) ? responseJson.results.palette : [];
-              ctx.appendActionLog("Read palette", "info", {
-                canvasId,
-                colours: palette.length,
-              });
-              return {
-                taskStatus: "complete" as const,
-                result: {
-                  type: "processed",
-                  canvas: {
-                    canvasId,
-                    model,
-                    annotations: 0,
-                    durationMs,
-                    palette,
-                    sourceImage: responseJson?.results?.source_image,
-                    message: palette.length ? `Found ${palette.length} colours` : "No palette colours returned",
-                  },
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const responseCanvas = responseJson?.canvas;
-            const annotationPages: any[] = responseCanvas?.annotations || [];
-            if (!annotationPages.length) {
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: "Server returned no annotation pages for this model.",
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const annotationsWritten = writeRemoteInferenceAnnotations(ctx, canvasId, model, annotationPages);
-
-            ctx.appendActionLog("Wrote annotations", "info", {
-              canvasId,
-              annotations: annotationsWritten,
-            });
-
-            return {
-              taskStatus: "complete" as const,
-              result: {
-                type: "processed",
-                canvas: {
-                  canvasId,
-                  model,
-                  annotations: annotationsWritten,
-                  durationMs,
-                  sourceImage: responseJson?.results?.source_image,
-                  message: getModelResultMessage(model, responseJson?.results),
-                },
-              } satisfies RemoteInferenceTaskResult,
-            };
-          } catch (error) {
-            if (ctx.signal.aborted) throw error;
-
+          if (!response.ok) {
+            const text = await response.text().catch(() => response.statusText);
             const skip: RemoteInferenceCanvasSkip = {
               canvasId,
-              reason: getErrorMessage(error),
+              reason: `Server responded with ${response.status}: ${text}`,
+              reasonMessage: manifestMessage("workflow.serverRespondedWith", { current: response.status, total: text }),
             };
-            ctx.appendActionLog("Skipped canvas", "warn", {
-              canvasId,
-              reason: skip.reason,
-            });
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
             return {
               taskStatus: "skipped" as const,
               result: {
@@ -1890,22 +1800,160 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
               } satisfies RemoteInferenceTaskResult,
             };
           }
-        },
-        {
-          progressLabel: (_task, index, total) => `Inference ${index + 1}/${total}`,
-        },
-      );
+
+          const responseJson = await response.json();
+          const responseError = getResponseError(responseJson?.results);
+          if (responseError) {
+            const skip: RemoteInferenceCanvasSkip = {
+              canvasId,
+              reason: responseError,
+            };
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
+            return {
+              taskStatus: "skipped" as const,
+              result: {
+                type: "skipped",
+                skip,
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+
+          const durationMs = performance.now() - startedAt;
+
+          if (model === "palette") {
+            const palette = Array.isArray(responseJson?.results?.palette) ? responseJson.results.palette : [];
+            ctx.appendActionLog(
+              "Read palette",
+              "info",
+              {
+                canvasId,
+                colours: palette.length,
+              },
+              manifestMessage("workflow.readPalette")
+            );
+            return {
+              taskStatus: "complete" as const,
+              result: {
+                type: "processed",
+                canvas: {
+                  canvasId,
+                  model,
+                  annotations: 0,
+                  durationMs,
+                  palette,
+                  sourceImage: responseJson?.results?.source_image,
+                  message: palette.length ? `Found ${palette.length} colours` : "No palette colours returned",
+                  messageReference: manifestMessage(
+                    palette.length ? "workflow.paletteCount" : "workflow.noPalette",
+                    palette.length ? { count: palette.length } : undefined
+                  ),
+                },
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+
+          const responseCanvas = responseJson?.canvas;
+          const annotationPages: any[] = responseCanvas?.annotations || [];
+          if (!annotationPages.length) {
+            const skip: RemoteInferenceCanvasSkip = {
+              canvasId,
+              reason: "Server returned no annotation pages for this model.",
+              reasonMessage: manifestMessage("workflow.noModelAnnotationPages"),
+            };
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
+            return {
+              taskStatus: "skipped" as const,
+              result: {
+                type: "skipped",
+                skip,
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+
+          const annotationsWritten = writeRemoteInferenceAnnotations(ctx, canvasId, model, annotationPages);
+
+          ctx.appendActionLog(
+            "Wrote annotations",
+            "info",
+            {
+              canvasId,
+              annotations: annotationsWritten,
+            },
+            manifestMessage("workflow.wroteAnnotations")
+          );
+
+          return {
+            taskStatus: "complete" as const,
+            result: {
+              type: "processed",
+              canvas: {
+                canvasId,
+                model,
+                annotations: annotationsWritten,
+                durationMs,
+                sourceImage: responseJson?.results?.source_image,
+                message: getModelResultMessage(model, responseJson?.results),
+              },
+            } satisfies RemoteInferenceTaskResult,
+          };
+        } catch (error) {
+          if (ctx.signal.aborted) throw error;
+
+          const skip: RemoteInferenceCanvasSkip = {
+            canvasId,
+            reason: getErrorMessage(error),
+            reasonMessage: error instanceof Error ? undefined : manifestMessage("workflow.inferenceFailed"),
+          };
+          ctx.appendActionLog(
+            "Skipped canvas",
+            "warn",
+            {
+              canvasId,
+              reason: skip.reason,
+            },
+            manifestMessage("workflow.skippedCanvas")
+          );
+          return {
+            taskStatus: "skipped" as const,
+            result: {
+              type: "skipped",
+              skip,
+            } satisfies RemoteInferenceTaskResult,
+          };
+        }
+      }, {});
     }
 
     const result = aggregateResult(totalCanvases, ctx.tasks.getAll());
     ctx.setActionStatus(
       "running",
       `Processed ${result.processed} canvases and created ${result.annotations} annotations`,
+      manifestMessage(
+        result.annotations === 1 ? "workflow.inferenceSummaryOneAnnotation" : "workflow.inferenceSummaryAnnotations",
+        { count: result.processed, annotations: result.annotations }
+      )
     );
     ctx.setActionProgress({
       current: result.selected,
       total: result.selected,
       label: "Inference complete",
+      labelMessage: manifestMessage("workflow.inferenceComplete"),
     });
 
     return result;
@@ -1915,8 +1963,11 @@ const remoteInferenceBackgroundAction: BackgroundActionDefinition = {
 const structuredOutputBackgroundAction: BackgroundActionDefinition = {
   id: STRUCTURED_OUTPUT_ACTION_ID,
   label: "Run structured output",
+  labelMessage: manifestMessage("workflow.runStructuredOutputLabel"),
   summary: "Extract configured structured fields from canvas images",
+  summaryMessage: manifestMessage("workflow.structuredActionSummary"),
   section: "OCR",
+  sectionMessage: manifestMessage("workflow.ocr"),
   order: 22,
   resourceTypes: ["Manifest"],
   resumable: true,
@@ -1966,15 +2017,19 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
     const endpoint = getRemoteInferenceEndpoint(serverUrl);
     const fields = structuredFieldsToConfig(options.fields);
 
-    ctx.setActionLabel("Running structured output");
+    ctx.setActionLabel("Running structured output", manifestMessage("workflow.runningStructuredOutput"));
 
     if (!tasks.length) {
-      ctx.setActionStatus("running", "No canvases selected");
+      ctx.setActionStatus("running", "No canvases selected", manifestMessage("workflow.noCanvasesSelected"));
       return createEmptyResult(totalCanvases, 0);
     }
 
     if (!Object.keys(fields).length) {
-      ctx.setActionStatus("error", "No structured fields configured");
+      ctx.setActionStatus(
+        "error",
+        "No structured fields configured",
+        manifestMessage("workflow.noStructuredFieldsConfigured")
+      );
       return createEmptyResult(totalCanvases, tasks.length);
     }
 
@@ -1983,144 +2038,67 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
         pendingTasks
           .map((task) => task.target)
           .filter(
-            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas",
+            (target): target is NonNullable<BackgroundActionTask["target"]> => !!target && target.type === "Canvas"
           ),
-        "queued",
+        "queued"
       );
 
-      await ctx.tasks.runEach(
-        async (task, { index, total }) => {
-          throwIfAborted(ctx.signal);
-          const input = task.input as { canvasId: string; manifestId: string };
-          const canvasId = task.target?.id || input.canvasId || task.id;
-          const manifestId = input.manifestId || "";
+      await ctx.tasks.runEach(async (task, { index, total }) => {
+        throwIfAborted(ctx.signal);
+        const input = task.input as { canvasId: string; manifestId: string };
+        const canvasId = task.target?.id || input.canvasId || task.id;
+        const manifestId = input.manifestId || "";
 
-          ctx.appendActionLog(`Structured output ${index + 1}/${total}`, "info", {
+        ctx.appendActionLog(
+          `Structured output ${index + 1}/${total}`,
+          "info",
+          {
             canvasId,
             current: index + 1,
             total,
+          },
+          manifestMessage("workflow.structuredOutput", { current: index + 1, total: total })
+        );
+
+        try {
+          const startedAt = performance.now();
+
+          ctx.setActionStatus(
+            "running",
+            `Sending canvas ${index + 1}/${total} to server`,
+            manifestMessage("workflow.sendingCanvasToServer", { current: index + 1, total: total })
+          );
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: getRequestHeaders(options),
+            body: JSON.stringify({
+              manifest_url: manifestId,
+              canvas_id: canvasId,
+              config: {
+                type: STRUCTURED_OUTPUT_MODEL,
+                fields,
+              },
+            }),
+            signal: ctx.signal,
           });
 
-          try {
-            const startedAt = performance.now();
-
-            ctx.setActionStatus("running", `Sending canvas ${index + 1}/${total} to server`);
-
-            const response = await fetch(endpoint, {
-              method: "POST",
-              headers: getRequestHeaders(options),
-              body: JSON.stringify({
-                manifest_url: manifestId,
-                canvas_id: canvasId,
-                config: {
-                  type: STRUCTURED_OUTPUT_MODEL,
-                  fields,
-                },
-              }),
-              signal: ctx.signal,
-            });
-
-            if (!response.ok) {
-              const text = await response.text().catch(() => response.statusText);
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: `Server responded with ${response.status}: ${text}`,
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const responseJson = await response.json();
-            const responseError = getResponseError(responseJson?.results);
-            if (responseError) {
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: responseError,
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const responseCanvas = responseJson?.canvas;
-            const annotationPages = getStructuredOutputAnnotationPages(responseCanvas);
-            if (!annotationPages.length) {
-              const skip: RemoteInferenceCanvasSkip = {
-                canvasId,
-                reason: "Server returned no structured annotation pages.",
-              };
-              ctx.appendActionLog("Skipped canvas", "warn", {
-                canvasId,
-                reason: skip.reason,
-              });
-              return {
-                taskStatus: "skipped" as const,
-                result: {
-                  type: "skipped",
-                  skip,
-                } satisfies RemoteInferenceTaskResult,
-              };
-            }
-
-            const durationMs = performance.now() - startedAt;
-            const runId = `${Date.now()}-${index + 1}`;
-            const annotationsWritten = writeRemoteInferenceAnnotations(
-              ctx,
-              canvasId,
-              STRUCTURED_OUTPUT_MODEL,
-              annotationPages,
-              { mode: "append", runId },
-            );
-            const resultFields = getStructuredFieldsResult(responseJson?.results);
-
-            ctx.appendActionLog("Wrote structured annotations", "info", {
-              canvasId,
-              annotations: annotationsWritten,
-            });
-
-            return {
-              taskStatus: "complete" as const,
-              result: {
-                type: "processed",
-                canvas: {
-                  canvasId,
-                  model: STRUCTURED_OUTPUT_MODEL,
-                  annotations: annotationsWritten,
-                  durationMs,
-                  fields: resultFields,
-                  sourceImage: responseJson?.results?.source_image,
-                  message: getModelResultMessage(STRUCTURED_OUTPUT_MODEL, responseJson?.results),
-                },
-              } satisfies RemoteInferenceTaskResult,
-            };
-          } catch (error) {
-            if (ctx.signal.aborted) throw error;
-
+          if (!response.ok) {
+            const text = await response.text().catch(() => response.statusText);
             const skip: RemoteInferenceCanvasSkip = {
               canvasId,
-              reason: getErrorMessage(error),
+              reason: `Server responded with ${response.status}: ${text}`,
+              reasonMessage: manifestMessage("workflow.serverRespondedWith", { current: response.status, total: text }),
             };
-            ctx.appendActionLog("Skipped canvas", "warn", {
-              canvasId,
-              reason: skip.reason,
-            });
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
             return {
               taskStatus: "skipped" as const,
               result: {
@@ -2129,22 +2107,136 @@ const structuredOutputBackgroundAction: BackgroundActionDefinition = {
               } satisfies RemoteInferenceTaskResult,
             };
           }
-        },
-        {
-          progressLabel: (_task, index, total) => `Structured output ${index + 1}/${total}`,
-        },
-      );
+
+          const responseJson = await response.json();
+          const responseError = getResponseError(responseJson?.results);
+          if (responseError) {
+            const skip: RemoteInferenceCanvasSkip = {
+              canvasId,
+              reason: responseError,
+            };
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
+            return {
+              taskStatus: "skipped" as const,
+              result: {
+                type: "skipped",
+                skip,
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+
+          const responseCanvas = responseJson?.canvas;
+          const annotationPages = getStructuredOutputAnnotationPages(responseCanvas);
+          if (!annotationPages.length) {
+            const skip: RemoteInferenceCanvasSkip = {
+              canvasId,
+              reason: "Server returned no structured annotation pages.",
+              reasonMessage: manifestMessage("workflow.noStructuredAnnotationPages"),
+            };
+            ctx.appendActionLog(
+              "Skipped canvas",
+              "warn",
+              {
+                canvasId,
+                reason: skip.reason,
+              },
+              manifestMessage("workflow.skippedCanvas")
+            );
+            return {
+              taskStatus: "skipped" as const,
+              result: {
+                type: "skipped",
+                skip,
+              } satisfies RemoteInferenceTaskResult,
+            };
+          }
+
+          const durationMs = performance.now() - startedAt;
+          const runId = `${Date.now()}-${index + 1}`;
+          const annotationsWritten = writeRemoteInferenceAnnotations(
+            ctx,
+            canvasId,
+            STRUCTURED_OUTPUT_MODEL,
+            annotationPages,
+            { mode: "append", runId }
+          );
+          const resultFields = getStructuredFieldsResult(responseJson?.results);
+
+          ctx.appendActionLog(
+            "Wrote structured annotations",
+            "info",
+            {
+              canvasId,
+              annotations: annotationsWritten,
+            },
+            manifestMessage("workflow.wroteStructuredAnnotations")
+          );
+
+          return {
+            taskStatus: "complete" as const,
+            result: {
+              type: "processed",
+              canvas: {
+                canvasId,
+                model: STRUCTURED_OUTPUT_MODEL,
+                annotations: annotationsWritten,
+                durationMs,
+                fields: resultFields,
+                sourceImage: responseJson?.results?.source_image,
+                message: getModelResultMessage(STRUCTURED_OUTPUT_MODEL, responseJson?.results),
+              },
+            } satisfies RemoteInferenceTaskResult,
+          };
+        } catch (error) {
+          if (ctx.signal.aborted) throw error;
+
+          const skip: RemoteInferenceCanvasSkip = {
+            canvasId,
+            reason: getErrorMessage(error),
+            reasonMessage: error instanceof Error ? undefined : manifestMessage("workflow.inferenceFailed"),
+          };
+          ctx.appendActionLog(
+            "Skipped canvas",
+            "warn",
+            {
+              canvasId,
+              reason: skip.reason,
+            },
+            manifestMessage("workflow.skippedCanvas")
+          );
+          return {
+            taskStatus: "skipped" as const,
+            result: {
+              type: "skipped",
+              skip,
+            } satisfies RemoteInferenceTaskResult,
+          };
+        }
+      }, {});
     }
 
     const result = aggregateResult(totalCanvases, ctx.tasks.getAll());
     ctx.setActionStatus(
       "running",
       `Processed ${result.processed} canvases and created ${result.annotations} annotations`,
+      manifestMessage(
+        result.annotations === 1 ? "workflow.inferenceSummaryOneAnnotation" : "workflow.inferenceSummaryAnnotations",
+        { count: result.processed, annotations: result.annotations }
+      )
     );
     ctx.setActionProgress({
       current: result.selected,
       total: result.selected,
       label: "Structured output complete",
+      labelMessage: manifestMessage("workflow.structuredOutputComplete"),
     });
 
     return result;

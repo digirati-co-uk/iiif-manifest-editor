@@ -1,4 +1,6 @@
-import { HTMLPortal, useRuntime } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
+import { useRuntime } from "@atlas-viewer/atlas";
 import { resizeCanvasHandle, type CanvasHandle, type Rectangle, type Size } from "@manifest-editor/editor-api";
 import { useRef } from "react";
 
@@ -18,6 +20,8 @@ export function CanvasResizeEdges({
   onDone: () => void;
   onDiscard: () => void;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const runtime = useRuntime();
   const drag = useRef<{ x: number; y: number; scale: number; size: Size; next: Rectangle } | null>(null);
   const rect = preview || { x: 0, y: 0, ...size };
@@ -53,8 +57,8 @@ export function CanvasResizeEdges({
           <HTMLPortal key={handle} target={{ x, y, width: 1, height: 1 }} relative interactive>
             <button
               type="button"
-              aria-label={`Resize canvas ${handle} ${corner ? "corner" : "edge"}`}
-              title={corner ? "Drag to resize · Shift unlocks proportions" : "Drag to resize"}
+              aria-label={t(`messages.resize_${handle.replaceAll("-", "_")}`)}
+              title={corner ? t("messages.dragResizeCorner") : t("messages.dragResize")}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -162,7 +166,7 @@ export function CanvasResizeEdges({
               fontSize: 13,
             }}
           >
-            Done
+            {commonT("actions.done")}
           </button>
           <button
             type="button"
@@ -176,7 +180,7 @@ export function CanvasResizeEdges({
               fontSize: 13,
             }}
           >
-            Discard changes
+            {t("ui.discardChanges")}
           </button>
         </div>
       </HTMLPortal>

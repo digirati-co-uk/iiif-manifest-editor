@@ -1,3 +1,4 @@
+import type { Translate } from "@manifest-editor/i18n";
 import type { AppDropdownItem } from "../components/AppDropdown/AppDropdown";
 import { DeleteIcon } from "@manifest-editor/ui/icons/DeleteIcon";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
@@ -7,15 +8,21 @@ import type { MetadataEditor, BaseReferenceListEditor } from "@manifest-editor/e
 
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any>,
-  callback?: () => void | undefined
+  callback?: () => void | undefined,
+  t?: Translate,
+  common?: Translate
 ): (ref: Reference, index: number, item: Reference | SpecificResource) => AppDropdownItem[];
 export function createAppActions(
   editor: MetadataEditor<any>,
-  callback?: () => void
+  callback?: () => void,
+  t?: Translate,
+  common?: Translate
 ): (ref: MetadataItem, index: number, item: MetadataItem) => AppDropdownItem[];
 export function createAppActions(
   editor: BaseReferenceListEditor<any, any> | MetadataEditor<any>,
-  callback?: () => void
+  callback?: () => void,
+  t?: Translate,
+  common?: Translate
 ): (
   ref: MetadataItem | Reference,
   index: number,
@@ -30,17 +37,17 @@ export function createAppActions(
 
     return [
       {
-        label: "Move to start",
+        label: t ? t("ui.moveToStart") : "Move to start",
         icon: <ResetIcon />,
         onClick: () => editor.moveToStart(index),
       },
       {
-        label: "Move to end",
+        label: t ? t("ui.moveToEnd") : "Move to end",
         icon: <DownIcon />,
         onClick: () => editor.moveToEnd(index),
       },
       {
-        label: "Delete",
+        label: common ? common("actions.delete") : "Delete",
         icon: <DeleteIcon />,
         onClick: () => {
           editor.deleteAtIndex(index);

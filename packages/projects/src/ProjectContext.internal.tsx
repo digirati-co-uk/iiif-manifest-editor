@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ReactNode, useEffect, useMemo, useReducer } from "react";
 import { ProjectReactContext, ProjectLoadingReactContext } from "./ProjectContext";
 import { useApps, AppResourceProvider, AppResourceInstanceProvider } from "@manifest-editor/shell";
@@ -19,6 +20,7 @@ export interface ProjectProviderProps {
 }
 
 export function ProjectProvider(props: ProjectProviderProps) {
+  const t = useTranslations("projects");
   const { currentApp, changeApp } = useApps();
   // @todo this may be configuration or something else.
   //   The interface for the loader will definitely change over time.
@@ -56,7 +58,7 @@ export function ProjectProvider(props: ProjectProviderProps) {
   }, []);
 
   if ((state.loadingStatus && state.loadingStatus.loading) || (context.current && !manifestOrCollection)) {
-    return <div>Loading...</div>;
+    return <output style={{ display: "block" }}>{t("status.loading")}</output>;
   }
 
   return (

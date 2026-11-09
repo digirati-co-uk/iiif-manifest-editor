@@ -1,3 +1,4 @@
+import type { Translate } from "@manifest-editor/i18n";
 import type { Vault } from "@iiif/helpers/vault";
 import { addMappings, importEntities, modifyEntityField } from "@iiif/helpers/vault/actions";
 import type { InternationalString, Reference } from "@iiif/presentation-3";
@@ -110,7 +111,7 @@ export function updateChoiceField(
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
   key: string,
-  value: unknown,
+  value: unknown
 ) {
   if (info.ref) {
     vault.modifyEntityField(info.ref, key, value);
@@ -127,7 +128,7 @@ export function updateChoiceItems(
   vault: Vault,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
-  items: unknown[],
+  items: unknown[]
 ) {
   updateChoiceField(vault, annotationRef, info, "items", items);
 }
@@ -135,7 +136,7 @@ export function updateChoiceItems(
 export function ensureChoiceBodyRef(
   vault: Vault,
   annotationRef: Reference<"Annotation">,
-  info: ChoiceBodyInfo,
+  info: ChoiceBodyInfo
 ): ChoiceBodyRef {
   if (info.ref) {
     return info.ref;
@@ -158,14 +159,14 @@ export function ensureChoiceBodyRef(
             [choiceId]: choice,
           },
         },
-      }),
+      })
     );
     batchVault.dispatch(
       addMappings({
         mapping: {
           [choiceId]: "ContentResource",
         },
-      }),
+      })
     );
     batchVault.dispatch(
       modifyEntityField({
@@ -173,7 +174,7 @@ export function ensureChoiceBodyRef(
         type: "Annotation",
         key: "body",
         value: bodies,
-      }),
+      })
     );
   });
 
@@ -185,7 +186,7 @@ export function updateChoiceItemLabel(
   annotationRef: Reference<"Annotation">,
   choiceInfo: ChoiceBodyInfo,
   itemInfo: ChoiceItemInfo,
-  label: InternationalString,
+  label: InternationalString
 ) {
   if (itemInfo.ref) {
     vault.modifyEntityField(itemInfo.ref, "label", label);
@@ -197,18 +198,19 @@ export function updateChoiceItemLabel(
   updateChoiceItems(vault, annotationRef, choiceInfo, items);
 }
 
-export function getPaintingChoiceCandidates(vault: Vault, annotationRefs: Array<Reference | any>) {
-  return annotationRefs.map((ref, index) => getPaintingChoiceCandidate(vault, ref, index));
+export function getPaintingChoiceCandidates(vault: Vault, annotationRefs: Array<Reference | any>, t?: Translate) {
+  return annotationRefs.map((ref, index) => getPaintingChoiceCandidate(vault, ref, index, t));
 }
 
 export function getPaintingChoiceCandidate(
   vault: Vault,
   annotationRef: Reference | any,
   index: number,
+  t?: Translate
 ): PaintingChoiceCandidate {
   const annotation = vault.get(annotationRef as any, { skipSelfReturn: false } as any) as any;
   const resolvedAnnotationRef = getAnnotationRef(annotationRef, annotation);
-  const fallbackLabel = `Media ${index + 1}`;
+  const fallbackLabel = t ? t("messages.mediaNumber", { number: index + 1 }) : `Media ${index + 1}`;
 
   if (!annotation || !resolvedAnnotationRef) {
     return {
@@ -216,40 +218,70 @@ export function getPaintingChoiceCandidate(
       annotationRef: { id: "", type: "Annotation" },
       index,
       label: fallbackLabel,
-      detail: "Annotation not found",
+      detail: t ? t("messages.annotationNotFound") : "Annotation not found",
       body: null,
       bodyResource: null,
       bodyRef: null,
       choiceItem: null,
       eligible: false,
-      disabledReason: "Annotation not found",
+      disabledReason: t ? t("messages.annotationNotFound") : "Annotation not found",
     };
   }
 
   const label = getInternationalStringText(annotation.label, fallbackLabel);
   const motivation = toArray(annotation.motivation);
   if (!motivation.includes("painting")) {
-    return createDisabledCandidate(annotation, resolvedAnnotationRef, index, label, "Not a painting annotation");
+    return createDisabledCandidate(
+      annotation,
+      resolvedAnnotationRef,
+      index,
+      label,
+      t ? t("messages.notPainting") : "Not a painting annotation"
+    );
   }
 
   if (getChoiceBodyInfo(annotation, vault)) {
-    return createDisabledCandidate(annotation, resolvedAnnotationRef, index, label, "Already a Choice");
+    return createDisabledCandidate(
+      annotation,
+      resolvedAnnotationRef,
+      index,
+      label,
+      t ? t("messages.alreadyChoice") : "Already a Choice"
+    );
   }
 
   const bodies = toArray(annotation.body);
   if (bodies.length !== 1) {
-    return createDisabledCandidate(annotation, resolvedAnnotationRef, index, label, "Expected one image body");
+    return createDisabledCandidate(
+      annotation,
+      resolvedAnnotationRef,
+      index,
+      label,
+      t ? t("messages.expectedImage") : "Expected one image body"
+    );
   }
 
   const body = bodies[0];
   const bodyResource = resolveContentResource(vault, body);
   if (!bodyResource) {
-    return createDisabledCandidate(annotation, resolvedAnnotationRef, index, label, "Body not found");
+    return createDisabledCandidate(
+      annotation,
+      resolvedAnnotationRef,
+      index,
+      label,
+      t ? t("messages.bodyNotFound") : "Body not found"
+    );
   }
 
   const bodyType = getResourceType(bodyResource);
   if (bodyType !== "Image") {
-    return createDisabledCandidate(annotation, resolvedAnnotationRef, index, label, "Only image bodies can be combined");
+    return createDisabledCandidate(
+      annotation,
+      resolvedAnnotationRef,
+      index,
+      label,
+      t ? t("messages.onlyImages") : "Only image bodies can be combined"
+    );
   }
 
   return {
@@ -273,7 +305,7 @@ export function combinePaintingAnnotationsIntoChoice(
     selectedAnnotationIds: string[];
     defaultLanguage?: string;
     choiceLabel?: InternationalString;
-  },
+  }
 ): Reference<"Annotation"> {
   const page = vault.get(options.annotationPageRef as any, { skipSelfReturn: false } as any) as any;
   const pageItems = toArray(page?.items);
@@ -302,7 +334,7 @@ export function combinePaintingAnnotationsIntoChoice(
   const choiceRef: ChoiceBodyRef = { id: choiceId, type: "ContentResource" };
   const defaultLanguage = options.defaultLanguage || "en";
   const choiceItems = candidates.map((candidate, index) =>
-    ensureChoiceItemLabel(vault, candidate, defaultLanguage, index + 1),
+    ensureChoiceItemLabel(vault, candidate, defaultLanguage, index + 1)
   );
 
   const choice: ChoiceBody = {
@@ -333,7 +365,7 @@ export function combinePaintingAnnotationsIntoChoice(
             [annotationId]: annotation,
           },
         },
-      }),
+      })
     );
     batchVault.dispatch(
       addMappings({
@@ -341,7 +373,7 @@ export function combinePaintingAnnotationsIntoChoice(
           [choiceId]: "ContentResource",
           [annotationId]: "Annotation",
         },
-      }),
+      })
     );
     batchVault.dispatch(
       modifyEntityField({
@@ -349,7 +381,7 @@ export function combinePaintingAnnotationsIntoChoice(
         type: "AnnotationPage",
         key: "items",
         value: newPageItems,
-      }),
+      })
     );
   });
 
@@ -361,7 +393,7 @@ export function unwrapChoicePaintingAnnotation(
   options: {
     annotationRef: Reference<"Annotation">;
     annotationPageRef?: Reference<"AnnotationPage">;
-  },
+  }
 ): UnwrappedChoicePaintingAnnotation {
   const annotation = vault.get(options.annotationRef as any, { skipSelfReturn: false } as any) as any;
   const choiceInfo = annotation ? getChoiceBodyInfo(annotation, vault) : null;
@@ -403,9 +435,7 @@ export function unwrapChoicePaintingAnnotation(
     return annotationRef;
   });
 
-  const nextPageItems = pageMatch.items.flatMap((item, index) =>
-    index === pageMatch.index ? annotationRefs : [item],
-  );
+  const nextPageItems = pageMatch.items.flatMap((item, index) => (index === pageMatch.index ? annotationRefs : [item]));
 
   vault.batch((batchVault) => {
     batchVault.dispatch(
@@ -413,12 +443,12 @@ export function unwrapChoicePaintingAnnotation(
         entities: {
           Annotation: annotationEntities,
         },
-      }),
+      })
     );
     batchVault.dispatch(
       addMappings({
         mapping: mappings,
-      }),
+      })
     );
     batchVault.dispatch(
       modifyEntityField({
@@ -426,7 +456,7 @@ export function unwrapChoicePaintingAnnotation(
         type: "AnnotationPage",
         key: "items",
         value: nextPageItems,
-      }),
+      })
     );
   });
 
@@ -492,7 +522,7 @@ function createDisabledCandidate(
   annotationRef: Reference<"Annotation">,
   index: number,
   label: string,
-  disabledReason: string,
+  disabledReason: string
 ): PaintingChoiceCandidate {
   return {
     annotation,
@@ -560,7 +590,7 @@ function ensureChoiceItemLabel(
   vault: Vault,
   candidate: PaintingChoiceCandidate,
   defaultLanguage: string,
-  optionNumber: number,
+  optionNumber: number
 ) {
   const resource = candidate.bodyResource;
   if (hasInternationalStringText(resource?.label)) {
@@ -578,7 +608,7 @@ function ensureChoiceItemLabel(
         type: "ContentResource",
         key: "label",
         value: label,
-      }),
+      })
     );
     return candidate.choiceItem;
   }
@@ -603,11 +633,7 @@ function setInlineResourceLabel(resource: any, label: InternationalString) {
   };
 }
 
-function replaceSelectedPageItems(
-  items: any[],
-  selected: Set<string>,
-  annotationRef: Reference<"Annotation">,
-) {
+function replaceSelectedPageItems(items: any[], selected: Set<string>, annotationRef: Reference<"Annotation">) {
   const nextItems = [];
   let inserted = false;
 
@@ -629,7 +655,7 @@ function replaceSelectedPageItems(
 function findAnnotationPageMatch(
   vault: Vault,
   annotationRef: Reference<"Annotation">,
-  annotationPageRef?: Reference<"AnnotationPage">,
+  annotationPageRef?: Reference<"AnnotationPage">
 ): { annotationPageRef: Reference<"AnnotationPage">; items: any[]; index: number } | null {
   if (annotationPageRef) {
     const page = vault.get(annotationPageRef as any, { skipSelfReturn: false } as any) as any;
@@ -658,7 +684,7 @@ function updateEmbeddedChoice(
   vault: Vault,
   annotationRef: Reference<"Annotation">,
   info: ChoiceBodyInfo,
-  choice: ChoiceBody,
+  choice: ChoiceBody
 ) {
   const bodies = toArray(info.annotation.body);
   bodies[info.bodyIndex] = choice;

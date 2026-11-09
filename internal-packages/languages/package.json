@@ -1,0 +1,47 @@
+{
+  "name": "@manifest-editor/languages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Internal UI language catalogs and composition tools for Manifest Editor",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./validation": "./src/validation.ts",
+    "./composition": "./src/composition.ts",
+    "./selection": "./src/selection.ts",
+    "./loaders": "./src/loaders.ts",
+    "./messages": "./src/messages.ts",
+    "./pseudo": "./src/pseudo.ts",
+    "./translation-files": "./src/translation-files.ts",
+    "./translation-review": "./src/translation-review.ts",
+    "./translator-notes": "./src/translator-notes.ts",
+    "./catalogs": "./src/catalogs.ts",
+    "./locales/en-GB/*": "./src/locales/en-GB/*.ts",
+    "./profiles/plain/en-GB/*": "./src/profiles/plain/en-GB/*.ts",
+    "./presets/exhibition/en-GB/*": "./src/presets/exhibition/en-GB/*.ts",
+    "./presets/exhibition/plain/en-GB/*": "./src/presets/exhibition/plain/en-GB/*.ts",
+    "./package.json": "./package.json",
+    "./locales/nl/*": "./src/locales/nl/*.ts",
+    "./profiles/plain/nl/*": "./src/profiles/plain/nl/*.ts",
+    "./presets/exhibition/nl/*": "./src/presets/exhibition/nl/*.ts",
+    "./presets/exhibition/plain/nl/*": "./src/presets/exhibition/plain/nl/*.ts"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "validate": "node scripts/validate.mjs",
+    "inventory": "node scripts/generate-module-inventories.mjs",
+    "translations:export": "node scripts/export-translations.mjs",
+    "translations:import": "node scripts/import-translation.mjs",
+    "translations:check": "node scripts/check-translation.mjs",
+    "translations:gaps": "node scripts/translation-gaps.mjs"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

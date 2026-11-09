@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
@@ -73,6 +74,8 @@ export async function createAudioAnnotation(data: CreateAudioAnnotationPayload, 
 }
 
 export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnotationPayload>) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
   const [initialData] = useState(() => props.options.initialData as Partial<CreateAudioAnnotationPayload>);
   const [url, setUrl] = useState(initialData.url || "");
   const [duration, setDuration] = useState(initialData.duration || 0);
@@ -99,11 +102,25 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
 
   return (
     <PaddedSidebarContainer>
-      {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+      {error ? (
+        <ErrorMessage>
+          <div role="alert">{t("errors.media")}</div>
+          <details>
+            <summary>{t("errors.details")}</summary>
+            {error}
+          </details>
+        </ErrorMessage>
+      ) : null}
 
       <InputContainer $wide>
-        <InputLabel htmlFor="audio-url">Link to audio file</InputLabel>
-        <Input type="url" placeholder="https://example.org/audio.mp3" id="audio-url" value={url} onChange={(e) => setUrl(e.target.value)} />
+        <InputLabel htmlFor="audio-url">{t("form.audioUrl")}</InputLabel>
+        <Input
+          type="url"
+          placeholder="https://example.org/audio.mp3"
+          id="audio-url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+        />
       </InputContainer>
 
       {url && !error ? (
@@ -112,7 +129,7 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
             key={`${url}__${duration}`}
             containerId={"label"}
             focusId={"label_"}
-            label={"Label"}
+            label={property("fields.label")}
             fields={label}
             onSave={(e: any) => setLabel(e.toInternationalString())}
           />
@@ -131,13 +148,13 @@ export function CreateAudioAnnotationForm(props: CreatorContext<CreateAudioAnnot
 
       {duration && !error ? (
         <FormFieldWrapper>
-          <InputLabel htmlFor="duration">Duration</InputLabel>
+          <InputLabel htmlFor="duration">{property("fields.duration")}</InputLabel>
           <Input type="number" id="duration" value={duration} onChange={(e) => setDuration(e.target.valueAsNumber)} />
         </FormFieldWrapper>
       ) : null}
 
       <ActionButton primary large type="button" onPress={onSubmit} isDisabled={!url || !!error}>
-        Add audio
+        {t("form.addAudio")}
       </ActionButton>
     </PaddedSidebarContainer>
   );

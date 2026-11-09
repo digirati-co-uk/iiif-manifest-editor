@@ -1,0 +1,97 @@
+{
+  "namespaces": [
+    "collection",
+    "common",
+    "components",
+    "creator-api",
+    "creators",
+    "editor-api",
+    "editors",
+    "exhibition",
+    "manifest",
+    "plugin-annotations",
+    "plugin-canvas-label-generator",
+    "plugin-ocr-classification",
+    "plugin-ocr-docling",
+    "plugin-specifications",
+    "plugin-translation",
+    "projects",
+    "shell",
+    "ui",
+    "web"
+  ],
+  "coverage": {
+    "cs": {
+      "standard": [],
+      "plain": []
+    },
+    "da": {
+      "standard": [],
+      "plain": []
+    },
+    "de": {
+      "standard": [],
+      "plain": []
+    },
+    "en-GB": {
+      "standard": [],
+      "plain": []
+    },
+    "es": {
+      "standard": [],
+      "plain": []
+    },
+    "fi": {
+      "standard": [],
+      "plain": []
+    },
+    "fr": {
+      "standard": [],
+      "plain": []
+    },
+    "hi": {
+      "standard": [],
+      "plain": []
+    },
+    "it": {
+      "standard": [],
+      "plain": []
+    },
+    "ja": {
+      "standard": [],
+      "plain": []
+    },
+    "ms": {
+      "standard": [],
+      "plain": []
+    },
+    "nl": {
+      "standard": [],
+      "plain": []
+    },
+    "pl": {
+      "standard": [],
+      "plain": []
+    },
+    "pt": {
+      "standard": [],
+      "plain": []
+    },
+    "ta": {
+      "standard": [],
+      "plain": []
+    },
+    "tr": {
+      "standard": [],
+      "plain": []
+    },
+    "uk": {
+      "standard": [],
+      "plain": []
+    },
+    "zh": {
+      "standard": [],
+      "plain": []
+    }
+  }
+}

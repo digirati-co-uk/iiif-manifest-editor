@@ -1,10 +1,7 @@
 import { VideoIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
 import { getContentType, isHttpUrl, matchesExtension } from "../../resource-probes";
-import {
-  CreateVideoAnnotationForm,
-  createVideoAnnotation,
-} from "./create-video-annotation";
+import { CreateVideoAnnotationForm, createVideoAnnotation } from "./create-video-annotation";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -18,7 +15,9 @@ export const videoAnnotation = defineCreator({
   id: "@manifest-editor/video-annotation",
   create: createVideoAnnotation,
   label: "Video",
+  labelMessage: { namespace: "creators", key: "definitions.video.label" },
   summary: "Add video from a direct video-file link. Use YouTube for YouTube videos.",
+  summaryMessage: { namespace: "creators", key: "definitions.video.summary" },
   icon: <VideoIcon />,
   render(ctx) {
     return <CreateVideoAnnotationForm {...ctx} />;

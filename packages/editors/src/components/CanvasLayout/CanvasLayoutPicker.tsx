@@ -1,3 +1,5 @@
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { canvasLayouts, type CanvasLayout } from "@manifest-editor/editor-api";
 import { useId, useState } from "react";
 
@@ -17,6 +19,8 @@ export function CanvasLayoutPicker({
   aspectRatio?: number;
   compact?: boolean;
 }) {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const name = useId();
   const [hovered, setHovered] = useState<string | null>(null);
   const layouts = canvasLayouts.filter((l) => l.slots.length <= MAX_PREVIEW && l.slots.length >= imageCount);
@@ -24,12 +28,10 @@ export function CanvasLayoutPicker({
 
   return (
     <fieldset className="min-w-0 space-y-2">
-      <legend className="text-sm font-semibold text-gray-900">Image layout</legend>
+      <legend className="text-sm font-semibold text-gray-900">{t("ui.imageLayout")}</legend>
       {!compact && (
         <p className="text-xs text-gray-500">
-          {imageCount
-            ? `Layouts for ${imageCount} image${imageCount === 1 ? "" : "s"}. Applying one replaces manual positioning.`
-            : "Start with a layout, then add your images. You can move and resize them freely."}
+          {imageCount ? t("messages.layouts", { count: imageCount }) : t("messages.layoutsStart")}
         </p>
       )}
       <div
@@ -41,7 +43,7 @@ export function CanvasLayoutPicker({
           return (
             <label
               key={layout.id}
-              title={layout.label}
+              title={apiLabel(layout)}
               className="relative min-w-0 cursor-pointer rounded-md border p-1.5 focus-within:ring-2"
               style={{
                 borderColor: active || hovered === layout.id ? ACCENT : "#e5e7eb",
@@ -54,7 +56,7 @@ export function CanvasLayoutPicker({
                 type="radio"
                 onMouseEnter={() => setHovered(layout.id)}
                 onMouseLeave={() => setHovered(null)}
-                aria-label={layout.label}
+                aria-label={apiLabel(layout)}
                 name={name}
                 value={layout.id}
                 checked={active}
@@ -95,7 +97,7 @@ export function CanvasLayoutPicker({
         })}
       </div>
       {!layouts.length && (
-        <p className="text-sm text-gray-500">No templates fit this many images. You can still arrange them freely.</p>
+        <p className="text-sm text-gray-500">{t("ui.noTemplatesFitThisManyImagesYouCanStillArrangeThemFreely")}</p>
       )}
     </fieldset>
   );

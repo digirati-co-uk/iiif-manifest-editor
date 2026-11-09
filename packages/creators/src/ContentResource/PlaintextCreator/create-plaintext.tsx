@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, PaddedSidebarContainer } from "@manifest-editor/components";
 import type { CreatorContext, CreatorFunctionContext } from "@manifest-editor/creator-api";
@@ -19,6 +20,9 @@ export async function createPlaintext(data: CreatePlaintextPayload, ctx: Creator
 }
 
 export function CreatePlaintextForm(props: CreatorContext) {
+  const property = useTranslations("editor-api");
+  const t = useTranslations("creators");
+  const common = useTranslations("common");
   const [label, setLabel] = useState<InternationalString>(
     props.options.initialData?.label || {
       en: ["View as text"],
@@ -40,18 +44,18 @@ export function CreatePlaintextForm(props: CreatorContext) {
       <form onSubmit={onSubmit}>
         <LanguageFieldEditor
           focusId={"label"}
-          label={"Label"}
+          label={property("fields.label")}
           fields={label}
           onSave={(e: any) => setLabel(e.toInternationalString())}
         />
 
         <InputContainer $wide>
-          <InputLabel htmlFor="url">Link to plain-text file</InputLabel>
+          <InputLabel htmlFor="url">{t("form.textUrl")}</InputLabel>
           <Input type="url" id="url" name="url" defaultValue={props.options.initialData?.url || ""} />
         </InputContainer>
 
         <ActionButton primary large type="submit">
-          Create
+          {common("actions.create")}
         </ActionButton>
       </form>
     </PaddedSidebarContainer>

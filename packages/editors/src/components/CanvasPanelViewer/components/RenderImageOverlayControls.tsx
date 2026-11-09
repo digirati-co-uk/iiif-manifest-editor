@@ -1,4 +1,6 @@
-import { HTMLPortal } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
+
 import { ActionButton } from "@manifest-editor/components";
 import { useEditingResource, useEditingStack, useLayoutActions } from "@manifest-editor/shell";
 import { type SVGProps, useState } from "react";
@@ -49,6 +51,8 @@ function SingleImageOverlay(props: {
   selected: boolean;
   onSelect: () => void;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const { edit } = useLayoutActions();
   const resource = useEditingResource();
   const resourceId = resource?.resource.source?.id;
@@ -84,10 +88,10 @@ function SingleImageOverlay(props: {
               isDisabled={isSelected}
               onPress={() => edit({ id: props.id, type: "Annotation" }, undefined, { forceOpen: true })}
             >
-              Edit
+              {commonT("actions.edit")}
             </ActionButton>
             <ActionButton
-              aria-label="Image actions"
+              aria-label={t("ui.imageActions")}
               onPress={(e) => {
                 store.toggle({
                   x: target.x + props.target.width / 2,
