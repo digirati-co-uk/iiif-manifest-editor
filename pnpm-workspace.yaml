@@ -34,7 +34,7 @@ catalog:
   zustand: 4.5.2
   "@iiif/parser": 4.0.7
   "@iiif/helpers": 4.0.5
-  iiif-browser: 2.3.0
+  iiif-browser: 2.3.2
   "@atlas-viewer/atlas": 3.3.4
   "react-aria-components": ^1.12
 
@@ -51,7 +51,7 @@ minimumReleaseAgeExclude:
   - '@atlas-viewer/atlas@3.3.4'
   - react-iiif-vault@4.1.0
   - polygon-editor@1.0.0
-  - iiif-browser@2.3.0
+  - iiif-browser@2.3.2
 
 blockExoticSubdeps: false
 
