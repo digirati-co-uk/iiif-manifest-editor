@@ -25,6 +25,10 @@ import { manifestBrowserCreator } from "./Manifest/ManifestBrowserCreator";
 import { rangeWithItems } from "./Range/RangeWithItems";
 import { rangeTopLevel } from "./Range/TopLevelRangeCreator";
 
+// Type-only exports keep the browser form implementations lazy.
+export type { IIIFBrowserCreatorInitialData } from "./ContentResource/IIIFBrowserCreator/iiif-browser-form.lazy";
+export type { ManifestBrowserCreatorInitialData } from "./Manifest/ManifestBrowserCreator/manifest-browser-form.lazy";
+
 export * from "./Agent/ProviderCreator/create-provider";
 export * from "./Annotation/AudioAnnotation/create-audio-annotation";
 export * from "./Annotation/CaptionedImageAnnotation/create-captioned-image-annotation";

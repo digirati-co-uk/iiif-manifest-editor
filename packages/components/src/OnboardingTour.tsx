@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "@manifest-editor/i18n";
 import { useEffect } from "react";
 import Joyride, { type CallBackProps, STATUS, type Step } from "react-joyride";
 import { useLocalStorage } from "./hooks/use-local-storage";
@@ -12,6 +13,7 @@ interface OnboardingTourProps {
 }
 
 export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel }: OnboardingTourProps) {
+  const t = useTranslations("components");
   const [isEnabled, setIsEnabled] = useLocalStorage(`tour_step/${id}`, true);
   const run = isEnabled || forceStart;
 
@@ -65,7 +67,15 @@ export function OnboardingTour({ id, steps, forceStart, onClose, lastButtonLabel
       steps={steps}
       run={run}
       callback={lifecycle}
-      locale={lastButtonLabel ? { last: lastButtonLabel } : undefined}
+      locale={{
+        back: t("tour.back"),
+        close: t("actions.close"),
+        last: lastButtonLabel ?? t("tour.last"),
+        next: t("tour.next"),
+        nextLabelWithProgress: t("tour.nextProgress"),
+        open: t("tour.open"),
+        skip: t("tour.skip"),
+      }}
       styles={{
         options: {
           primaryColor: "#b84c74",

@@ -1,5 +1,8 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  },
   "include": [
     "cloudflare-env.d.ts",
     "next-env.d.ts",

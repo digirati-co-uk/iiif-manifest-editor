@@ -1,4 +1,5 @@
-import { HTMLPortal } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "./EditorI18nBridge";
+
 import { useViewerAnnotationTarget } from "./useViewerAnnotationTarget";
 
 export function ViewerAnnotationBadge(props: { index: number }) {

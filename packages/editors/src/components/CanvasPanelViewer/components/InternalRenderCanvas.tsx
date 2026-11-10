@@ -1,6 +1,9 @@
+import { useEditorsI18nInstance } from "../../../editor-i18n-context";
+import { EditorI18nBoundary } from "../../EditorI18nBridge";
+import { CanvasComposition } from "./CanvasComposition";
 import type { BoxStyle } from "@atlas-viewer/atlas";
 import { IIIFMediaPlayer } from "@manifest-editor/components";
-import { type ReactNode, useContext } from "react";
+import { type ReactNode, type ComponentProps, useContext } from "react";
 import {
   CanvasWorldObject,
   ContextBridge,
@@ -29,6 +32,9 @@ import { RenderCurrentContextMenuItem } from "./RenderCurrentContextMenuItem";
 import { RenderImageOverlayControls } from "./RenderImageOverlayControls";
 
 interface InternalRenderCanvasProps {
+  moveMode?: boolean;
+  resizing?: boolean;
+  onResizeDone?: () => void;
   x?: number;
   y?: number;
   children?: ReactNode;
@@ -43,6 +49,9 @@ interface InternalRenderCanvasProps {
 }
 
 export function InternalRenderCanvas({
+  moveMode = false,
+  resizing = false,
+  onResizeDone = () => {},
   x,
   y,
   alwaysShowBackground,
@@ -55,6 +64,7 @@ export function InternalRenderCanvas({
   svgTheme,
   annotationPopup,
 }: InternalRenderCanvasProps) {
+  const i18nInstance = useEditorsI18nInstance();
   const strategy = useStrategy();
   const keepCanvasScale = true;
   const bridge = useContextBridge();
@@ -66,7 +76,9 @@ export function InternalRenderCanvas({
         renderContextMenu={(data) => (
           <StrategyReactContext.Provider value={strategy}>
             <ContextBridge bridge={bridge} custom={customBridge}>
-              <RenderContextMenu {...data} />
+              <EditorI18nBoundary instance={i18nInstance}>
+                <RenderContextMenu {...data} />
+              </EditorI18nBoundary>
             </ContextBridge>
           </StrategyReactContext.Provider>
         )}
@@ -85,16 +97,25 @@ export function InternalRenderCanvas({
         <RenderAnnotationStrategy />
         <Render3DModelStrategy />
         <RenderAudioStrategy />
-        <RenderVideoStrategy as={IIIFMediaPlayer} />
+        <RenderVideoStrategy as={BridgedMediaPlayer} />
         <RenderYouTubeStrategy />
-        <RenderImageOverlayControls />
+        {!moveMode && <RenderImageOverlayControls />}
         <RenderAnnotationEditing theme={svgTheme}>
-          {annotationPopup || <AnnotationPopupTools />}
+          <EditorI18nBoundary instance={i18nInstance}>{annotationPopup || <AnnotationPopupTools />}</EditorI18nBoundary>
         </RenderAnnotationEditing>
+        {moveMode && <CanvasComposition resizing={resizing} onResizeDone={onResizeDone} />}
         <RenderCurrentContextMenuItem />
         {children}
       </CanvasWorldObject>
       <RenderAccompanyingCanvas />
     </>
+  );
+}
+
+function BridgedMediaPlayer(props: ComponentProps<typeof IIIFMediaPlayer>) {
+  return (
+    <EditorI18nBoundary>
+      <IIIFMediaPlayer {...props} />
+    </EditorI18nBoundary>
   );
 }

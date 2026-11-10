@@ -8,6 +8,7 @@ import { mediaEditor } from "./MediaEditor";
 import { choicePaintingAnnotationEditor } from "./ChoicePaintingAnnotationEditor";
 import { htmlBodyEditor } from "./HTMLBodyEditor";
 import { overviewCanvasEditor } from "./OverviewCanvasEditor";
+import { rangeOverview } from "./RangeOverview";
 import { combinedProperties } from "./CombinedEditor";
 import { metadata } from "./Metadata";
 import { technicalProperties } from "./TechnicalProperties";
@@ -25,6 +26,8 @@ export const allEditors = [
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,
+  // Overview comes first for ranges, with structure after it.
+  rangeOverview,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   partOfReferenceEditor,
@@ -48,6 +51,7 @@ export {
   mediaEditor,
   htmlBodyEditor,
   overviewCanvasEditor,
+  rangeOverview,
   rangeStructuralProperties,
   inlineAnnotationPageEditor,
   combinedProperties,

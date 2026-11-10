@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { getValue } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, HTMLEditor, PaddedSidebarContainer } from "@manifest-editor/components";
@@ -85,6 +86,7 @@ export async function createHtmlAnnotation(data: CreateHTMLAnnotationPayload, ct
 }
 
 export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationPayload>) {
+  const common = useTranslations("common");
   const [body, setBody] = useAnnotationCreatorState<InternationalString>({
     key: "bodyValue",
     initialValue: props.options.initialData?.body || { en: [""] },
@@ -100,16 +102,13 @@ export function CreateHTMLAnnotation(props: CreatorContext<CreateHTMLAnnotationP
   };
 
   return (
-    <>
-      <HTMLEditor
-        className="border-none"
-        value={body.en?.[0] || ""}
-        onChange={(newValue) => setBody({ en: [newValue] })}
-      />
-
-      <ActionButton primary type="button" onPress={onSubmit} isDisabled={isEmpty}>
-        Create
-      </ActionButton>
-    </>
+    <div className="flex flex-col gap-3">
+      <HTMLEditor value={body.en?.[0] || ""} onChange={(newValue) => setBody({ en: [newValue] })} />
+      <div className="flex justify-end">
+        <ActionButton primary type="button" onPress={onSubmit} isDisabled={isEmpty}>
+          {common("actions.create")}
+        </ActionButton>
+      </div>
+    </div>
   );
 }

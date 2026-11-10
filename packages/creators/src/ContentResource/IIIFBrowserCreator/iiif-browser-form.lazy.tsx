@@ -1,40 +1,74 @@
+import { LocalizedIIIFBrowser } from "@manifest-editor/components";
+import { useEditorI18n, useTranslations, type MessageReference } from "@manifest-editor/i18n";
+import { useConfig, useNotebookBrowserPlugins } from "@manifest-editor/shell";
 import type { CreatorContext } from "@manifest-editor/creator-api";
 import { PreviewVaultBoundary, usePreviewVault } from "@manifest-editor/shell";
-import { IIIFBrowser, type IIIFBrowserProps } from "iiif-browser";
-import { useMemo } from "react";
+import type { IIIFBrowserProps } from "iiif-browser";
+import { useMemo, useRef } from "react";
 import { formatIIIFBrowserOutput } from "./iiif-browser-output";
 
 export interface IIIFBrowserCreatorInitialData {
+  /** Optional UI message; legacy caller labels remain literal fallbacks. */
+  actionLabelMessage?: MessageReference;
   url?: string;
   iiifBrowserOptions?: Partial<IIIFBrowserProps>;
 }
 
 export default function IIIFBrowserCreatorForm(props: CreatorContext) {
+  const t = useTranslations("creators");
+  const { resolveMessage } = useEditorI18n();
+  const notebookPlugins = useNotebookBrowserPlugins();
   const initialData: IIIFBrowserCreatorInitialData = useMemo(() => {
     return props.options.initialData || {};
   }, [props.options.initialData]);
 
   const vault = usePreviewVault();
+  const {
+    runCreate,
+    options: { targetType },
+  } = props;
+  const notebookConfig = useConfig().notebook;
+  const live = useRef({
+    t,
+    resolveMessage,
+    targetType,
+    notebookConfig,
+    reference: initialData.actionLabelMessage,
+    runCreate,
+  });
+  live.current = {
+    t,
+    resolveMessage,
+    targetType,
+    notebookConfig,
+    reference: initialData.actionLabelMessage,
+    runCreate,
+  };
   const output = useMemo(() => {
     return [
       {
         type: "callback",
-        label: "Select",
-        supportedTypes: [
-          "Canvas",
-          "CanvasList",
-          "CanvasRegion",
-          "ImageService",
-          "ImageServiceRegion",
-        ],
-        cb: (resource) => props.runCreate({ output: resource }),
+        // Output descriptors live for the browser lifetime. Keep labels reactive without remounting.
+        get label() {
+          const { t, resolveMessage, targetType, notebookConfig, reference } = live.current;
+          const fallback =
+            targetType === "Canvas"
+              ? (notebookConfig?.canvasActionLabel ?? t("browser.addToManifest"))
+              : t("browser.select");
+          return resolveMessage(
+            reference || (targetType === "Canvas" ? notebookConfig?.canvasActionLabelMessage : undefined),
+            fallback
+          );
+        },
+        supportedTypes: ["Canvas", "CanvasList", "CanvasRegion", "ImageService", "ImageServiceRegion"],
+        cb: (resource) => live.current.runCreate({ output: resource }),
         format: {
           type: "custom",
           format: formatIIIFBrowserOutput,
         },
       },
     ] as IIIFBrowserProps["output"];
-  }, [props.runCreate]);
+  }, [live]);
 
   const navigationOptions = useMemo(() => {
     return {
@@ -59,7 +93,7 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
   }, [initialData, props.config]);
   const historyOptions = useMemo(() => {
     const history = initialData.iiifBrowserOptions?.history || {};
-    if (!initialData.url) return history;
+    if (!initialData.url || history.initialHistory?.length) return history;
     return {
       ...history,
       restoreFromLocalStorage: false,
@@ -68,7 +102,9 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
         {
           url: initialData.url,
           resource: null,
-          route: `/loading?id=${encodeURIComponent(initialData.url)}`,
+          route: initialData.url.startsWith("iiif://")
+            ? initialData.url.replace("iiif://", "/")
+            : `/loading?id=${encodeURIComponent(initialData.url)}`,
         },
       ],
     } as IIIFBrowserProps["history"];
@@ -76,7 +112,8 @@ export default function IIIFBrowserCreatorForm(props: CreatorContext) {
 
   return (
     <PreviewVaultBoundary>
-      <IIIFBrowser
+      <LocalizedIIIFBrowser
+        plugins={[...notebookPlugins, ...(initialData.iiifBrowserOptions?.plugins || [])]}
         ui={uiOptions}
         vault={vault}
         className="iiif-browser border-none border-t rounded-none h-[70vh] min-h-[60vh] max-h-full max-w-full"

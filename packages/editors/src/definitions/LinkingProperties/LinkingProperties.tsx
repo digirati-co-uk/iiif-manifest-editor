@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { toRef } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useAppResource, useCreator, useEditingResource, useEditor, useLayoutActions } from "@manifest-editor/shell";
@@ -18,6 +21,9 @@ import { createAppActions } from "../../helpers/create-app-actions";
 export function useCreators() {}
 
 export function LinkingProperties() {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const resource = useEditingResource();
   const appResource = useAppResource();
   const { create } = useLayoutActions();
@@ -57,11 +63,14 @@ export function LinkingProperties() {
         };
       });
     },
-    [resource?.resource.source.id, resource?.resource.source.type],
+    [resource?.resource.source.id, resource?.resource.source.type]
   );
   const partOfItems = parentPartOfItems || trackedPartOfItems;
   const firstPartOfRef = toRef(partOfItems[0]);
-  const partOfLabel = partOfItems.length === 1 && firstPartOfRef?.type === "Manifest" ? "Source Manifest" : "Part of";
+  const partOfLabel =
+    partOfItems.length === 1 && firstPartOfRef?.type === "Manifest"
+      ? t("ui.sourceManifest")
+      : apiLabel(propertyLabels.partOf)!;
 
   // @todo "service" + "services"
   // @todo "seeAlso" may include manifest types (external)
@@ -71,13 +80,13 @@ export function LinkingProperties() {
       {!notAllowed.includes("seeAlso") ? (
         <LinkingPropertyList
           containerId={seeAlso.containerId()}
-          label="See also"
+          label={apiLabel(propertyLabels.seeAlso)!}
           property="seeAlso"
           items={seeAlso.get()}
           reorder={(ctx) => seeAlso.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(seeAlso)}
+          createActions={createAppActions(seeAlso, undefined, t, commonT)}
           creationType="ContentResource"
-          emptyLabel="No see also"
+          emptyLabel={t("ui.noSeeAlso")}
           parent={resource?.resource}
         />
       ) : null}
@@ -85,13 +94,13 @@ export function LinkingProperties() {
       {!notAllowed.includes("rendering") ? (
         <LinkingPropertyList
           containerId={rendering.containerId()}
-          label="Rendering"
+          label={apiLabel(propertyLabels.rendering)!}
           property="rendering"
           items={rendering.get()}
           reorder={(ctx) => rendering.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(rendering)}
+          createActions={createAppActions(rendering, undefined, t, commonT)}
           creationType="ContentResource"
-          emptyLabel="No rendering"
+          emptyLabel={t("ui.noRendering")}
           parent={resource?.resource}
         />
       ) : null}
@@ -99,13 +108,13 @@ export function LinkingProperties() {
       {!notAllowed.includes("homepage") ? (
         <LinkingPropertyList
           containerId={homepage.containerId()}
-          label="Homepage"
+          label={apiLabel(propertyLabels.homepage)!}
           property="homepage"
           items={homepage.get()}
           reorder={(ctx) => homepage.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(homepage)}
+          createActions={createAppActions(homepage, undefined, t, commonT)}
           creationType="ContentResource"
-          emptyLabel="No homepage"
+          emptyLabel={t("ui.noHomepage")}
           parent={resource?.resource}
         />
       ) : null}
@@ -118,9 +127,9 @@ export function LinkingProperties() {
           property="partOf"
           items={partOfItems}
           reorder={(ctx) => partOf.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(partOf)}
+          createActions={createAppActions(partOf, undefined, t, commonT)}
           creationType={resourceType === "Canvas" ? "Manifest" : "Collection"}
-          emptyLabel="No part of"
+          emptyLabel={t("ui.noPartOf")}
           parent={resource?.resource}
           referenceOnly
           editTab="@manifest-editor/part-of-reference"
@@ -171,13 +180,13 @@ export function LinkingProperties() {
       {!notAllowed.includes("supplementary") ? (
         <LinkingPropertyList
           containerId={supplementary.containerId()}
-          label="Supplementary"
+          label={apiLabel(propertyLabels.supplementary)!}
           property="supplementary"
           items={supplementary.get()}
           reorder={(ctx) => supplementary.reorder(ctx.startIndex, ctx.endIndex)}
-          createActions={createAppActions(supplementary)}
+          createActions={createAppActions(supplementary, undefined, t, commonT)}
           creationType="AnnotationCollection"
-          emptyLabel="No supplementary"
+          emptyLabel={t("ui.noSupplementary")}
           parent={resource?.resource}
         />
       ) : null}
@@ -187,23 +196,23 @@ export function LinkingProperties() {
           <InputContainer $wide>
             {start.get() ? (
               <>
-                <InputLabel>Start</InputLabel>
+                <InputLabel>{apiLabel(propertyLabels.start)!}</InputLabel>
                 <CanvasContext canvas={toRef(start.get())?.id as string}>
                   <CanvasListPreview onClick={() => startActions.edit(start.get())} />
                 </CanvasContext>
               </>
             ) : (
               <>
-                <InputLabel>Start</InputLabel>
+                <InputLabel>{apiLabel(propertyLabels.start)!}</InputLabel>
                 <EmptyState $noMargin $box>
-                  No start resource
+                  {t("ui.noStartResource")}
                 </EmptyState>
               </>
             )}
           </InputContainer>
           <FlexContainer>
-            {canCreateStart ? <Button onClick={() => startActions.create()}>Set start</Button> : null}
-            {start.get() ? <Button onClick={() => start.set(null)}>Unset start</Button> : null}
+            {canCreateStart ? <Button onClick={() => startActions.create()}>{t("ui.setStart")}</Button> : null}
+            {start.get() ? <Button onClick={() => start.set(null)}>{t("ui.unsetStart")}</Button> : null}
           </FlexContainer>
         </div>
       ) : null}
@@ -213,14 +222,14 @@ export function LinkingProperties() {
           <InputContainer $wide>
             {!logo.get()?.length ? (
               <>
-                <InputLabel>Logo</InputLabel>
+                <InputLabel>{apiLabel(propertyLabels.logo)!}</InputLabel>
                 <EmptyState $noMargin $box>
-                  No logo
+                  {t("ui.noLogo")}
                 </EmptyState>
               </>
             ) : (
               <InputLabel>
-                logo
+                {apiLabel(propertyLabels.logo)!}
                 <InputLabelEdit data-active={toggled.logo} onClick={() => toggle("logo")} />
               </InputLabel>
             )}
@@ -231,10 +240,10 @@ export function LinkingProperties() {
               onSelect={(e, index) => {
                 logoActions.edit(e, index);
               }}
-              createActions={createAppActions(logo)}
+              createActions={createAppActions(logo, undefined, t, commonT)}
             />
           </InputContainer>
-          {canCreateLogo ? <Button onClick={() => logoActions.create()}>Add logo</Button> : null}
+          {canCreateLogo ? <Button onClick={() => logoActions.create()}>{t("ui.addLogo")}</Button> : null}
         </div>
       ) : null}
     </PaddedSidebarContainer>

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Service } from "@iiif/presentation-3";
 import { parseServiceProfile } from "./ServiceList.utility";
 import { ServiceContainer } from "./ServiceList.styles";
@@ -6,11 +7,12 @@ import { InputLabel } from "../Input";
 import { RichMediaLink } from "@manifest-editor/ui/components/organisms/RichMediaLink/RichMediaLink";
 
 export function ServiceList(props: { resourceId: string; services: Service[] }) {
+  const t = useTranslations("editors");
   const { stack } = useLayoutActions();
 
   return (
     <ServiceContainer>
-      <InputLabel>Services</InputLabel>
+      <InputLabel>{t("ui.services")}</InputLabel>
       {props.services
         ? props.services.map((service: any, key) => (
             <RichMediaLink
@@ -23,7 +25,7 @@ export function ServiceList(props: { resourceId: string; services: Service[] }) 
                 });
               }}
               link={service.id || service["@id"]}
-              title={service.type || service["@type"] || "Unknown service"}
+              title={service.type || service["@type"] || t("messages.unknownService")}
               label={parseServiceProfile(service.profile)}
             />
           ))

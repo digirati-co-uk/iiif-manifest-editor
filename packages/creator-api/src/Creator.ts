@@ -1,6 +1,13 @@
 import { Vault } from "@iiif/helpers/vault";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
+import { placeCreatedResources } from "./placeholder-position";
+import {
+  beginCanvasComposition,
+  getCanvasLayout,
+  getEmptyCanvasPlaceholders,
+  validRectangle,
+} from "@manifest-editor/editor-api";
 import { CreatorRuntime } from "./CreatorRuntime";
 import type { CreatableResource, CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
 import { matchBasedOnResource } from "./utils";
@@ -44,7 +51,7 @@ export class Creator {
         const type = foundDefinition.supports.parentFieldMap[options.parent.resource.type];
         if (!type || !type.includes(options.parent.property)) {
           throw new Error(
-            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`,
+            `Definition ${definition} does not support parent ${options.parent.property} / ${options.parent.property}`
           );
         }
       }
@@ -63,9 +70,12 @@ export class Creator {
       this.configs,
       this.previewVault,
       options,
-      this.creatorConfig,
+      this.creatorConfig
     );
 
+    if (options?.placeholderPosition && !validRectangle(options.placeholderPosition.bounds)) {
+      throw new Error("Invalid placeholder position");
+    }
     const run = await runtime.run();
     const allResources = Array.isArray(run) ? run : [run];
     const afterActions: any[] = [];
@@ -79,7 +89,7 @@ export class Creator {
               type: options.parent.resource.type as any,
               value: resource.ref(),
               key: options.parent.property,
-            }),
+            })
           );
         } else {
           afterActions.push(
@@ -88,20 +98,50 @@ export class Creator {
               type: options.parent.resource.type as any,
               reference: resource.ref(),
               key: options.parent.property,
-              index: options.parent.atIndex,
-            }),
+              index: options.placeholderPosition?.replaceAnnotationId
+                ? this.vault
+                    .get<any>(options.parent.resource)
+                    [options.parent.property]?.findIndex(
+                      (ref: Reference) => ref.id === options.placeholderPosition!.replaceAnnotationId
+                    )
+                : options.parent.atIndex,
+            })
           );
         }
       }
     }
 
+    // Validate against live occupancy before any parent references are committed.
+    const placement = options?.placeholderPosition;
+    if (placement) {
+      if (placement.replaceAnnotationId && allResources.length !== 1)
+        throw new Error("Choose one image to replace this image. Nothing has been changed.");
+      const canvas = this.vault.get<any>({ id: placement.canvasId, type: "Canvas" });
+      const state = getCanvasLayout(this.vault, canvas.id);
+      if (state?.customised === false) {
+        const slot = state.slots.find((slot) => slot.id === placement.placeholderId);
+        const empty = getEmptyCanvasPlaceholders(this.vault, canvas);
+        if (
+          !slot ||
+          (placement.replaceAnnotationId
+            ? slot.annotationIds?.length !== 1 ||
+              slot.annotationIds[0] !== placement.replaceAnnotationId ||
+              allResources.length !== 1
+            : !empty.some((item) => item.id === slot.id) || allResources.length > empty.length)
+        )
+          throw new Error(
+            "Not enough empty positions. Reduce the selection or choose a larger layout. Nothing has been added."
+          );
+      }
+      beginCanvasComposition(this.vault, canvas);
+    }
     const result = runtime.commit(afterActions);
 
     // Only run side effects if there is a parent
     if (options?.parent) {
       if (foundDefinition.sideEffects) {
         for (const sideEffect of foundDefinition.sideEffects) {
-          if (sideEffect.run) {
+          if (sideEffect.run && !(options.placeholderPosition && sideEffect.spatial && sideEffect.canvasInteraction)) {
             const allResults = Array.isArray(result) ? result : [result];
             for (const item of allResults) {
               // @todo we need more in the ctx (like parent/target where this is to be added.)
@@ -111,6 +151,8 @@ export class Creator {
         }
       }
     }
+
+    if (options?.placeholderPosition) placeCreatedResources(this.vault, result, runtime.options);
 
     return result;
   }

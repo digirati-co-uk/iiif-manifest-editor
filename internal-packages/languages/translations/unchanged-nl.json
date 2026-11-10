@@ -1,0 +1,314 @@
+{
+  "locales/en-GB/collection.ts": {
+    "panels.items": {
+      "source": "Items",
+      "reason": "Item/items are established Dutch loanwords for collection entries; this plural heading is correctly identical."
+    },
+    "items.count_one": {
+      "source": "{{count}} item",
+      "reason": "The singular Dutch noun item has the same spelling and count phrase as English."
+    },
+    "items.count_other": {
+      "source": "{{count}} items",
+      "reason": "The plural Dutch noun items has the same spelling and count phrase as English."
+    }
+  },
+  "locales/en-GB/creators.ts": {
+    "resource.label": {
+      "source": "Label",
+      "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "resource.url": {
+      "source": "URL",
+      "reason": "URL is a language-independent technical abbreviation."
+    },
+    "content.manifest": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical term Manifest in the standard wording profile; plain profiles can use item."
+    },
+    "definitions.html.label": {
+      "source": "HTML",
+      "reason": "HTML is the language-independent markup format abbreviation."
+    },
+    "definitions.video.label": {
+      "source": "Video",
+      "reason": "Video is the standard Dutch noun for the same medium."
+    },
+    "definitions.youtube.label": {
+      "source": "YouTube",
+      "reason": "YouTube is a registered platform name; retain its spelling."
+    },
+    "form.dimensions": {
+      "source": "{{width}} × {{height}} pixels",
+      "reason": "Pixels is the Dutch plural for the display unit; multiplication notation is language independent. Display values are locale formatted."
+    }
+  },
+  "locales/en-GB/editor-api.ts": {
+    "resources.manifest": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical term Manifest in the standard wording profile; plain profiles can use item."
+    },
+    "resources.canvas": {
+      "source": "Canvas",
+      "reason": "Retain the IIIF technical term Canvas in the standard wording profile; plain profiles use pagina."
+    },
+    "resources.range": {
+      "source": "Range",
+      "reason": "Retain the IIIF technical term Range in the standard wording profile; plain profiles use sectie."
+    },
+    "fields.label": {
+      "source": "Label",
+      "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "fields.metadata": {
+      "source": "Metadata",
+      "reason": "Metadata is the same standard collective noun in Dutch."
+    },
+    "fields.type": {
+      "source": "Type",
+      "reason": "Type is the same Dutch noun for a resource category."
+    },
+    "fields.logo": {
+      "source": "Logo",
+      "reason": "Logo is the same Dutch noun for an identifying graphic."
+    },
+    "fields.items": {
+      "source": "Items",
+      "reason": "Items is the established Dutch plural for entries, consistent with the collection heading."
+    },
+    "behavior.groups.range": {
+      "source": "Range",
+      "reason": "Retain the IIIF technical term Range in the standard profile, consistent with the resource type heading."
+    }
+  },
+  "locales/en-GB/editors.ts": {
+    "fields.label": {
+      "source": "Label",
+      "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "fields.metadata": {
+      "source": "Metadata",
+      "reason": "Metadata is the same standard collective noun in Dutch."
+    },
+    "canvas.count_one": {
+      "source": "{{count}} canvas",
+      "reason": "The singular Dutch loanword canvas is identical; the Dutch plural is separately translated as canvassen."
+    },
+    "metadata.label": {
+      "source": "Label",
+      "reason": "Label is an established Dutch noun and the standard technical heading for the IIIF label property."
+    },
+    "ui.media": {
+      "source": "Media",
+      "reason": "Media is the standard Dutch collective noun for image, audio and video resources."
+    },
+    "ui.logo": {
+      "source": "logo",
+      "reason": "Logo has the same spelling in Dutch. Capitalisation only differs in the field heading."
+    },
+    "ui.html": {
+      "source": "HTML",
+      "reason": "HTML is the standard language-independent markup abbreviation, used for the value format toggle."
+    },
+    "ui.canvas": {
+      "source": "Canvas:",
+      "reason": "Canvas is the retained IIIF technical noun in the standard Dutch profile. Plain wording uses Pagina:."
+    },
+    "ui.west": {
+      "source": "west",
+      "reason": "The Dutch cardinal direction west has exactly the same spelling as English; names a resize handle."
+    },
+    "messages.mediaNumber": {
+      "source": "Media {{number}}",
+      "reason": "Media is the standard Dutch collective noun; this numbered fallback for an unlabelled media resource has the same Dutch word order."
+    },
+    "map.measure.yards_one": {
+      "source": "{{value}} yard",
+      "reason": "The Dutch singular unit yard has the same established spelling as English; the numeric value is formatted using the UI locale."
+    },
+    "map.measure.hectares_one": {
+      "source": "{{value}} hectare",
+      "reason": "The Dutch singular unit hectare has the same established spelling as English; the numeric value is formatted using the UI locale."
+    },
+    "map.measure.acres_one": {
+      "source": "{{value}} acre",
+      "reason": "The Dutch singular unit acre has the same established spelling as English; the numeric value is formatted using the UI locale."
+    }
+  },
+  "locales/en-GB/manifest.ts": {
+    "app.title": {
+      "source": "Manifest Editor",
+      "reason": "Manifest Editor is the product brand, preserved across locales."
+    },
+    "panels.ranges": {
+      "source": "Ranges",
+      "reason": "Retain the IIIF technical plural Ranges in the standard wording profile; plain profiles use secties."
+    },
+    "panels.tags": {
+      "source": "Tags",
+      "reason": "Tags is established Dutch terminology for digital tagging."
+    },
+    "workflow.canvas": {
+      "source": "Canvas",
+      "reason": "Canvas is the established singular Dutch IIIF technical noun; plain wording uses Pagina."
+    },
+    "workflow.video": {
+      "source": "Video",
+      "reason": "Video is the standard Dutch media noun, also used for the Video display type."
+    },
+    "workflow.audio": {
+      "source": "Audio",
+      "reason": "Audio is the standard Dutch media noun."
+    },
+    "workflow.manifest": {
+      "source": "Manifest",
+      "reason": "Manifest is the IIIF technical resource term in Dutch standard wording; plain wording uses Item."
+    },
+    "workflow.label": {
+      "source": "Label",
+      "reason": "Label is the established Dutch noun for the IIIF label property; plain wording uses Titel."
+    },
+    "workflow.model": {
+      "source": "Model",
+      "reason": "Model is the Dutch noun for an inference model, with identical spelling."
+    },
+    "workflow.ocr": {
+      "source": "OCR",
+      "reason": "OCR is the international technical abbreviation for optical character recognition."
+    },
+    "workflow.tagType": {
+      "source": "Type: {{type}}",
+      "reason": "Type has identical Dutch spelling; the interpolated type is authored tag data and remains verbatim."
+    },
+    "workflow.canvasCount_one": {
+      "source": "{{count}} canvas",
+      "reason": "The Dutch singular IIIF noun canvas has identical spelling; the plural is canvassen."
+    },
+    "workflow.canvasNumber": {
+      "source": "Canvas {{number}}",
+      "reason": "Canvas is the Dutch singular IIIF term; this numbered missing-title display fallback is not authored content."
+    },
+    "workflow.rangeCount_one": {
+      "source": "{{count}} range",
+      "reason": "Range is the retained singular Dutch IIIF technical noun; plain wording uses sectie."
+    },
+    "workflow.rangeCount_other": {
+      "source": "{{count}} ranges",
+      "reason": "Ranges is the standard Dutch plural of the retained IIIF loanword range; plain wording uses secties."
+    }
+  },
+  "locales/en-GB/plugin-ocr-classification.ts": {
+    "settings.model": {
+      "source": "Model",
+      "reason": "Model is the same Dutch noun for a machine-learning model."
+    }
+  },
+  "locales/en-GB/plugin-ocr-docling.ts": {
+    "metadata.label": {
+      "source": "Docling OCR",
+      "reason": "Docling is the upstream product name and OCR is the technical abbreviation; both remain unchanged."
+    }
+  },
+  "locales/en-GB/plugin-translation.ts": {
+    "settings.runtime": {
+      "source": "Runtime",
+      "reason": "Runtime is the retained technical term for the translation execution environment in the standard profile."
+    }
+  },
+  "locales/en-GB/shell.ts": {
+    "panels.editor": {
+      "source": "Editor",
+      "reason": "Editor is an established Dutch software noun for the editing panel."
+    }
+  },
+  "locales/en-GB/ui.ts": {
+    "media.volume": {
+      "source": "Volume",
+      "reason": "Volume is the same Dutch noun for audio loudness."
+    },
+    "media.title": {
+      "source": "Media",
+      "reason": "Media is the established Dutch collective noun for audiovisual material."
+    },
+    "export.presentation3": {
+      "source": "IIIF Presentation 3",
+      "reason": "IIIF Presentation 3 is the official specification name and version."
+    },
+    "export.presentation2": {
+      "source": "IIIF Presentation 2",
+      "reason": "IIIF Presentation 2 is the official specification name and version."
+    },
+    "annotation.type": {
+      "source": "Type",
+      "reason": "Type is the Dutch noun for a resource category."
+    },
+    "annotation.label": {
+      "source": "Label",
+      "reason": "Label is the established Dutch term for the IIIF label property."
+    },
+    "annotation.items_one": {
+      "source": "{{count}} item",
+      "reason": "Item is an established Dutch loanword; the singular count phrase is identical."
+    },
+    "annotation.items_other": {
+      "source": "{{count}} items",
+      "reason": "Items is the established Dutch plural; the count phrase is identical."
+    },
+    "structure.canvas": {
+      "source": "Canvas:",
+      "reason": "Canvas is the IIIF technical resource name, with a colon before the authored label."
+    }
+  },
+  "locales/en-GB/web.ts": {
+    "launcher.title": {
+      "source": "Manifest Editor",
+      "reason": "Manifest Editor is the product brand, preserved across locales."
+    },
+    "navigation.github": {
+      "source": "GitHub",
+      "reason": "GitHub is the service brand and retains its spelling in Dutch."
+    },
+    "launcher.recentTab": {
+      "source": "Recent",
+      "reason": "Recent is the normal Dutch adjective for recent activity; this is the short project-tab label."
+    }
+  },
+  "profiles/plain/en-GB/editor-api.ts": {
+    "resources.manifest": {
+      "source": "Item",
+      "reason": "Item is an established Dutch noun for an entry or object, consistent with the plain wording profile."
+    }
+  },
+  "locales/en-GB/components.ts": {
+    "icons.manifest": {
+      "source": "manifest",
+      "reason": "The IIIF technical term manifest is also the established Dutch noun; lowercase icon name matches the source."
+    },
+    "browser.canvas": {
+      "source": "canvas",
+      "reason": "Retain the IIIF technical noun canvas in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.manifest": {
+      "source": "manifest",
+      "reason": "Retain the IIIF technical noun manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.manifestLabel": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical noun Manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.canvasLabel": {
+      "source": "Canvas",
+      "reason": "Retain the IIIF technical noun Canvas in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    },
+    "browser.resourceTypeManifest": {
+      "source": "Manifest",
+      "reason": "Retain the IIIF technical noun Manifest in Dutch standard wording, matching the editor-api glossary; this is a UI type/icon name, never an authored resource label."
+    }
+  },
+  "profiles/plain/en-GB/manifest.ts": {
+    "workflow.manifest": {
+      "source": "Item",
+      "reason": "Item is an established singular Dutch noun for the whole object in plain wording."
+    }
+  }
+}

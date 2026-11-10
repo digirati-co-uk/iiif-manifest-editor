@@ -1,4 +1,4 @@
-export { ManifestEditor } from "../src/ManifestEditor";
+export { ManifestEditor, type ManifestEditorProps } from "../src/ManifestEditor";
 export * as shell from "@manifest-editor/shell";
 export * as components from "@manifest-editor/components";
 export * as creators from "@manifest-editor/creators";
@@ -10,4 +10,8 @@ export * as exhibitionPreset from "@manifest-editor/exhibition-preset";
 export * as vault from "react-iiif-vault";
 export { Vault } from "@iiif/helpers";
 
-export const runtimeApiVersion = 1;
+// Shared host modules: never bundle a second public translation context.
+export * as i18n from "@manifest-editor/i18n";
+export * as i18nCore from "@manifest-editor/i18n/core";
+
+export const runtimeApiVersion = 2;

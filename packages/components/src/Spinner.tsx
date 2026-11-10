@@ -1,6 +1,8 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import * as React from "react";
 
 export function Spinner(props: React.SVGProps<SVGSVGElement>) {
+  const t = useTranslations("components");
   return (
     <svg
       width="1em"
@@ -8,6 +10,10 @@ export function Spinner(props: React.SVGProps<SVGSVGElement>) {
       viewBox="0 0 42 42"
       xmlns="http://www.w3.org/2000/svg"
       stroke="currentColor"
+      // SVG retains scalable animation; native img cannot represent these children.
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+      role="img"
+      aria-label={t("controls.loading")}
       {...props}
     >
       <g transform="translate(2 2)" strokeWidth={5} fill="none" fillRule="evenodd">

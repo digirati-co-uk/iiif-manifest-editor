@@ -27,16 +27,15 @@ catalog:
   "@types/node": 22.20.1
   "@types/react": 19.2.18
   "@types/react-dom": 19.2.4
-  react-iiif-vault: 4.0.0
+  react-iiif-vault: 4.1.0
   react: 19.2.8
   react-dom: 19.2.8
   styled-components: 6.1.8
   zustand: 4.5.2
-  "@iiif/parser": 4.0.1
-  "@iiif/helpers": 4.0.0
-  # "iiif-browser": 2.2.4
-  iiif-browser: https://pkg.pr.new/digirati-co-uk/iiif-browser/iiif-browser@4934ee2
-  "@atlas-viewer/atlas": 3.3.0
+  "@iiif/parser": 4.0.7
+  "@iiif/helpers": 4.0.5
+  iiif-browser: 2.3.2
+  "@atlas-viewer/atlas": 3.3.6
   "react-aria-components": ^1.12
 
 minimumReleaseAgeExclude:
@@ -49,14 +48,30 @@ minimumReleaseAgeExclude:
   - syncpack-windows-arm64@15.3.3
   - syncpack-windows-x64@15.3.3
   - syncpack@15.3.3
-  - '@atlas-viewer/atlas@3.3.0'
-  - react-iiif-vault@4.0.0
+  - '@atlas-viewer/atlas@3.3.6'
+  - react-iiif-vault@4.1.0
+  - polygon-editor@1.0.0
+  - iiif-browser@2.3.2
 
 blockExoticSubdeps: false
 
 overrides:
-  "@atlas-viewer/atlas": 3.3.0
-  react-iiif-vault: 4.0.0
+  # Notebook and descriptive editors must share ProseMirror node/fragment instances.
+  prosemirror-model: 1.25.12
+  "@atlas-viewer/atlas": 3.3.6
+  react-iiif-vault: 4.1.0
+  polygon-editor: 1.0.0
   react-aria: 3.43.2
   react-aria-components: 1.12.1
   react-reconciler: 0.33.0
+
+patchedDependencies:
+  'leaflet-draw@1.0.4': patches/leaflet-draw@1.0.4.patch
+  '@mdxeditor/editor@4.0.4': patches/@mdxeditor__editor@4.0.4.patch
+  '@vidstack/react@1.12.12': patches/@vidstack__react@1.12.12.patch
+
+# The maintained source/search patch uses the public search-panel commands.
+packageExtensions:
+  '@mdxeditor/editor@4.0.4':
+    dependencies:
+      '@codemirror/search': 6.5.8

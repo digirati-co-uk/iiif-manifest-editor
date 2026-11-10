@@ -1,5 +1,6 @@
+import { exhibitionNotebookConfig } from "../notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
-import { extendApp, mapApp } from "@manifest-editor/shell";
+import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
 import { tourStepAnnotations } from "../annotations/TourStepAnnotations";
 import { exhibitionBackgroundTask } from "../background-panel";
 import { slideshowCanvasEditor } from "../canvas-editors/slideshow-canvas-editor";
@@ -36,6 +37,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
   {
     preset: exhibitionPresetConfig,
     config: {
+      notebook: exhibitionNotebookConfig,
       editorConfig: {
         Canvas: {
           singleTab: "@exhibition/slideshow-workbench-editor",
@@ -66,7 +68,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       //
       tourStepAnnotations,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["left-panel-manifest", NOTEBOOK_PANEL_ID],
     background: [
       //
       exhibitionBackgroundTask,

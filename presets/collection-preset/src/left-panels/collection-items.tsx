@@ -9,13 +9,7 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@manifest-editor/components";
-import {
-  CollectionItemList,
-  createAppActions,
-  emptyCallback,
-  useInStack,
-  useToggleList,
-} from "@manifest-editor/editors";
+import { CollectionItemList, createAppActions, useInStack, useToggleList } from "@manifest-editor/editors";
 import {
   type LayoutPanel,
   useCollectionEditor,

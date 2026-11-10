@@ -72,4 +72,16 @@ describe("remote release resolution", () => {
     item.stylesheet.url = "https://cdn.jsdelivr.net/npm/manifest-editor@2.2.0/dist/browser/runtime.css";
     expect(() => validateCatalog({ releases: [item], latest: null })).not.toThrow();
   });
+  it("validates exact dependency pins when a descriptor supplies them", () => {
+    const dependencies = { i18n: "2.2.1", react: "19.2.8", reconciler: "0.33.0" };
+    expect(() => validateCatalog({ releases: [release("2.2.1", { dependencies })], latest: null })).not.toThrow();
+    for (const invalid of [
+      { ...dependencies, i18n: "latest" },
+      { ...dependencies, react: "18.3.1" },
+    ]) {
+      expect(() => validateCatalog({ releases: [release("2.2.1", { dependencies: invalid })], latest: null })).toThrow(
+        "pins"
+      );
+    }
+  });
 });

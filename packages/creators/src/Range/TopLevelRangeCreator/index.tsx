@@ -1,9 +1,6 @@
 import { RangesIcon } from "@manifest-editor/components";
 import { defineCreator } from "@manifest-editor/creator-api";
-import {
-  createRangeTopLevel,
-  TopLevelRangeCreatorForm,
-} from "./create-range-top-level";
+import { createRangeTopLevel, TopLevelRangeCreatorForm } from "./create-range-top-level";
 
 declare module "@manifest-editor/creator-api" {
   namespace IIIFManifestEditor {
@@ -16,8 +13,10 @@ declare module "@manifest-editor/creator-api" {
 export const rangeTopLevel = defineCreator({
   id: "@manifest-editor/range-top-level",
   create: createRangeTopLevel,
-  label: "Top Level Range",
-  summary: "Add a new top level range",
+  label: "Table of contents",
+  labelMessage: { namespace: "creators", key: "definitions.contents.label" },
+  summary: "Create a top-level range to organise the manifest’s contents.",
+  summaryMessage: { namespace: "creators", key: "definitions.contents.summary" },
   icon: <RangesIcon />,
   render(ctx) {
     return <TopLevelRangeCreatorForm {...ctx} />;

@@ -1,4 +1,5 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": { "allowImportingTsExtensions": true },
   "include": ["**/*.ts", "**/*.tsx", "../editors/src/components/DimensionsTriplet.tsx"]
 }

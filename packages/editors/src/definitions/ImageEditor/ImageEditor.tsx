@@ -1,3 +1,6 @@
+import { propertyLabels } from "@manifest-editor/editor-api";
+import { useDisplayLabel } from "../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
 import { toRef } from "@iiif/parser";
 import { PaddedSidebarContainer } from "@manifest-editor/components";
 import { useEditingResource, useEditor } from "@manifest-editor/shell";
@@ -8,6 +11,8 @@ import { Input, InputContainer, InputLabel } from "../../components/Input";
 import { useContentResourceThumbnail } from "../../hooks/useContentResourceThumbnailHelper";
 
 export function ImageEditor() {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const resource = useEditingResource();
   const { technical } = useEditor();
   const vault = useVault();
@@ -32,13 +37,20 @@ export function ImageEditor() {
           <img
             src={thumbnail.id}
             alt=""
-            style={{ maxWidth: 200, maxHeight: 200, width: "auto", height: "auto", objectFit: "contain", display: "block" }}
+            style={{
+              maxWidth: 200,
+              maxHeight: 200,
+              width: "auto",
+              height: "auto",
+              objectFit: "contain",
+              display: "block",
+            }}
           />
         </div>
       ) : null}
       <PaddedSidebarContainer>
         <InputContainer $wide>
-          <InputLabel htmlFor={id.focusId()}>Identifier</InputLabel>
+          <InputLabel htmlFor={id.focusId()}>{apiLabel(propertyLabels.id)!}</InputLabel>
           <Input disabled id={id.focusId()} value={id.get()} />
         </InputContainer>
 
@@ -52,11 +64,11 @@ export function ImageEditor() {
         </InputContainer>
 
         <InputContainer $wide>
-          <InputLabel htmlFor={format.focusId()}>Format</InputLabel>
+          <InputLabel htmlFor={format.focusId()}>{apiLabel(propertyLabels.format)!}</InputLabel>
           <Input
             id={format.focusId()}
             value={format.get()}
-            placeholder={"jpg, png etc."}
+            placeholder={t("ui.jpgPngEtc")}
             onChange={(e: any) => format.set(e.target.value)}
           />
         </InputContainer>
@@ -70,7 +82,7 @@ export function ImageEditor() {
               }
             }}
           >
-            Set as Manifest thumbnail
+            {t("ui.setAsManifestThumbnail")}
           </Button>
         ) : null}
       </PaddedSidebarContainer>

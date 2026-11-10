@@ -8,3 +8,5 @@ export * from "./resources";
 export * from "./rights";
 export * from "./structural";
 export * from "./technical";
+export * from "./display";
+export * from "./labels";

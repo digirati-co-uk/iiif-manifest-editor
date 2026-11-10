@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "allowImportingTsExtensions": true },
+  "include": ["test/i18n.test.tsx", "test/boundaries.test.ts"],
+  "exclude": []
+}

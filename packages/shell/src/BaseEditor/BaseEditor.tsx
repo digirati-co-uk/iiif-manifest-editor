@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import type { Vault } from "@iiif/helpers";
 import { SidebarTabs } from "@manifest-editor/components";
 import { BackIcon } from "@manifest-editor/ui/icons/BackIcon";
@@ -14,12 +15,14 @@ import { useLayoutActions } from "../Layout/Layout.context";
 import type { EditorDefinition, ResourceDefinition } from "../Layout/Layout.types";
 
 export function BaseEditorBackButton({ fallback, backAction }: any) {
+  const t = useTranslations("shell");
+
   const stack = useEditingResourceStack();
   const { back } = useEditingStack();
 
   if (stack.length) {
     return (
-      <ModulePanelButton aria-label="Back" onClick={back}>
+      <ModulePanelButton aria-label={t("actions.back")} onClick={back}>
         <BackIcon aria-hidden="true" />
       </ModulePanelButton>
     );
@@ -29,13 +32,15 @@ export function BaseEditorBackButton({ fallback, backAction }: any) {
 }
 
 export function BaseEditorCloseButton({ closeAction, fallback }: any) {
+  const t = useTranslations("shell");
+
   const stack = useEditingResourceStack();
   const current = useEditingResource();
 
   if (current || stack.length) {
     return (
       <ModulePanelButton
-        aria-label="Close panel"
+        aria-label={t("actions.closePanel")}
         onClick={() => {
           closeAction();
         }}
@@ -52,7 +57,7 @@ export function editBasedOnResource(
   resource: EditableResource,
   list: ResourceDefinition[],
   options: { edit?: boolean; vault: Vault },
-  config: EditorConfig,
+  config: EditorConfig
 ): ResourceDefinition | null {
   const filteredList = list.filter((l) => l.resourceType === resource.resource.source.type);
 
@@ -126,6 +131,8 @@ export function editBasedOnResource(
 }
 
 export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) {
+  const { resolveMessage, locale, profile } = useEditorI18n();
+
   const resource = useEditingResource();
   const currentResourceContext = useContext(ResourceReactContext);
   const app = useApp();
@@ -183,6 +190,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
         return {
           id: "@default/" + resource,
           label: resource,
+          labelMessage: {
+            namespace: "editor-api",
+            key: `resources.${resource.charAt(0).toLowerCase()}${resource.slice(1)}`,
+            defaultValue: resource,
+          },
           resourceType: resource,
           auto: true,
           editors: editors.filter((e: any) => e.supports.resourceTypes.includes(resource)),
@@ -195,8 +207,8 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   }, [resource, app]);
 
   useEffect(() => {
-    set(match?.label || "");
-  }, [match]);
+    set(resolveMessage(match?.labelMessage, match?.label) || "");
+  }, [match, resolveMessage, locale, profile, set]);
 
   useEffect(() => {
     const availableKeys = match?.editors.map((editor) => editor.id) || [];
@@ -213,11 +225,11 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
     () =>
       (match?.editors || []).map((editor) => ({
         id: editor.id,
-        label: editor.label,
+        label: resolveMessage(editor?.labelMessage, editor.label),
         renderComponent: () => editor.component(resourceConfig),
       })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [match?.editors, resourceConfig],
+    [match?.editors, resourceConfig, resolveMessage, locale, profile]
   );
 
   // Problems to solve:
@@ -235,7 +247,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       return wrap(
         <div key={resource.resource.source?.id} className="w-full">
           {first.component(resourceConfig)}
-        </div>,
+        </div>
       );
     }
   }
@@ -251,6 +263,6 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       onSelectionChange={(p: any) => {
         change("@manifest-editor/editor", { currentTab: p });
       }}
-    />,
+    />
   );
 }

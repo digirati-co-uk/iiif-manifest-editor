@@ -1,3 +1,6 @@
+import type { MessageReference } from "@manifest-editor/i18n/core";
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { type LayoutPanel, type PluginMetadata, useLayoutActions } from "@manifest-editor/shell";
 import type { SVGProps } from "react";
@@ -9,7 +12,9 @@ type QualityIssue = {
   id: string;
   severity: IssueSeverity;
   title: string;
+  titleMessage?: MessageReference;
   detail: string;
+  detailMessage?: MessageReference;
   resource?: { id: string; type: string };
   index?: number;
 };
@@ -23,9 +28,12 @@ type QualityReport = {
 export default {
   id: "@manifest-editor/manifest-quality-checks",
   label: "Manifest Quality Checks",
+  labelMessage: manifestMessage("workflow.manifestQualityChecks"),
   description: "Review common IIIF completeness and presentation issues before publishing.",
+  descriptionMessage: manifestMessage("workflow.qualitySummary"),
   author: "Digirati",
   official: true,
+  localisation: { requiredNamespaces: ["manifest"] },
   defaultEnabled: false,
   tags: ["quality", "validation", "publishing"],
   supports: {
@@ -37,6 +45,7 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: "manifest-quality-checks",
     label: "Quality",
+    labelMessage: manifestMessage("workflow.quality"),
     icon: <QualityChecksIcon />,
     render: () => <ManifestQualityChecksPanel />,
   },
@@ -54,11 +63,13 @@ function QualityChecksIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 function ManifestQualityChecksPanel() {
+  const t = useTranslations("manifest");
+  const { locale, profile } = useEditorI18n();
   const manifest = useManifest();
   const actions = useLayoutActions();
   const report = useVaultSelector(
-    (_, vault) => createQualityReport(manifest, vault),
-    [manifest?.id, manifest?.items?.length],
+    (_, vault) => createQualityReport(manifest, vault, t),
+    [manifest?.id, manifest?.items?.length, locale, profile, t]
   );
   const counts = countBySeverity(report.issues);
 
@@ -74,7 +85,7 @@ function ManifestQualityChecksPanel() {
           property: "items",
           index: issue.index,
         },
-        { forceOpen: true },
+        { forceOpen: true }
       );
       return;
     }
@@ -84,19 +95,23 @@ function ManifestQualityChecksPanel() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Quality checks" />
+      <SidebarHeader title={t("workflow.qualityChecks")} />
       <SidebarContent className="flex flex-col gap-4 p-4">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <SummaryMetric label="Errors" value={counts.error} tone="error" />
-          <SummaryMetric label="Warnings" value={counts.warning} tone="warning" />
-          <SummaryMetric label="Info" value={counts.info} tone="info" />
+          <SummaryMetric label={t("workflow.errors")} value={counts.error} tone="error" />
+          <SummaryMetric label={t("workflow.warnings")} value={counts.warning} tone="warning" />
+          <SummaryMetric label={t("workflow.info")} value={counts.info} tone="info" />
         </div>
 
         <div className="rounded border border-gray-200 bg-white p-3 text-sm text-gray-700">
-          <div className="font-medium text-gray-900">Manifest coverage</div>
+          <div className="font-medium text-gray-900">{t("workflow.manifestCoverage")}</div>
           <div className="mt-1">
-            {report.canvasCount} canvas{report.canvasCount === 1 ? "" : "es"} and {report.paintingAnnotationCount} painting
-            annotation{report.paintingAnnotationCount === 1 ? "" : "s"} checked.
+            {t(
+              report.paintingAnnotationCount === 1
+                ? "workflow.qualityCoverageOneAnnotation"
+                : "workflow.qualityCoverageAnnotations",
+              { count: report.canvasCount, annotations: report.paintingAnnotationCount }
+            )}
           </div>
         </div>
 
@@ -108,7 +123,7 @@ function ManifestQualityChecksPanel() {
           </div>
         ) : (
           <div className="rounded border border-green-200 bg-green-50 p-3 text-sm text-green-900">
-            No common publishing issues found.
+            {t("workflow.noCommonPublishingIssuesFound")}
           </div>
         )}
       </SidebarContent>
@@ -116,15 +131,7 @@ function ManifestQualityChecksPanel() {
   );
 }
 
-function SummaryMetric({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone: IssueSeverity;
-}) {
+function SummaryMetric({ label, value, tone }: { label: string; value: number; tone: IssueSeverity }) {
   const className =
     tone === "error"
       ? "border-red-200 bg-red-50 text-red-900"
@@ -141,6 +148,8 @@ function SummaryMetric({
 }
 
 function IssueCard({ issue, onOpen }: { issue: QualityIssue; onOpen: () => void }) {
+  const t = useTranslations("manifest");
+  const { resolveMessage } = useEditorI18n();
   const badgeClass =
     issue.severity === "error"
       ? "bg-red-100 text-red-800"
@@ -151,15 +160,17 @@ function IssueCard({ issue, onOpen }: { issue: QualityIssue; onOpen: () => void 
   return (
     <div className="rounded border border-gray-200 bg-white p-3 text-sm">
       <div className="flex items-start gap-2">
-        <span className={`rounded px-2 py-0.5 text-xs font-medium capitalize ${badgeClass}`}>{issue.severity}</span>
+        <span className={`rounded px-2 py-0.5 text-xs font-medium capitalize ${badgeClass}`}>
+          {t(`workflow.severity.${issue.severity}`)}
+        </span>
         <div className="min-w-0 flex-1">
-          <div className="font-medium text-gray-900">{issue.title}</div>
-          <div className="mt-1 text-gray-600">{issue.detail}</div>
+          <div className="font-medium text-gray-900">{resolveMessage(issue.titleMessage, issue.title)}</div>
+          <div className="mt-1 text-gray-600">{resolveMessage(issue.detailMessage, issue.detail)}</div>
         </div>
       </div>
       {issue.resource ? (
         <button className="mt-3 text-sm font-medium text-me-primary-600 hover:underline" type="button" onClick={onOpen}>
-          Open {issue.resource.type.toLowerCase()}
+          {t(issue.resource.type === "Canvas" ? "workflow.openCanvas" : "workflow.openManifest")}
         </button>
       ) : null}
     </div>
@@ -172,11 +183,15 @@ function countBySeverity(issues: QualityIssue[]) {
       counts[issue.severity] += 1;
       return counts;
     },
-    { error: 0, warning: 0, info: 0 } satisfies Record<IssueSeverity, number>,
+    { error: 0, warning: 0, info: 0 } satisfies Record<IssueSeverity, number>
   );
 }
 
-function createQualityReport(manifest: any, vault: any): QualityReport {
+export function createQualityReport(
+  manifest: any,
+  vault: any,
+  t?: (key: string, values?: Record<string, string | number>) => string
+): QualityReport {
   const issues: QualityIssue[] = [];
   const canvases = manifest?.items ? vault.get(manifest.items) || [] : [];
   let paintingAnnotationCount = 0;
@@ -190,7 +205,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
       id: "manifest-label",
       severity: "error",
       title: "Manifest label is missing",
+      titleMessage: manifestMessage("workflow.manifestLabelIsMissing"),
       detail: "Published IIIF resources need a clear label so viewers and search results can identify them.",
+      detailMessage: manifestMessage("workflow.qualityLabelHelp"),
       resource: { id: manifest.id, type: "Manifest" },
     });
   }
@@ -200,7 +217,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
       id: "manifest-canvases",
       severity: "warning",
       title: "No canvases",
+      titleMessage: manifestMessage("canvas.empty"),
       detail: "A manifest usually needs at least one canvas before it is useful in viewers.",
+      detailMessage: manifestMessage("workflow.qualityCanvasHelp"),
       resource: { id: manifest.id, type: "Manifest" },
     });
   }
@@ -210,7 +229,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
       id: "manifest-required-statement",
       severity: "warning",
       title: "Required statement is missing",
+      titleMessage: manifestMessage("workflow.requiredStatementIsMissing"),
       detail: "Required statements are commonly used for attribution, holding institution, or usage information.",
+      detailMessage: manifestMessage("workflow.qualityAttributionHelp"),
       resource: { id: manifest.id, type: "Manifest" },
     });
   }
@@ -220,14 +241,19 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
       id: "manifest-rights",
       severity: "info",
       title: "Rights statement is missing",
+      titleMessage: manifestMessage("workflow.rightsStatementIsMissing"),
       detail: "Adding a rights URI helps downstream viewers and catalogues communicate reuse conditions.",
+      detailMessage: manifestMessage("workflow.qualityRightsHelp"),
       resource: { id: manifest.id, type: "Manifest" },
     });
   }
 
   for (const [index, canvas] of canvases.entries()) {
     if (!canvas) continue;
-    const canvasLabel = getText(canvas.label, `Canvas ${index + 1}`);
+    const canvasLabel = getText(
+      canvas.label,
+      t ? t("workflow.canvasNumber", { number: index + 1 }) : `Canvas ${index + 1}`
+    );
     const canvasRef = { id: canvas.id, type: "Canvas" };
 
     if (!hasText(canvas.label)) {
@@ -235,7 +261,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
         id: `${canvas.id}-label`,
         severity: "warning",
         title: "Canvas label is missing",
+        titleMessage: manifestMessage("workflow.canvasLabelIsMissing"),
         detail: `${canvasLabel} will be harder to identify in navigation, search, and range editing.`,
+        detailMessage: manifestMessage("workflow.qualityLabelDetail", { label: canvasLabel }),
         resource: canvasRef,
         index,
       });
@@ -246,7 +274,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
         id: `${canvas.id}-dimensions`,
         severity: "warning",
         title: "Canvas dimensions or duration are missing",
+        titleMessage: manifestMessage("workflow.qualityDimensionsMissing"),
         detail: `${canvasLabel} does not expose width/height or duration, which can make viewer layout unreliable.`,
+        detailMessage: manifestMessage("workflow.qualityDimensionsDetail", { label: canvasLabel }),
         resource: canvasRef,
         index,
       });
@@ -260,7 +290,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
         id: `${canvas.id}-painting`,
         severity: "error",
         title: "Canvas has no painting content",
+        titleMessage: manifestMessage("workflow.qualityPaintingMissing"),
         detail: `${canvasLabel} has no painting annotation, so viewers may show it as empty.`,
+        detailMessage: manifestMessage("workflow.qualityPaintingDetail", { label: canvasLabel }),
         resource: canvasRef,
         index,
       });
@@ -273,7 +305,9 @@ function createQualityReport(manifest: any, vault: any): QualityReport {
           id: `${canvas.id}-painting-${annotationIndex}-body`,
           severity: "error",
           title: "Painting annotation has no body",
+          titleMessage: manifestMessage("workflow.qualityBodyMissing"),
           detail: `${canvasLabel} includes a painting annotation without an image, video, audio, or text body.`,
+          detailMessage: manifestMessage("workflow.qualityBodyDetail", { label: canvasLabel }),
           resource: canvasRef,
           index,
         });

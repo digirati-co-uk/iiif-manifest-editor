@@ -22,6 +22,19 @@ export interface AvCanvas {
   }>;
 }
 
+/**
+ * Panel `supports` check shared by the A/V plugins: a Manifest project with at least one audio or
+ * video canvas that has a duration.
+ */
+export function supportsAvCanvases(ctx: { rootResource?: any; vault?: any }) {
+  if (!ctx.rootResource || ctx.rootResource.type !== "Manifest" || !ctx.vault) {
+    return false;
+  }
+
+  const manifest = ctx.vault.get(ctx.rootResource, { skipSelfReturn: false });
+  return getAvCanvases(ctx.vault, manifest).length > 0;
+}
+
 export function getAvCanvases(
   vault: { get: (ref: any, options?: any) => any },
   manifest: any,

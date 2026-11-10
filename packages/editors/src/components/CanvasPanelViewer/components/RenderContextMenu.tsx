@@ -1,9 +1,6 @@
-import {
-  type ContextMenuItem,
-  useLayoutActions,
-  useResourceContextMenuItems,
-} from "@manifest-editor/shell";
-import { useMemo } from "react";
+import { useDisplayLabel } from "../../../i18n";
+import { useTranslations } from "@manifest-editor/i18n";
+import { type ContextMenuItem, useLayoutActions, useResourceContextMenuItems } from "@manifest-editor/shell";
 import { Header, Menu, MenuItem, MenuSection } from "react-aria-components";
 import { flushSync } from "react-dom";
 import { useStrategy } from "react-iiif-vault";
@@ -48,9 +45,7 @@ export function RenderContextMenu({
 
   // If nothing, show canvas options.
 
-  return (
-    <CanvasContextMenu canvasId={canvasId} close={close} position={position} />
-  );
+  return <CanvasContextMenu canvasId={canvasId} close={close} position={position} />;
 }
 
 function CanvasContextMenu({
@@ -62,6 +57,8 @@ function CanvasContextMenu({
   position: { x: number; y: number };
   close: () => void;
 }) {
+  const t = useTranslations("editors");
+  const apiLabel = useDisplayLabel();
   const { edit } = useLayoutActions();
   const items = useResourceContextMenuItems({
     id: canvasId,
@@ -72,11 +69,14 @@ function CanvasContextMenu({
     items.length === 0
       ? [
           {
-            sectionTitle: "Canvas",
+            sectionTitle: apiLabel({
+              labelMessage: { namespace: "editor-api", key: "resources.canvas" },
+              label: "Canvas",
+            }),
             items: [
               {
                 id: "edit",
-                label: "Edit canvas",
+                label: t("ui.editCanvas"),
                 onAction: () => edit({ id: canvasId, type: "Canvas" }),
               },
             ],
@@ -105,6 +105,8 @@ function PaintingAnnotationContextMenu({
   annotationId: string;
   close: () => void;
 }) {
+  const commonT = useTranslations("common");
+  const t = useTranslations("editors");
   const { edit } = useLayoutActions();
   const canvasItems = useResourceContextMenuItems({
     id: canvasId,
@@ -115,15 +117,15 @@ function PaintingAnnotationContextMenu({
     type: "Annotation",
   });
 
-  const menuItems = useMemo(() => {
+  const menuItems = (() => {
     if (items.length === 0) {
       return [
         {
-          sectionTitle: "Painting Annotation",
+          sectionTitle: t("messages.paintingAnnotation"),
           items: [
             {
               id: "edit",
-              label: "Edit",
+              label: commonT("actions.edit"),
               onAction: () => edit({ id: annotationId, type: "Annotation" }),
             },
           ],
@@ -132,7 +134,7 @@ function PaintingAnnotationContextMenu({
       ];
     }
     return [...items, ...canvasItems];
-  }, [canvasItems, items, annotationId, edit]);
+  })();
 
   return (
     <GenericContextMenu
@@ -174,9 +176,7 @@ function GenericContextMenu({
         return (
           <MenuSection key={key}>
             {section.sectionTitle ? (
-              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">
-                {section.sectionTitle}
-              </Header>
+              <Header className="bg-gray-200 text-gray-500 text-xs px-2 py-1">{section.sectionTitle}</Header>
             ) : null}
             {sectionItems.map((item, key2) => {
               return (

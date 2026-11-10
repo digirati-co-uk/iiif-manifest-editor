@@ -1,12 +1,17 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { NotebookCreatorSources } from "../Notebook/ProjectNotebook";
 import { toRef } from "@iiif/parser";
 import {
   ActionButton,
-  BackIcon,
   CreatorGrid,
   EmptyState,
   ErrorMessage,
   GridIcon,
   IconButton,
+  InfoIcon,
+  Tooltip,
+  TooltipTrigger,
+  DefaultTooltipContent,
   ModalBackSlot,
   Spinner,
 } from "@manifest-editor/components";
@@ -14,13 +19,14 @@ import {
   type CreatableResource,
   type CreatorDefinition,
   type CreatorOptions,
+  type CreatorValidationMessage,
   type CreatorResourceProbeHelpers,
   type CreatorResourceProbeResult,
   getCreatorConfigKey,
   matchBasedOnResource,
 } from "@manifest-editor/creator-api";
 import { Button } from "@manifest-editor/ui/atoms/Button";
-import { type FormEvent, memo, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { type FormEvent, memo, Suspense, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useVault } from "react-iiif-vault";
 import { useApp } from "../AppContext/AppContext";
 import { useConfig } from "../ConfigContext/ConfigContext";
@@ -30,6 +36,7 @@ import { useLayoutActions } from "../Layout/Layout.context";
 import { useInlineCreator } from "./BaseCreator.hooks";
 import { completeCreator } from "./creator-completion";
 import { useInitialData } from "./CreatorInitialData";
+import { CreatorResourceInput } from "./CreatorResourceInput";
 
 interface BaseCreatorProps {
   resource: CreatableResource;
@@ -41,11 +48,17 @@ export const RenderCreator = memo(function RenderCreator(props: {
   onCreate?: () => void;
   skipEditingOnCreate?: boolean;
   initialData?: Record<string, any>;
+  /** The parent shows the summary; no-form creators render just their action. */
+  compact?: boolean;
 }) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const vault = useVault();
-  const { edit, modal } = useLayoutActions();
+  const { edit, modal, open } = useLayoutActions();
   const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | CreatorValidationMessage | null>(null);
   const creator = useInlineCreator();
   const config = useConfig();
   const isCreatingRef = useRef(false);
@@ -65,12 +78,14 @@ export const RenderCreator = memo(function RenderCreator(props: {
         }
       : undefined,
     target: props.resource.target,
+    placeholderPosition: props.resource.placeholderPosition,
     initialData: { ...initialData, ...(props.resource.initialData || {}), ...(props.initialData || {}) },
   };
 
   const runCreate = async (payload: any) => {
     if (isCreating || isCreatingRef.current) return;
 
+    setError(null);
     setIsCreating(true);
     isCreatingRef.current = true;
 
@@ -87,15 +102,24 @@ export const RenderCreator = memo(function RenderCreator(props: {
         edit:
           props.skipEditingOnCreate || props.resource.initialData?.skipEditingOnCreate
             ? undefined
-            : (resource) =>
-                edit(resource, {
-                  parent: toRef(props.resource.parent),
-                  property: props.resource.property,
-                  index: props.resource.index,
-                }),
+            : (resource) => {
+                if (resource.type === "Canvas") open({ id: "current-canvas" });
+                edit(
+                  resource,
+                  {
+                    parent: toRef(props.resource.parent),
+                    property: props.resource.property,
+                    index: props.resource.index,
+                  },
+                  { selectedTab: props.creator.initialEditor }
+                );
+              },
       });
     } catch (err: any) {
-      setError(err?.message || "Unknown error");
+      setError(
+        props.creator.validationErrorMessage?.(err, { payload, vault }) ||
+          err?.message || { message: { namespace: "shell", key: "creator.unknownError" } }
+      );
     } finally {
       setIsCreating(false);
       isCreatingRef.current = false;
@@ -116,32 +140,39 @@ export const RenderCreator = memo(function RenderCreator(props: {
     }
   }, [props.creator]);
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center p-4">
-        <ErrorMessage>{error}</ErrorMessage>
-      </div>
-    );
-  }
-
   const spinner = (
     <div className="flex flex-col items-center py-8">
       <div className="flex gap-2 items-center">
-        <Spinner /> <span>Loading</span>
+        <Spinner /> <span>{t("creator.loading")}</span>
       </div>
     </div>
   );
 
-  if (isCreating) {
-    return spinner;
-  }
-
   if (!props.creator.render) {
+    if (isCreating) return spinner;
+    if (props.compact) {
+      return (
+        <>
+          {error ? (
+            <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+          ) : null}
+          <div className="flex justify-end">
+            <ActionButton primary onPress={() => runCreate({})}>
+              {resolveMessage(props.creator?.actionButtonMessage, props.creator.actionButton) || t("creator.create")}
+            </ActionButton>
+          </div>
+        </>
+      );
+    }
     return (
       <>
-        <EmptyState>No options available</EmptyState>
+        {error ? (
+          <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+        ) : (
+          <EmptyState>{t("creator.noOptions")}</EmptyState>
+        )}
         <ActionButton primary onPress={() => runCreate({})}>
-          {props.creator.actionButton || "Create"}
+          {resolveMessage(props.creator?.actionButtonMessage, props.creator.actionButton) || t("creator.create")}
         </ActionButton>
       </>
     );
@@ -149,21 +180,55 @@ export const RenderCreator = memo(function RenderCreator(props: {
 
   return (
     <>
-      <Suspense fallback={spinner}>
-        {props.creator.render({
-          vault,
-          runCreate,
-          validate,
-          options,
-          config: config.creators?.[getCreatorConfigKey(props.creator)] || {},
-        })}
-      </Suspense>
+      {isCreating ? spinner : null}
+      <div hidden={isCreating}>
+        {resolveMessage(props.creator.helpMessage || props.creator.summaryMessage, props.creator.summary) &&
+        !props.compact &&
+        !props.creator.hideSummary ? (
+          <div className="flex justify-end px-4">
+            <Tooltip>
+              <TooltipTrigger
+                aria-label={t("creator.help", {
+                  name: resolveMessage(props.creator.labelMessage, props.creator.label),
+                })}
+                className="rounded p-1 text-gray-500 focus-visible:outline focus-visible:outline-2"
+              >
+                <InfoIcon className="h-5 w-5" />
+              </TooltipTrigger>
+              <DefaultTooltipContent
+                className="max-w-xs"
+                root={document.getElementById("headlessui-portal-root") || undefined}
+              >
+                {resolveMessage(props.creator.helpMessage || props.creator.summaryMessage, props.creator.summary)}
+              </DefaultTooltipContent>
+            </Tooltip>
+          </div>
+        ) : null}
+        {error ? (
+          <ErrorMessage>{typeof error === "string" ? error : resolveMessage(error.message)}</ErrorMessage>
+        ) : null}
+        <Suspense fallback={spinner}>
+          {props.creator.render({
+            vault,
+            i18n: { resolveMessage },
+            runCreate,
+            validate,
+            options,
+            config: config.creators?.[getCreatorConfigKey(props.creator)] || {},
+          })}
+        </Suspense>
+      </div>
     </>
   );
 });
 
 export function BaseCreator(props: BaseCreatorProps) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   const app = useApp();
+  const config = useConfig();
   const vault = useVault();
   const [currentId, setCurrentId] = useState(props.resource.initialCreator || "");
   const [currentInitialData, setCurrentInitialData] = useState<Record<string, any> | undefined>();
@@ -172,16 +237,43 @@ export function BaseCreator(props: BaseCreatorProps) {
   const [probeError, setProbeError] = useState("");
   const [probeMatches, setProbeMatches] = useState<ProbeMatch[] | null>(null);
   const resourceInputRef = useRef<HTMLInputElement>(null);
+  const probeRun = useRef(0);
+  const probeController = useRef<AbortController | null>(null);
+  const gridId = useId();
+  const linkFirst =
+    props.resource.type === "Canvas" &&
+    props.resource.parent?.type === "Manifest" &&
+    props.resource.property === "items";
+  const [showAll, setShowAll] = useState(false);
   const set = useSetCustomTitle();
   const supported = useMemo(
     () =>
       matchBasedOnResource(props.resource, app.layout.creators || [], {
         vault,
       }),
-    [props.resource, app.layout.creators, vault],
+    [props.resource, app.layout.creators, vault]
   );
 
   const canProbe = supported.some((creator) => creator.supportsResource);
+  const browserCreator =
+    supported.find((creator) => creator.id === config.notebook?.browserCreatorId) ??
+    supported.find((creator) => getCreatorConfigKey(creator) === "@manifest-editor/iiif-browser-creator");
+  const manualCreators = supported.filter((creator) => !creator.supportsResource);
+
+  useEffect(
+    () => () => {
+      probeRun.current++;
+      probeController.current?.abort();
+    },
+    []
+  );
+
+  const cancelProbe = () => {
+    probeRun.current++;
+    probeController.current?.abort();
+    probeController.current = null;
+    setIsProbing(false);
+  };
 
   useEffect(() => {
     if (supported.length === 1 && !currentId && !canProbe) {
@@ -198,49 +290,68 @@ export function BaseCreator(props: BaseCreatorProps) {
   const current = supported.find((t) => t.id === currentId);
 
   useEffect(() => {
-    if (current) {
-      set?.(current.label);
-    }
+    set?.(resolveMessage(current?.labelMessage, current?.label) || t("creator.add"));
   });
 
   if (supported.length === 0) {
-    return <EmptyState>Not currently supported</EmptyState>;
+    return <EmptyState>{t("creator.unsupported")}</EmptyState>;
   }
 
   const selectCreator = (creator: CreatorDefinition, initialData?: Record<string, any>) => {
+    cancelProbe();
     setCurrentInitialData(initialData || getDefaultProbeInitialData(resourceValue));
     setCurrentId(creator.id);
   };
 
-  const runResourceProbe = async (e: FormEvent) => {
-    e.preventDefault();
-    const value = resourceValue.trim();
+  const openBrowser = browserCreator
+    ? (url?: string) => selectCreator(browserCreator, { url: url ?? (resourceValue.trim() || undefined) })
+    : undefined;
+
+  const runResourceProbe = async (e?: FormEvent, source?: string) => {
+    e?.preventDefault();
+    const value = (source ?? resourceValue).trim();
+    if (source) setResourceValue(source);
     if (!value || isProbing) return;
 
+    const requestId = ++probeRun.current;
+    const controller = new AbortController();
+    probeController.current = controller;
     setIsProbing(true);
     setProbeError("");
     setProbeMatches(null);
 
-    const helpers = createProbeHelpers();
-    const results: ProbeResult[] = await Promise.all(
-      supported.map(async (creator) => {
+    let requestFailed = false;
+    let timedOut = false;
+    const helpers = createProbeHelpers(controller.signal, () => {
+      requestFailed = true;
+    });
+    let timer: ReturnType<typeof setTimeout>;
+    const timeout = new Promise<null>((resolve) => {
+      timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+        resolve(null);
+      }, 10_000);
+    });
+    const results = await Promise.all(
+      supported.map(async (creator): Promise<ProbeResult> => {
         if (!creator.supportsResource) return null;
-        try {
-          const result = await creator.supportsResource(value, helpers, { vault, resource: props.resource });
-          if (!result) return null;
-          return {
-            creator,
-            initialData: normaliseProbeResult(value, result).initialData,
-          };
-        } catch (err: any) {
-          return { creator, error: err?.message || "Could not check this link" };
-        }
-      }),
+        const probe = async (): Promise<ProbeResult> => {
+          try {
+            const result = await creator.supportsResource!(value, helpers, { vault, resource: props.resource });
+            return result ? { creator, initialData: normaliseProbeResult(value, result).initialData } : null;
+          } catch {
+            return { creator, error: t("creator.probeFailed") };
+          }
+        };
+        return Promise.race([probe(), timeout]);
+      })
     );
-    const matches = results.filter(isProbeMatch);
-    const errors = results.filter(isProbeError);
-
+    clearTimeout(timer!);
+    if (requestId !== probeRun.current) return;
+    probeController.current = null;
     setIsProbing(false);
+    const matches = results.filter(isProbeMatch);
 
     if (matches.length === 1) {
       selectCreator(matches[0]!.creator, matches[0]!.initialData);
@@ -248,22 +359,30 @@ export function BaseCreator(props: BaseCreatorProps) {
     }
 
     if (matches.length > 1) {
+      setShowAll(false);
       setProbeMatches(matches);
-      setProbeError("Multiple creators can use this link. Choose one below.");
       return;
     }
 
-    setProbeError(errors[0]?.error || "No creator recognised this link. Choose one below.");
+    setShowAll(true);
+    setProbeError(
+      timedOut
+        ? "creator.timeout"
+        : requestFailed || results.some(isProbeError)
+          ? "creator.requestFailed"
+          : "creator.unrecognised"
+    );
   };
 
   const backButton = (
     <ModalBackSlot>
       <IconButton
         root={document.getElementById("headlessui-portal-root") || undefined}
-        label="Back to Add content options"
+        label={t("creator.back")}
         className="group"
         placement="right"
         onPress={() => {
+          cancelProbe();
           setCurrentId("");
           setCurrentInitialData(undefined);
         }}
@@ -295,51 +414,75 @@ export function BaseCreator(props: BaseCreatorProps) {
     );
   }
 
-  const gridItems = probeMatches?.length ? probeMatches.map((match) => match.creator) : supported;
+  const allVisible = !canProbe || showAll || (!linkFirst && !probeMatches);
+  const gridItems = allVisible ? supported : probeMatches?.map((match) => match.creator) || [];
   const initialDataByCreator = new Map(probeMatches?.map((match) => [match.creator.id, match.initialData]));
+  const renderGrid = (items: CreatorDefinition[], label: string, compact = false) => (
+    <CreatorGrid
+      label={label}
+      compact={compact}
+      items={items.map((item) => ({
+        id: item.id,
+        title: resolveMessage(item?.labelMessage, item.label),
+        description: resolveMessage(item?.summaryMessage, item.summary) || "",
+        icon: item.icon,
+        onClick: () => selectCreator(item, initialDataByCreator.get(item.id)),
+      }))}
+    />
+  );
 
   return (
     <>
       {canProbe ? (
-        <form className="p-4 pb-0" onSubmit={runResourceProbe}>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="creator-resource-link">
-            Paste a link
-          </label>
-          <div className="mt-1 flex gap-2">
-            <input
-              ref={resourceInputRef}
-              id="creator-resource-link"
-              className="min-w-0 flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
-              value={resourceValue}
-              onChange={(e) => {
-                setResourceValue(e.currentTarget.value);
-                setProbeError("");
-                setProbeMatches(null);
-              }}
-              placeholder="https://example.org/resource"
-              type="url"
-            />
-            <ActionButton primary type="submit" isDisabled={!resourceValue.trim() || isProbing}>
-              {isProbing ? "Checking" : "Use link"}
-            </ActionButton>
+        <form className="p-4" onSubmit={(e) => void runResourceProbe(e)} aria-busy={isProbing}>
+          <CreatorResourceInput
+            inputRef={resourceInputRef}
+            rotateExamples={linkFirst}
+            onBrowse={openBrowser ? () => openBrowser() : undefined}
+            value={resourceValue}
+            isChecking={isProbing}
+            onChange={(value) => {
+              cancelProbe();
+              setResourceValue(value);
+              setProbeError("");
+              setProbeMatches(null);
+            }}
+          />
+          <div role="status" aria-live="polite" className="text-sm text-gray-600">
+            {isProbing ? <span className="sr-only">{t("creator.checking")}</span> : null}
+            {probeError ? <p className="mt-3">{t(probeError)}</p> : null}
+            {probeMatches && !allVisible ? <p className="mt-3">{t("creator.chooseLink")}</p> : null}
           </div>
-          {probeError ? (
-            <div className="mt-2 text-sm text-gray-600" role="status">
-              {probeError}
-            </div>
+          {!resourceValue ? (
+            <NotebookCreatorSources
+              isDisabled={isProbing}
+              onSelect={(url) => void runResourceProbe(undefined, url)}
+              onOpenNotebook={openBrowser ? () => openBrowser("iiif://notes") : undefined}
+            />
           ) : null}
         </form>
       ) : null}
-      <CreatorGrid
-        label="Select a type"
-        items={gridItems.map((item) => ({
-          id: item.id,
-          title: item.label,
-          description: item.summary || "",
-          icon: item.icon,
-          onClick: () => selectCreator(item, initialDataByCreator.get(item.id)),
-        }))}
-      />
+      <div id={gridId}>
+        {gridItems.length
+          ? renderGrid(gridItems, probeMatches && !allVisible ? t("creator.matches") : t("creator.selectType"))
+          : null}
+      </div>
+      {linkFirst && !allVisible && manualCreators.length ? renderGrid(manualCreators, t("creator.noLink"), true) : null}
+      {canProbe && (linkFirst || probeMatches) ? (
+        <div className="px-4 pb-4">
+          <Button
+            className="rounded px-2 py-1 text-sm text-me-gray-700 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2"
+            aria-expanded={showAll}
+            aria-controls={gridId}
+            onClick={() => {
+              cancelProbe();
+              setShowAll(!showAll);
+            }}
+          >
+            {showAll ? t("creator.fewer") : t("creator.chooseType")}
+          </Button>
+        </div>
+      ) : null}
     </>
   );
 }
@@ -356,7 +499,10 @@ function isProbeError(result: ProbeResult): result is ProbeError {
   return !!result && "error" in result;
 }
 
-function normaliseProbeResult(value: string, result: CreatorResourceProbeResult): Exclude<CreatorResourceProbeResult, boolean> {
+function normaliseProbeResult(
+  value: string,
+  result: CreatorResourceProbeResult
+): Exclude<CreatorResourceProbeResult, boolean> {
   return typeof result === "object" ? result : { initialData: getDefaultProbeInitialData(value) };
 }
 
@@ -365,7 +511,17 @@ function getDefaultProbeInitialData(value: string) {
   return trimmed ? { url: trimmed, youtubeUrl: trimmed } : undefined;
 }
 
-function createProbeHelpers(): CreatorResourceProbeHelpers {
+function createProbeHelpers(signal: AbortSignal, onRequestError: () => void): CreatorResourceProbeHelpers {
+  const request = async (url: string, method = "GET") => {
+    try {
+      const response = await fetch(url, { method, signal });
+      if (!response.ok) throw new Error("Could not load link");
+      return response;
+    } catch (error) {
+      onRequestError();
+      throw error;
+    }
+  };
   const textCache = new Map<string, Promise<string>>();
   const jsonCache = new Map<string, Promise<any>>();
   const headCache = new Map<string, Promise<Response>>();
@@ -374,10 +530,7 @@ function createProbeHelpers(): CreatorResourceProbeHelpers {
     if (!textCache.has(url)) {
       textCache.set(
         url,
-        fetch(url).then((response) => {
-          if (!response.ok) throw new Error(`Could not load ${url}`);
-          return response.text();
-        }),
+        request(url).then((response) => response.text())
       );
     }
     return textCache.get(url)!;
@@ -385,13 +538,7 @@ function createProbeHelpers(): CreatorResourceProbeHelpers {
 
   const head = (url: string) => {
     if (!headCache.has(url)) {
-      headCache.set(
-        url,
-        fetch(url, { method: "HEAD" }).then((response) => {
-          if (!response.ok) throw new Error(`Could not check ${url}`);
-          return response;
-        }),
-      );
+      headCache.set(url, request(url, "HEAD"));
     }
     return headCache.get(url)!;
   };
@@ -401,7 +548,10 @@ function createProbeHelpers(): CreatorResourceProbeHelpers {
     head,
     json(url) {
       if (!jsonCache.has(url)) {
-        jsonCache.set(url, text(url).then((body) => JSON.parse(body)));
+        jsonCache.set(
+          url,
+          text(url).then((body) => JSON.parse(body))
+        );
       }
       return jsonCache.get(url)!;
     },

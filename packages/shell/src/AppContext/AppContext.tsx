@@ -1,3 +1,4 @@
+import type { ShellLocalisation } from "../i18n/ShellI18n";
 import type { CreatorDefinition } from "@manifest-editor/creator-api";
 import { useLocalStorage } from "../hooks/use-local-storage";
 import { createContext, type ReactNode, type SetStateAction, useCallback, useContext, useEffect, useMemo } from "react";
@@ -25,6 +26,7 @@ export type LoadedApp = Partial<LayoutProps> & {
   default: {
     id: string;
     title: string;
+    titleMessage?: import("@manifest-editor/i18n/core").MessageReference;
     type?: "manifest" | "launcher";
     project?: boolean;
     projectType?: "Manifest" | "Collection";
@@ -45,15 +47,22 @@ export type MappedApp = {
 export type PresetTemplateConfigurationField = {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type: "text" | "textarea" | "number" | "boolean" | "select";
   defaultValue?: string | number | boolean;
-  options?: Array<{ label: string; value: string | number | boolean }>;
+  options?: Array<{
+    label: string;
+    labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
+    value: string | number | boolean;
+  }>;
 };
 
 export type PresetTemplateDefinition = {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   summary: string;
+  summaryMessage?: import("@manifest-editor/i18n/core").MessageReference;
   type: "slideshow" | "fullpage" | "scroll";
   previewUrl: string;
   thumbnailUrl: string;
@@ -63,6 +72,7 @@ export type PresetTemplateDefinition = {
 export type PresetPreviewAction = {
   id: string;
   label: string;
+  labelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   status?: "available" | "configured" | "active";
   disabled?: boolean;
   onClick: () => void;
@@ -74,6 +84,7 @@ export type PresetPreviewOptions = {
 };
 
 export type PresetOnboardingRenderContext = {
+  i18n?: Pick<import("@manifest-editor/i18n/core").EditorI18n, "resolveMessage">;
   templates: PresetTemplateDefinition[];
   selectedTemplateId: string | null;
   selectedTemplate: PresetTemplateDefinition | null;
@@ -82,6 +93,7 @@ export type PresetOnboardingRenderContext = {
 };
 
 export type PresetPreviewButtonRenderContext = {
+  i18n?: Pick<import("@manifest-editor/i18n/core").EditorI18n, "resolveMessage">;
   downloadEnabled?: boolean;
   fileName?: string;
   preview?: PresetPreviewOptions;
@@ -93,15 +105,21 @@ export type PresetOnboardingDefinition = {
   id: string;
   mode: "global" | "per-resource";
   title: string;
+  titleMessage?: import("@manifest-editor/i18n/core").MessageReference;
   summary?: string;
+  summaryMessage?: import("@manifest-editor/i18n/core").MessageReference;
   openLabel?: string;
+  openLabelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   dismissLabel?: string;
+  dismissLabelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   primaryLabel?: string;
+  primaryLabelMessage?: import("@manifest-editor/i18n/core").MessageReference;
   renderBody: (ctx: PresetOnboardingRenderContext) => ReactNode;
   renderPreviewButton?: (ctx: PresetPreviewButtonRenderContext) => ReactNode;
 };
 
 export type PresetDefinition = {
+  localisation?: ShellLocalisation;
   onboarding?: PresetOnboardingDefinition;
   templates?: PresetTemplateDefinition[];
   /** Use `replace` with `templates: leedsTemplates` to replace an inherited list. */
@@ -165,10 +183,7 @@ export function useAppState<S = any>() {
   return useContext(AppStateReactContext);
 }
 
-export function getSelectedPresetTemplate(
-  templates: PresetTemplateDefinition[],
-  selectedTemplateId?: string | null,
-) {
+export function getSelectedPresetTemplate(templates: PresetTemplateDefinition[], selectedTemplateId?: string | null) {
   return templates.find((template) => template.id === selectedTemplateId) || null;
 }
 
@@ -179,11 +194,11 @@ export function usePresetTemplateSelection() {
   const selectedTemplateId = typeof state?.presetTemplateId === "string" ? state.presetTemplateId : null;
   const selectedTemplate = useMemo(
     () => getSelectedPresetTemplate(templates, selectedTemplateId),
-    [selectedTemplateId, templates],
+    [selectedTemplateId, templates]
   );
   const setSelectedTemplateId = useCallback(
     (presetTemplateId: string | null) => setState({ presetTemplateId }),
-    [setState],
+    [setState]
   );
 
   return { templates, selectedTemplateId, selectedTemplate, setSelectedTemplateId };
@@ -198,7 +213,7 @@ function AppStateProvider(props: {
 }) {
   const [state, _setState, stateRef] = useLocalStorage(
     `app-state/${props.appId}/${props.instanceId}`,
-    props.initialState || {},
+    props.initialState || {}
   );
 
   const setState = useCallback((partial: any) => {

@@ -1,6 +1,6 @@
 import type { createHelper } from "polygon-editor";
 import { useEffect } from "react";
-import { RenderSvgEditorControls } from "react-iiif-vault";
+import { SvgEditorControls } from "./SvgEditorControls";
 import { DeleteForeverIcon } from "./icons/DeleteForeverIcon";
 import { DrawIcon } from "./icons/DrawIcon";
 import { HexagonIcon } from "./icons/HexagonIcon";
@@ -16,11 +16,11 @@ const className =
 
 const icons = {
   DrawIcon: <DrawIcon />,
-  PolygonIcon: <PolygonIcon />,
+  PenIcon: <PolygonIcon />,
   LineIcon: <LineIcon />,
   LineBoxIcon: <LineBoxIcon />,
   ShapesIcon: <ShapesIcon />,
-  SquareIcon: <SquareIcon />,
+  BoxIcon: <SquareIcon />,
   TriangleIcon: <TriangleIcon />,
   HexagonIcon: <HexagonIcon />,
   DeleteForeverIcon: <DeleteForeverIcon />,
@@ -30,7 +30,7 @@ export function SvgControlBar({
   helper,
   showShapes,
 }: {
-  helper: ReturnType<typeof createHelper>;
+  helper: Pick<ReturnType<typeof createHelper>, "stamps">;
   state: any;
   showShapes: any;
 }) {
@@ -39,7 +39,7 @@ export function SvgControlBar({
   }, []);
 
   return (
-    <RenderSvgEditorControls
+    <SvgEditorControls
       icons={icons}
       showShapes={showShapes}
       classNames={{

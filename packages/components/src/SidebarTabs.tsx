@@ -1,3 +1,5 @@
+import { ComponentI18nProvider } from "./ComponentI18nProvider";
+import { useEditorI18n, useTranslations, type MessageReference } from "@manifest-editor/i18n";
 import { createHideableComponent } from "@react-aria/collections";
 import { memo, type ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
@@ -9,6 +11,7 @@ interface SidebarTabsProps {
   menu: Array<{
     id: string;
     label: string;
+    labelMessage?: MessageReference;
     renderComponent: () => ReactNode;
   }>;
 
@@ -20,7 +23,10 @@ interface SidebarTabsProps {
   rootResource?: { id: string; type: string };
 }
 
-export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: SidebarTabsProps) {
+function SidebarTabsContent({ menu, menuId, selectedKey, onSelectionChange }: SidebarTabsProps) {
+  const { resolveMessage } = useEditorI18n();
+  const labels = menu.map((item) => resolveMessage(item.labelMessage, item.label));
+  const labelSignature = JSON.stringify(labels);
   const ref = useRef<HTMLDivElement>(null);
   const [hidden, setHidden] = useState(0);
   const [hiddenMenu, setHiddenMenu] = useState<HTMLDivElement | null>(null);
@@ -30,14 +36,20 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
   const selectedIndex = useMemo(() => menu.findIndex((item) => item.id === selectedKey), [menu, selectedKey]);
 
   useLayoutEffect(() => {
+    widths.current = [];
     const cb = () => {
-      if (widths.current.length === 0) {
-        widths.current = [];
-        for (const item of itemsRef.current) {
-          if (item) {
-            widths.current.push(item.getBoundingClientRect().width);
-          }
-        }
+      // React Aria may commit translated collection text after the parent effect.
+      // Refresh on the existing interval as well as at label changes.
+      // Reveal hidden tabs only for synchronous measurement, restoring before paint.
+      const items = itemsRef.current.filter((item): item is HTMLDivElement => !!item);
+      const displays = items.map((item) => item.style.display);
+      try {
+        for (const item of items) item.style.display = "block";
+        widths.current = items.map((item) => item.getBoundingClientRect().width);
+      } finally {
+        items.forEach((item, index) => {
+          item.style.display = displays[index]!;
+        });
       }
 
       const fullWidth = widths.current.reduce((a, b) => a + b, 0);
@@ -65,7 +77,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [labelSignature, menu]);
 
   const menuHidden = menu.filter((item, idx) => hidden >= menu.length - idx);
 
@@ -83,7 +95,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
               const isHidden = hidden >= menu.length - idx;
               return (
                 <SidebarTab key={item.id} id={item.id} idx={idx} isHidden={isHidden} itemsRef={itemsRef}>
-                  {item.label}
+                  {labels[idx]}
                 </SidebarTab>
               );
             })}
@@ -107,7 +119,7 @@ export function SidebarTabs({ menu, menuId, selectedKey, onSelectionChange }: Si
               selectedKey={selectedKey}
               onSelectionChange={onSelectionChange}
             />,
-            hiddenMenu,
+            hiddenMenu
           )
         : null}
     </>
@@ -140,7 +152,7 @@ const SidebarTab = memo(function SidebarTab({
           "border-b-2 px-2 py-1 text-sm text-gray-600 select-none hover:text-black focus:outline-none",
           isSelected && "border-me-primary-500 text-black",
           isFocusVisible && "ring-2 ring-inset ring-me-primary-500 bg-me-gray-100",
-          isHidden && "hidden",
+          isHidden && "hidden"
         )
       }
     >
@@ -154,23 +166,25 @@ const MoreMenu = createHideableComponent<
   {
     selectedIndex: number;
     hidden: number;
-    menuHidden: Array<{ id: string; label: string }>;
+    menuHidden: Array<{ id: string; label: string; labelMessage?: MessageReference }>;
     selectedKey: string | undefined;
     onSelectionChange?: (key: string) => void;
   }
 >(({ selectedIndex, hidden, menuHidden, selectedKey, onSelectionChange }) => {
+  const { resolveMessage, locale, direction } = useEditorI18n();
+  const t = useTranslations("components");
   return (
     <MenuTrigger>
       <Button
-        aria-label="More tabs"
+        aria-label={t("panels.moreTabs")}
         className={cn(
           "min-h-6 border-none rounded bg-gray-100 px-1.5 py-1 mr-2 mb-1 text-me-primary-600 semibold uppercase text-[10px]",
-          selectedIndex > hidden && "bg-me-primary-500 text-white rounded",
+          selectedIndex > hidden && "bg-me-primary-500 text-white rounded"
         )}
       >
-        MORE
+        {t("panels.more")}
       </Button>
-      <Popover>
+      <Popover lang={locale} dir={direction}>
         {menuHidden.length ? (
           <Menu className="bg-white rounded shadow-lg flex flex-col gap-0.5 p-0.5 min-w-28">
             {menuHidden.map((item) => {
@@ -179,13 +193,13 @@ const MoreMenu = createHideableComponent<
                   className={(state) =>
                     cn(
                       "hover:bg-me-gray-100 p-1 rounded-sm text-sm",
-                      selectedKey === item.id && "ring ring-me-primary-500",
+                      selectedKey === item.id && "ring ring-me-primary-500"
                     )
                   }
                   key={item.id}
                   onAction={() => onSelectionChange?.(item.id)}
                 >
-                  {item.label}
+                  {resolveMessage(item.labelMessage, item.label)}
                 </MenuItem>
               );
             })}
@@ -195,3 +209,11 @@ const MoreMenu = createHideableComponent<
     </MenuTrigger>
   );
 });
+
+export function SidebarTabs(props: SidebarTabsProps) {
+  return (
+    <ComponentI18nProvider>
+      <SidebarTabsContent {...props} />
+    </ComponentI18nProvider>
+  );
+}

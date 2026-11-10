@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import { createRangeHelper, getValue, type RangeTableOfContentsNode } from "@iiif/helpers";
 import { toRef } from "@iiif/parser";
 import type { InternationalString } from "@iiif/presentation-3";
@@ -28,6 +30,7 @@ import { RangeWorkbenchSection } from "./components/RangeWorkbenchSection";
 export const rangeWorkbench: LayoutPanel = {
   id: "range-workbench",
   label: "Range Workbench",
+  labelMessage: manifestMessage("workflow.rangeWorkbench"),
   icon: <RangesIcon />,
   focusedMode: {
     hide: true,
@@ -74,6 +77,7 @@ function getNextRangeLabel(label: InternationalString | null) {
 }
 
 function RangeWorkbench() {
+  const t = useTranslations("manifest");
   const selectedRange = useInStack("Range");
   const [{ size }, gridOptions] = useGridOptions("default-grid-size", {
     defaultGridSize: "grid-sm",
@@ -392,7 +396,7 @@ function RangeWorkbench() {
         <RangeWorkbenchHeader className="flex flex-row justify-between bg-me-primary-500 sticky top-0 h-16 z-30 border-me-400 border-b">
           <div className="flex items-center gap-4">
             {hasParent ? (
-              <ActionButton aria-label="Go to parent range" onPress={() => goToParent()}>
+              <ActionButton aria-label={t("workflow.goToParentRange")} onPress={() => goToParent()}>
                 <ArrowUpIcon aria-hidden="true" className="text-xl" />
               </ActionButton>
             ) : null}
@@ -403,14 +407,14 @@ function RangeWorkbench() {
                 key={topLevelRange.id}
                 editor={rangeEditor.descriptive.label}
                 as="h2"
-                placeholder="Untitled range"
+                placeholder={t("workflow.untitledRange")}
                 className="text-xl text-white"
               >
                 {topLevelRange.label}
               </InlineLocaleStringEditor>
             )}
             <MenuTrigger>
-              <ActionButton aria-label="Range actions">
+              <ActionButton aria-label={t("workflow.rangeActions")}>
                 <MoreMenuIcon aria-hidden="true" className="text-xl" />
               </ActionButton>
               <Popover className="bg-white shadow-md rounded-md p-1">
@@ -420,14 +424,14 @@ function RangeWorkbench() {
                     onAction={() => setIsEditingLabel(true)}
                   >
                     <EditIcon />
-                    Edit range label
+                    {t("workflow.editRangeLabel")}
                   </MenuItem>
                 </Menu>
               </Popover>
             </MenuTrigger>
             {!isSplitting && (topLevelRange?.items?.length ?? 0) > 0 && !topLevelRange.isRangeLeaf && (
               <ActionButton onPress={() => setIsSplitting(true)}>
-                <SplitRangeIcon className="text-xl" /> Split range
+                <SplitRangeIcon className="text-xl" /> {t("workflow.splitRange")}
               </ActionButton>
             )}
 
@@ -440,15 +444,15 @@ function RangeWorkbench() {
 
       {isSplitting && !preview ? (
         <RangeWorkbenchNotice className="mb-4 flex gap-4 sticky top-16 rounded-none bg-me-primary-600 z-30">
-          Splitting range, click to confirm the the new range item
-          <ActionButton onPress={() => setIsSplitting(false)}>Exit splitting mode</ActionButton>
+          {t("workflow.splittingNotice")}
+          <ActionButton onPress={() => setIsSplitting(false)}>{t("workflow.exitSplittingMode")}</ActionButton>
         </RangeWorkbenchNotice>
       ) : null}
 
       {preview && (
         <div className="flex flex-col h-full">
           <RangeWorkbenchHeader className="flex bg-me-primary-500 sticky top-0 h-16 z-20 border-b-white border-b items-center gap-4">
-              <ActionButton aria-label="Back to range" onPress={handleClosePreview}>
+            <ActionButton aria-label={t("workflow.backToRange")} onPress={handleClosePreview}>
               <ArrowBackwardIcon aria-hidden="true" className="text-xl" />
             </ActionButton>
             {isEditingLabel && !topLevelRange.isVirtual ? (
@@ -463,7 +467,7 @@ function RangeWorkbench() {
                   {previewRangeLabel}
                 </LocaleString>
                 <MenuTrigger>
-                  <ActionButton aria-label="Range actions">
+                  <ActionButton aria-label={t("workflow.rangeActions")}>
                     <MoreMenuIcon aria-hidden="true" className="text-xl" />
                   </ActionButton>
                   <Popover className="bg-white shadow-md rounded-md p-1">
@@ -473,7 +477,7 @@ function RangeWorkbench() {
                         onAction={() => setIsEditingLabel(true)}
                       >
                         <EditIcon />
-                        Edit range label
+                        {t("workflow.editRangeLabel")}
                       </MenuItem>
                     </Menu>
                   </Popover>
@@ -542,11 +546,13 @@ function RangeWorkbench() {
         <div className="sticky bottom-5 float-right right-5">
           {isBottomVisible ? (
             <ActionButton primary onPress={scrollToTop}>
-              Scroll to top <ArrowUpIcon />
+              {t("workflow.scrollToTop")}
+              <ArrowUpIcon />
             </ActionButton>
           ) : (
             <ActionButton primary onPress={scrollToBottom}>
-              Scroll to bottom <ArrowDownIcon />
+              {t("workflow.scrollToBottom")}
+              <ArrowDownIcon />
             </ActionButton>
           )}
         </div>

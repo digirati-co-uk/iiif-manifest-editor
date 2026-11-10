@@ -96,5 +96,4 @@ export function CollectionPreviewItem() {
       </Modal>
     </li>
   );
-  t;
 }

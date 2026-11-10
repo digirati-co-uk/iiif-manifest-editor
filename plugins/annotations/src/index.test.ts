@@ -8,7 +8,8 @@ import {
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { ANNOTATIONS_LEFT_PANEL_ID, BULK_ANNOTATION_IMPORT_ACTION_ID } from "./constants";
 
-vi.mock("@manifest-editor/components", () => ({
+vi.mock("@manifest-editor/components", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@manifest-editor/components")>()),
   ActionButton: ({ children }: any) => children,
   AddIcon: () => null,
   CheckIcon: () => null,

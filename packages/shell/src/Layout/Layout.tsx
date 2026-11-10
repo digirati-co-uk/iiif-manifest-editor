@@ -1,3 +1,5 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { ProjectNotebookHeader } from "../Notebook/ProjectNotebook";
 import { Modal, PanelSideMenu } from "@manifest-editor/components";
 // import { LayoutProps } from "./Layout.types";
 import { DownIcon } from "@manifest-editor/ui/icons/DownIcon";
@@ -44,6 +46,10 @@ export interface LayoutRenderProps {
 }
 
 export const Layout = memo(function Layout(props: LayoutRenderProps) {
+  const { resolveMessage } = useEditorI18n();
+
+  const t = useTranslations("shell");
+
   if (props.layoutMode === "focused") {
     return <FocusedLayout {...props} />;
   }
@@ -74,35 +80,35 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       layoutState: state,
       appState,
     }),
-    [rootResource, vault, app, state, appState, vaultState],
+    [rootResource, vault, app, state, appState, vaultState]
   );
   const leftPanels = useMemo(
     () =>
       filterSupportedPanels(configuredLeftPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredLeftPanels, supportContext],
+    [configuredLeftPanels, supportContext]
   );
   const centerPanels = useMemo(
     () =>
       filterSupportedPanels(configuredCenterPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredCenterPanels, supportContext],
+    [configuredCenterPanels, supportContext]
   );
   const rightPanels = useMemo(
     () =>
       filterSupportedPanels(configuredRightPanels, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredRightPanels, supportContext],
+    [configuredRightPanels, supportContext]
   );
   const modals = useMemo(
     () =>
       filterSupportedPanels(configuredModals, supportContext, (panel, error) => {
         console.error(`Layout panel "${panel.id}" failed support check`, error);
       }),
-    [configuredModals, supportContext],
+    [configuredModals, supportContext]
   );
   const modalLeftPanels = useMemo(() => leftPanels.filter((panel) => panel.modal), [leftPanels]);
   const dockedLeftPanels = useMemo(() => leftPanels.filter((panel) => !panel.modal), [leftPanels]);
@@ -115,7 +121,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       rightPanels,
       modals: modalPanels,
     }),
-    [layout, leftPanels, centerPanels, rightPanels, modalPanels],
+    [layout, leftPanels, centerPanels, rightPanels, modalPanels]
   );
   const leftPanel = dockedLeftPanels.find((panel) => panel.id === state.leftPanel.current);
   const rightPanel = rightPanels.find((panel) => panel.id === state.rightPanel.current);
@@ -208,7 +214,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
           current: actions.centerPanel,
           vault: vault as any,
         },
-        appState,
+        appState
       );
     }
   }, [state.centerPanel.current, centerPanel?.id]);
@@ -334,7 +340,11 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     }
 
     return (
-      <Modal title={modalToRender.label} open={state.modal.open} onClose={() => actions.modal.close()}>
+      <Modal
+        title={resolveMessage(modalToRender?.labelMessage, modalToRender.label)}
+        open={state.modal.open}
+        onClose={() => actions.modal.close()}
+      >
         {modalToRender.modal ? (
           <div className="h-[70vh] min-h-[60vh] max-h-full flex w-full">
             <ModularPanel isLeft isModal noHeader panel={modalToRender} state={state.modal} actions={actions.modal} />
@@ -344,8 +354,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             modalToRender.render(
               state.modal.state || modalToRender.defaultState || {},
               { ...supportedLayout, current: actions.modal, vault: vault, isModal: true },
-              appState,
-            ),
+              appState
+            )
           )
         )}
       </Modal>
@@ -382,8 +392,8 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                     current: actions.centerPanel,
                     vault: vault,
                   },
-                  appState,
-                ),
+                  appState
+                )
               )
             ) : null
           ) : null}
@@ -447,7 +457,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
       <L.OuterWrapper>
         {props.hideHeader ? null : (
           <L.Header>
-            {props.header || null}
+            {props.header || <ProjectNotebookHeader />}
             {props.menu ? <menu>{props.menu}</menu> : null}
           </L.Header>
         )}
@@ -463,7 +473,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                     actions.leftPanel.toggle();
                   }}
                 >
-                  {leftPanel?.label}
+                  {resolveMessage(leftPanel?.labelMessage, leftPanel?.label)}
                 </M.LeftBarButton>
               ) : null}
               {rightPanels.length > 0 ? (
@@ -477,7 +487,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                     }}
                   >
                     <DownIcon aria-hidden="true" rotate={90} />
-                    {rightPanel?.label}
+                    {resolveMessage(rightPanel?.labelMessage, rightPanel?.label)}
                   </M.DrawerButton>
                 </M.DrawerContainer>
               ) : null}
@@ -488,7 +498,10 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             ) : null}
             {dockedLeftPanels.length > 0 ? (
               <M.LeftPanel $open={state.leftPanel.open}>
-                <nav aria-label="Left panel tabs" className="flex flex-none overflow-x-auto border-b border-gray-300">
+                <nav
+                  aria-label={t("panels.leftTabs")}
+                  className="flex flex-none overflow-x-auto border-b border-gray-300"
+                >
                   {dockedLeftPanels.map((panel) => (
                     <button
                       type="button"
@@ -504,7 +517,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
                       }}
                     >
                       {panel.icon}
-                      {panel.label}
+                      {resolveMessage(panel?.labelMessage, panel.label)}
                     </button>
                   ))}
                 </nav>
@@ -514,7 +527,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             {leftPanels.length > 0 || rightPanels.length > 0 ? (
               <M.Lightbox
                 type="button"
-                aria-label="Close panels"
+                aria-label={t("panels.closeAll")}
                 $open={state.leftPanel.open || state.rightPanel.open}
                 onClick={() => {
                   actions.leftPanel.close();
@@ -541,7 +554,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
     >
       {props.hideHeader ? null : (
         <L.Header>
-          {props.header || null}
+          {props.header || <ProjectNotebookHeader />}
           {props.menu ? <menu>{props.menu}</menu> : null}
         </L.Header>
       )}
@@ -556,7 +569,7 @@ export const Layout = memo(function Layout(props: LayoutRenderProps) {
             current={activeLeftPanelId}
             items={leftPanels.map((panel) => ({
               id: panel.id,
-              label: panel.label,
+              label: resolveMessage(panel?.labelMessage, panel.label),
               icon: panel.icon,
               divide: panel.divide,
               separator: panel.separator,

@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { CloseIcon, useLocalStorage } from "@manifest-editor/components";
 import { RightArrow } from "@manifest-editor/ui/icons/RightArrow";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,8 @@ export function MaybeExhibitionPrompt({
   alreadyExhibition: boolean;
   onOpenExhibition?: () => Promise<void>;
 }) {
+  const webT = useTranslations("web");
+
   const router = useRouter();
   const manifest = useManifest();
   const [isDismissed, setDismissed] = useLocalStorage(`exhibition-popup/${id}`);
@@ -24,7 +27,7 @@ export function MaybeExhibitionPrompt({
         .slice(0, 5)
         .map((item) => item.behavior.join(" "))
         .join(" "),
-    [manifest],
+    [manifest]
   );
   const isExhibition = useMemo(() => {
     if (
@@ -53,7 +56,7 @@ export function MaybeExhibitionPrompt({
       <div className="flex gap-2 justify-between items-center text-sm bg-me-50 rounded p-1.5">
         <div />
         <p className="text-gray-600">
-          This Manifest appears to be an Exhibition Manifest.{" "}
+          {webT("exhibition.detected")}{" "}
           <a
             className="text-me-primary-500 underline hover:underline hover:text-me-primary-600 inline-flex items-center gap-2"
             href={exhibitionHref}
@@ -66,14 +69,14 @@ export function MaybeExhibitionPrompt({
               }
             }}
           >
-            Open in Exhibition Editor
+            {webT("exhibition.open")}
           </a>
         </p>
         <Button
           className="inline-flex gap-1 items-center text-me-primary-500 underline"
           onPress={() => setDismissed(true)}
         >
-          Dismiss this message
+          {webT("exhibition.dismiss")}
         </Button>
       </div>
     );

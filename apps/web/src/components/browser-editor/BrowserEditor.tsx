@@ -1,14 +1,17 @@
 "use client";
+import { useWebExhibitionResources } from "../../i18n/WebResources";
+import { WebShellProvider as ShellProvider } from "../../i18n/WebShellProvider";
+
+import { useTranslations } from "@manifest-editor/i18n";
+
+import headerStyles from "./BrowserEditorHeader.module.css";
+import { HeaderLanguageMenu } from "../site/HeaderLanguageMenu";
 
 import { createThumbnailHelper } from "@iiif/helpers";
 import {
   ActionButton,
   DefaultTooltipContent,
-  Form,
   ManifestEditorLogo,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
   Tab,
   TabList,
   TabPanel,
@@ -17,7 +20,6 @@ import {
   TooltipTrigger,
 } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
-import { PresetIcon } from "@manifest-editor/exhibition-preset";
 import * as manifestEditorPreset from "@manifest-editor/manifest-preset";
 import * as collectionEditorPreset from "@manifest-editor/manifest-preset";
 import {
@@ -29,7 +31,6 @@ import {
   type EditorDefinition,
   extendApp,
   Layout,
-  type LayoutPanel,
   ManifestPaginationNavigation,
   type MappedApp,
   type MappedPlugin,
@@ -39,7 +40,6 @@ import {
   PluginProvider,
   PresetPreviewButton,
   type PreviewConfiguration,
-  ShellProvider,
   useAppResource,
   useEditingResource,
   useLayoutActions,
@@ -129,6 +129,7 @@ const previews: PreviewConfiguration[] = [
     id: "iiif-preview",
     type: "iiif-preview-service",
     label: "IIIF Preview",
+    labelMessage: { namespace: "web", key: "preview.iiif" },
     config: {
       url: "/api/iiif/store",
     },
@@ -137,6 +138,7 @@ const previews: PreviewConfiguration[] = [
     id: "raw-manifest",
     type: "external-manifest-preview",
     label: "Raw Manifest",
+    labelMessage: { namespace: "web", key: "preview.rawManifest" },
     config: {
       url: "{manifestId}",
     },
@@ -213,7 +215,7 @@ function createFloatingTourUrl(floatingPosition: ExhibitionPresetViewerSettings[
 function applyExhibitionViewerSettings(
   baseConfig: Partial<Config>,
   presetPath: string | undefined,
-  settings: Required<ExhibitionPresetViewerSettings>,
+  settings: Required<ExhibitionPresetViewerSettings>
 ): Partial<Config> {
   if (!presetPath?.startsWith("exhibition")) {
     return baseConfig;
@@ -231,6 +233,7 @@ function applyExhibitionViewerSettings(
     id: "minimal-floating-tour",
     type: "external-manifest-preview",
     label: "Floating tour",
+    labelMessage: { namespace: "web", key: "preset.floating" },
     config: {
       url: createFloatingTourUrl(settings.floatingPosition),
     },
@@ -284,6 +287,9 @@ export default function BrowserEditor({
   layoutMode,
   plugins = [],
 }: BrowserEditorProps) {
+  const webT = useTranslations("web");
+  const webExhibitionResources = useWebExhibitionResources();
+
   const {
     staleEtag,
     vaultReady,
@@ -384,29 +390,11 @@ export default function BrowserEditor({
   const manifestEditor = useMemo(() => {
     return extendApp(preset, preset.metadata, {
       leftPanels: [
-        ...(isExhibitionPreset
-          ? [
-              {
-                divide: true,
-                id: "exhibition-preset-config",
-                label: "Preset",
-                icon: <PresetIcon />,
-                render: () => (
-                  <ExhibitionPresetConfigEditor
-                    projectId={id}
-                    layoutMode={layoutMode}
-                    layoutPreset={presetPath}
-                    settings={exhibitionViewerSettings}
-                    saveConfig={saveProjectConfig}
-                  />
-                ),
-              } satisfies LayoutPanel,
-            ]
-          : []),
         {
-          divide: !isExhibitionPreset,
+          divide: true,
           id: "config",
           label: "Settings",
+          labelMessage: { namespace: "web", key: "settings.title" },
           icon: <SettingsIcon />,
           render: () => <BrowserSettingsPanel />,
           modal: true,
@@ -417,28 +405,29 @@ export default function BrowserEditor({
           id: "share-modal",
           icon: <ShareIcon />,
           label: "Share workspace",
+          labelMessage: { namespace: "web", key: "share.workspace" },
           render: () => <SharePanel projectId={id} presetPath={presetPath} />,
         },
       ],
     });
-  }, [exhibitionViewerSettings, isExhibitionPreset, presetPath, project, saveProjectConfig]);
+  }, [preset, presetPath, id]);
 
   const header = (
     <>
       <header
         className={
           isFocusedExhibition
-            ? `grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 border-b border-white/10 lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-6 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
-            : "grid min-h-[176px] w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[56px_56px_64px] items-center gap-x-2 px-3 shadow lg:h-[64px] lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:gap-4 lg:px-4"
+            ? `${headerStyles.header} px-3 border-b border-white/10 lg:px-6 ${exhibitionHeaderStyles[exhibitionTheme]} text-white`
+            : `${headerStyles.header} px-3 shadow lg:px-4`
         }
       >
         <Link
           href="/"
-          aria-label={`${isFocusedExhibition ? "Exhibition" : "Manifest"} Editor home`}
-          className="col-span-2 col-start-1 row-start-1 flex min-w-0 items-center justify-start gap-2 overflow-hidden whitespace-nowrap lg:col-span-1"
+          aria-label={webT(isFocusedExhibition ? "navigation.exhibitionHome" : "navigation.home")}
+          className={`${headerStyles.logo} flex items-center gap-2 overflow-hidden whitespace-nowrap`}
         >
           {isFocusedExhibition ? (
-            <span className="text-xl font-bold tracking-normal text-white">Exhibition Editor</span>
+            <span className="text-xl font-bold tracking-normal text-white">{webT("navigation.exhibition")}</span>
           ) : (
             <>
               <ManifestEditorLogo />
@@ -447,21 +436,22 @@ export default function BrowserEditor({
           )}
         </Link>
         <ManifestPaginationNavigation
-          className="col-span-2 col-start-1 row-start-2 justify-self-center lg:col-span-1 lg:col-start-2 lg:row-start-1"
+          className={headerStyles.pagination}
           variant={isFocusedExhibition ? "dark" : "light"}
         />
-        <div className="col-span-2 row-start-3 flex min-w-0 items-center justify-end lg:col-span-1 lg:col-start-3 lg:row-start-1">
+        <div className={`${headerStyles.actions} flex items-center justify-end`}>
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
-          <div className="flex w-full items-center justify-end gap-1 sm:gap-2 lg:w-auto">
+          <div className={headerStyles.actionButtons}>
             <ShareButton />
             <BackgroundActionsMenu />
+            <HeaderLanguageMenu variant={isFocusedExhibition ? "dark" : "light"} />
             {isFocusedExhibition ? (
               <button
                 type="button"
                 className="h-9 rounded-md border border-white/20 bg-white/10 px-3 text-sm font-semibold text-white transition-colors hover:bg-white/15"
                 aria-pressed={exhibitionTheme === "dark"}
-                aria-label={`Switch to ${exhibitionTheme === "dark" ? "light" : "dark"} mode`}
+                aria-label={webT(exhibitionTheme === "dark" ? "navigation.lightMode" : "navigation.darkMode")}
                 onClick={toggleExhibitionTheme}
               >
                 {exhibitionTheme === "dark" ? <LightIcon /> : <DarkIcon />}
@@ -471,16 +461,12 @@ export default function BrowserEditor({
           </div>
         </div>
       </header>
-      <MaybeExhibitionPrompt
-        id={id}
-        alreadyExhibition={isExhibitionPreset}
-        onOpenExhibition={saveExhibitionPreset}
-      />
+      <MaybeExhibitionPrompt id={id} alreadyExhibition={isExhibitionPreset} onOpenExhibition={saveExhibitionPreset} />
     </>
   );
 
-  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>Loading...</div>;
-  if (isProjectError || !project) return <div>Error: {projectError?.message}</div>;
+  if (isProjectLoading || isGlobalPluginConfigLoading) return <div>{webT("feedback.loading")}</div>;
+  if (isProjectError || !project) return <div role="alert">{webT("feedback.projectFailed")}</div>;
 
   // @todo test without this option and see if its needed
   if (wasAlreadyOpen && !allowAnyway) {
@@ -528,7 +514,12 @@ export default function BrowserEditor({
         >
           <AppProvider appId="manifest-editor" definition={manifestEditor} instanceId={id}>
             <VaultProvider vault={vault}>
-              <ShellProvider resource={project.resource} config={mergedConfig} saveConfig={saveProjectConfig}>
+              <ShellProvider
+                localisation={isExhibitionPreset ? webExhibitionResources : undefined}
+                resource={project.resource}
+                config={mergedConfig}
+                saveConfig={saveProjectConfig}
+              >
                 <Layout
                   key={isFocusedExhibition ? "focused-exhibition" : "editor-layout"}
                   header={header}
@@ -570,192 +561,11 @@ function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {
         property: "items",
         index: 0,
       },
-      { forceOpen: false },
+      { forceOpen: false }
     );
   }, [edit, enabled, manifest, selected]);
 
   return null;
-}
-
-function ExhibitionPresetConfigEditor({
-  projectId,
-  layoutMode,
-  layoutPreset,
-  settings,
-  saveConfig,
-}: {
-  projectId: string;
-  layoutMode?: "default" | "focused";
-  layoutPreset?: string;
-  settings: Required<ExhibitionPresetViewerSettings>;
-  saveConfig: (config: Partial<Config>) => void | Promise<void>;
-}) {
-  const [isSaving, setIsSaving] = useState(false);
-  const isSlideshow = layoutPreset === "exhibition/slideshow";
-  const editorBasePath =
-    layoutMode === "focused" ? `/editor-focused/${projectId}/exhibition` : `/editor/${projectId}/exhibition`;
-
-  const saveSettings = useCallback(
-    async (nextSettings: Required<ExhibitionPresetViewerSettings>) => {
-      setIsSaving(true);
-      try {
-        await saveConfig({
-          defaultPreview: nextSettings.defaultPreview,
-          plugins: {
-            apps: {
-              [exhibitionViewerPluginId]: {
-                settings: {
-                  [exhibitionViewerSettingsKey]: nextSettings,
-                },
-              },
-            },
-          },
-        });
-      } finally {
-        setIsSaving(false);
-      }
-    },
-    [saveConfig],
-  );
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formValues = new FormData(e.currentTarget);
-    saveSettings({
-      defaultPreview: (formValues.get("defaultPreview") ||
-        defaultExhibitionViewerSettings.defaultPreview) as Required<ExhibitionPresetViewerSettings>["defaultPreview"],
-      floatingPosition: (formValues.get("floatingPosition") ||
-        defaultExhibitionViewerSettings.floatingPosition) as Required<ExhibitionPresetViewerSettings>["floatingPosition"],
-    });
-  }
-
-  return (
-    <Sidebar>
-      <SidebarHeader title="Preset configuration" />
-      <SidebarContent className="p-4">
-        <div className="mb-6">
-          <div className="mb-3 text-sm font-semibold text-gray-700">Layout preset</div>
-          <div className="flex flex-col gap-2">
-            <PresetLayoutLink
-              href={editorBasePath}
-              label="Full page exhibition"
-              selected={layoutPreset === "exhibition"}
-            />
-            <PresetLayoutLink
-              href={`${editorBasePath}/slideshow`}
-              label="Slideshow exhibition"
-              selected={layoutPreset === "exhibition/slideshow"}
-            />
-            <PresetLayoutLink
-              href={`${editorBasePath}/scroll`}
-              label="Scrolling exhibition"
-              selected={layoutPreset === "exhibition/scroll"}
-            />
-          </div>
-        </div>
-
-        {isSlideshow ? (
-          <Form.Form onSubmit={onSubmit} className="flex flex-col gap-5">
-            <Form.InputContainer>
-              <Form.Label htmlFor="delft-slideshow">Default preview</Form.Label>
-              <div className="flex flex-col gap-3">
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="delft-slideshow"
-                    name="defaultPreview"
-                    value="delft-slideshow"
-                    defaultChecked={settings.defaultPreview === "delft-slideshow"}
-                  />
-                  <label htmlFor="delft-slideshow">Delft slideshow</label>
-                </Form.InputContainer>
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="minimal-slideshow"
-                    name="defaultPreview"
-                    value="minimal-slideshow"
-                    defaultChecked={settings.defaultPreview === "minimal-slideshow"}
-                  />
-                  <label htmlFor="minimal-slideshow">Light slideshow</label>
-                </Form.InputContainer>
-                <Form.InputContainer horizontal>
-                  <Form.Input
-                    type="radio"
-                    id="minimal-floating-tour"
-                    name="defaultPreview"
-                    value="minimal-floating-tour"
-                    defaultChecked={settings.defaultPreview === "minimal-floating-tour"}
-                  />
-                  <label htmlFor="minimal-floating-tour">Floating tour</label>
-                </Form.InputContainer>
-              </div>
-            </Form.InputContainer>
-
-            <Form.InputContainer>
-              <Form.Label htmlFor="floatingPosition">Floating tour position</Form.Label>
-              <select
-                id="floatingPosition"
-                name="floatingPosition"
-                defaultValue={settings.floatingPosition}
-                className="border border-gray-300 rounded-md px-3 py-2"
-              >
-                <option value="top-left">Top left</option>
-                <option value="top-right">Top right</option>
-                <option value="bottom-left">Bottom left</option>
-                <option value="bottom-right">Bottom right</option>
-              </select>
-            </Form.InputContainer>
-
-            <div>
-              <ActionButton type="submit" isDisabled={isSaving}>
-                {isSaving ? "Saving..." : "Save preset"}
-              </ActionButton>
-            </div>
-          </Form.Form>
-        ) : (
-          <div className="text-sm text-gray-600">
-            There are no additional supported preset options for this layout yet.
-          </div>
-        )}
-      </SidebarContent>
-    </Sidebar>
-  );
-}
-
-function PresetLayoutLink({
-  href,
-  label,
-  selected,
-  disabled,
-}: {
-  href?: string;
-  label: string;
-  selected: boolean;
-  disabled?: boolean;
-}) {
-  const className = [
-    "flex items-center justify-between rounded-md border px-3 py-2 text-sm font-medium",
-    selected ? "border-me-primary-500 bg-me-50 text-me-primary-700" : "border-gray-200 bg-white text-gray-700",
-    disabled ? "cursor-not-allowed opacity-50" : "hover:border-me-primary-300",
-  ].join(" ");
-
-  const content = (
-    <>
-      <span>{label}</span>
-      <span className="text-xs font-semibold">{selected ? "Current" : disabled ? "Coming soon" : "Open"}</span>
-    </>
-  );
-
-  if (disabled || !href) {
-    return <div className={className}>{content}</div>;
-  }
-
-  return (
-    <Link href={href} className={className}>
-      {content}
-    </Link>
-  );
 }
 
 function FromQueryString({
@@ -791,18 +601,20 @@ function FromQueryString({
 }
 
 function ShareButton() {
+  const webT = useTranslations("web");
+
   const { modal } = useLayoutActions();
 
   return (
     <Tooltip placement="bottom">
       <TooltipTrigger
         className="bg-me-gray-100 hover:bg-me-primary-500 hover:text-white p-1 rounded-md text-me-primary-500 text-2xl"
-        aria-label="Share workspace"
+        aria-label={webT("share.workspace")}
         id="share-modal"
         onPress={() => modal.open({ id: "share-modal" })}
       >
         <ShareIcon aria-labelledby="share-modal" />
-        <DefaultTooltipContent>Share workspace</DefaultTooltipContent>
+        <DefaultTooltipContent>{webT("share.workspace")}</DefaultTooltipContent>
       </TooltipTrigger>
     </Tooltip>
   );
@@ -891,6 +703,8 @@ function createShareLink({
 }
 
 function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?: string }) {
+  const webT = useTranslations("web");
+
   const { actions } = usePreviewContext();
   const resource = useEditingResource();
   const appResource = useAppResource();
@@ -902,13 +716,14 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
     includeCurrentTab: true,
   });
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   const { includeCurrentSelectedItem, includeCurrentTab } = options;
 
   const selected = resource ? resource.resource.source : undefined;
   const currentTab = rightPanel.current === "@manifest-editor/editor" ? rightPanel.state.currentTab : undefined;
 
-  const { data } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["share", { projectId }],
     queryFn: async () => {
       return await actions.getPreviewLink();
@@ -945,7 +760,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
       <div>
         <div className="my-4 flex flex-col gap-2 sm:!flex-row">
           <input
-            aria-label="Share link"
+            aria-label={webT("share.link")}
             className="min-w-0 flex-1 border-b bg-gray-50 p-2"
             type="text"
             value={link}
@@ -955,25 +770,27 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
             type="button"
             className="rounded-md bg-me-primary-500 px-5 py-2 text-white"
             onClick={() => {
-              void navigator.clipboard.writeText(link).then(() => setCopied(true));
+              setCopyFailed(false);
+              void Promise.resolve()
+                .then(() => navigator.clipboard.writeText(link))
+                .then(() => setCopied(true))
+                .catch(() => setCopyFailed(true));
             }}
           >
-            {copied ? "Copied" : "Copy"}
+            {copied ? webT("actions.copied") : webT("actions.copy")}
           </button>
-          <span className="sr-only" role="status">
-            {copied ? "Share link copied" : ""}
-          </span>
+          <output className="sr-only">{copied ? webT("share.copied") : ""}</output>
         </div>
       </div>
     ) : (
-      <div>Loading...</div>
+      <div>{webT(isError ? "feedback.projectFailed" : "feedback.loading")}</div>
     );
 
   return (
     <div className="min-h-64 px-4">
       <p className="mb-8">
-        Share your workspace link with a colleague, enabling them to preview it, make a copy, or import any changes to
-        continue collaborating on this resource
+        {copyFailed ? <span role="alert">{webT("feedback.copyFailed")}</span> : null}
+        {webT("share.explanation")}
       </p>
       {renderLink(
         data
@@ -986,7 +803,7 @@ function SharePanel({ projectId, presetPath }: { projectId: string; presetPath?:
               presetPath,
               canvasId: canvas && selected && selected.type !== "Canvas" ? canvas.resource.source.id : undefined,
             })
-          : "",
+          : ""
       )}
     </div>
   );

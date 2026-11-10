@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import Link from "next/link";
 
 export function ExampleListing({
@@ -5,6 +6,8 @@ export function ExampleListing({
 }: {
   examples: Array<{ id: string; label: string; description: string; url: string; thumbnail?: string }>;
 }) {
+  const webT = useTranslations("web");
+
   return (
     <div className="grid grid-md gap-4">
       {examples.map((example) => (
@@ -15,7 +18,9 @@ export function ExampleListing({
                 {example.thumbnail ? (
                   <img src={example.thumbnail} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-black/60">No thumbnail</div>
+                  <div className="w-full h-full flex items-center justify-center text-black/60">
+                    {webT("projects.noThumbnail")}
+                  </div>
                 )}
               </div>
               <span className="underline p-3  text-sm text-center w-full h-20 flex items-center justify-center overflow-hidden text-ellipsis">

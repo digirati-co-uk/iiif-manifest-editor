@@ -74,3 +74,9 @@ export {
   type RemoteVaultAction,
   type RemoteVaultClientMessage,
 } from "@manifest-editor/client-vault";
+
+export * from "./Notebook/ProjectNotebook";
+export * from "./Notebook/notebook";
+
+export * from "./i18n/ShellI18n";
+export * from "./BackgroundTasks/BackgroundActionMessages";

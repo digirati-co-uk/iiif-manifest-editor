@@ -2,6 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  external: [/^@manifest-editor\/i18n(?:\/|$)/],
   exports: {
     customExports: (exports) => {
       exports["./dist/index.css"] = "./dist/index.css";
@@ -35,7 +36,4 @@ export default defineConfig((options) => ({
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
-  define: {
-    "global.setImmediate": "window.setImmediate",
-  },
 }));

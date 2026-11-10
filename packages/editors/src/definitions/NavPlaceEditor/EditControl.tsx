@@ -1,3 +1,5 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
+import { createMapLocalisation } from "./map-localisation";
 import { useLeafletContext } from "@react-leaflet/core";
 import * as L from "leaflet";
 import "leaflet-draw";
@@ -50,6 +52,49 @@ const eventHandlers = {
 
 export function EditControl(props: EditControlProps) {
   const context = useLeafletContext();
+  const t = useTranslations("editors");
+  const { locale, profile } = useEditorI18n();
+  const localisation = useMemo(() => createMapLocalisation(t, locale), [t, locale]);
+
+  // Only display attributes on Leaflet's existing zoom buttons change. The map,
+  // control, click handlers, focus, zoom and disabled state remain owned by Leaflet.
+  useEffect(() => {
+    const map = context.map;
+    const previous = map.options.drawLocalisation;
+    const buttons = map.zoomControl?.getContainer();
+    const zoomIn = buttons?.querySelector<HTMLAnchorElement>(".leaflet-control-zoom-in");
+    const zoomOut = buttons?.querySelector<HTMLAnchorElement>(".leaflet-control-zoom-out");
+    const original = [zoomIn, zoomOut].map(
+      (button) => button && ([button.title, button.getAttribute("aria-label")] as const)
+    );
+    return () => {
+      map.setDrawLocalisation?.(previous);
+      [zoomIn, zoomOut].forEach((button, index) => {
+        const labels = original[index];
+        if (button && labels) {
+          button.title = labels[0] || "";
+          if (labels[1] === null) button.removeAttribute("aria-label");
+          else button.setAttribute("aria-label", labels[1]);
+        }
+      });
+    };
+  }, [context.map]);
+
+  useEffect(() => {
+    const map = context.map;
+    map.setDrawLocalisation?.(localisation);
+    const buttons = map.zoomControl?.getContainer();
+    for (const [selector, key] of [
+      [".leaflet-control-zoom-in", "map.zoomIn"],
+      [".leaflet-control-zoom-out", "map.zoomOut"],
+    ] as const) {
+      const button = buttons?.querySelector<HTMLAnchorElement>(selector);
+      if (button) {
+        button.title = t(key);
+        button.setAttribute("aria-label", t(key));
+      }
+    }
+  }, [context.map, localisation, t, profile]);
   const controlRef = useRef<DrawControl | null>(null);
   const propsRef = useRef(props);
   propsRef.current = props;
@@ -60,7 +105,7 @@ export function EditControl(props: EditControlProps) {
       edit: props.edit,
       position: props.position,
     }),
-    [props.draw, props.edit, props.position],
+    [props.draw, props.edit, props.position]
   );
 
   useEffect(() => {
@@ -76,9 +121,9 @@ export function EditControl(props: EditControlProps) {
 
     for (const [propName, eventName] of Object.entries(eventHandlers)) {
       const handler = (event: DrawEvent) => {
-        const current = propsRef.current[
-          propName as keyof EditControlProps
-        ] as ((event: DrawEvent) => void) | undefined;
+        const current = propsRef.current[propName as keyof EditControlProps] as
+          | ((event: DrawEvent) => void)
+          | undefined;
         current?.(event);
       };
       registeredHandlers.push([eventName, handler]);
@@ -103,10 +148,7 @@ export function EditControl(props: EditControlProps) {
   return null;
 }
 
-function createDrawControl(
-  props: EditControlProps,
-  context: ReturnType<typeof useLeafletContext>,
-): DrawControl {
+function createDrawControl(props: EditControlProps, context: ReturnType<typeof useLeafletContext>): DrawControl {
   const ControlDraw = (L.Control as any).Draw;
   const options: Record<string, unknown> = {
     edit: {

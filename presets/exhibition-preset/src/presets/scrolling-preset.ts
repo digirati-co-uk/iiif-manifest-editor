@@ -1,5 +1,6 @@
+import { exhibitionNotebookConfig } from "../notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
-import { extendApp, mapApp } from "@manifest-editor/shell";
+import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
 import {
   imageBrowserSlideCreator,
   keepIIIFBrowserNested,
@@ -13,6 +14,7 @@ import { exhibitionPresetConfig } from "../exhibition-onboarding";
 import { youtubeSlideCreator } from "../creators/youtube-slide-creator";
 import { scrollGridLeftPanel } from "../left-panels/ExhibitionGrid";
 import { exhibitionThemeLeftPanel } from "../left-panels/ExhibitionTheme";
+import { exhibitionImagesEditor } from "../right-panels/ExhibitionImagesEditor";
 import { exhibitionCanvasEditor } from "../right-panels/ExhibitionCanvasEditor";
 import { exhibitionSummaryEdtior } from "../right-panels/ExhibitionSummaryEditor";
 import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
@@ -41,6 +43,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
   {
     preset: exhibitionPresetConfig,
     config: {
+      notebook: exhibitionNotebookConfig,
       editorConfig: {},
     },
     leftPanels: [
@@ -48,7 +51,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
       scrollGridLeftPanel,
       exhibitionThemeLeftPanel,
     ],
-    leftPanelIds: ["left-panel-manifest"],
+    leftPanelIds: ["left-panel-manifest", NOTEBOOK_PANEL_ID],
     centerPanels: [
       //
     ],
@@ -67,6 +70,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
       infoBoxWorkbenchEditor,
       exhibitionWorkbenchEditor,
       exhibitionCanvasEditor,
+      exhibitionImagesEditor,
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,

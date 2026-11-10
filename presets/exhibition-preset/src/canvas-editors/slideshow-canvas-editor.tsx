@@ -1,7 +1,8 @@
 import { CanvasPanelEditor, useAnnotationEditing } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition, EditableResource } from "@manifest-editor/shell";
 import { useLayoutActions, useLayoutState } from "@manifest-editor/shell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCanvasLayout, getPaintingAnnotations } from "@manifest-editor/editor-api";
 import { Button } from "react-aria-components";
 import {
   CanvasContext,
@@ -10,9 +11,9 @@ import {
   useCanvas,
   useCurrentAnnotationRequest,
   useManifest,
+  useVault,
 } from "react-iiif-vault";
 import { SlideshowSlidePreview } from "../components/SlideshowSlidePreview";
-import { isExhibitionItem } from "../helpers";
 import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const slideshowCanvasEditor: CanvasEditorDefinition = {
@@ -22,7 +23,7 @@ export const slideshowCanvasEditor: CanvasEditorDefinition = {
   supports: {
     strategy: (_strategy: RenderingStrategy, resource: EditableResource, vault) => {
       const canvas = vault.get(resource.resource);
-      return canvas?.type === "Canvas" && isExhibitionItem(canvas as any);
+      return canvas?.type === "Canvas";
     },
   },
 };
@@ -30,6 +31,14 @@ export const slideshowCanvasEditor: CanvasEditorDefinition = {
 function SlideshowCanvasEditor() {
   const canvas = useCanvas();
   const manifest = useManifest();
+  const vault = useVault();
+  const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
+  const canvasId = canvas?.id;
+  useEffect(() => {
+    if (!canvasId) return;
+    const resource = vault.get({ id: canvasId, type: "Canvas" });
+    if (getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length) setCenterPanelMode("edit");
+  }, [canvasId, vault, setCenterPanelMode]);
   const { edit } = useLayoutActions();
   const { rightPanel } = useLayoutState();
   const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
@@ -44,15 +53,13 @@ function SlideshowCanvasEditor() {
     return null;
   }
 
-  if (
+  const isEditing = !!(
     request ||
     editingAnnotationId ||
     centerPanelMode === "edit" ||
     (rightPanel.current === "@manifest-editor/editor" &&
       rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps"))
-  ) {
-    return <CanvasPanelEditor asFallback />;
-  }
+  );
 
   return (
     <div className="exhibition-slideshow-current-canvas flex h-full min-h-0 flex-col bg-slate-100">
@@ -61,6 +68,9 @@ function SlideshowCanvasEditor() {
           <LocaleString className="block truncate text-sm font-semibold text-slate-800">{canvas.label}</LocaleString>
         </div>
         <div className="flex items-center gap-2">
+          <ControlButton onPress={() => setCenterPanelMode(isEditing ? "preview" : "edit")}>
+            {isEditing ? "Preview" : "Edit"}
+          </ControlButton>
           <ControlButton onPress={() => setZoom(1)}>Home</ControlButton>
           <ControlButton onPress={() => setZoom((value) => Math.max(0.25, value - 0.25))}>-</ControlButton>
           <ControlButton onPress={() => setZoom((value) => Math.min(3, value + 0.25))}>+</ControlButton>
@@ -88,21 +98,35 @@ function SlideshowCanvasEditor() {
           </ControlButton>
         </div>
       </div>
-      <div className="exhibition-slideshow-current-viewport min-h-0 flex-1 overflow-auto p-8">
-        <div
-          className="exhibition-slideshow-current-preview mx-auto origin-top overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
-          style={{
-            width: "min(100%, 1200px)",
-            aspectRatio: `${canvas.width || 1920} / ${canvas.height || 1080}`,
-            transform: `scale(${zoom})`,
-            transformOrigin: "top center",
-          }}
-        >
-          <CanvasContext canvas={canvas.id}>
-            <SlideshowSlidePreview />
-          </CanvasContext>
+      {isEditing ? (
+        <div className="min-h-0 flex-1">
+          <CanvasPanelEditor
+            enableAddMedia
+            asFallback
+            moveMode={
+              centerPanelMode === "edit" &&
+              !editingAnnotationId &&
+              !rightPanel.state?.currentTab?.startsWith("@exhibition/tour-steps")
+            }
+          />
         </div>
-      </div>
+      ) : (
+        <div className="exhibition-slideshow-current-viewport min-h-0 flex-1 overflow-auto p-8">
+          <div
+            className="exhibition-slideshow-current-preview mx-auto origin-top overflow-hidden rounded-md bg-white shadow-xl ring-1 ring-black/10"
+            style={{
+              width: "min(100%, 1200px)",
+              aspectRatio: `${canvas.width || 1920} / ${canvas.height || 1080}`,
+              transform: `scale(${zoom})`,
+              transformOrigin: "top center",
+            }}
+          >
+            <CanvasContext canvas={canvas.id}>
+              <SlideshowSlidePreview />
+            </CanvasContext>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -78,12 +78,12 @@ export const CenterPanel = styled.div`
   }
 
   ${focusedExhibition} .atlas-container {
-    --atlas-background: ${exhibitionColours.lightStage} !important;
-    background: ${exhibitionColours.lightStage} !important;
+    --atlas-background: var(--canvas-workspace-background, ${exhibitionColours.lightStage}) !important;
+    background: var(--canvas-workspace-background, ${exhibitionColours.lightStage}) !important;
   }
 
   ${focusedExhibition} .atlas-canvas {
-    background: ${exhibitionColours.lightStage} !important;
+    background: var(--canvas-workspace-background, ${exhibitionColours.lightStage}) !important;
   }
 
   ${darkFocusedExhibition} > .delft-exhibition {
@@ -92,12 +92,12 @@ export const CenterPanel = styled.div`
   }
 
   ${darkFocusedExhibition} .atlas-container {
-    --atlas-background: ${exhibitionColours.darkStage} !important;
-    background: ${exhibitionColours.darkStage} !important;
+    --atlas-background: var(--canvas-workspace-background, ${exhibitionColours.darkStage}) !important;
+    background: var(--canvas-workspace-background, ${exhibitionColours.darkStage}) !important;
   }
 
   ${darkFocusedExhibition} .atlas-canvas {
-    background: ${exhibitionColours.darkStage} !important;
+    background: var(--canvas-workspace-background, ${exhibitionColours.darkStage}) !important;
   }
 
   ${darkFocusedExhibition} [class*="CanvasContainer"],

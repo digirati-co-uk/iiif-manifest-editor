@@ -1,9 +1,13 @@
+vi.mock("@manifest-editor/editors", () => ({ CanvasLayoutForm: () => null }));
 import { imageServiceCreator } from "@manifest-editor/creators";
 import { describe, expect, test, vi } from "vitest";
 import { imageServiceSlideCreator } from "./image-service-slide-creator";
 import { imageSlideCreator } from "./image-slide-creator";
 
-vi.mock("@manifest-editor/components", () => ({ EmptyCanvasIcon: () => null }));
+vi.mock("@manifest-editor/components", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@manifest-editor/components")>()),
+  EmptyCanvasIcon: () => null,
+}));
 vi.mock("@manifest-editor/creators", () => ({
   imageServiceCreator: {
     id: "@manifest-editor/image-service-creator",
@@ -31,10 +35,7 @@ const service = {
   height: 800,
 };
 
-async function createSlide(
-  payload: Record<string, unknown> = {},
-  initialData: Record<string, unknown> = {},
-) {
+async function createSlide(payload: Record<string, unknown> = {}, initialData: Record<string, unknown> = {}) {
   let id = 0;
   const ctx: any = {
     config: {},
@@ -98,7 +99,7 @@ describe("imageServiceSlideCreator", () => {
         imageSlideBehavior: ["w-12", "h-8", "image"],
         slideType: "right",
       },
-      { imageSlideBehavior: ["splash"] },
+      { imageSlideBehavior: ["splash"] }
     );
 
     expect(canvas.behavior).toEqual(["w-12", "h-8", "image", "right"]);

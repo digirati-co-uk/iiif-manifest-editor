@@ -63,7 +63,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
             isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row",
           )}
         >
-          <div className="flex-1 overflow-hidden relative justify-self-stretch">
+          <div className="flex-1 overflow-hidden relative justify-self-stretch" style={{ backgroundColor: (canvas as any)?.backgroundColor }}>
             <div className="absolute inset-0 w-full h-full">
               <LazyThumbnail cover={behavior.includes("cover") || behavior.includes("image-cover")} fade={false} />
             </div>

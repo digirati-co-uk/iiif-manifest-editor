@@ -1,9 +1,6 @@
 import type { InternationalString } from "@iiif/presentation-3";
 import { EmptyCanvasIcon } from "@manifest-editor/components";
-import {
-  type CreatorFunctionContext,
-  defineCreator,
-} from "@manifest-editor/creator-api";
+import { type CreatorFunctionContext, defineCreator } from "@manifest-editor/creator-api";
 
 // @todo combine this with the content resource one.
 
@@ -23,8 +20,10 @@ export interface NoBodyAnnotationPayload {
 export const noBodyAnnotation = defineCreator({
   id: "@manifest-editor/no-body-annotation",
   create: createNoBodyAnnotation,
-  label: "Annotation without body",
-  summary: "Add an annotation that only has motivation and target",
+  label: "Highlight",
+  labelMessage: { namespace: "creators", key: "definitions.highlight.label" },
+  summary: "Mark a region of the canvas without adding any content.",
+  summaryMessage: { namespace: "creators", key: "definitions.highlight.summary" },
   icon: <EmptyCanvasIcon />,
   resourceType: "Annotation",
   resourceFields: ["id", "type", "motivation", "target"],
@@ -34,23 +33,20 @@ export const noBodyAnnotation = defineCreator({
     parentFields: ["items"],
     disallowPainting: true,
   },
-  actionButton: "Create empty annotation",
+  actionButton: "Create highlight",
+  actionButtonMessage: { namespace: "creators", key: "definitions.highlight.create" },
   sideEffects: [],
   staticFields: {
     type: "Annotation",
   },
 });
 
-export function createNoBodyAnnotation(
-  data: NoBodyAnnotationPayload,
-  ctx: CreatorFunctionContext,
-) {
+export function createNoBodyAnnotation(data: NoBodyAnnotationPayload, ctx: CreatorFunctionContext) {
   return ctx.embed({
     id: ctx.generateId("annotation"),
     type: "Annotation",
     label: data?.label,
-    motivation:
-      data.motivation || ctx.options.initialData?.motivation || "highlighting",
+    motivation: data.motivation || ctx.options.initialData?.motivation || "highlighting",
     target: ctx.getTarget(),
   });
 }

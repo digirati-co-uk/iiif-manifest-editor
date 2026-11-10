@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { manifestMessage } from "../i18n";
 import { type LayoutPanel, useLayoutActions } from "@manifest-editor/shell";
 import { type SVGProps, useEffect } from "react";
 
@@ -14,6 +16,7 @@ export function HomeIcon({ title, titleId, ...props }: SVGProps<SVGSVGElement> &
 export const overviewPanel: LayoutPanel = {
   id: "left-panel-overview",
   label: "Overview",
+  labelMessage: manifestMessage("panels.overview"),
   icon: <HomeIcon />,
   render: (state, ctx, app) => {
     return <Overview />;
@@ -21,6 +24,7 @@ export const overviewPanel: LayoutPanel = {
 };
 
 export function Overview() {
+  const t = useTranslations("manifest");
   const { open } = useLayoutActions();
 
   useEffect(() => {
@@ -34,8 +38,8 @@ export function Overview() {
 
   return (
     <div className="p-4">
-      <h1>Overview</h1>
-      <p>This is the overview page for the manifest editor.</p>
+      <h1>{t("panels.overview")}</h1>
+      <p>{t("workflow.overviewIntroduction")}</p>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig((options) => ({
   dts: true,
+  external: [/^@manifest-editor\/i18n(?:\/|$)/],
   target: ["es2020"],
   format: ["esm", "cjs"],
   platform: "browser",
@@ -27,8 +28,5 @@ export default defineConfig((options) => ({
   },
   minify: !options.watch,
   sourcemap: true,
-  define: {
-    "global.setImmediate": "window.setImmediate",
-  },
   plugins: [esmExternalRequirePlugin({ external: ["react"] })],
 }));

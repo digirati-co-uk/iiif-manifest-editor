@@ -1,5 +1,12 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { useCustomContextMenu, useEditor } from "@manifest-editor/shell";
-import { useAtlasStore, useCanvas, useCurrentAnnotationTransition, useRequestAnnotation, useVault } from "react-iiif-vault";
+import {
+  useAtlasStore,
+  useCanvas,
+  useCurrentAnnotationTransition,
+  useRequestAnnotation,
+  useVault,
+} from "react-iiif-vault";
 import { useStore } from "zustand";
 import { InputContainer } from "../../components";
 import { BoxSelectorField } from "../../form-elements/BoxSelectorField/BoxSelectorField";
@@ -7,29 +14,32 @@ import { ActionButton, CheckIcon } from "@manifest-editor/components";
 import { targetWholeCanvas } from "./target-whole-canvas";
 
 export function MediaTargetEditor() {
+  const t = useTranslations("editors");
+  const { locale, profile } = useEditorI18n();
   const vault = useVault();
   const annotationEditor = useEditor();
   const { target } = annotationEditor.annotation;
   const canvas = useCanvas({ id: target.getSourceId() });
   const bounds = canvas ? { x: 0, y: 0, width: canvas.width, height: canvas.height } : null;
-  const { requestAnnotation, isPending, isActive, busy, completeRequest, cancelRequest, requestId } = useRequestAnnotation({
-    onSuccess: (response) => {
-      if (response.boundingBox) {
-        target.setPosition(response.boundingBox);
-      }
-    },
-  });
+  const { requestAnnotation, isPending, isActive, busy, completeRequest, cancelRequest, requestId } =
+    useRequestAnnotation({
+      onSuccess: (response) => {
+        if (response.boundingBox) {
+          target.setPosition(response.boundingBox);
+        }
+      },
+    });
   const currentSelector = target.getParsedSelector();
   const setTargetWholeCanvas = () => targetWholeCanvas(vault, canvas, annotationEditor.annotation);
 
   useCustomContextMenu(
     {
-      sectionTitle: "Painting Annotation Target",
+      sectionTitle: t("messages.paintingAnnotationTarget"),
       resource: annotationEditor.ref(),
       items: [
         {
           id: "save-changes",
-          label: "Save changes",
+          label: t("ui.saveChanges"),
           enabled: isActive,
           onAction: () => {
             completeRequest();
@@ -37,7 +47,7 @@ export function MediaTargetEditor() {
         },
         {
           id: "discard-changes",
-          label: "Discard changes",
+          label: t("ui.discardChanges"),
           enabled: isActive,
           onAction: () => {
             cancelRequest();
@@ -45,17 +55,17 @@ export function MediaTargetEditor() {
         },
       ],
     },
-    [isPending],
+    [isPending, locale, profile]
   );
 
   useCustomContextMenu(
     {
-      sectionTitle: "Painting Annotation",
+      sectionTitle: t("messages.paintingAnnotation"),
       resource: annotationEditor.ref(),
       items: [
         {
           id: "edit-position",
-          label: "Edit position",
+          label: t("ui.editPosition"),
           enabled: !isPending && currentSelector?.type === "BoxSelector",
           onAction: () =>
             currentSelector?.type === "BoxSelector"
@@ -64,13 +74,13 @@ export function MediaTargetEditor() {
         },
         {
           id: "target-whole-canvas",
-          label: "Target whole canvas",
+          label: t("ui.targetWholeCanvas"),
           enabled: currentSelector?.type === "BoxSelector",
           onAction: setTargetWholeCanvas,
         },
       ],
     },
-    [currentSelector, isPending],
+    [currentSelector, isPending, locale, profile]
   );
 
   const store = useAtlasStore();
@@ -111,23 +121,25 @@ export function MediaTargetEditor() {
           target.setPosition(data.spatial);
         }}
       >
-        <ActionButton isDisabled={isActive} type="submit">Update target</ActionButton>
-        <h3 className="text-md font-semibold my-4">Change position on canvas</h3>
+        <ActionButton isDisabled={isActive} type="submit">
+          {t("ui.updateTarget")}
+        </ActionButton>
+        <h3 className="text-md font-semibold my-4">{t("ui.changePositionOnCanvas")}</h3>
         <div className="flex gap-2">
           {isActive ? (
             <ActionButton primary onPress={() => completeRequest()}>
-              <CheckIcon /> Finish editing
+              <CheckIcon /> {t("ui.finishEditing")}
             </ActionButton>
           ) : (
             <ActionButton
               isDisabled={busy}
               onPress={() => requestAnnotation({ type: "target", bounds, selector: currentSelector.spatial })}
             >
-              Reposition
+              {t("ui.reposition")}
             </ActionButton>
           )}
           <ActionButton type="button" onPress={setTargetWholeCanvas}>
-            Target whole canvas
+            {t("ui.targetWholeCanvas")}
           </ActionButton>
         </div>
       </BoxSelectorField>

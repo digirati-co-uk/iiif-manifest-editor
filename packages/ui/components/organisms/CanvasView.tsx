@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import React, { useRef } from "react";
 import { useCanvas } from "react-iiif-vault";
 import { CanvasContainer, GhostCanvas } from "../layout/CanvasContainer";
@@ -5,6 +6,7 @@ import { useManifest } from "../../hooks/useManifest";
 import { ErrorBoundary } from "../../atoms/ErrorBoundary";
 
 export const CanvasView: React.FC = () => {
+  const t = useTranslations("ui");
   const viewer = useRef();
   const canvas = useCanvas();
   const manifest = useManifest();
@@ -35,7 +37,7 @@ export const CanvasView: React.FC = () => {
             --atlas-background:  #E5E7F0;
           }
       `}</style>
-      <ErrorBoundary>NO LONGER IN USE.</ErrorBoundary>
+      <ErrorBoundary>{t("viewer.retired")}</ErrorBoundary>
     </CanvasContainer>
   );
 };

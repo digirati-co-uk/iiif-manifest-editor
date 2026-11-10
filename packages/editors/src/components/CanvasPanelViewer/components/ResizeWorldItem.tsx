@@ -1,13 +1,13 @@
-import { HTMLPortal, useResizeWorldItem } from "@atlas-viewer/atlas";
+import { EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
+import { useEditorsTranslations as useTranslations } from "../../../editor-i18n-context";
+import { useResizeWorldItem } from "@atlas-viewer/atlas";
 import { type CSSProperties, type ReactNode, useMemo } from "react";
 
 type ResizeWorldItemProps = JSX.IntrinsicElements["worldObject"] & {
   handleSize?: number;
   resizable?: boolean;
   aspectRatio?: number;
-  onSave: (
-    pos: Partial<{ x: number; y: number; width: number; height: number }>,
-  ) => void;
+  onSave: (pos: Partial<{ x: number; y: number; width: number; height: number }>) => void;
   children?: ReactNode;
   maintainAspectRatio?: boolean;
   disableCardinalControls?: boolean;
@@ -23,12 +23,8 @@ export function ResizeWorldItem({
   aspectRatio,
   ...props
 }: ResizeWorldItemProps) {
-  const handleSize =
-    typeof _handleSize === "undefined"
-      ? maintainAspectRatio
-        ? 12
-        : 8
-      : _handleSize;
+  const t = useTranslations("editors");
+  const handleSize = typeof _handleSize === "undefined" ? (maintainAspectRatio ? 12 : 8) : _handleSize;
   const { portalRef, mode, mouseEvent, isEditing } = useResizeWorldItem(
     {
       x: props.x || 0,
@@ -38,7 +34,7 @@ export function ResizeWorldItem({
       aspectRatio: aspectRatio,
       maintainAspectRatio,
     },
-    onSave,
+    onSave
   );
 
   const translate = useMemo(() => mouseEvent("translate"), [mouseEvent]);
@@ -83,22 +79,18 @@ export function ResizeWorldItem({
                     display: "block",
                     width: "100%",
                     height: "100%",
-                    cursor: 'move',
+                    cursor: "move",
                     border: "1px solid rgba(255,255,255, .7)",
                     outline: "2px solid rgba(155,155,155, .7)",
                     boxSizing: "border-box",
-                    pointerEvents: isEditing
-                      ? "none"
-                      : inSketchMode
-                        ? "initial"
-                        : "none",
+                    pointerEvents: isEditing ? "none" : inSketchMode ? "initial" : "none",
                   }}
                 />
 
                 {!maintainAspectRatio ? (
                   <>
                     <div
-                      title="east"
+                      title={t("ui.east")}
                       onTouchStart={east}
                       onMouseDown={east}
                       style={{
@@ -113,7 +105,7 @@ export function ResizeWorldItem({
                       }}
                     />
                     <div
-                      title="west"
+                      title={t("ui.west")}
                       onMouseDown={west}
                       style={{
                         ...baseStyle,
@@ -129,7 +121,7 @@ export function ResizeWorldItem({
                     />
 
                     <div
-                      title="north"
+                      title={t("ui.north")}
                       onMouseDown={north}
                       style={{
                         ...baseStyle,
@@ -145,7 +137,7 @@ export function ResizeWorldItem({
                     />
 
                     <div
-                      title="south"
+                      title={t("ui.south")}
                       onMouseDown={south}
                       style={{
                         ...baseStyle,
@@ -163,7 +155,7 @@ export function ResizeWorldItem({
                 ) : null}
 
                 <div
-                  title="north-east"
+                  title={t("ui.northeast")}
                   onMouseDown={northEast}
                   style={{
                     ...baseStyle,
@@ -178,7 +170,7 @@ export function ResizeWorldItem({
                 />
 
                 <div
-                  title="south-east"
+                  title={t("ui.southeast")}
                   onMouseDown={southEast}
                   style={{
                     ...baseStyle,
@@ -193,7 +185,7 @@ export function ResizeWorldItem({
                 />
 
                 <div
-                  title="south-west"
+                  title={t("ui.southwest")}
                   onMouseDown={southWest}
                   style={{
                     ...baseStyle,
@@ -208,7 +200,7 @@ export function ResizeWorldItem({
                 />
 
                 <div
-                  title="north-west"
+                  title={t("ui.northwest")}
                   onMouseDown={northWest}
                   style={{
                     ...baseStyle,

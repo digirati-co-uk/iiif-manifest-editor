@@ -1,3 +1,4 @@
+import { ProjectNotebookButton } from "../Notebook/ProjectNotebook";
 import { Logo, Container, Header } from "./AppHeader.styles";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
 import { BackgroundActionsMenu } from "../BackgroundTasks/BackgroundActions";
@@ -21,6 +22,7 @@ export const AppHeader = memo(function AppHeader(props: AppHeaderProps) {
           <ManifestEditorLogo />
         </Logo>
 
+        <ProjectNotebookButton />
         <PreviewButton />
         <PresetOnboardingButton />
         <BackgroundActionsMenu />

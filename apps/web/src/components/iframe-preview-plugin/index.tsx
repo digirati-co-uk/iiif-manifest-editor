@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { Sidebar, SidebarContent, SidebarHeader } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -24,7 +25,9 @@ import { openIframePreviewWindow, updateIframePreviewWindow } from "./window-pre
 export default {
   id: IFRAME_PREVIEW_PLUGIN_ID,
   label: "Iframe preview",
+  labelMessage: { namespace: "web", key: "preview.iframe" },
   description: "Preview the current manifest in an iframe backed by vault communication.",
+  descriptionMessage: { namespace: "web", key: "preview.description" },
   author: "Digirati",
   official: true,
   defaultEnabled: false,
@@ -39,6 +42,7 @@ export const leftPanels: LayoutPanel[] = [
   {
     id: IFRAME_PREVIEW_LEFT_PANEL_ID,
     label: "Iframe preview",
+    labelMessage: { namespace: "web", key: "preview.iframe" },
     icon: <PreviewIcon />,
     render: () => <IframePreviewSidebar />,
   },
@@ -48,6 +52,7 @@ export const centerPanels: LayoutPanel[] = [
   {
     id: IFRAME_PREVIEW_CENTER_PANEL_ID,
     label: "Iframe preview",
+    labelMessage: { namespace: "web", key: "preview.iframe" },
     icon: <PreviewIcon />,
     options: {
       hideHeader: true,
@@ -60,11 +65,14 @@ export const background: BackgroundPanel[] = [
   {
     id: "iframe-preview-window-background",
     label: "Iframe preview window background",
+    labelMessage: { namespace: "web", key: "preview.background" },
     render: () => <IframePreviewWindowBackground />,
   },
 ];
 
 function IframePreviewSidebar() {
+  const webT = useTranslations("web");
+
   const actions = useLayoutActions();
   const rootResource = useAppResource();
   const manifest = useManifest();
@@ -75,12 +83,12 @@ function IframePreviewSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader title="Iframe preview" />
+      <SidebarHeader title={webT("preview.iframe")} />
       <SidebarContent className="flex min-h-0 flex-col gap-3 p-3">
         <div className="rounded border border-gray-200 bg-white p-3 text-sm text-gray-700">
-          <div className="font-medium text-gray-900">Current canvas</div>
+          <div className="font-medium text-gray-900">{webT("preview.currentCanvas")}</div>
           <div className="mt-1 truncate text-gray-600">
-            {currentCanvas ? <LocaleString>{currentCanvas.label}</LocaleString> : "No canvas selected"}
+            {currentCanvas ? <LocaleString>{currentCanvas.label}</LocaleString> : webT("preview.noneSelected")}
           </div>
         </div>
         <button
@@ -88,7 +96,7 @@ function IframePreviewSidebar() {
           className="rounded bg-me-primary-500 px-3 py-2 text-sm font-medium text-white hover:bg-me-primary-600"
           onClick={() => actions.open(IFRAME_PREVIEW_CENTER_PANEL_ID)}
         >
-          Open preview
+          {webT("preview.open")}
         </button>
         <button
           type="button"
@@ -101,7 +109,7 @@ function IframePreviewSidebar() {
             })
           }
         >
-          Open in new window
+          {webT("preview.newWindow")}
         </button>
       </SidebarContent>
     </Sidebar>
@@ -127,6 +135,8 @@ function IframePreviewWindowBackground() {
 }
 
 function IframePreviewMain() {
+  const webT = useTranslations("web");
+
   const vault = useVault();
   const rootResource = useAppResource();
   const manifest = useManifest();
@@ -161,7 +171,7 @@ function IframePreviewMain() {
           canvasId: canvasIdRef.current,
         },
         targetOrigin,
-        [channel.port2],
+        [channel.port2]
       );
       setStatus("connected");
     } catch {
@@ -196,7 +206,7 @@ function IframePreviewMain() {
         resource: rootResource,
         canvasId: currentCanvasId,
       },
-      targetOrigin,
+      targetOrigin
     );
   }, [status, rootResource.id, rootResource.type, currentCanvasId, targetOrigin]);
 
@@ -204,13 +214,13 @@ function IframePreviewMain() {
     <div className="flex h-full min-h-0 w-full flex-col bg-zinc-100">
       {status !== "connected" ? (
         <div className="border-b border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
-          {status === "error" ? "Preview connection failed" : "Connecting preview..."}
+          {status === "error" ? webT("preview.connectionFailed") : webT("preview.connecting")}
         </div>
       ) : null}
       <iframe
         ref={iframeRef}
         src={src}
-        title="IIIF iframe preview"
+        title={webT("preview.frameTitle")}
         className="min-h-0 flex-1 border-0 bg-white"
         onLoad={() => {
           setStatus("waiting");

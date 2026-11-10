@@ -1,9 +1,14 @@
+import type { MessageReference } from "@manifest-editor/i18n";
 import { EditorDefinition } from "@manifest-editor/shell";
 import { CombinedEditor } from "../CombinedEditor/CombinedEditor";
 
-export const combinedProperties: EditorDefinition = {
+export const combinedProperties: EditorDefinition & {
+  labelMessage?: MessageReference;
+  summaryMessage?: MessageReference;
+} = {
   id: "@manifest-editor/overview",
   label: "Overview",
+  labelMessage: { namespace: "editors", key: "ui.overview" },
   supports: {
     edit: true,
     properties: [], // Empty, since you shouldn't navigate directly to this one I don't think.
@@ -16,7 +21,7 @@ export const combinedProperties: EditorDefinition = {
       // Ignore for annotations as they already have a combined editor.
       // "Annotation",
       "AnnotationPage",
-      "Range",
+      // Ranges have their own overview (see RangeOverview).
     ],
   },
   component: (config) => <CombinedEditor config={config} />,

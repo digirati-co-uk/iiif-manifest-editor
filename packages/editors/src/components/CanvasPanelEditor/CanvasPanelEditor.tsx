@@ -1,3 +1,5 @@
+import { useTranslations } from "@manifest-editor/i18n";
+import { getCanvasLayout } from "@manifest-editor/editor-api";
 import { useLayoutActions } from "@manifest-editor/shell";
 import { EmptyState } from "@manifest-editor/ui/madoc/components/EmptyState";
 import { useEffect } from "react";
@@ -7,9 +9,14 @@ import { CanvasPanelViewer } from "../CanvasPanelViewer/CanvasPanelViewer";
 
 export function CanvasPanelEditor({
   asFallback = false,
+  moveMode,
+  enableAddMedia,
 }: {
   asFallback?: boolean;
+  moveMode?: boolean;
+  enableAddMedia?: boolean;
 }) {
+  const t = useTranslations("editors");
   const { edit, create } = useLayoutActions();
   const canvas = useInStack("Canvas");
   const annotationPage = useInStack("AnnotationPage");
@@ -17,34 +24,13 @@ export function CanvasPanelEditor({
   const manifest = useManifest();
 
   const canvasId = canvas?.resource.source.id;
+  const hasLayout = useVaultSelector((_, vault) => !!(canvasId && getCanvasLayout(vault, canvasId)), [canvasId]);
   const firstCanvasId = manifest?.items?.[0]?.id;
   let createAnnotation = undefined;
   const annotationPageId =
-    annotationPage &&
-    canvas &&
-    annotationPage.parent?.id === canvasId &&
-    annotationPage.property === "annotations"
+    annotationPage && canvas && annotationPage.parent?.id === canvasId && annotationPage.property === "annotations"
       ? annotationPage.resource.source.id
       : undefined;
-
-  const totalAnnotations = useVaultSelector(
-    (state, vault) => {
-      if (canvasId) {
-        const c = vault.get(canvasId);
-        if (c && c.items) {
-          const page = c.items[0];
-          if (page) {
-            const fullPage = vault.get(page);
-            if (fullPage) {
-              return fullPage.items.length;
-            }
-          }
-        }
-      }
-      return 0;
-    },
-    [canvasId],
-  );
 
   const annotationId = annotation?.resource?.source.id;
 
@@ -61,15 +47,15 @@ export function CanvasPanelEditor({
       <CanvasContext canvas={canvasId}>
         <CanvasPanelViewer
           asFallback={asFallback}
-          key={`${canvasId}/${totalAnnotations}/${annotationPageId}`}
+          enableAddMedia={enableAddMedia}
+          moveMode={moveMode ?? (hasLayout && !annotationId)}
+          key={`${canvasId}/${annotationPageId}`}
           highlightAnnotation={annotationId}
-          onEditAnnotation={(id: string) =>
-            id !== annotationId && edit({ id, type: "Annotation" })
-          }
+          onEditAnnotation={(id: string) => id !== annotationId && edit({ id, type: "Annotation" })}
           createAnnotation={createAnnotation}
         />
       </CanvasContext>
     );
   }
-  return <EmptyState>No canvas selected</EmptyState>;
+  return <EmptyState>{t("ui.noCanvasSelected")}</EmptyState>;
 }

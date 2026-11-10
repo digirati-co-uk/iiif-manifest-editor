@@ -1,3 +1,7 @@
+import { ShellI18nBoundary, type ShellLocalisation } from "../i18n/ShellI18n";
+import { useApp } from "../AppContext/AppContext";
+import { ProjectNotebookSync } from "../Notebook/ProjectNotebook";
+import { AnnotationRequestCleanup } from "../AtlasStore/AtlasStoreProvider";
 import { ImageServiceLoader } from "@atlas-viewer/iiif-image-api";
 import { ErrorBoundary } from "@manifest-editor/ui/atoms/ErrorBoundary";
 import { type ReactNode, useMemo } from "react";
@@ -11,7 +15,7 @@ import { type Config, ConfigProvider, mergeConfig, useConfig } from "../ConfigCo
 import { ContextMenuProvider } from "../ContextMenu/ContextMenuContext";
 import { EditingStack } from "../EditingStack/EditingStack";
 import { LayoutProvider } from "../Layout/Layout.context-internal";
-import { PluginConfigBridge } from "../PluginContext/PluginContext";
+import { PluginConfigBridge, PluginI18nBridge } from "../PluginContext/PluginContext";
 import { PreviewProvider } from "../PreviewContext/PreviewContext";
 import type { Preview, PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
 import { PreviewVaultContext } from "../PreviewVault/PreviewVault";
@@ -67,7 +71,9 @@ export function ShellProvider({
   resource,
   editing,
   backgroundActionPersistence,
+  localisation,
 }: {
+  localisation?: ShellLocalisation;
   resource: Resource;
   config?: Partial<Config>;
   saveConfig?: (config: Partial<Config>) => void;
@@ -78,6 +84,7 @@ export function ShellProvider({
   backgroundActionPersistence?: BackgroundActionPersistence | false | null;
 }) {
   const app = useAppInstance();
+  const definition = useApp();
   const existingConfig = useConfig();
   const mergedConfig = useMemo(() => {
     const resolvedPreviews =
@@ -109,26 +116,33 @@ export function ShellProvider({
           <PreviewVaultContext>
             <ThemeProvider theme={theme || defaultTheme}>
               <ConfigProvider config={mergedConfig} saveConfig={saveConfig}>
-                <PluginConfigBridge config={mergedConfig} />
-                <EditingStack>
-                  <LayoutProvider>
-                    <BackgroundActionsProvider
-                      persistence={backgroundActionPersistence}
-                      persistenceKey={backgroundActionPersistenceKey}
-                    >
-                      <ContextMenuProvider>
-                        <ToastProvider>
-                          {/* @todo swap these out for (config?.previews || []) */}
-                          <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
-                            <PreviewWindowProvider>
-                              <AtlasStoreProvider>{children}</AtlasStoreProvider>
-                            </PreviewWindowProvider>
-                          </PreviewProvider>
-                        </ToastProvider>
-                      </ContextMenuProvider>
-                    </BackgroundActionsProvider>
-                  </LayoutProvider>
-                </EditingStack>
+                <ShellI18nBoundary localisation={localisation} preset={definition.preset?.localisation}>
+                  <PluginConfigBridge config={mergedConfig} />
+                  <PluginI18nBridge />
+                  <ProjectNotebookSync />
+                  <EditingStack>
+                    <LayoutProvider>
+                      <BackgroundActionsProvider
+                        persistence={backgroundActionPersistence}
+                        persistenceKey={backgroundActionPersistenceKey}
+                      >
+                        <ContextMenuProvider>
+                          <ToastProvider>
+                            {/* @todo swap these out for (config?.previews || []) */}
+                            <PreviewProvider previews={previews || []} configs={mergedConfig.previews}>
+                              <PreviewWindowProvider>
+                                <AtlasStoreProvider>
+                                  <AnnotationRequestCleanup />
+                                  {children}
+                                </AtlasStoreProvider>
+                              </PreviewWindowProvider>
+                            </PreviewProvider>
+                          </ToastProvider>
+                        </ContextMenuProvider>
+                      </BackgroundActionsProvider>
+                    </LayoutProvider>
+                  </EditingStack>
+                </ShellI18nBoundary>
               </ConfigProvider>
             </ThemeProvider>
           </PreviewVaultContext>

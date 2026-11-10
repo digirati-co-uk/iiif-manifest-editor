@@ -1,12 +1,15 @@
-import { HTMLPortal, useMode } from "@atlas-viewer/atlas";
+import { SvgEditorControls } from "@manifest-editor/components";
+import { useEditorsI18nInstance } from "../../../editor-i18n-context";
+import { EditorI18nBoundary, EditorHTMLPortal as HTMLPortal } from "../../EditorI18nBridge";
 import type { SupportedTarget, SvgSelector } from "@iiif/helpers";
 import type { AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { useGenericEditor } from "@manifest-editor/shell";
-import { PolygonSelector, RenderSvgEditorControls, useAnnotation, useCanvas, useVault } from "react-iiif-vault";
+import { PolygonSelector, useAnnotation, useCanvas } from "react-iiif-vault";
 import { constrainPosition } from "../../../helpers/constrain-position";
 import { ResizeWorldItem } from "./ResizeWorldItem";
 
 export function AnnotationTargetEditor() {
+  const i18n = useEditorsI18nInstance();
   const canvas = useCanvas();
   const annotation = useAnnotation<AnnotationNormalized & { target: SupportedTarget }>();
   const editor = useGenericEditor(annotation ? { id: annotation.id, type: "Annotation" } : undefined);
@@ -81,7 +84,9 @@ export function AnnotationTargetEditor() {
           annotationBucket="default"
           renderControls={(helper, state, showShapes) => (
             <>
-              <RenderSvgEditorControls showShapes={showShapes} />
+              <EditorI18nBoundary instance={i18n}>
+                <SvgEditorControls showShapes={showShapes} />
+              </EditorI18nBoundary>
             </>
           )}
         />

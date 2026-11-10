@@ -1,9 +1,6 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ActionButton } from "@manifest-editor/components";
-import {
-  useConfig,
-  useGenericEditor,
-  useInlineCreator,
-} from "@manifest-editor/shell";
+import { useConfig, useGenericEditor, useInlineCreator } from "@manifest-editor/shell";
 import { useAnnotation } from "react-iiif-vault";
 import { useMemo } from "react";
 import { useVault } from "react-iiif-vault";
@@ -17,6 +14,7 @@ type EditableBodyEntry = {
 };
 
 export function HTMLAnnotationEditor({ className }: { className?: string }) {
+  const t = useTranslations("editors");
   const annotation = useAnnotation();
   const vault = useVault();
   const creator = useInlineCreator();
@@ -25,13 +23,8 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
   const {
     i18n: { defaultLanguage, advancedLanguageMode },
   } = useConfig();
-  const editableBodies = useMemo(
-    () => getEditableBodyEntries(bodies, vault),
-    [bodies, vault],
-  );
-  const choiceParent =
-    editableBodies.find((entry) => entry.choice)?.choice ||
-    getFirstChoiceRef(bodies, vault);
+  const editableBodies = useMemo(() => getEditableBodyEntries(bodies, vault), [bodies, vault]);
+  const choiceParent = editableBodies.find((entry) => entry.choice)?.choice || getFirstChoiceRef(bodies, vault);
 
   if (!annotation) {
     return null;
@@ -49,18 +42,12 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
             resourceId={body.ref.id}
             onRemove={() => {
               if (body.choice && typeof body.choiceItemIndex === "number") {
-                const choice = vault.get(
-                  body.choice as any,
-                  { skipSelfReturn: false } as any,
-                ) as any;
+                const choice = vault.get(body.choice as any, { skipSelfReturn: false } as any) as any;
                 const items = Array.isArray(choice?.items) ? choice.items : [];
                 vault.modifyEntityField(
                   body.choice as any,
                   "items",
-                  items.filter(
-                    (_item: unknown, index: number) =>
-                      index !== body.choiceItemIndex,
-                  ),
+                  items.filter((_item: unknown, index: number) => index !== body.choiceItemIndex)
                 );
                 return;
               }
@@ -89,11 +76,11 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
                     },
                   },
                   initialData: {},
-                },
+                }
               );
             }}
           >
-            Add new translation
+            {t("ui.addNewTranslation")}
           </ActionButton>
         </div>
       ) : null}
@@ -101,20 +88,15 @@ export function HTMLAnnotationEditor({ className }: { className?: string }) {
   );
 }
 
-function getEditableBodyEntries(
-  bodies: any[],
-  vault: any,
-): EditableBodyEntry[] {
-  return bodies.flatMap((body, bodyIndex) =>
-    getEditableBodyEntry(body, bodyIndex, vault),
-  );
+function getEditableBodyEntries(bodies: any[], vault: any): EditableBodyEntry[] {
+  return bodies.flatMap((body, bodyIndex) => getEditableBodyEntry(body, bodyIndex, vault));
 }
 
 function getEditableBodyEntry(
   body: any,
   bodyIndex: number,
   vault: any,
-  choice?: EditableBodyEntry["choice"],
+  choice?: EditableBodyEntry["choice"]
 ): EditableBodyEntry[] {
   const resource = resolveResource(body, vault);
   const ref = getResourceRef(body, resource);
@@ -127,13 +109,11 @@ function getEditableBodyEntry(
       getEditableBodyEntry(item, bodyIndex, vault, ref).map((entry) => ({
         ...entry,
         choiceItemIndex,
-      })),
+      }))
     );
   }
 
-  return resource.type === "TextualBody" || resource.type === "Text"
-    ? [{ ref, bodyIndex, choice }]
-    : [];
+  return resource.type === "TextualBody" || resource.type === "Text" ? [{ ref, bodyIndex, choice }] : [];
 }
 
 function getFirstChoiceRef(bodies: any[], vault: any) {
@@ -147,16 +127,8 @@ function getFirstChoiceRef(bodies: any[], vault: any) {
   return null;
 }
 
-function getResourceRef(
-  input: any,
-  resource: any,
-): { id: string; type: "ContentResource" } | null {
-  const id =
-    typeof input?.id === "string"
-      ? input.id
-      : typeof resource?.id === "string"
-        ? resource.id
-        : "";
+function getResourceRef(input: any, resource: any): { id: string; type: "ContentResource" } | null {
+  const id = typeof input?.id === "string" ? input.id : typeof resource?.id === "string" ? resource.id : "";
   return id ? { id, type: "ContentResource" } : null;
 }
 
@@ -165,9 +137,7 @@ function resolveResource(resource: any, vault: any) {
     return resource;
   }
 
-  return (
-    vault.get(resource as any, { skipSelfReturn: false } as any) || resource
-  );
+  return vault.get(resource as any, { skipSelfReturn: false } as any) || resource;
 }
 
 function toArray<T>(value: T | T[] | null | undefined): T[] {

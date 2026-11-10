@@ -1,3 +1,4 @@
+import { useTranslations } from "@manifest-editor/i18n";
 import { ErrorMessage, PaddedSidebarContainer } from "@manifest-editor/components";
 import { Button, CalltoButton } from "@manifest-editor/ui/atoms/Button";
 import { ExperimentalMessage } from "@manifest-editor/ui/madoc/components/callouts/ExperimentalMessage";
@@ -8,6 +9,8 @@ import { ExperimentalIcon } from "@manifest-editor/ui/madoc/components/icons/Exp
 import { useState } from "react";
 
 export function PanelError(props: { error: Error; resetErrorBoundary: () => void }) {
+  const t = useTranslations("shell");
+
   const error = props.error.toString();
   const [isFixing, setIsFixing] = useState(false);
 
@@ -58,8 +61,12 @@ export function PanelError(props: { error: Error; resetErrorBoundary: () => void
 
   return (
     <PaddedSidebarContainer>
-      <ErrorMessage className="mb-2">{error}</ErrorMessage>
-      <CalltoButton onClick={props.resetErrorBoundary}>Try again</CalltoButton>
+      <ErrorMessage className="mb-2">{t("panels.error")}</ErrorMessage>
+      <details className="mb-2 text-sm">
+        <summary>{t("panels.technicalDetails")}</summary>
+        <pre className="whitespace-pre-wrap">{error}</pre>
+      </details>
+      <CalltoButton onClick={props.resetErrorBoundary}>{t("actions.retry")}</CalltoButton>
     </PaddedSidebarContainer>
   );
 }

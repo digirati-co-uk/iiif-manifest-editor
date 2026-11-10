@@ -161,9 +161,10 @@ function ExhibitionPresetPreviewButton({
           />
         </div>
       ) : null}
-      <ButtonContainer style={{ width: "auto", minWidth: "10em" }}>
+      <ButtonContainer style={{ width: "max-content", minWidth: "10em", flexShrink: 0 }}>
         <ButtonMain
           as={Button}
+          style={{ whiteSpace: "nowrap" }}
           data-preview-action={preview?.mainAction?.id}
           isDisabled={preview?.mainAction?.disabled}
           onPress={preview?.mainAction?.onClick || openThemePanel}

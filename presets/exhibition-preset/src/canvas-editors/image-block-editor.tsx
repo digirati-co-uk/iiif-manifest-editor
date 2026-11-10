@@ -1,9 +1,9 @@
+import { getCanvasLayout, getPaintingAnnotations } from "@manifest-editor/editor-api";
 import { CanvasPanelEditor, useInStack } from "@manifest-editor/editors";
 import type { CanvasEditorDefinition } from "@manifest-editor/shell";
-import { useLocalStorage } from "@manifest-editor/shell";
 import { useEffect } from "react";
 import { Button } from "react-aria-components";
-import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas } from "react-iiif-vault";
+import { CanvasContext, LocaleString, type RenderingStrategy, useCanvas, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { ExhibitionPreviewPanel } from "../components/ExhibitionPreviewPanel";
 import { useConfiguredExhibitionPreviewPreset } from "../helpers/exhibition-preview-state";
@@ -11,47 +11,37 @@ import { useSlideshowWorkbenchState } from "../slideshow-content-positioning";
 
 export const imageBlockEditor: CanvasEditorDefinition = {
   id: "image-block-editor",
-  label: "Image Block Editor",
+  label: "Exhibition canvas editor",
   component: (strategy) => <ImageBlockEditor strategy={strategy} />,
   supports: {
     strategy: (strategy, resource, vault) => {
-      if (strategy.type !== "images") {
+      if (strategy.type !== "images" && strategy.type !== "empty") {
         return false;
       }
 
       const fullResource = vault.get(resource.resource);
-      if (fullResource.type !== "Canvas") {
-        return false;
-      }
-
-      const behaviors = fullResource.behavior || [];
-
-      let isImage = false;
-      for (const behaviour of behaviors) {
-        if (behaviour.startsWith("w-") || behaviour.startsWith("h-") || behaviour === "image") {
-          isImage = true;
-        }
-      }
-
-      return isImage;
+      return fullResource?.type === "Canvas";
     },
   },
 };
 
 export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingStrategy }) {
-  const [isPreview, setIsPreview] = useLocalStorage("exhibition-preview-mode");
   const centerPanelMode = useSlideshowWorkbenchState((state) => state.centerPanelMode);
   const setCenterPanelMode = useSlideshowWorkbenchState((state) => state.setCenterPanelMode);
   const previewPreset = useConfiguredExhibitionPreviewPreset();
   const canvas = useInStack("Canvas");
-
+  const canvasId = canvas?.resource.source?.id;
+  const emptyLayout = useVaultSelector(
+    (_, vault) => {
+      if (!canvasId) return false;
+      const resource = vault.get({ id: canvasId, type: "Canvas" });
+      return !!getCanvasLayout(vault, canvasId) && !getPaintingAnnotations(vault, resource).length;
+    },
+    [canvasId]
+  );
   useEffect(() => {
-    if (centerPanelMode === "edit" && isPreview) {
-      setIsPreview(false);
-    } else if (centerPanelMode === "preview" && !isPreview) {
-      setIsPreview(true);
-    }
-  }, [centerPanelMode, isPreview, setIsPreview]);
+    if (emptyLayout) setCenterPanelMode("edit");
+  }, [canvasId, emptyLayout, setCenterPanelMode]);
 
   if (!canvas) {
     return null;
@@ -60,11 +50,10 @@ export function ImageBlockEditor({ strategy: _strategy }: { strategy: RenderingS
   return (
     <CanvasContext canvas={canvas.resource.source?.id}>
       <ImageBlockEditorContent
-        isPreview={!!isPreview}
+        isPreview={centerPanelMode === "preview"}
         previewPreset={previewPreset}
         onModeChange={(nextIsPreview) => {
           setCenterPanelMode(nextIsPreview ? "preview" : "edit");
-          setIsPreview(nextIsPreview);
         }}
       />
     </CanvasContext>
@@ -105,7 +94,7 @@ function ImageBlockEditorContent({
         </div>
       ) : (
         <div className="flex min-h-0 flex-1">
-          <CanvasPanelEditor asFallback />
+          <CanvasPanelEditor enableAddMedia asFallback moveMode />
         </div>
       )}
     </div>
@@ -117,7 +106,7 @@ function ModeButton({ children, selected, onPress }: { children: string; selecte
     <Button
       className={twMerge(
         "px-3 py-2 text-xs font-semibold transition",
-        selected ? "bg-me-primary-500 text-white shadow-sm" : "text-slate-500 hover:text-slate-700",
+        selected ? "bg-me-primary-500 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
       )}
       onPress={onPress}
     >

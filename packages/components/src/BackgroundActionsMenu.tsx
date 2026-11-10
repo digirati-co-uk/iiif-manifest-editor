@@ -1,3 +1,4 @@
+import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, SVGProps } from "react";
 import { InfoIcon } from "./icons/InfoIcon";
 import { cn } from "./utils";
@@ -21,6 +22,7 @@ export function BackgroundActionMenuButton({
   errorCount?: number;
 }) {
   const hasError = errorCount > 0;
+  const t = useTranslations("components");
   const isRunning = runningCount > 0;
 
   return (
@@ -29,9 +31,14 @@ export function BackgroundActionMenuButton({
         "relative cursor-pointer rounded-md border-0 bg-me-gray-100 p-1.5 text-xl text-me-primary-500",
         "hover:bg-me-primary-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-me-primary-500",
         active && "bg-me-primary-500 text-white",
-        className,
+        className
       )}
       type="button"
+      aria-label={
+        runningCount || errorCount
+          ? t("background.summary", { running: runningCount, errors: errorCount })
+          : t("background.menu")
+      }
       {...props}
     >
       {children || <BackgroundActionMenuCogIcon aria-hidden />}
@@ -58,7 +65,7 @@ export function BackgroundActionMenuPanel({
       className={cn(
         "pointer-events-none absolute right-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-lg border border-zinc-200 bg-white opacity-0 shadow-[0_12px_32px_rgba(0,0,0,0.12)] transition-[opacity,transform] duration-150 ease-out translate-y-2 overflow-hidden",
         open && "pointer-events-auto opacity-100 translate-y-0",
-        className,
+        className
       )}
       {...props}
     />
@@ -68,7 +75,10 @@ export function BackgroundActionMenuPanel({
 export function BackgroundActionMenuSection({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-600", className)}
+      className={cn(
+        "px-3 pt-2.5 pb-1 text-[10px] font-semibold uppercase tracking-widest leading-none text-zinc-600",
+        className
+      )}
       {...props}
     />
   );
@@ -90,7 +100,7 @@ export function BackgroundActionMenuItem({
         status === "error" && "bg-red-50 outline outline-1 outline-red-200",
         (status === "running" || status === "preparing") && "bg-orange-50/60",
         status === "complete" && "bg-green-50/60",
-        className,
+        className
       )}
       {...props}
     />
@@ -107,7 +117,7 @@ export function BackgroundActionMenuTrigger({
       className={cn(
         "group flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-md border-0 bg-transparent px-3 py-2 text-left text-black",
         "hover:bg-black/5 focus:bg-black/5 focus:outline-none",
-        className,
+        className
       )}
       type="button"
       {...props}
@@ -132,11 +142,7 @@ export function BackgroundActionMenuLabel({
 }: HTMLAttributes<HTMLSpanElement> & { running?: boolean }) {
   return (
     <span
-      className={cn(
-        "truncate text-sm font-medium leading-tight text-zinc-800",
-        running && "text-zinc-600",
-        className,
-      )}
+      className={cn("truncate text-sm font-medium leading-tight text-zinc-800", running && "text-zinc-600", className)}
       {...props}
     />
   );
@@ -152,7 +158,7 @@ export function BackgroundActionMenuMeta({
       className={cn(
         "text-xs leading-tight",
         variant === "error" ? "text-red-700 font-medium line-clamp-2" : "truncate text-zinc-600",
-        className,
+        className
       )}
       {...props}
     />
@@ -168,7 +174,7 @@ export function BackgroundActionMenuInlineAction({
     <button
       className={cn(
         "flex-none cursor-pointer self-center border-0 bg-transparent px-2 py-1 text-xs font-medium leading-none text-me-primary-500 hover:text-me-primary-600 focus:outline-none focus:ring-2 focus:ring-me-primary-200 rounded",
-        className,
+        className
       )}
       type="button"
       {...props}
@@ -178,17 +184,16 @@ export function BackgroundActionMenuInlineAction({
   );
 }
 
-export function BackgroundActionMenuInfoButton({
-  className,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement>) {
+export function BackgroundActionMenuInfoButton({ className, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  const t = useTranslations("components");
   return (
     <button
       className={cn(
         "flex w-8 flex-none cursor-pointer items-center justify-center self-stretch border-0 border-l border-transparent bg-transparent text-[15px] text-zinc-300",
         "hover:border-zinc-100 hover:bg-zinc-50 hover:text-zinc-500 focus:outline-none",
-        className,
+        className
       )}
+      aria-label={t("background.info")}
       type="button"
       {...props}
     >
@@ -207,21 +212,29 @@ export function BackgroundActionMenuProgressBar({
   label?: string;
 }) {
   const value = Math.min(100, Math.max(0, Number.isFinite(percent) ? percent : 0));
+  const t = useTranslations("components");
+  const { locale } = useEditorI18n();
   const rounded = Math.round(value);
+  const percentage = new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 }).format(
+    rounded / 100
+  );
 
   return (
     <span className={cn("flex w-full items-center gap-2 pt-0.5", className)}>
       <span
         className="h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-200"
         role="progressbar"
-        aria-label={label || "Background action progress"}
+        aria-label={label ?? t("background.progress")}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={rounded}
       >
-        <span className="block h-full rounded-full bg-me-primary-500 transition-[width] duration-500 ease-out" style={{ width: `${value}%` }} />
+        <span
+          className="block h-full rounded-full bg-me-primary-500 transition-[width] duration-500 ease-out"
+          style={{ width: `${value}%` }}
+        />
       </span>
-      <span className="w-7 flex-none text-right text-[10px] font-medium leading-none text-zinc-400">{rounded}%</span>
+      <span className="w-7 flex-none text-right text-[10px] font-medium leading-none text-zinc-400">{percentage}</span>
     </span>
   );
 }
