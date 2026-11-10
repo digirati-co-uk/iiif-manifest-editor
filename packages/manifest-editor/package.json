@@ -1,6 +1,6 @@
 {
   "name": "manifest-editor",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -110,14 +110,14 @@
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
     "@manifest-editor/exhibition-preset": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@mdxeditor/editor": "^4.0.4",
     "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-iiif-vault": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "react-iiif-vault": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

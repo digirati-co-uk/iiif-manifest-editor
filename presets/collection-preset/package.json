@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/collection-preset",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -44,14 +44,14 @@
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-aria": "^3.38.1",
     "react-dom": "catalog:",
     "react-iiif-vault": "catalog:",
-    "styled-components": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "styled-components": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

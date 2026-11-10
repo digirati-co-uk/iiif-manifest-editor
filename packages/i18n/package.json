@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/i18n",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -76,9 +76,9 @@
     "@manifest-editor/languages": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "jsdom": "26.1.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "jsdom": "26.1.0",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
