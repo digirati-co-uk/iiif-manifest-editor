@@ -55,14 +55,14 @@ test(
     const settings = page.getByRole("dialog", { name: "Settings", exact: true });
     await settings.getByRole("textbox", { name: "Available languages", exact: true }).fill("en, gez");
     await settings.getByRole("textbox", { name: "Available languages", exact: true }).blur();
-    await settings.getByRole("button", { name: "IIIF Options", exact: true }).click();
+    await settings.getByRole("button", { name: "IIIF options", exact: true }).click();
     await settings.getByRole("combobox", { name: "Compact services", exact: true }).selectOption("compact");
     await settings.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
     await manifestPage.waitForPage();
     await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
-    await page.getByRole("textbox", { name: "Label (en)", exact: true }).fill(recipe.label.en[0]);
-    await page.getByRole("textbox", { name: "Label (en)", exact: true }).blur();
+    await page.getByRole("textbox", { name: "Label (English)", exact: true }).fill(recipe.label.en[0]);
+    await page.getByRole("textbox", { name: "Label (English)", exact: true }).blur();
     await expect(manifestPage.manifestHeading).toHaveText(recipe.label.en[0]);
 
     const openCanvases = async () => {
@@ -88,7 +88,7 @@ test(
       await dialog.getByRole("button", { name: "Create", exact: true }).click();
       await expect(dialog).toBeHidden();
       await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
-      const label = page.getByRole("textbox", { name: "Label (en)", exact: true });
+      const label = page.getByRole("textbox", { name: "Label (English)", exact: true });
       await expect(label).toHaveValue("Untitled canvas");
       await label.fill(recipe.items[index].label.en[0]);
       await label.blur();
@@ -105,6 +105,7 @@ test(
       await page.getByRole("menuitem", { name: "Edit range label", exact: true }).click();
       const form = workbench.locator("form");
       await form.getByRole("textbox").fill(label);
+      await form.getByRole("button", { name: /options$/ }).click();
       await form.getByRole("combobox").selectOption(language);
       await form.getByRole("button", { name: "Save", exact: true }).click();
       await expect(form).toHaveCount(0);

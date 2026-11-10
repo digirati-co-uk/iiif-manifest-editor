@@ -7,6 +7,9 @@ import {
   getImageSize,
   setCanvasLayout,
   validSize,
+  getEmptyCanvasPlaceholders,
+  layoutSlotToPixels,
+  syncCanvasPaintOrder,
 } from "@manifest-editor/editor-api";
 import type { CreatorOptions } from "./types";
 
@@ -21,6 +24,40 @@ export function placeCreatedResources(vault: Vault, result: Reference | Referenc
       return [vault.get(options.parent.resource)];
     return [];
   });
+  const canvas = vault.get<any>({ id: placement.canvasId, type: "Canvas" });
+  const state = getCanvasLayout(vault, canvas.id);
+  if (state?.customised === false && placement.placeholderId) {
+    const first = state.slots.find((slot) => slot.id === placement.placeholderId)!;
+    const empty = getEmptyCanvasPlaceholders(vault, canvas).filter((slot) => slot.id !== first.id);
+    const positions = [first, ...empty];
+    if (
+      !first ||
+      annotations.length > positions.length ||
+      (first.annotationIds?.length && first.annotationIds[0] !== placement.replaceAnnotationId)
+    )
+      throw new Error("This position is no longer available. Choose an empty position.");
+    {
+      const slots = state.slots.map((slot) => ({ ...slot }));
+      annotations.forEach((annotation, index) => {
+        const slot = positions[index]!;
+        const size = getImageSize(vault, annotation) || placement.bounds;
+        new EditorInstance({ vault, reference: annotation }).annotation.target.setPosition(
+          fitWithinBounds(size, layoutSlotToPixels(slot.bounds, canvas))
+        );
+        slots.find((item) => item.id === slot.id)!.annotationIds = [annotation.id];
+      });
+      if (placement.replaceAnnotationId)
+        for (const page of canvas.items)
+          vault.modifyEntityField(
+            page,
+            "items",
+            vault.get(page).items.filter((ref: any) => ref.id !== placement.replaceAnnotationId)
+          );
+      setCanvasLayout(vault, canvas.id, { ...state, slots });
+      syncCanvasPaintOrder(vault, canvas);
+    }
+    return;
+  }
   const placed: string[] = [];
   const columns = Math.ceil(Math.sqrt(annotations.length));
   const rows = Math.ceil(annotations.length / columns);
@@ -47,11 +84,26 @@ export function placeCreatedResources(vault: Vault, result: Reference | Referenc
       placed.push(annotation.id);
     });
     const state = getCanvasLayout(vault, placement.canvasId);
+    if (placement.replaceAnnotationId)
+      for (const page of canvas.items)
+        vault.modifyEntityField(
+          page,
+          "items",
+          vault.get(page).items.filter((ref: any) => ref.id !== placement.replaceAnnotationId)
+        );
     if (state && placement.placeholderId && placed.length)
       setCanvasLayout(vault, placement.canvasId, {
         ...state,
         slots: state.slots.map((slot) =>
-          slot.id === placement.placeholderId ? { ...slot, annotationIds: placed } : slot
+          slot.id === placement.placeholderId
+            ? {
+                ...slot,
+                annotationIds: [
+                  ...(slot.annotationIds || []).filter((id) => id !== placement.replaceAnnotationId),
+                  ...placed,
+                ],
+              }
+            : slot
         ),
       });
   });

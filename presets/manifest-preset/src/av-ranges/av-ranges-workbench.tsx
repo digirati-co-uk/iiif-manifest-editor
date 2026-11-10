@@ -236,10 +236,21 @@ function AvRangesWorkbench() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      // Window shortcuts must leave text editors and native control keys alone.
+      const isInteractive = (target: EventTarget | null) =>
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          !!target.closest(
+            'input, textarea, select, button, a[href], [role="textbox"], [role="combobox"], [role="slider"], [role="spinbutton"]',
+          ));
       if (
-        event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement ||
-        event.target instanceof HTMLSelectElement
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        event.composedPath().some(isInteractive) ||
+        isInteractive(document.activeElement)
       ) {
         return;
       }

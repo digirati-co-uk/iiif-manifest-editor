@@ -70,6 +70,7 @@ export interface PlaceholderPosition {
   canvasId: string;
   bounds: import("@manifest-editor/editor-api").Rectangle;
   placeholderId?: string;
+  replaceAnnotationId?: string;
 }
 
 export interface CreatorOptions {
@@ -212,6 +213,8 @@ export interface SpecificCreatorDefinition<
   additionalTypes?: AdditionalResourceTypes;
   actionButton?: string;
   actionButtonMessage?: MessageReference;
+  /** Editor tab to open after creating this resource. */
+  initialEditor?: string;
   resourceFields: string[];
   embeddedResources?: string[];
   // This is completely static values. (e.g. {type: 'Image'})

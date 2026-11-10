@@ -116,11 +116,15 @@ export const RenderCreator = memo(function RenderCreator(props: {
             ? undefined
             : (resource) => {
                 if (resource.type === "Canvas") open({ id: "current-canvas" });
-                edit(resource, {
-                  parent: toRef(props.resource.parent),
-                  property: props.resource.property,
-                  index: props.resource.index,
-                });
+                edit(
+                  resource,
+                  {
+                    parent: toRef(props.resource.parent),
+                    property: props.resource.property,
+                    index: props.resource.index,
+                  },
+                  { selectedTab: props.creator.initialEditor }
+                );
               },
       });
     } catch (err: any) {

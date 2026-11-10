@@ -42,16 +42,17 @@ for (const format of ["Leeds exhibition", "Leeds exhibition slideshow", "Leeds e
     await expect(dialog.getByRole("option", { name: "YouTube", exact: true })).toHaveCount(0);
     const manual = dialog.getByRole("listbox", { name: "Create without a link", exact: true });
     const blank = manual.getByRole("option", {
-      name: format.endsWith("slideshow") ? "Multiple images" : "Empty slide",
+      name: "Multiple images",
       exact: true,
     });
     await expect(blank).toBeVisible();
     await blank.hover();
     await expect(page.getByRole("tooltip")).toContainText(
-      format.endsWith("slideshow") ? "multiple images" : "blank slide"
+      format.endsWith("slideshow") ? "multiple images" : "image layout"
     );
     // The description is help on hover/focus, not a second line of card copy.
-    await expect(blank).toHaveText(format.endsWith("slideshow") ? "Multiple images" : "Empty slide");
+    await expect(blank).toHaveAccessibleName("Multiple images");
+    await expect(blank.locator('[slot="description"]')).toHaveClass(/sr-only/);
     const all = dialog.getByRole("button", { name: "Choose a content type instead", exact: true });
     await all.click();
     await expect(dialog.getByRole("button", { name: "Show fewer options", exact: true })).toHaveAttribute(
@@ -62,6 +63,7 @@ for (const format of ["Leeds exhibition", "Leeds exhibition slideshow", "Leeds e
     await dialog.getByRole("button", { name: "Show fewer options", exact: true }).click();
     await blank.focus();
     await page.keyboard.press("Enter");
+    await dialog.getByRole("button", { name: "Create canvas", exact: true }).click();
     await expect(dialog).toBeHidden();
     const manifest = await downloadManifest(page, testInfo.outputPath("manual.json"));
     expect(manifest.items).toHaveLength(1);
@@ -107,7 +109,7 @@ test("multiple matches offer a choice while preserving the link and manual route
   const matches = dialog.getByRole("listbox", { name: "Matching content types", exact: true });
   await expect(matches.getByRole("option")).toHaveCount(2);
   await expect(dialog.getByRole("listbox", { name: "Create without a link", exact: true })).toBeVisible();
-  await matches.getByRole("option", { name: "Image from a link", exact: true }).click();
+  await matches.getByRole("option", { name: "Image", exact: true }).click();
   await expect(dialog.getByRole("textbox", { name: "Link to image", exact: true })).toHaveValue(url);
   await dialog.getByRole("button", { name: "Back to Add content options", exact: true }).click();
   await expect(matches).toBeVisible();
@@ -158,7 +160,8 @@ test("editing a link discards old results and manual selection cancels pending c
   await page.unroute("https://creator.test/**");
   await page.route("https://creator.test/**", () => {});
   await dialog.getByRole("button", { name: "Use link", exact: true }).click();
-  await dialog.getByRole("option", { name: "Empty slide", exact: true }).click();
+  await dialog.getByRole("option", { name: "Multiple images", exact: true }).click();
+  await dialog.getByRole("button", { name: "Create canvas", exact: true }).click();
   await expect(dialog).toBeHidden();
   const manifest = await downloadManifest(page, testInfo.outputPath("cancelled-probe.json"));
   expect(manifest.items).toHaveLength(1);

@@ -11,6 +11,14 @@ import {
 } from "../src/canvas-layout/geometry";
 import {
   captureCanvasComposition,
+  beginCanvasComposition,
+  completeCanvasComposition,
+  setCanvasLayout,
+  isTemplateManaged,
+  resizeCanvasLayout,
+  canReapplyCanvasLayout,
+  removeCanvasImage,
+  swapCanvasPositions,
   restoreCanvasComposition,
   applyCanvasLayout,
   targetPaintingImageRegion,
@@ -18,6 +26,7 @@ import {
   clearCanvasPlaceholders,
   canResizeCanvas,
   getCanvasLayout,
+  getAnnotationRectangle,
   getCanvasOrigin,
   getEmptyCanvasPlaceholders,
   getPaintingImages,
@@ -152,6 +161,7 @@ describe("canvas layout operations", () => {
       canvas,
       canvasLayouts.find((l) => l.id === "feature-left")!
     );
+    setCanvasLayout(vault, canvas.id, { ...getCanvasLayout(vault, canvas.id)!, customised: true });
     const slot = getEmptyCanvasPlaceholders(vault, canvas)[0]!;
     placeCreatedResources(vault, getPaintingImages(vault, canvas), {
       targetType: "Annotation",
@@ -313,7 +323,7 @@ describe("canvas layout operations", () => {
       }
     );
     expect(sideEffect).toBe(false);
-    expect(vault.get(`${canvasId}/new`).target.selector.value).toBe("xywh=50,150,400,200");
+    expect(vault.get(`${canvasId}/new`).target.selector.value).toBe("xywh=30,265,540,270");
     expect(getEmptyCanvasPlaceholders(vault, canvas)).toHaveLength(1);
     expect(getPaintingImages(vault, canvas)).toHaveLength(1);
     expect(vault.get(canvas).width).toBe(1200);
@@ -374,4 +384,193 @@ test("discard restores dimensions, targets, placeholders and origin without chan
   restoreCanvasComposition(vault, canvas.id, original);
   expect(captureCanvasComposition(vault, vault.get(canvas))).toEqual(original);
   expect(vault.get(canvas).backgroundColor).toBe("#abcdef");
+});
+
+describe("guided exhibition compositions", () => {
+  test.each([false, true])(
+    "discarding a separate resize preserves added images (customised: %s)",
+    async (customised) => {
+      const { vault, canvas } = await fixture(1);
+      applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+      beginCanvasComposition(vault, vault.get(canvas));
+      const annotation = await vault.load(`${canvasId}/added`, {
+        id: `${canvasId}/added`,
+        type: "Annotation",
+        motivation: "painting",
+        target: canvasId,
+        body: { id: "https://example.org/added.jpg", type: "Image", width: 600, height: 400 },
+      });
+      const page = vault.get(canvas.items[0]!);
+      vault.modifyEntityField(page, "items", [...page.items, annotation]);
+      const slot = getEmptyCanvasPlaceholders(vault, vault.get(canvas))[0]!;
+      placeCreatedResources(vault, annotation, {
+        targetType: "Annotation",
+        placeholderPosition: { canvasId, placeholderId: slot.id, bounds: layoutSlotToPixels(slot.bounds, canvas) },
+      });
+      if (customised)
+        movePaintingImage(vault, vault.get(canvas), annotation.id, { x: 10, y: 20, width: 300, height: 200 });
+      const before = captureCanvasComposition(vault, vault.get(canvas));
+
+      // The resize controls start a separate session after adding images.
+      beginCanvasComposition(vault, vault.get(canvas), { restart: true });
+      resizeCanvasLayout(vault, vault.get(canvas), { x: -100, y: -50, width: 2400, height: 1600 });
+      resizeCanvasLayout(vault, vault.get(canvas), { x: 0, y: 0, width: 1800, height: 1200 });
+      expect(vault.get(canvas).width).toBe(1800);
+      completeCanvasComposition(vault, canvas.id, true);
+
+      expect(getPaintingImages(vault, vault.get(canvas)).map((image) => image.id)).toContain(annotation.id);
+      expect(captureCanvasComposition(vault, vault.get(canvas))).toEqual(before);
+    }
+  );
+  test("reapply keeps out-of-order assignments and template stacking", async () => {
+    const { vault, canvas } = await fixture();
+    const layout = canvasLayouts.find((l) => l.id === "hero-inset")!;
+    applyCanvasLayout(vault, canvas, layout);
+    const state = getCanvasLayout(vault, canvas.id)!;
+    setCanvasLayout(vault, canvas.id, {
+      ...state,
+      slots: state.slots.map((slot, i) => ({ ...slot, annotationIds: [`${canvasId}/a${1 - i}`] })),
+    });
+    applyCanvasLayout(vault, canvas, layout);
+    expect(getPaintingImages(vault, canvas).map((image) => image.id)).toEqual([`${canvasId}/a1`, `${canvasId}/a0`]);
+    const targets = getPaintingImages(vault, canvas).map((image) => image.target);
+    applyCanvasLayout(vault, canvas, layout);
+    expect(getPaintingImages(vault, canvas).map((image) => image.target)).toEqual(targets);
+  });
+  test("smaller compatible templates remap missing positions without losing images", async () => {
+    const { vault, canvas } = await fixture();
+    applyCanvasLayout(
+      vault,
+      canvas,
+      canvasLayouts.find((l) => l.id === "triptych")!
+    );
+    const state = getCanvasLayout(vault, canvas.id)!;
+    state.slots[2]!.annotationIds = state.slots[1]!.annotationIds;
+    state.slots[1]!.annotationIds = [];
+    setCanvasLayout(vault, canvas.id, state);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    expect(getCanvasLayout(vault, canvas.id)!.slots.map((slot) => slot.annotationIds)).toEqual([
+      [`${canvasId}/a0`],
+      [`${canvasId}/a1`],
+    ]);
+  });
+  test("discard restores removal, swaps, resize and membership without reverting labels", async () => {
+    const { vault, canvas } = await fixture();
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    const before = captureCanvasComposition(vault, canvas);
+    swapCanvasPositions(vault, canvas, 0, 1);
+    expect(getPaintingImages(vault, canvas).map((image) => image.id)).toEqual([`${canvasId}/a1`, `${canvasId}/a0`]);
+    resizeCanvasLayout(vault, canvas, { x: 0, y: 0, width: 2400, height: 1600 });
+    removeCanvasImage(vault, vault.get(canvas), `${canvasId}/a0`);
+    vault.modifyEntityField(canvas, "label", { en: ["Keep this"] });
+    completeCanvasComposition(vault, canvas.id, true);
+    expect(captureCanvasComposition(vault, vault.get(canvas))).toEqual(before);
+    expect(vault.get(canvas).label).toEqual({ en: ["Keep this"] });
+  });
+  test("finishing an unchanged image selection keeps template management", async () => {
+    const { vault, canvas } = await fixture(1);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    const image = getPaintingImages(vault, canvas)[0]!;
+    movePaintingImage(vault, canvas, image.id, getAnnotationRectangle(vault, image, canvas)!);
+    expect(isTemplateManaged(vault, canvas)).toBe(true);
+  });
+  test("explicit template resize reflows, manual movement detaches before expansion", async () => {
+    const { vault, canvas } = await fixture(1);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    const old = getPaintingImages(vault, canvas)[0]!.target;
+    resizeCanvasLayout(vault, canvas, { x: 0, y: 0, width: 2400, height: 1600 });
+    expect(getPaintingImages(vault, canvas)[0]!.target).not.toEqual(old);
+    movePaintingImage(vault, vault.get(canvas), `${canvasId}/a0`, { x: -10, y: 20, width: 300, height: 200 });
+    expect(isTemplateManaged(vault, vault.get(canvas))).toBe(false);
+    const moved = getPaintingImages(vault, canvas)[0]!.target;
+    resizeCanvasLayout(vault, vault.get(canvas), { x: 0, y: 0, width: 3000, height: 2000 });
+    expect(getPaintingImages(vault, canvas)[0]!.target).toEqual(moved);
+  });
+  test("resizing can reapply the template to a custom arrangement, or keep every position", async () => {
+    const { vault, canvas } = await fixture(1);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    movePaintingImage(vault, vault.get(canvas), `${canvasId}/a0`, { x: 10, y: 20, width: 300, height: 200 });
+    expect(isTemplateManaged(vault, vault.get(canvas))).toBe(false);
+    expect(canReapplyCanvasLayout(vault, vault.get(canvas))).toBe(true);
+    const moved = getPaintingImages(vault, canvas)[0]!.target;
+    resizeCanvasLayout(vault, vault.get(canvas), { x: 0, y: 0, width: 3000, height: 2000 }, { reapply: false });
+    expect(getPaintingImages(vault, canvas)[0]!.target).toEqual(moved);
+    expect(isTemplateManaged(vault, vault.get(canvas))).toBe(false);
+    resizeCanvasLayout(vault, vault.get(canvas), { x: 0, y: 0, width: 2400, height: 1600 }, { reapply: true });
+    expect(getPaintingImages(vault, canvas)[0]!.target).not.toEqual(moved);
+    expect(isTemplateManaged(vault, vault.get(canvas))).toBe(true);
+  });
+  test("tour regions suppress automatic template reflow", async () => {
+    const { vault, canvas } = await fixture(1);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    const page = await vault.load(`${canvasId}/tour`, {
+      id: `${canvasId}/tour`,
+      type: "AnnotationPage",
+      items: [
+        {
+          id: `${canvasId}/step`,
+          type: "Annotation",
+          target: `${canvasId}#xywh=1,2,3,4`,
+          body: { type: "TextualBody", value: "Tour" },
+        },
+      ],
+    });
+    vault.modifyEntityField(canvas, "annotations", [page]);
+    const current = vault.get(canvas);
+    const target = getPaintingImages(vault, current)[0]!.target;
+    expect(isTemplateManaged(vault, current)).toBe(false);
+    resizeCanvasLayout(vault, current, { x: 0, y: 0, width: 2400, height: 1600 });
+    expect(getPaintingImages(vault, current)[0]!.target).toEqual(target);
+  });
+  test("creator validates capacity and occupied positions before committing; replacement is discardable", async () => {
+    const { vault, canvas } = await fixture(1);
+    applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+    const creator = new Creator(vault, [
+      {
+        id: "batch",
+        label: "Batch",
+        resourceType: "Annotation",
+        resourceFields: [],
+        supports: {},
+        create: (payload: { count: number }, ctx) =>
+          Array.from({ length: payload.count }, (_, i) =>
+            ctx.embed({
+              id: `${canvasId}/new${i}`,
+              type: "Annotation",
+              motivation: "painting",
+              target: canvas.id,
+              body: { id: `https://example.org/new${i}.jpg`, type: "Image", width: 600, height: 400 },
+            })
+          ),
+      },
+    ]);
+    const slot = getEmptyCanvasPlaceholders(vault, canvas)[0]!;
+    const options = {
+      targetType: "Annotation" as const,
+      parent: { resource: canvas.items[0]!, property: "items" },
+      placeholderPosition: { canvasId, placeholderId: slot.id, bounds: layoutSlotToPixels(slot.bounds, canvas) },
+    };
+    await expect(creator.create("batch", { count: 2 }, options)).rejects.toThrow("Not enough empty positions");
+    expect(getPaintingImages(vault, canvas)).toHaveLength(1);
+    await creator.create("batch", { count: 1 }, options);
+    await expect(creator.create("batch", { count: 1 }, options)).rejects.toThrow("Not enough empty positions");
+    completeCanvasComposition(vault, canvas.id, true);
+    expect(getPaintingImages(vault, canvas).map((image) => image.id)).toEqual([`${canvasId}/a0`]);
+    const first = getCanvasLayout(vault, canvas.id)!.slots[0]!;
+    await creator.create(
+      "batch",
+      { count: 1 },
+      {
+        ...options,
+        placeholderPosition: {
+          ...options.placeholderPosition,
+          placeholderId: first.id,
+          replaceAnnotationId: `${canvasId}/a0`,
+        },
+      }
+    );
+    expect(getPaintingImages(vault, canvas).map((image) => image.id)).toEqual([`${canvasId}/new0`]);
+    completeCanvasComposition(vault, canvas.id, true);
+    expect(getPaintingImages(vault, canvas).map((image) => image.id)).toEqual([`${canvasId}/a0`]);
+  });
 });

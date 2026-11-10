@@ -5,9 +5,11 @@ import { cookies } from "next/headers";
 
 import "exhibition-viewer/dist/lib.css";
 import "manifest-editor/dist/index.css";
+// Read component styles directly so development updates do not depend on the
+// aggregate manifest-editor stylesheet being regenerated.
+import "@manifest-editor/components/lib.css";
 
 // Hopefully these are not needed.
-// import "@manifest-editor/components/dist/lib.css";
 // import "@manifest-editor/exhibition-preset/dist/index.css";
 
 import { Posthog } from "../../components/PostHog";

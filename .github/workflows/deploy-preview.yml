@@ -1,0 +1,205 @@
+name: Shared preview
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, labeled, unlabeled, closed, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Serialize publication AND reporting. Pending events coalesce; each run reads live state.
+concurrency:
+  # Fork events must not replace a queued trusted reconciliation run.
+  group: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository && format('ignored-fork-{0}', github.run_id) || 'manifest-editor-shared-preview' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  compose:
+    # Forks previously could not receive deployment secrets. Preserve that trust boundary.
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+      deployments: read
+    outputs:
+      relevant: ${{ steps.compose.outputs.relevant }}
+      controller: ${{ steps.controller.outputs.sha }}
+    steps:
+      # Never load automation scripts from the PR or the synthetic merge.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - id: controller
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Compose labelled PRs
+        id: compose
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const { compose } = await import(`${process.env.GITHUB_WORKSPACE}/.github/scripts/preview/preview.mjs`);
+            await compose({ github, context, core });
+      - name: Preserve deployment inputs even if composition fails
+        if: always() && steps.compose.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-state-${{ github.run_attempt }}
+          path: state/*.json
+          if-no-files-found: error
+      - name: Upload integration source
+        if: success() && steps.compose.outputs.relevant == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-source-${{ github.run_attempt }}
+          path: state/source.tar
+          if-no-files-found: error
+
+  build:
+    needs: compose
+    if: needs.compose.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      failed-step: ${{ steps.install.outcome == 'failure' && 'Install dependencies' || steps.build.outcome == 'failure' && 'Build' || steps.lint.outcome == 'failure' && 'Lint' || steps.opennext.outcome == 'failure' && 'OpenNext build' || 'Build job setup or artifact upload' }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-source-${{ github.run_attempt }}
+          path: source
+      - name: Extract combined source
+        run: tar -xf source/source.tar && rm -rf source
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # No shared build caches with privileged jobs and no credentials in this job.
+      - id: install
+        run: pnpm install --frozen-lockfile
+      - id: build
+        run: pnpm run build
+      - id: lint
+        run: pnpm run lint:ci
+      - id: opennext
+        run: pnpm --filter web run pre-build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-worker-${{ github.run_attempt }}
+          path: apps/web/.open-next/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  deploy:
+    needs: [compose, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+      deployments: write
+    outputs:
+      fresh: ${{ steps.fresh.outputs.fresh }}
+      published: ${{ steps.publish.outcome }}
+      deployed-at: ${{ steps.publish.outputs.deployed-at }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compose.outputs.controller }}
+          persist-credentials: false
+          path: controller
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-state-${{ github.run_attempt }}
+          path: state
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-worker-${{ github.run_attempt }}
+          path: worker/.open-next
+      - name: Prepare trusted deployment tooling
+        run: |
+          mkdir -p "$RUNNER_TEMP/preview-tools"
+          npm install --prefix "$RUNNER_TEMP/preview-tools" --ignore-scripts --no-audit --no-fund wrangler@4.120.0
+          cp controller/apps/web/wrangler.toml worker/wrangler.toml
+      - name: Validate isolated Worker artifact without credentials
+        working-directory: worker
+        run: '"$RUNNER_TEMP/preview-tools/node_modules/.bin/wrangler" deploy --dry-run --outdir "$RUNNER_TEMP/preview-dry-run" --config wrangler.toml --env preview'
+      - name: Check candidate still matches repository
+        id: fresh
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const { fresh } = await import(`${process.env.GITHUB_WORKSPACE}/controller/.github/scripts/preview/preview.mjs`);
+            await fresh({ github, context, core });
+      - name: Publish shared preview
+        id: publish
+        if: steps.fresh.outputs.fresh == 'true'
+        working-directory: worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        # No package.json, lifecycle scripts, or PR-supplied Wrangler config in this directory.
+        run: |
+          set -o pipefail
+          "$RUNNER_TEMP/preview-tools/node_modules/.bin/wrangler" deploy --config wrangler.toml --env preview | tee "$RUNNER_TEMP/preview-deploy.log"
+          echo "deployed-at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          version=$(sed -n 's/.*Current Version ID: //p' "$RUNNER_TEMP/preview-deploy.log" | tail -1)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Record successful deployment
+        env:
+          CLOUDFLARE_VERSION: ${{ steps.publish.outputs.version }}
+        if: steps.fresh.outputs.fresh == 'true'
+        uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const { record } = await import(`${process.env.GITHUB_WORKSPACE}/controller/.github/scripts/preview/preview.mjs`);
+            await record({ github, context });
+
+  report:
+    needs: [compose, build, deploy]
+    if: always() && needs.compose.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      deployments: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compose.outputs.controller }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: preview-state-${{ github.run_attempt }}
+          path: state
+      - name: Update PR comments
+        uses: actions/github-script@v7
+        env:
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          PUBLISH_RESULT: ${{ needs.deploy.outputs.published }}
+          DEPLOYED_AT: ${{ needs.deploy.outputs.deployed-at }}
+          FRESH: ${{ needs.deploy.outputs.fresh }}
+          FAILED_STEP: ${{ needs.compose.result == 'failure' && 'Compose labelled PRs' || needs.build.result == 'failure' && needs.build.outputs.failed-step || needs.deploy.result == 'failure' && 'Deploy job (artifact validation, publication or bookkeeping)' || '' }}
+        with:
+          retries: 3
+          script: |
+            const { report } = await import(`${process.env.GITHUB_WORKSPACE}/.github/scripts/preview/preview.mjs`);
+            await report({ github, context, core });

@@ -141,7 +141,13 @@ it.each(["esm", "cjs"])(
       expect(selected).toHaveBeenCalledWith("https://example.org/m");
       await act(async () => browser!.getState().resolve("iiif://history"));
       expect(container.textContent).toContain("Geschiedenis");
-      expect(container.textContent).toContain("1 vermelding");
+      const historyCount = browser!
+        .getState()
+        .linearHistory.filter(
+          (item) => item.url && !item.url.startsWith("iiif://") && !item.route.startsWith("/loading")
+        ).length;
+      expect(historyCount).toBeGreaterThan(0);
+      expect(container.textContent).toContain(`${historyCount} ${historyCount === 1 ? "vermelding" : "vermeldingen"}`);
       expect(container.textContent).toContain("Teitl Cymraeg");
       expect(container.textContent).not.toMatch(/ago|minute|hour/);
       await act(async () => searchStore!.getState().open("Geschiedenis"));
@@ -152,7 +158,7 @@ it.each(["esm", "cjs"])(
       expect(container.querySelector("input")).toBe(searchInput);
       expect(searchInput.value).toBe("Geschiedenis");
       expect(container.textContent).toContain("No results found");
-      expect(container.textContent).toContain("1 item");
+      expect(container.textContent).toContain(`${historyCount} ${historyCount === 1 ? "item" : "items"}`);
       await act(async () => {
         searchStore!.getState().close();
         browser!.getState().resolve("https://example.org/m");

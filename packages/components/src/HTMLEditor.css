@@ -36,9 +36,12 @@
 }
 
 .me-html-editor .mdxeditor-toolbar {
-  position: sticky;
+  /* Keep the toolbar below the text, including inside scrolling side panels. */
+  position: relative;
   top: auto;
-  bottom: 0;
+  bottom: auto;
+  flex-shrink: 0;
+  flex-wrap: wrap;
   gap: 0;
   padding: 0.25rem 0.3rem;
   border-radius: 0;

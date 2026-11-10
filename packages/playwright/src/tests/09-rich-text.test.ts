@@ -60,6 +60,31 @@ test("plain text saves immediately when leaving the field and survives reload", 
   const manifest = await downloadManifest(page, testInfo.outputPath("plain-text.json"));
   expect(manifest.label.en).toEqual([title]);
   expect(manifest.label.fr).toEqual(["Titre français"]);
+  const projectId = new URL(page.url()).pathname.split("/")[2];
+  // Export reads the live vault; wait for the separate autosave before reloading.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          (projectId) =>
+            new Promise((resolve, reject) => {
+              const request = indexedDB.open("manifest-editor-projects-v2");
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => {
+                const db = request.result;
+                const tx = db.transaction("manifest-editor-project-store", "readonly");
+                const saved = tx.objectStore("manifest-editor-project-store").get(projectId!);
+                saved.onsuccess = () =>
+                  resolve(saved.result?.vaultData?.entities?.Manifest?.["https://rich-text.test/manifest"]?.label?.en);
+                saved.onerror = () => reject(saved.error);
+                tx.oncomplete = () => db.close();
+              };
+            }),
+          projectId
+        ),
+      { timeout: 10_000 }
+    )
+    .toEqual([title]);
   await page.reload();
   await page.getByRole("tab", { name: "Descriptive", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Label (English)", exact: true })).toHaveValue(title);

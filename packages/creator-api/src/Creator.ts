@@ -2,7 +2,13 @@ import { Vault } from "@iiif/helpers/vault";
 import { entityActions } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { placeCreatedResources } from "./placeholder-position";
-import { EditorInstance, validRectangle } from "@manifest-editor/editor-api";
+import {
+  EditorInstance,
+  beginCanvasComposition,
+  getCanvasLayout,
+  getEmptyCanvasPlaceholders,
+  validRectangle,
+} from "@manifest-editor/editor-api";
 import { CreatorRuntime } from "./CreatorRuntime";
 import type { CreatableResource, CreatorConfig, CreatorDefinition, CreatorOptions } from "./types";
 import { matchBasedOnResource } from "./utils";
@@ -114,13 +120,45 @@ export class Creator {
                 type: options.parent.resource.type as any,
                 reference: resource.ref(),
                 key: options.parent.property,
-                index: options.parent.atIndex === undefined ? undefined : options.parent.atIndex + offset,
+                index: options.placeholderPosition?.replaceAnnotationId
+                  ? scoped
+                      .get<any>(options.parent.resource)
+                      [options.parent.property]?.findIndex(
+                        (ref: Reference) => ref.id === options.placeholderPosition!.replaceAnnotationId
+                      )
+                  : options.parent.atIndex === undefined
+                    ? undefined
+                    : options.parent.atIndex + offset,
               })
             );
           }
         }
       }
 
+      // Validate against live occupancy before any parent references are committed.
+      const placement = options?.placeholderPosition;
+      if (placement) {
+        if (placement.replaceAnnotationId && allResources.length !== 1)
+          throw new Error("Choose one image to replace this image. Nothing has been changed.");
+        const canvas = scoped.get<any>({ id: placement.canvasId, type: "Canvas" });
+        const state = getCanvasLayout(scoped, canvas.id);
+        if (state?.customised === false) {
+          const slot = state.slots.find((slot) => slot.id === placement.placeholderId);
+          const empty = getEmptyCanvasPlaceholders(scoped, canvas);
+          if (
+            !slot ||
+            (placement.replaceAnnotationId
+              ? slot.annotationIds?.length !== 1 ||
+                slot.annotationIds[0] !== placement.replaceAnnotationId ||
+                allResources.length !== 1
+              : !empty.some((item) => item.id === slot.id) || allResources.length > empty.length)
+          )
+            throw new Error(
+              "Not enough empty positions. Reduce the selection or choose a larger layout. Nothing has been added."
+            );
+        }
+      }
+      if (placement) beginCanvasComposition(scoped, scoped.get<any>({ id: placement.canvasId, type: "Canvas" }));
       const result = runtime.commit(afterActions);
 
       // Only run side effects if there is a parent
