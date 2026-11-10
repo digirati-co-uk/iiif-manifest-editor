@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/annotations",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -42,11 +42,11 @@
     "@iiif/parser": "catalog:",
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "react": "catalog:",
     "react-iiif-vault": "catalog:",
-    "zustand": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",

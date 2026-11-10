@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/canvas-label-generator",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -41,9 +41,9 @@
     "@iiif/helpers": "catalog:",
     "@iiif/presentation-3": "^2.2.3",
     "@manifest-editor/components": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
-    "react": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "react": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
