@@ -145,6 +145,12 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
     setActive(null);
     setPreview(null);
   }, [store, release]);
+  const finishResize = useCallback(() => {
+    completeCanvasComposition(vault, current.current.canvas.id);
+    snapshot.current = null;
+    setPreview(null);
+    current.current.onResizeDone();
+  }, [vault]);
   const discard = useCallback(() => {
     const original = snapshot.current;
     cancel();
@@ -326,7 +332,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         return;
       if (current.current.resizing && (event.key === "Escape" || event.key === "Enter")) {
         if (event.key === "Escape") discard();
-        else current.current.onResizeDone();
+        else finishResize();
         setPreview(null);
         event.preventDefault();
         return;
@@ -387,7 +393,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
       window.removeEventListener("pointerup", release);
       window.removeEventListener("pointercancel", release);
     };
-  }, [store, cancel, finish, discard, vault]);
+  }, [store, cancel, finish, finishResize, discard, vault]);
   useEffect(
     () => () => {
       if (current.current.isActive) {
@@ -401,6 +407,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
   useEffect(() => {
     if (resizing) {
       cancel();
+      beginCanvasComposition(vault, current.current.canvas, { restart: true });
       snapshot.current = captureCanvasComposition(vault, current.current.canvas);
     }
   }, [resizing, cancel, vault]);
@@ -419,7 +426,7 @@ export function CanvasComposition({ resizing, onResizeDone }: { resizing: boolea
         <CanvasResizeEdges
           size={canvas}
           preview={preview}
-          onDone={onResizeDone}
+          onDone={finishResize}
           onDiscard={discard}
           onPreview={setPreview}
           onCommit={save}

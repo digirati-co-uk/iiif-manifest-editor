@@ -16,6 +16,37 @@ async function addAt(page: Page, number: number) {
   await page.getByRole("button", { name: "Create", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Add content", exact: true })).toBeHidden();
 }
+test("discarding a canvas resize preserves newly added images", async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.route(`${service["@id"]}/info.json`, (route) => route.fulfill({ json: service }));
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create Exhibition", exact: true }).click();
+  await page.getByRole("button", { name: "Start building", exact: true }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Dismiss", exact: true }).click();
+  await page.getByRole("button", { name: "Start adding content", exact: true }).click();
+  await page.getByRole("option", { name: "Multiple images", exact: true }).click();
+  await page.getByRole("button", { name: "Create canvas", exact: true }).click();
+  await addAt(page, 1);
+  await addAt(page, 2);
+  const before = (await exported(page)).items[0];
+  expect(before.items[0].items).toHaveLength(2);
+
+  await page.getByRole("button", { name: "Resize canvas", exact: true }).click();
+  const edge = (await page.getByRole("button", { name: "Resize canvas left edge", exact: true }).boundingBox())!;
+  await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(edge.x + edge.width / 2 + 60, edge.y + edge.height / 2, { steps: 10 });
+  await page.mouse.up();
+  const resized = (await exported(page)).items[0];
+  expect(resized.width).toBeLessThan(before.width);
+  expect(resized.items[0].items).toHaveLength(2);
+
+  await page.getByRole("button", { name: "Discard changes", exact: true }).click();
+  expect((await exported(page)).items[0]).toEqual(before);
+  await expect(page.getByRole("button", { name: "Select image 1", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Select image 2", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Add image to position/ })).toHaveCount(0);
+});
 test("guided composition keeps slots, stacking and discard across resize and removal", async ({ page }) => {
   test.setTimeout(120_000);
   await page.route(`${service["@id"]}/info.json`, (route) => route.fulfill({ json: service }));

@@ -404,7 +404,9 @@ export function restoreCanvasComposition(
 }
 
 /** A bounded, workspace-local editing session; never exported as IIIF. */
-export function beginCanvasComposition(vault: Vault, canvas: CanvasNormalized) {
+export function beginCanvasComposition(vault: Vault, canvas: CanvasNormalized, options: { restart?: boolean } = {}) {
+  // A separate operation (such as canvas resize) owns only changes made after it begins.
+  if (options.restart) completeCanvasComposition(vault, canvas.id);
   if (!getCanvasCompositionSnapshot(vault, canvas.id))
     vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "editingSnapshot"], captureCanvasComposition(vault, canvas));
 }

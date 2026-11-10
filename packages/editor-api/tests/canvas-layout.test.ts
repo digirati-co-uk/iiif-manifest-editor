@@ -387,6 +387,41 @@ test("discard restores dimensions, targets, placeholders and origin without chan
 });
 
 describe("guided exhibition compositions", () => {
+  test.each([false, true])(
+    "discarding a separate resize preserves added images (customised: %s)",
+    async (customised) => {
+      const { vault, canvas } = await fixture(1);
+      applyCanvasLayout(vault, canvas, canvasLayouts[0]!);
+      beginCanvasComposition(vault, vault.get(canvas));
+      const annotation = await vault.load(`${canvasId}/added`, {
+        id: `${canvasId}/added`,
+        type: "Annotation",
+        motivation: "painting",
+        target: canvasId,
+        body: { id: "https://example.org/added.jpg", type: "Image", width: 600, height: 400 },
+      });
+      const page = vault.get(canvas.items[0]!);
+      vault.modifyEntityField(page, "items", [...page.items, annotation]);
+      const slot = getEmptyCanvasPlaceholders(vault, vault.get(canvas))[0]!;
+      placeCreatedResources(vault, annotation, {
+        targetType: "Annotation",
+        placeholderPosition: { canvasId, placeholderId: slot.id, bounds: layoutSlotToPixels(slot.bounds, canvas) },
+      });
+      if (customised)
+        movePaintingImage(vault, vault.get(canvas), annotation.id, { x: 10, y: 20, width: 300, height: 200 });
+      const before = captureCanvasComposition(vault, vault.get(canvas));
+
+      // The resize controls start a separate session after adding images.
+      beginCanvasComposition(vault, vault.get(canvas), { restart: true });
+      resizeCanvasLayout(vault, vault.get(canvas), { x: -100, y: -50, width: 2400, height: 1600 });
+      resizeCanvasLayout(vault, vault.get(canvas), { x: 0, y: 0, width: 1800, height: 1200 });
+      expect(vault.get(canvas).width).toBe(1800);
+      completeCanvasComposition(vault, canvas.id, true);
+
+      expect(getPaintingImages(vault, vault.get(canvas)).map((image) => image.id)).toContain(annotation.id);
+      expect(captureCanvasComposition(vault, vault.get(canvas))).toEqual(before);
+    }
+  );
   test("reapply keeps out-of-order assignments and template stacking", async () => {
     const { vault, canvas } = await fixture();
     const layout = canvasLayouts.find((l) => l.id === "hero-inset")!;
