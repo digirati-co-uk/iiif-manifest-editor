@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/editors",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -55,6 +55,7 @@
     "@manifest-editor/components": "workspace:*",
     "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "@react-leaflet/core": "3.0.0",
     "@tiptap/core": "^3.23.6",
@@ -87,8 +88,7 @@
     "react-textarea-autosize": "^8.5.9",
     "styled-components": "catalog:",
     "tailwind-merge": "^2.3.0",
-    "zustand": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",

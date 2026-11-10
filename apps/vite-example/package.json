@@ -1,7 +1,7 @@
 {
   "name": "vite-example",
   "private": true,
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3008",
@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@manifest-editor/i18n": "workspace:*",
     "manifest-editor": "workspace:*",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

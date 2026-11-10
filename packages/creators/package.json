@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/creators",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -48,14 +48,14 @@
     "@manifest-editor/creator-api": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "iiif-browser": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-error-boundary": "^4.0.13",
     "react-iiif-vault": "catalog:",
-    "styled-components": "6.1.8",
-    "@manifest-editor/i18n": "workspace:*"
+    "styled-components": "6.1.8"
   },
   "devDependencies": {
     "@atlas-viewer/iiif-image-api": "^2.2.0",
@@ -63,10 +63,10 @@
     "@tsdown/css": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "jsdom": "26.1.0",
     "tiny-invariant": "^1.3.3",
-    "vitest": "catalog:",
     "tsdown": "catalog:",
-    "jsdom": "26.1.0"
+    "vitest": "catalog:"
   },
   "publishConfig": {
     "access": "public"

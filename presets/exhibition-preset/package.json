@@ -1,6 +1,6 @@
 {
   "name": "@manifest-editor/exhibition-preset",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "bugs": "https://github.com/digirati-co-uk/iiif-manifest-editor/issues",
   "repository": {
@@ -53,6 +53,7 @@
     "@manifest-editor/creators": "workspace:*",
     "@manifest-editor/editor-api": "workspace:*",
     "@manifest-editor/editors": "workspace:*",
+    "@manifest-editor/i18n": "workspace:*",
     "@manifest-editor/manifest-preset": "workspace:*",
     "@manifest-editor/shell": "workspace:*",
     "exhibition-viewer": "^1.0.14",
@@ -62,8 +63,7 @@
     "react-iiif-vault": "catalog:",
     "tailwind-merge": "^2.3.0",
     "tiny-invariant": "^1.3.3",
-    "zustand": "catalog:",
-    "@manifest-editor/i18n": "workspace:*"
+    "zustand": "catalog:"
   },
   "devDependencies": {
     "@manifest-editor/ui": "workspace:*",
