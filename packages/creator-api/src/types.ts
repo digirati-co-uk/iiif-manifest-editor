@@ -74,6 +74,8 @@ export interface PlaceholderPosition {
 }
 
 export interface CreatorOptions {
+  signal?: AbortSignal;
+  ensurePaintingPage?: { canvasId: string; pageId: string };
   placeholderPosition?: PlaceholderPosition;
   targetType: string;
   target?: Reference;
@@ -248,6 +250,7 @@ export interface CreatorSideEffect {
 }
 
 export interface CreatableResource {
+  ensurePaintingPage?: { canvasId: string; pageId: string };
   placeholderPosition?: PlaceholderPosition;
   type: string;
   parent?: Reference;

@@ -1,5 +1,18 @@
 /** Shell UI messages. Authored IIIF values, IDs and protocol data are not catalog entries. */
 export const catalog = {
+  history: {
+    title: "Edit history",
+    undo: "Undo",
+    redo: "Redo",
+    redoOperation: "Redo {{label}}",
+    undoOperation: "Undo {{label}}",
+    disabled: "History is unavailable for this document.",
+    empty: "There are no changes to reverse.",
+    open: "Finish the current edit before undoing.",
+    busy: "Waiting for the current change to finish.",
+    syncConflict: "A concurrent edit prevented saving this change. The current document has been reloaded.",
+    conflict: "This change cannot be reversed because the affected content has changed.",
+  },
   project: {
     open: "Open project",
     export: "Export",

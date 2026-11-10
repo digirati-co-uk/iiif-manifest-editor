@@ -1,11 +1,16 @@
+import {
+  captureVaultCheckpoint,
+  restoreVaultCheckpoint,
+  createManifestEditorVault,
+} from "@manifest-editor/client-vault";
 // 1. List projects
 // 2. Get project by ID
 
-import { createThumbnailHelper, Vault } from "@iiif/helpers";
+import { createThumbnailHelper, Vault, type VaultHistorySnapshot } from "@iiif/helpers";
 import type { InternationalString } from "@iiif/presentation-3";
 import type { Config } from "@manifest-editor/shell";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createStore, del, delMany, get, keys, set } from "idb-keyval";
+import { createStore, del, delMany, get, keys, set, update } from "idb-keyval";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { queryClient } from "../site/Provider";
 
@@ -50,6 +55,7 @@ export interface LocalBrowserProject {
   };
   source: { id: string; type: string };
   vaultData: any;
+  historySnapshot?: VaultHistorySnapshot;
   extraData: { config?: Config } & { [key: string]: any };
   created: number;
   updated: number;
@@ -81,25 +87,46 @@ export async function internal_getBrowserProjectById(projectId: string): Promise
   return (await get(projectId, localStore)) || null;
 }
 
+async function updateBrowserProject(id: string, transform: (current: LocalBrowserProject) => LocalBrowserProject) {
+  let result!: LocalBrowserProject;
+  await update<LocalBrowserProject>(
+    id,
+    (current) => {
+      if (!current) throw new Error("Project not found");
+      result = transform(current);
+      return result;
+    },
+    localStore
+  );
+  return result;
+}
+
 export async function openBrowserProject(
   id: string
 ): Promise<{ project: LocalBrowserProject; wasAlreadyOpen: boolean }> {
-  const current = await get<LocalBrowserProject>(id, localStore);
-  if (!current) throw new Error("Project not found");
-  const project = { ...current, isOpen: true };
-  await set(id, project, localStore);
-  return {
-    project,
-    wasAlreadyOpen: current.isOpen,
-  };
+  let wasAlreadyOpen = false;
+  const project = await updateBrowserProject(id, (current) => {
+    wasAlreadyOpen = current.isOpen;
+    return { ...current, isOpen: true };
+  });
+  return { project, wasAlreadyOpen };
 }
 
 export async function closeBrowserProject(id: string): Promise<LocalBrowserProject> {
-  const current = await get<LocalBrowserProject>(id, localStore);
-  if (!current) throw new Error("Project not found");
-  const project = { ...current, isOpen: false };
-  await set(id, project, localStore);
-  return current;
+  return updateBrowserProject(id, (current) => ({ ...current, isOpen: false }));
+}
+
+async function updateBrowserProjectWithEtag(
+  id: string,
+  etag: string,
+  transform: (current: LocalBrowserProject) => LocalBrowserProject
+): Promise<string> {
+  if (!etag) throw new Error("etag is required");
+  const project = await updateBrowserProject(id, (current) => {
+    if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
+    return { ...transform(current), updated: Date.now(), etag: `etag_${crypto.randomUUID()}` };
+  });
+  return project.etag!;
 }
 
 export async function createBrowserProject(
@@ -129,53 +156,29 @@ export async function saveBrowserProjectResource(
   resource: LocalBrowserProject["resource"],
   etag: string
 ): Promise<string> {
-  const current = await get<LocalBrowserProject>(id, localStore);
-  if (!current) throw new Error("Project not found");
-  if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
-  const newEtag = `etag_${Date.now()}`;
-  const project = { ...current, resource, updated: Date.now(), etag: newEtag };
-  await set(id, project, localStore);
-  return newEtag;
+  return updateBrowserProjectWithEtag(id, etag, (current) => ({ ...current, resource }));
 }
 
 export async function saveBrowserProjectVaultData(
   id: string,
   data: object,
   etag: string,
-  resource?: LocalBrowserProject["resource"]
+  resource?: LocalBrowserProject["resource"],
+  historySnapshot?: VaultHistorySnapshot
 ): Promise<string> {
-  const current = await get<LocalBrowserProject>(id, localStore);
-  if (!current) throw new Error("Project not found");
-  if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
-  const newEtag = `etag_${Date.now()}`;
-  const project = {
+  return updateBrowserProjectWithEtag(id, etag, (current) => ({
     ...current,
     vaultData: data,
+    historySnapshot,
     resource: resource || current.resource,
-    updated: Date.now(),
-    etag: newEtag,
-  };
-  await set(id, project, localStore);
-  return newEtag;
+  }));
 }
 
 export async function saveBrowserProjectExtraData(id: string, data: object, etag: string): Promise<string> {
-  const current = await get<LocalBrowserProject>(id, localStore);
-  if (!current) throw new Error("Project not found");
-  if (!etag) throw new Error("etag is required");
-  if (current.etag !== etag) throw new Error(`etag mismatch: ${current.etag} !== ${etag}`);
-  const newEtag = `etag_${Date.now()}`;
-  const newExtraData = { ...(current.extraData || {}), ...data };
-  const project = {
+  return updateBrowserProjectWithEtag(id, etag, (current) => ({
     ...current,
-    extraData: newExtraData,
-    updated: Date.now(),
-    etag: newEtag,
-  };
-  await set(id, project, localStore);
-  return newEtag;
+    extraData: { ...(current.extraData || {}), ...data },
+  }));
 }
 
 export async function getLatestEtag(id: string): Promise<string | null> {
@@ -238,10 +241,20 @@ export function useBrowserGlobalPluginConfig() {
 }
 
 export function useBrowserProject(id: string) {
-  const etag = useRef<string | null>(null);
+  const etag = useMemo(() => ({ id, current: null as string | null }), [id]);
+  const lifecycle = useRef(new Map<Vault, number>());
+  const enqueueWrite = useMemo(() => {
+    let tail: Promise<unknown> = Promise.resolve();
+    return <T>(write: () => Promise<T>): Promise<T> => {
+      if (!id) return Promise.reject(new Error("Project id is required"));
+      const result = tail.catch(() => {}).then(write);
+      tail = result;
+      return result;
+    };
+  }, [id]);
   const vaultRef = useRef<{ id: string; vault: Vault } | null>(null);
   if (vaultRef.current?.id !== id) {
-    vaultRef.current = { id, vault: new Vault() };
+    vaultRef.current = { id, vault: createManifestEditorVault() };
   }
   const vault = vaultRef.current.vault;
   useEffect(() => {
@@ -259,7 +272,7 @@ export function useBrowserProject(id: string) {
     queryFn: async () => {
       if (!id) throw new Error("id is required");
       const project = await openBrowserProject(id);
-      vault.getStore().setState({ iiif: project.project.vaultData as any });
+      restoreVaultCheckpoint(vault, project.project);
       setVaultReady(true);
       etag.current = project.project.etag;
       setStaleEtag(false);
@@ -281,20 +294,21 @@ export function useBrowserProject(id: string) {
   });
 
   const saveExtraData = useMutation({
-    mutationFn: async (data: object, force = false) => {
-      if (force) etag.current = await getLatestEtag(id);
-      if (!projectData) throw new Error("project not loaded");
-      if (!etag.current) throw new Error("etag not set");
-      const newEtag = await saveBrowserProjectExtraData(id, data, etag.current!);
-      etag.current = newEtag;
-      queryClient.setQueryData(["browser-project", id], {
-        project: {
-          ...projectData.project,
-          extraData: { ...(projectData.project.extraData || {}), ...data },
-        },
-        wasAlreadyOpen: projectData.wasAlreadyOpen,
-      });
-    },
+    mutationFn: async (data: object, force = false) =>
+      enqueueWrite(async () => {
+        if (force) etag.current = await getLatestEtag(id);
+        if (!projectData) throw new Error("project not loaded");
+        if (!etag.current) throw new Error("etag not set");
+        const newEtag = await saveBrowserProjectExtraData(id, data, etag.current!);
+        etag.current = newEtag;
+        queryClient.setQueryData(["browser-project", id], {
+          project: {
+            ...projectData.project,
+            extraData: { ...(projectData.project.extraData || {}), ...data },
+          },
+          wasAlreadyOpen: projectData.wasAlreadyOpen,
+        });
+      }),
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -313,17 +327,18 @@ export function useBrowserProject(id: string) {
   );
 
   const saveResource = useMutation({
-    mutationFn: async (data: LocalBrowserProject["resource"], force = false) => {
-      if (force) etag.current = await getLatestEtag(id);
-      if (!projectData) throw new Error("project not loaded");
-      if (!etag.current) throw new Error("etag not set");
-      const newEtag = await saveBrowserProjectResource(id, data, etag.current!);
-      etag.current = newEtag;
-      queryClient.setQueryData(["browser-project", id], {
-        project: { ...projectData.project, resource: data },
-        wasAlreadyOpen: projectData.wasAlreadyOpen,
-      });
-    },
+    mutationFn: async (data: LocalBrowserProject["resource"], force = false) =>
+      enqueueWrite(async () => {
+        if (force) etag.current = await getLatestEtag(id);
+        if (!projectData) throw new Error("project not loaded");
+        if (!etag.current) throw new Error("etag not set");
+        const newEtag = await saveBrowserProjectResource(id, data, etag.current!);
+        etag.current = newEtag;
+        queryClient.setQueryData(["browser-project", id], {
+          project: { ...projectData.project, resource: data },
+          wasAlreadyOpen: projectData.wasAlreadyOpen,
+        });
+      }),
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -332,26 +347,27 @@ export function useBrowserProject(id: string) {
   });
 
   const saveVaultData = useMutation({
-    mutationFn: async ({ force = false, resource }: { force?: boolean; resource?: object } = {}) => {
-      if (force) etag.current = await getLatestEtag(id);
-      if (!projectData) return null;
-      if (!etag.current) throw new Error("etag not set");
-      const data = vault.getState().iiif;
+    mutationFn: async ({ force = false, resource }: { force?: boolean; resource?: object } = {}) =>
+      enqueueWrite(async () => {
+        if (force) etag.current = await getLatestEtag(id);
+        if (!projectData) return null;
+        if (!etag.current) throw new Error("etag not set");
+        const { vaultData: data, historySnapshot } = captureVaultCheckpoint(vault);
 
-      const manifests = Object.keys(data.entities.Manifest || {});
-      const collections = Object.keys(data.entities.Manifest || {});
+        const manifests = Object.keys(data.entities.Manifest || {});
+        const collections = Object.keys(data.entities.Collection || {});
 
-      if (manifests.length + collections.length === 0) {
-        // Ignore empty vaults.
-        return;
-      }
+        if (manifests.length + collections.length === 0) {
+          // Ignore empty vaults.
+          return;
+        }
 
-      etag.current = await saveBrowserProjectVaultData(id, data, etag.current!, resource as any);
-      queryClient.setQueryData(["browser-project", id], {
-        project: { ...projectData.project, vaultData: data },
-        wasAlreadyOpen: projectData.wasAlreadyOpen,
-      });
-    },
+        etag.current = await saveBrowserProjectVaultData(id, data, etag.current!, resource as any, historySnapshot);
+        queryClient.setQueryData(["browser-project", id], {
+          project: { ...projectData.project, vaultData: data, historySnapshot },
+          wasAlreadyOpen: projectData.wasAlreadyOpen,
+        });
+      }),
     onError: (error) => {
       console.log("error", error);
       setStaleEtag(true);
@@ -373,17 +389,43 @@ export function useBrowserProject(id: string) {
   });
 
   useEffect(() => {
-    return () => {
-      closeProject.mutate();
+    const lifetimes = lifecycle.current;
+    const generation = (lifetimes.get(vault) || 0) + 1;
+    lifetimes.set(vault, generation);
+    const persist = () =>
+      enqueueWrite(async () => {
+        if (!etag.current) return;
+        const { finishVaultEditSessions } = await import("@manifest-editor/shell");
+        finishVaultEditSessions(vault);
+        const checkpoint = captureVaultCheckpoint(vault);
+        etag.current = await saveBrowserProjectVaultData(
+          id,
+          checkpoint.vaultData,
+          etag.current,
+          undefined,
+          checkpoint.historySnapshot
+        );
+        await closeBrowserProject(id);
+      });
+    const beforeUnload = () => {
+      void persist().catch(console.error);
     };
-  }, []);
-
-  // Before the window closes.
-  useEffect(() => {
-    window.addEventListener("beforeunload", async (e) => {
-      await closeProject.mutateAsync();
-    });
-  }, []);
+    window.addEventListener("beforeunload", beforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      queueMicrotask(() => {
+        if (lifetimes.get(vault) !== generation) return;
+        void persist()
+          .catch(console.error)
+          .finally(() => {
+            if (lifetimes.get(vault) === generation) {
+              vault.history?.dispose();
+              lifetimes.delete(vault);
+            }
+          });
+      });
+    };
+  }, [id, vault, etag, enqueueWrite]);
 
   return {
     staleEtag,

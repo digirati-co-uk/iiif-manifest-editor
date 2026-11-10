@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Історія редагувань",
+    undo: "Скасувати",
+    redo: "Повторити",
+    redoOperation: "Повторити: {{label}}",
+    undoOperation: "Скасувати: {{label}}",
+    disabled: "Історія для цього документа недоступна.",
+    empty: "Немає змін для скасування.",
+    open: "Завершіть поточне редагування перед скасуванням.",
+    busy: "Очікування завершення поточної зміни.",
+    syncConflict: "Одночасне редагування завадило збереженню цієї зміни. Поточний документ було завантажено повторно.",
+    conflict: "Цю зміну неможливо скасувати, оскільки відповідний вміст було змінено.",
+  },
   project: {
     open: "Відкритий проект",
     export: "Експорт",

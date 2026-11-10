@@ -16,7 +16,7 @@ export class MessagePortClientVault extends RemoteClientVault {
   destroy() {
     this.port.removeEventListener("message", this.handleMessage);
     this.port.removeEventListener("messageerror", this.handleClose);
-    this.handleTransportClose();
+    this.disposeTransport();
     this.port.close();
   }
 
@@ -29,6 +29,6 @@ export class MessagePortClientVault extends RemoteClientVault {
   };
 
   private handleClose = () => {
-    this.handleTransportClose();
+    this.disposeTransport();
   };
 }

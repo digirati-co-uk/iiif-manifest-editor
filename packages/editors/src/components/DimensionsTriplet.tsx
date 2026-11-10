@@ -1,3 +1,5 @@
+import type { Vault } from "@iiif/helpers/vault";
+import { useVaultEditSession } from "@manifest-editor/shell";
 import { propertyLabels, documentation } from "@manifest-editor/editor-api";
 import { useDisplayLabel } from "../i18n";
 import { useEditorI18n } from "@manifest-editor/i18n";
@@ -8,11 +10,11 @@ import { InformationLink } from "@manifest-editor/ui/atoms/InformationLink";
 
 type Dimensions = {
   width: number;
-  changeWidth?: (newNumber: number) => void;
+  changeWidth?: (newNumber: number, vault?: Vault) => void;
   height: number;
-  changeHeight?: (newHeight: number) => void;
+  changeHeight?: (newHeight: number, vault?: Vault) => void;
   duration?: number;
-  changeDuration?: (newDuration: number) => void;
+  changeDuration?: (newDuration: number, vault?: Vault) => void;
   widthId?: string;
   heightId?: string;
   durationId?: string;
@@ -29,6 +31,9 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
   heightId,
   durationId,
 }) => {
+  const widthSession = useVaultEditSession("Edit width", `${widthId}:width`);
+  const heightSession = useVaultEditSession("Edit height", `${heightId}:height`);
+  const durationSession = useVaultEditSession("Edit duration", `${durationId}:duration`);
   const apiLabel = useDisplayLabel();
   const { resolveMessage } = useEditorI18n();
   return (
@@ -49,12 +54,13 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
           <Input
             id="dims-height"
             name="dims-height"
+            onBlur={() => heightSession.finish()}
             min={0}
             type="number"
             onChange={
               changeHeight
                 ? (e: any) => {
-                    changeHeight(e.target.valueAsNumber);
+                    heightSession.run((scoped) => changeHeight(e.target.valueAsNumber, scoped));
                   }
                 : undefined
             }
@@ -78,12 +84,13 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
           <Input
             id="dims-width"
             name="dims-width"
+            onBlur={() => widthSession.finish()}
             min={0}
             type="number"
             onChange={
               changeWidth
                 ? (e: any) => {
-                    changeWidth(e.target.valueAsNumber);
+                    widthSession.run((scoped) => changeWidth(e.target.valueAsNumber, scoped));
                   }
                 : undefined
             }
@@ -108,12 +115,13 @@ export const DimensionsTriplet: React.FC<Dimensions> = ({
             <Input
               id="dims-duration"
               name="dims-duration"
+              onBlur={() => durationSession.finish()}
               min={0}
               type="number"
               onChange={
                 changeDuration
                   ? (e: any) => {
-                      changeDuration(e.target.valueAsNumber);
+                      durationSession.run((scoped) => changeDuration(e.target.valueAsNumber, scoped));
                     }
                   : undefined
               }

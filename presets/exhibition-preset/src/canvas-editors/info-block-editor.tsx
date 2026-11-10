@@ -1,9 +1,12 @@
+import type { Vault } from "@iiif/helpers/vault";
+import { runVaultCommand } from "@manifest-editor/editor-api";
 import { ActionButton, HTMLEditor } from "@manifest-editor/components";
 import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
 import {
   type CanvasEditorDefinition,
   useConfig,
   useGenericEditor,
+  useVaultEditSession,
   useInlineCreator,
   useLocalStorage,
 } from "@manifest-editor/shell";
@@ -119,7 +122,7 @@ function LanguageSelector({
                     type="button"
                     className={twMerge(
                       "flex w-full items-center gap-2 px-3 py-1.5 text-xs hover:bg-slate-50",
-                      lang === selectedLanguage ? "font-semibold text-slate-900" : "text-slate-600",
+                      lang === selectedLanguage ? "font-semibold text-slate-900" : "text-slate-600"
                     )}
                     onClick={() => {
                       onSelectLanguage(lang);
@@ -212,7 +215,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
   const compact = hasDimension && dims.w <= 6;
   const annotationPage = useVaultSelector((_, vault) => (canvas?.items[0] ? vault.get(canvas.items[0]) : null));
   const longSummaries = useVaultSelector((_, vault) =>
-    canvas?.annotations[0] ? vault.get(canvas?.annotations[0]!) : null,
+    canvas?.annotations[0] ? vault.get(canvas?.annotations[0]!) : null
   );
 
   const {
@@ -235,15 +238,13 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
       if (all.size === 0) all.add(defaultLanguage || "en");
       return Array.from(all);
     },
-    [annotationPage?.id, longSummaries?.id, defaultLanguage],
+    [annotationPage?.id, longSummaries?.id, defaultLanguage]
   );
 
   const [selectedLanguage, setSelectedLanguage] = useState<string>();
   const effectiveLanguage =
     selectedLanguage ||
-    (presentLanguages.includes(defaultLanguage)
-      ? defaultLanguage
-      : presentLanguages[0] || defaultLanguage || "en");
+    (presentLanguages.includes(defaultLanguage) ? defaultLanguage : presentLanguages[0] || defaultLanguage || "en");
 
   // When a new language is added we switch to it immediately
   const handleAddLanguage = (lang: string) => {
@@ -299,7 +300,7 @@ function InfoBlockEditor({ strategy }: { strategy: TextualContentStrategy }) {
                 "border-b border-gray-100",
                 compact ? "p-3" : "p-5",
                 hasDimension && (isLeft || isRight) ? "max-w-xl" : "",
-                hasDimension && isBottom ? "max-w-4xl" : "",
+                hasDimension && isBottom ? "max-w-4xl" : ""
               )}
               parentProperty="items"
               selectedLanguage={effectiveLanguage}
@@ -328,7 +329,7 @@ function ModeButton({ children, selected, onPress }: { children: string; selecte
     <Button
       className={twMerge(
         "px-3 py-2 text-xs font-semibold transition",
-        selected ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700",
+        selected ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
       )}
       onPress={onPress}
     >
@@ -382,7 +383,7 @@ function SummarySection({
           property: parentProperty,
           resource: { id: canvas.id, type: "Canvas" },
         },
-      },
+      }
     );
   };
 
@@ -409,66 +410,68 @@ function SummarySection({
           resource: { id: page.id, type: "AnnotationPage" },
         },
         initialData: {},
-      },
+      }
     );
   };
 
   // Add a body in the selected language to every annotation in this page
   const addLanguageToPage = () => {
-    if (!page) {
-      // If there's no page yet, create an annotation with the selected language
-      createSummaryAnnotation();
-      onLanguageAdded(selectedLanguage);
-      return;
-    }
+    return runVaultCommand(vault, "Add text language", (vault) => {
+      if (!page) {
+        // If there's no page yet, create an annotation with the selected language
+        createSummaryAnnotation();
+        onLanguageAdded(selectedLanguage);
+        return;
+      }
 
-    let addedAny = false;
-    for (const annotationRef of items) {
-      const annotation = resolveResource(annotationRef, vault);
-      if (!annotation) continue;
-      const bodies = toArray(annotation.body);
-      const alreadyHasLang = bodies.some((bodyRef) => {
-        const body = resolveResource(bodyRef, vault);
-        return body?.language === selectedLanguage;
-      });
-      if (alreadyHasLang) continue;
+      let addedAny = false;
+      for (const annotationRef of items) {
+        const annotation = resolveResource(annotationRef, vault);
+        if (!annotation) continue;
+        const bodies = toArray(annotation.body);
+        const alreadyHasLang = bodies.some((bodyRef) => {
+          const body = resolveResource(bodyRef, vault);
+          return body?.language === selectedLanguage;
+        });
+        if (alreadyHasLang) continue;
 
-      // Create a new body with the selected language by cloning the first body's structure
-      const firstBodyRef = bodies[0];
-      const firstBody = firstBodyRef ? resolveResource(firstBodyRef, vault) : null;
-      const newBodyId = `${annotation.id}-body-${selectedLanguage}-${Date.now()}`;
-      vault.batch(() => {
-        vault.dispatch(
-          importEntities({
-            entities: {
-              ContentResource: {
-                [newBodyId]: {
-                  id: newBodyId,
-                  type: firstBody?.type || "TextualBody",
-                  language: selectedLanguage,
-                  value: "",
-                  format: firstBody?.format || "text/html",
+        // Create a new body with the selected language by cloning the first body's structure
+        const firstBodyRef = bodies[0];
+        const firstBody = firstBodyRef ? resolveResource(firstBodyRef, vault) : null;
+        const newBodyId = `${annotation.id}-body-${selectedLanguage}-${Date.now()}`;
+        vault.batch(() => {
+          vault.dispatch(
+            importEntities({
+              entities: {
+                ContentResource: {
+                  [newBodyId]: {
+                    id: newBodyId,
+                    type: firstBody?.type || "TextualBody",
+                    language: selectedLanguage,
+                    value: "",
+                    format: firstBody?.format || "text/html",
+                  },
                 },
               },
-            },
-          }),
-        );
-        vault.dispatch(addMappings({ mapping: { [newBodyId]: "ContentResource" } }));
-        vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", [
-          ...bodies,
-          { id: newBodyId, type: "ContentResource" },
-        ]);
-      });
-      addedAny = true;
-    }
+            })
+          );
+          vault.dispatch(addMappings({ mapping: { [newBodyId]: "ContentResource" } }));
+          vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", [
+            ...bodies,
+            { id: newBodyId, type: "ContentResource" },
+          ]);
+        });
+        addedAny = true;
+      }
 
-    if (addedAny) {
-      onLanguageAdded(selectedLanguage);
-    } else {
-      // If there were no annotations yet, create a fresh one
-      createSummaryAnnotation();
-      onLanguageAdded(selectedLanguage);
-    }
+      if (addedAny) {
+        onLanguageAdded(selectedLanguage);
+      } else {
+        // If there were no annotations yet, create a fresh one
+        createSummaryAnnotation();
+        onLanguageAdded(selectedLanguage);
+      }
+    });
   };
 
   // Check whether the selected language is already represented in this page
@@ -486,7 +489,7 @@ function SummarySection({
       }
       return false;
     },
-    [page?.id, items, selectedLanguage],
+    [page?.id, items, selectedLanguage]
   );
 
   return (
@@ -495,7 +498,7 @@ function SummarySection({
         <h2
           className={twMerge(
             "font-semibold tracking-tight text-gray-700",
-            compact ? "text-xs uppercase" : "text-sm uppercase tracking-wide",
+            compact ? "text-xs uppercase" : "text-sm uppercase tracking-wide"
           )}
         >
           {heading}
@@ -526,7 +529,7 @@ function SummarySection({
                   vault.modifyEntityField(
                     { id: page.id, type: "AnnotationPage" },
                     "items",
-                    items.filter((_item: any, itemIndex: number) => itemIndex !== index),
+                    items.filter((_item: any, itemIndex: number) => itemIndex !== index)
                   );
                 }}
               />
@@ -574,19 +577,21 @@ function AnnotationEditor({
   const visibleBodies = languageBodies.length > 0 ? languageBodies : [];
 
   const pruneEmptySiblings = useCallback(
-    (currentBodyId: string) => {
-      const nextBodies = filterEmptyRefs(bodies, vault, currentBodyId);
-      if (nextBodies.length !== bodies.length) {
-        vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", nextBodies);
-      }
+    (currentBodyId: string, sourceVault = vault) => {
+      return runVaultCommand(sourceVault, "Update text block", (vault) => {
+        const nextBodies = filterEmptyRefs(bodies, vault, currentBodyId);
+        if (nextBodies.length !== bodies.length) {
+          vault.modifyEntityField({ id: annotation.id, type: "Annotation" }, "body", nextBodies);
+        }
 
-      const nextPageItems = filterEmptyAnnotations(pageItems, vault, annotation.id);
-      if (nextPageItems.length !== pageItems.length) {
-        vault.modifyEntityField(pageRef, "items", nextPageItems);
-      }
+        const nextPageItems = filterEmptyAnnotations(pageItems, vault, annotation.id);
+        if (nextPageItems.length !== pageItems.length) {
+          vault.modifyEntityField(pageRef, "items", nextPageItems);
+        }
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [annotation.id, pageRef.id, pageItems, vault],
+    [annotation.id, pageRef.id, pageItems, vault]
   );
 
   if (!visibleBodies.length) {
@@ -600,7 +605,7 @@ function AnnotationEditor({
           key={body.id || index}
           resourceId={body.id}
           onRemove={() => editor.annotation.body.deleteAtIndex(index)}
-          onUpdate={() => pruneEmptySiblings(body.id)}
+          onUpdate={(scoped) => pruneEmptySiblings(body.id, scoped)}
           editorMaxWidth={editorMaxWidth}
         />
       ))}
@@ -617,7 +622,7 @@ function HTMLAnnotationBodyEditor({
   editorMaxWidth?: string;
   resourceId: string;
   onRemove: () => void;
-  onUpdate: () => void;
+  onUpdate: (vault?: Vault) => void;
 }) {
   const resourceRef = useMemo(() => ({ id: resourceId, type: "ContentResource" as const }), [resourceId]);
   const editor = useGenericEditor(resourceRef);
@@ -625,21 +630,17 @@ function HTMLAnnotationBodyEditor({
     i18n: { advancedLanguageMode, availableLanguages, defaultLanguage },
   } = useConfig();
   const { language, value } = editor.descriptive;
+  const session = useVaultEditSession("Edit text block", resourceId);
   const languageValue = language.get();
   const currentLanguage = Array.isArray(languageValue)
     ? languageValue[0] || defaultLanguage || "en"
     : languageValue || defaultLanguage || "en";
 
-  useEffect(() => {
-    const nextLanguage = Array.isArray(language.get()) ? language.get()[0] : language.get();
-    if (!advancedLanguageMode && nextLanguage !== currentLanguage) {
-      language.set(currentLanguage as any);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [advancedLanguageMode, currentLanguage]);
-
   return (
     <div
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) session.finish();
+      }}
       className="min-w-0 max-w-full overflow-hidden"
       style={editorMaxWidth ? { maxWidth: editorMaxWidth } : undefined}
     >
@@ -663,11 +664,16 @@ function HTMLAnnotationBodyEditor({
         </div>
       ) : null}
       <HTMLEditor
-        key={`${resourceId}:${currentLanguage}`}
+        registerFlush={(flush) => session.onFlush(flush)}
+        key={`${resourceId}:${currentLanguage}:${session.epoch}`}
         value={value.get() || ""}
         onChange={(newValue) => {
-          value.set(newValue);
-          onUpdate();
+          session.run((scoped) => {
+            if (!advancedLanguageMode && language.get() !== currentLanguage)
+              language.withVault(scoped).set(currentLanguage as any);
+            value.withVault(scoped).set(newValue);
+            onUpdate(scoped);
+          });
         }}
       />
     </div>

@@ -613,42 +613,44 @@ function SimpleSlideLayoutEditor({
     invert?: boolean;
     backdrop?: BackdropBehavior;
   }) => {
-    const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : undefined;
-    const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
-    const nextFloating = next.floating ?? floating;
-    const nextFloatingBehavior = next.floatingBehavior ?? floatingBehavior;
-    const nextCover = next.cover ?? cover;
-    const nextScrollEnabled = next.scrollEnabled ?? scrollEnabled;
-    const nextSplash = next.splash ?? splash;
-    const nextFixed = next.fixed ?? fixed;
-    const nextInvert = next.invert ?? invert;
-    const nextBackdrop = next.backdrop ?? backdrop;
-    onChange(
-      buildSimpleLayoutBehaviors({
-        behavior,
-        layoutPreset: nextLayoutPreset,
-        displayWidth: nextDisplayWidth,
-        canvasWidth,
-        canvasHeight,
-        floating: nextFloating,
-        floatingBehavior: nextFloatingBehavior,
-        cover: nextCover,
-        scrollEnabled: nextScrollEnabled,
-        splash: nextSplash,
-        fixed: controls.showFixedCover && nextFixed,
-        invert: nextInvert,
-        backdrop: controls.showCoverBackdrop ? nextBackdrop : "",
-        showGridSizing: controls.showGridSizing && !nextScrollEnabled,
-        showFloating: controls.showFloating,
-        showImageCover: controls.showImageCover,
-        showScrollToggle: controls.showScrollToggle,
-        showScrollDisplay: controls.showScrollDisplay && isCoverCanvas,
-      })
-    );
+    return vault.batch(() => {
+      const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : undefined;
+      const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
+      const nextFloating = next.floating ?? floating;
+      const nextFloatingBehavior = next.floatingBehavior ?? floatingBehavior;
+      const nextCover = next.cover ?? cover;
+      const nextScrollEnabled = next.scrollEnabled ?? scrollEnabled;
+      const nextSplash = next.splash ?? splash;
+      const nextFixed = next.fixed ?? fixed;
+      const nextInvert = next.invert ?? invert;
+      const nextBackdrop = next.backdrop ?? backdrop;
+      onChange(
+        buildSimpleLayoutBehaviors({
+          behavior,
+          layoutPreset: nextLayoutPreset,
+          displayWidth: nextDisplayWidth,
+          canvasWidth,
+          canvasHeight,
+          floating: nextFloating,
+          floatingBehavior: nextFloatingBehavior,
+          cover: nextCover,
+          scrollEnabled: nextScrollEnabled,
+          splash: nextSplash,
+          fixed: controls.showFixedCover && nextFixed,
+          invert: nextInvert,
+          backdrop: controls.showCoverBackdrop ? nextBackdrop : "",
+          showGridSizing: controls.showGridSizing && !nextScrollEnabled,
+          showFloating: controls.showFloating,
+          showImageCover: controls.showImageCover,
+          showScrollToggle: controls.showScrollToggle,
+          showScrollDisplay: controls.showScrollDisplay && isCoverCanvas,
+        })
+      );
 
-    if (canvas && nextLayoutPreset) {
-      injectTextPlaceholders(vault, canvas, nextLayoutPreset);
-    }
+      if (canvas && nextLayoutPreset) {
+        injectTextPlaceholders(vault, canvas, nextLayoutPreset);
+      }
+    });
   };
 
   return (

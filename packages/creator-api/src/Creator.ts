@@ -3,6 +3,7 @@ import { entityActions } from "@iiif/helpers/vault/actions";
 import type { Reference } from "@iiif/presentation-3";
 import { placeCreatedResources } from "./placeholder-position";
 import {
+  EditorInstance,
   beginCanvasComposition,
   getCanvasLayout,
   getEmptyCanvasPlaceholders,
@@ -29,7 +30,12 @@ export class Creator {
     return matchBasedOnResource(resource, this.configs || [], { vault: this.vault });
   }
 
+  withVault(vault: Vault): Creator {
+    return new Creator(vault, this.configs, this.previewVault, this.creatorConfig);
+  }
+
   async create(definition: string, payload: any, options?: Partial<CreatorOptions>): Promise<Reference | Reference[]> {
+    options?.signal?.throwIfAborted();
     const foundDefinition = this.configs.find((t) => t.id === definition);
     if (!foundDefinition) {
       throw new Error(`Creator config ${definition} not found`);
@@ -63,97 +69,123 @@ export class Creator {
       }
     }
 
-    const runtime = new CreatorRuntime(
-      this.vault,
-      foundDefinition,
-      payload,
-      this.configs,
-      this.previewVault,
-      options,
-      this.creatorConfig
-    );
-
     if (options?.placeholderPosition && !validRectangle(options.placeholderPosition.bounds)) {
       throw new Error("Invalid placeholder position");
     }
-    const run = await runtime.run();
-    const allResources = Array.isArray(run) ? run : [run];
-    const afterActions: any[] = [];
-
-    for (const resource of allResources) {
-      if (options?.parent) {
-        if (options.parent.property === "start" || options.parent.property === "target") {
-          afterActions.push(
-            entityActions.modifyEntityField({
-              id: options.parent.resource.id,
-              type: options.parent.resource.type as any,
-              value: resource.ref(),
-              key: options.parent.property,
-            })
-          );
-        } else {
-          afterActions.push(
-            entityActions.addReference({
-              id: options.parent.resource.id,
-              type: options.parent.resource.type as any,
-              reference: resource.ref(),
-              key: options.parent.property,
-              index: options.placeholderPosition?.replaceAnnotationId
-                ? this.vault
-                    .get<any>(options.parent.resource)
-                    [options.parent.property]?.findIndex(
-                      (ref: Reference) => ref.id === options.placeholderPosition!.replaceAnnotationId
-                    )
-                : options.parent.atIndex,
-            })
-          );
+    const context = this.vault.beginInteraction({ label: `Create ${foundDefinition.resourceType}` });
+    const abort = () => context.cancel();
+    options?.signal?.addEventListener("abort", abort, { once: true });
+    try {
+      const scoped = context.vault;
+      if (options?.ensurePaintingPage) {
+        const { canvasId, pageId } = options.ensurePaintingPage;
+        if (!scoped.get({ id: pageId, type: "AnnotationPage" })) {
+          await scoped.load(pageId, { id: pageId, type: "AnnotationPage", items: [] });
+          new EditorInstance({ vault: scoped, reference: { id: canvasId, type: "Canvas" } }).structural.items.add({
+            id: pageId,
+            type: "AnnotationPage",
+          });
         }
       }
-    }
+      const runtime = new CreatorRuntime(
+        scoped,
+        foundDefinition,
+        payload,
+        this.configs,
+        this.previewVault,
+        options,
+        this.creatorConfig
+      );
 
-    // Validate against live occupancy before any parent references are committed.
-    const placement = options?.placeholderPosition;
-    if (placement) {
-      if (placement.replaceAnnotationId && allResources.length !== 1)
-        throw new Error("Choose one image to replace this image. Nothing has been changed.");
-      const canvas = this.vault.get<any>({ id: placement.canvasId, type: "Canvas" });
-      const state = getCanvasLayout(this.vault, canvas.id);
-      if (state?.customised === false) {
-        const slot = state.slots.find((slot) => slot.id === placement.placeholderId);
-        const empty = getEmptyCanvasPlaceholders(this.vault, canvas);
-        if (
-          !slot ||
-          (placement.replaceAnnotationId
-            ? slot.annotationIds?.length !== 1 ||
-              slot.annotationIds[0] !== placement.replaceAnnotationId ||
-              allResources.length !== 1
-            : !empty.some((item) => item.id === slot.id) || allResources.length > empty.length)
-        )
-          throw new Error(
-            "Not enough empty positions. Reduce the selection or choose a larger layout. Nothing has been added."
-          );
+      const run = await runtime.run();
+      options?.signal?.throwIfAborted();
+      const allResources = Array.isArray(run) ? run : [run];
+      const afterActions: any[] = [];
+
+      for (const [offset, resource] of allResources.entries()) {
+        if (options?.parent) {
+          if (options.parent.property === "start" || options.parent.property === "target") {
+            afterActions.push(
+              entityActions.modifyEntityField({
+                id: options.parent.resource.id,
+                type: options.parent.resource.type as any,
+                value: resource.ref(),
+                key: options.parent.property,
+              })
+            );
+          } else {
+            afterActions.push(
+              entityActions.addReference({
+                id: options.parent.resource.id,
+                type: options.parent.resource.type as any,
+                reference: resource.ref(),
+                key: options.parent.property,
+                index: options.placeholderPosition?.replaceAnnotationId
+                  ? scoped
+                      .get<any>(options.parent.resource)
+                      [options.parent.property]?.findIndex(
+                        (ref: Reference) => ref.id === options.placeholderPosition!.replaceAnnotationId
+                      )
+                  : options.parent.atIndex === undefined
+                    ? undefined
+                    : options.parent.atIndex + offset,
+              })
+            );
+          }
+        }
       }
-      beginCanvasComposition(this.vault, canvas);
-    }
-    const result = runtime.commit(afterActions);
 
-    // Only run side effects if there is a parent
-    if (options?.parent) {
-      if (foundDefinition.sideEffects) {
-        for (const sideEffect of foundDefinition.sideEffects) {
-          if (sideEffect.run && !(options.placeholderPosition && sideEffect.spatial && sideEffect.canvasInteraction)) {
-            const allResults = Array.isArray(result) ? result : [result];
-            for (const item of allResults) {
-              // @todo we need more in the ctx (like parent/target where this is to be added.)
-              await sideEffect.run(item, { vault: this.vault, options: options as any });
+      // Validate against live occupancy before any parent references are committed.
+      const placement = options?.placeholderPosition;
+      if (placement) {
+        if (placement.replaceAnnotationId && allResources.length !== 1)
+          throw new Error("Choose one image to replace this image. Nothing has been changed.");
+        const canvas = scoped.get<any>({ id: placement.canvasId, type: "Canvas" });
+        const state = getCanvasLayout(scoped, canvas.id);
+        if (state?.customised === false) {
+          const slot = state.slots.find((slot) => slot.id === placement.placeholderId);
+          const empty = getEmptyCanvasPlaceholders(scoped, canvas);
+          if (
+            !slot ||
+            (placement.replaceAnnotationId
+              ? slot.annotationIds?.length !== 1 ||
+                slot.annotationIds[0] !== placement.replaceAnnotationId ||
+                allResources.length !== 1
+              : !empty.some((item) => item.id === slot.id) || allResources.length > empty.length)
+          )
+            throw new Error(
+              "Not enough empty positions. Reduce the selection or choose a larger layout. Nothing has been added."
+            );
+        }
+      }
+      if (placement) beginCanvasComposition(scoped, scoped.get<any>({ id: placement.canvasId, type: "Canvas" }));
+      const result = runtime.commit(afterActions);
+
+      // Only run side effects if there is a parent
+      if (options?.parent) {
+        if (foundDefinition.sideEffects) {
+          for (const sideEffect of foundDefinition.sideEffects) {
+            if (
+              sideEffect.run &&
+              !(options.placeholderPosition && sideEffect.spatial && sideEffect.canvasInteraction)
+            ) {
+              const allResults = Array.isArray(result) ? result : [result];
+              for (const item of allResults) {
+                // @todo we need more in the ctx (like parent/target where this is to be added.)
+                await sideEffect.run(item, { vault: scoped, options: options as any });
+              }
             }
           }
         }
       }
+
+      options?.signal?.throwIfAborted();
+      if (options?.placeholderPosition) placeCreatedResources(scoped, result, runtime.options);
+
+      return result;
+    } finally {
+      options?.signal?.removeEventListener("abort", abort);
+      context.finish();
     }
-
-    if (options?.placeholderPosition) placeCreatedResources(this.vault, result, runtime.options);
-
-    return result;
   }
 }

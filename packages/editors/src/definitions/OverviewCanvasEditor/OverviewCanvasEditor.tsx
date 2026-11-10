@@ -30,7 +30,7 @@ export function OverviewCanvasEditor() {
         focusId={label.focusId()}
         label={t("fields.label")}
         fields={label.get()}
-        onSave={(e: any) => label.set(e.toInternationalString())}
+        onSave={(e: any, _index, _property, scoped) => label.withVault(scoped!).set(e.toInternationalString())}
       />
       <CanvasContext canvas={technical.id.get()}>
         <AnnotationPageContext annotationPage={page.id}>

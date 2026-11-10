@@ -16,7 +16,7 @@ export type WrittenOcrAnnotation = {
 export function writeDoclingRegionAnnotations(
   ctx: BackgroundActionRunContext,
   canvas: any,
-  regions: DoclingParsedRegion[],
+  regions: DoclingParsedRegion[]
 ): WrittenOcrAnnotation[] {
   if (!canvas?.id) {
     return [];
@@ -52,7 +52,7 @@ export function writeDoclingRegionAnnotations(
             },
           },
         },
-      }),
+      })
     );
     actions.push(
       addReference({
@@ -63,7 +63,7 @@ export function writeDoclingRegionAnnotations(
           id: pageId,
           type: "AnnotationPage",
         },
-      }),
+      })
     );
   }
 
@@ -77,7 +77,7 @@ export function writeDoclingRegionAnnotations(
           id: item.id,
           type: "Annotation",
         },
-      }),
+      })
     );
   }
 
@@ -115,13 +115,14 @@ export function writeDoclingRegionAnnotations(
             id: annotation.id,
             type: "Annotation",
           },
-        }),
+        })
       );
     }
   }
 
   if (actions.length) {
-    ctx.vault.dispatch(batchActions({ actions }));
+    ctx.signal?.throwIfAborted();
+    ctx.vault.dispatch(batchActions({ actions }), { label: "Apply OCR result" });
   }
 
   return annotations;
@@ -144,7 +145,12 @@ function getDefaultAnnotationPage(ctx: BackgroundActionRunContext, canvas: any) 
   return firstPage ? ctx.vault.get(firstPage) : null;
 }
 
-function createAnnotations(canvasId: string, canvasWidth: number, canvasHeight: number, regions: DoclingParsedRegion[]) {
+function createAnnotations(
+  canvasId: string,
+  canvasWidth: number,
+  canvasHeight: number,
+  regions: DoclingParsedRegion[]
+) {
   const annotations: WrittenOcrAnnotation[] = [];
 
   for (const region of regions) {

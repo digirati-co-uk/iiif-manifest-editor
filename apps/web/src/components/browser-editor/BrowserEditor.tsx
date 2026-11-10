@@ -26,6 +26,7 @@ import {
   type AnnotationPanel,
   AppProvider,
   BackgroundActionsMenu,
+  HistoryControls,
   type CanvasEditorDefinition,
   type Config,
   type EditorDefinition,
@@ -443,6 +444,7 @@ export default function BrowserEditor({
           {/* Github links etc. */}
           {/* <GlobalNav noMenu /> */}
           <div className={headerStyles.actionButtons}>
+            <HistoryControls inline variant={isFocusedExhibition ? "dark" : "light"} />
             <ShareButton />
             <BackgroundActionsMenu />
             <HeaderLanguageMenu variant={isFocusedExhibition ? "dark" : "light"} />

@@ -79,3 +79,16 @@ describe("manifest editor canvas progress", () => {
     expect(serialised).not.toContain("pending");
   });
 });
+
+test("authored bulk progress is one group and background progress does not create undo entries", () => {
+  const vault = new Vault({ history: { metadata: ["@manifest-editor/canvas-progress"] } });
+  const progress = createManifestEditorCanvasProgressApi(vault);
+  progress.setStatuses([{ id: "a" }, { id: "b" }], "done");
+  expect(vault.history!.getState().undo).toHaveLength(1);
+  expect(vault.undo().ok).toBe(true);
+  expect(progress.getStatus({ id: "a" })).toBe("none");
+  const operational = createManifestEditorCanvasProgressApi(vault, { history: "ignore" });
+  operational.setStatus({ id: "c" }, "pending");
+  operational.clearStatus({ id: "c" });
+  expect(vault.history!.getState().undo).toHaveLength(0);
+});

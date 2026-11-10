@@ -1,18 +1,20 @@
+import type { Vault } from "@iiif/helpers/vault";
 import {
-  EditorInstance,
-  beginCanvasComposition,
   getCanvasLayout,
   getEmptyCanvasPlaceholders,
   layoutSlotToPixels,
   type CanvasPlaceholder,
 } from "@manifest-editor/editor-api";
 import { useLayoutActions } from "@manifest-editor/shell";
-import { useCanvas, useVault } from "react-iiif-vault";
+import { useVault, useCanvas } from "react-iiif-vault";
 
 /** The normal image creator, optionally scoped to a placeholder or the IIIF Browser. */
-export function useAddCanvasImage() {
-  const canvas = useCanvas();
-  const vault = useVault();
+export function useAddCanvasImage(sourceVault?: Vault) {
+  const liveVault = useVault();
+  const vault = sourceVault || liveVault;
+  const selectedCanvas = useCanvas();
+  const canvas =
+    sourceVault && selectedCanvas ? sourceVault.get({ id: selectedCanvas.id, type: "Canvas" }) : selectedCanvas;
   const { create } = useLayoutActions();
   return async (slot?: CanvasPlaceholder, browser = false, replaceAnnotationId?: string) => {
     if (!canvas) return;
@@ -20,13 +22,10 @@ export function useAddCanvasImage() {
       slot = getEmptyCanvasPlaceholders(vault, canvas)[0];
       if (!slot) return;
     }
-    beginCanvasComposition(vault, canvas);
     let page = canvas.items[0];
     if (!page) {
       const id = `${canvas.id}/painting/${crypto.randomUUID()}`;
-      await vault.load(id, { id, type: "AnnotationPage", items: [] });
       page = { id, type: "AnnotationPage" };
-      new EditorInstance({ vault, reference: canvas }).structural.items.add(page);
     }
     create({
       type: "Annotation",
@@ -44,7 +43,10 @@ export function useAddCanvasImage() {
             replaceAnnotationId,
           }
         : undefined,
-      initialData: { skipEditingOnCreate: true },
+      initialData: {
+        skipEditingOnCreate: true,
+        ensurePaintingPage: canvas.items.length ? undefined : { canvasId: canvas.id, pageId: page.id },
+      },
     });
   };
 }

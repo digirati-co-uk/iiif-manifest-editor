@@ -1,3 +1,4 @@
+import { HistoryHeader } from "../History/History";
 import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { DefaultTooltipContent, Modal, Tooltip, TooltipTrigger } from "@manifest-editor/components";
 import { Spinner } from "@manifest-editor/ui/madoc/components/icons/Spinner";
@@ -37,7 +38,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
   const rootResource = useAppResource();
   const layout = useLayoutProvider();
   const { vault: _vault } = useContext(ReactVaultContext);
-  const vault = _vault || undefined;
+  const vault = _vault?.presentationVersion === 3 ? _vault : undefined;
   const vaultState = useVaultSelector((state) => state.iiif);
   const {
     loading,
@@ -550,7 +551,7 @@ export const FocusedLayout = memo(function FocusedLayout(props: LayoutRenderProp
       >
         {props.hideHeader ? null : (
           <L.Header>
-            {props.header || null}
+            <HistoryHeader>{props.header || null}</HistoryHeader>
             {props.menu ? <menu>{props.menu}</menu> : null}
           </L.Header>
         )}

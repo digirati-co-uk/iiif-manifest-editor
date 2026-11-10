@@ -57,9 +57,9 @@ export function ImageEditor() {
         <InputContainer $wide>
           <DimensionsTriplet
             width={width.get() || 0}
-            changeWidth={(v) => width.set(v)}
+            changeWidth={(v, scoped) => width.withVault(scoped!).set(v)}
             height={height.get() || 0}
-            changeHeight={(v) => height.set(v)}
+            changeHeight={(v, scoped) => height.withVault(scoped!).set(v)}
           />
         </InputContainer>
 

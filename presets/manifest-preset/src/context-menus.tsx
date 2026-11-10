@@ -44,12 +44,22 @@ function CanvasContextMenu() {
   const canvas = useCanvas(canvasRef ? canvasRef : undefined);
   const { edit } = useLayoutActions();
   const annotationPage = canvas?.items?.[0]?.id;
+  const paintingPage = useMemo(
+    () => ({ id: annotationPage || `${canvas?.id}/painting/${crypto.randomUUID()}`, type: "AnnotationPage" as const }),
+    [annotationPage, canvas?.id]
+  );
+  const initialData =
+    annotationPage || !canvas
+      ? undefined
+      : {
+          ensurePaintingPage: { canvasId: canvas.id, pageId: paintingPage.id },
+        };
 
   const [canCreateAnnotation, annotationActions] = useCreator(
-    { id: annotationPage, type: "AnnotationPage" },
+    paintingPage,
     "items",
     "Annotation",
-    canvasRef,
+    canvasRef || (canvas ? { id: canvas.id, type: "Canvas" } : undefined),
     {
       isPainting: true,
     }
@@ -81,7 +91,7 @@ function CanvasContextMenu() {
             if (currentId !== resource.id) {
               edit(resource);
             }
-            annotationActions.create();
+            annotationActions.create(undefined, initialData);
           },
         },
         {
@@ -95,12 +105,12 @@ function CanvasContextMenu() {
             if (currentId !== resource.id) {
               edit(resource);
             }
-            annotationActions.creator("@manifest-editor/iiif-browser-creator");
+            annotationActions.creator("@manifest-editor/iiif-browser-creator", initialData);
           },
         },
       ],
     },
-    [canvasRef, currentId, canCreateAnnotation, locale, profile, resolveMessage]
+    [canvasRef, canvas?.id, paintingPage, currentId, canCreateAnnotation, locale, profile, resolveMessage]
   );
 
   return null;
@@ -124,6 +134,16 @@ function PaintingAnnotationContextMenu() {
   const { edit } = useLayoutActions();
   const vault = useVault();
   const annotationPage = canvas?.items?.[0]?.id;
+  const paintingPage = useMemo(
+    () => ({ id: annotationPage || `${canvas?.id}/painting/${crypto.randomUUID()}`, type: "AnnotationPage" as const }),
+    [annotationPage, canvas?.id]
+  );
+  const initialData =
+    annotationPage || !canvas
+      ? undefined
+      : {
+          ensurePaintingPage: { canvasId: canvas.id, pageId: paintingPage.id },
+        };
   const fullAnnotationPage = useVaultSelector(
     (_, v) => (annotationPage ? v.get(annotationPage) : null),
     [annotationPage]

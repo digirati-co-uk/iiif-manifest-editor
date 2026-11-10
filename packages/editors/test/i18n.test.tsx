@@ -12,6 +12,7 @@ import { CanvasLayoutPicker } from "../src/components/CanvasLayout/CanvasLayoutP
 import { CanvasShapePicker } from "../src/components/CanvasLayout/CanvasImageMode";
 import { ViewingDirectionEditor } from "../src/components/ViewingDirectionEditor/ViewingDirectionEditor";
 import { LanguageFieldEditor } from "../src/components/LanguageFieldEditor/LanguageFieldEditor";
+import { useVaultEditSession as actualEditSession } from "../../shell/src/History/use-edit-session";
 import { useDecayState as actualDecayState } from "../../shell/src/hooks/use-decay-state";
 import { EditorInstance } from "@manifest-editor/editor-api";
 import { Vault } from "@iiif/helpers/vault";
@@ -25,15 +26,20 @@ const shell = vi.hoisted(() => ({
 }));
 vi.mock("@manifest-editor/shell", () => ({
   useResource: () => shell.resource,
+  useEditingResource: () => null,
+  useVaultEditSession: (...args: Parameters<typeof actualEditSession>) => actualEditSession(...args),
   useEditor: () => shell.editor,
   useConfig: () => ({ i18n: { defaultLanguage: "cy", availableLanguages: ["cy", "en"], advancedLanguageMode: true } }),
   useDecayState: (time: number) => actualDecayState(time),
 }));
 vi.mock("react-iiif-vault", async (importOriginal) => ({
   ...(await importOriginal<typeof import("react-iiif-vault")>()),
-  useVault: () => ({ modifyEntityField: shell.modify }),
+  useVault: () => (shell.editor ? (shell.editor as any).config.vault : testVault),
   useClosestLanguage: () => "cy",
 }));
+
+const testVault = new Vault({ history: true });
+testVault.modifyEntityField = shell.modify;
 
 function runtime(locale = "en-GB") {
   return createEditorI18n({

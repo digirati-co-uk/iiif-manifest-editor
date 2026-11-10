@@ -6,6 +6,20 @@
  * Panel labels use noun/infinitive forms matching the English ("Aanmaken" for "Create").
  */
 export const catalog = {
+  history: {
+    title: "Bewerkingsgeschiedenis",
+    undo: "Ongedaan maken",
+    redo: "Opnieuw",
+    redoOperation: "{{label}} opnieuw uitvoeren",
+    undoOperation: "{{label}} ongedaan maken",
+    disabled: "De geschiedenis is niet beschikbaar voor dit document.",
+    empty: "Er zijn geen wijzigingen om ongedaan te maken.",
+    open: "Rond de huidige bewerking af voordat u deze ongedaan maakt.",
+    busy: "Wachten tot de huidige wijziging is voltooid.",
+    syncConflict:
+      "Een gelijktijdige bewerking heeft het opslaan van deze wijziging verhinderd. Het huidige document is opnieuw geladen.",
+    conflict: "Deze wijziging kan niet ongedaan worden gemaakt omdat de betreffende inhoud is gewijzigd.",
+  },
   project: {
     open: "Project openen",
     export: "Exporteren",

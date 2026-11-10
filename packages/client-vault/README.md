@@ -39,4 +39,6 @@ Start a compatible server first (see `@manifest-editor/server-vault`). A Message
 - `MessagePortClientVault`: MessagePort-backed implementation for embedded previews.
 - Protocol types for messages and remote Vault actions.
 
+`createReadOnlyVaultBridge` negotiates the preview transport from each client's `init-request`. Clients advertising `protocol: 2` receive the lossless Vault wire encoding. Older viewers receive plain JSON; undo and redo send a fresh document snapshot because older helpers cannot apply history actions. This also supports legacy and current viewers connected to the same Vault.
+
 See the [source exports](https://github.com/digirati-co-uk/iiif-manifest-editor/tree/main/packages/client-vault/src) for the complete API and TypeScript definitions.

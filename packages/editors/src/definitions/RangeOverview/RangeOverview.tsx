@@ -32,7 +32,7 @@ export function RangeOverview() {
           focusId={label.focusId()}
           label={apiLabel(propertyLabels.label)!}
           fields={label.get()}
-          onSave={(e: any) => label.set(e.toInternationalString())}
+          onSave={(e: any, _index, _property, scoped) => label.withVault(scoped!).set(e.toInternationalString())}
         />
       ) : null}
       {!notAllowed.includes("summary") ? (
@@ -42,7 +42,7 @@ export function RangeOverview() {
           label={apiLabel(propertyLabels.summary)!}
           disallowHTML={false}
           fields={summary.get()}
-          onSave={(e: any) => summary.set(e.toInternationalString())}
+          onSave={(e: any, _index, _property, scoped) => summary.withVault(scoped!).set(e.toInternationalString())}
         />
       ) : null}
       {!notAllowed.includes("requiredStatement") ? <RequiredStatementField /> : null}

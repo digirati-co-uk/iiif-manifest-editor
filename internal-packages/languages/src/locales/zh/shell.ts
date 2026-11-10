@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "编辑历史",
+    undo: "撤销",
+    redo: "重做",
+    redoOperation: "重做{{label}}",
+    undoOperation: "撤销{{label}}",
+    disabled: "此文档的历史记录不可用。",
+    empty: "没有可撤销的更改。",
+    open: "请先完成当前编辑，再撤销更改。",
+    busy: "正在等待当前更改完成。",
+    syncConflict: "同时进行的编辑导致此更改无法保存。已重新加载当前文档。",
+    conflict: "由于相关内容已更改，无法撤销此更改。",
+  },
   project: {
     open: "打开项目",
     export: "出口",

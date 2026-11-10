@@ -6,13 +6,19 @@ export { ClientVault };
 export { MessagePortClientVault };
 export type * from "./protocol";
 
-export async function createClientVault(
-  url: string,
-  options?: Partial<VaultOptions>,
-) {
+export async function createClientVault(url: string, options?: Partial<VaultOptions>) {
   const vault = new ClientVault(url, options);
 
   await vault.waitUntilReady();
 
   return vault;
 }
+
+export * from "./editor-vault";
+export { RemoteClientVault } from "./remote-client-vault";
+
+export * from "./wire";
+export * from "./preview-bridge";
+
+export * from "./document-changes";
+export * from "./checkpoint";

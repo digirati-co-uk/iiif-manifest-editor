@@ -22,48 +22,50 @@ export function VirtualRangeSidebar({
   const creator = useInlineCreator();
 
   const combineVirtualRanges = useCallback(async () => {
-    const rangeEditor = new EditorInstance({
-      reference: { id: range.id, type: "Range" },
-      vault,
-    });
-    const items = range.items || [];
+    return vault.interaction({ label: "Move into a new range" }, async (vault) => {
+      const rangeEditor = new EditorInstance({
+        reference: { id: range.id, type: "Range" },
+        vault,
+      });
+      const items = range.items || [];
 
-    // Create sub range.
-    const createdRange = (await creator.create(
-      "@manifest-editor/range-top-level",
-      {
-        type: "Range",
-        label: { en: ["Range 1"] },
-        items: [],
-      },
-      {
-        parent: {
-          property: "structures",
-          resource: { id: manifest.technical.id.getWithoutTracking(), type: "Manifest" },
-          atIndex: 0,
-        },
-      }
-    )) as { id: string; type: "Range" };
-
-    vault.dispatch(
-      moveEntities({
-        subjects: {
-          type: "slice",
-          startIndex: 1,
-          length: items.length,
-        },
-        from: {
-          id: manifest.technical.id.getWithoutTracking(),
-          type: "Manifest",
-          key: "structures",
-        },
-        to: {
-          id: createdRange.id,
+      // Create sub range.
+      const createdRange = (await creator.withVault(vault).create(
+        "@manifest-editor/range-top-level",
+        {
           type: "Range",
-          key: "items",
+          label: { en: ["Range 1"] },
+          items: [],
         },
-      })
-    );
+        {
+          parent: {
+            property: "structures",
+            resource: { id: manifest.technical.id.getWithoutTracking(), type: "Manifest" },
+            atIndex: 0,
+          },
+        }
+      )) as { id: string; type: "Range" };
+
+      vault.dispatch(
+        moveEntities({
+          subjects: {
+            type: "slice",
+            startIndex: 1,
+            length: items.length,
+          },
+          from: {
+            id: manifest.technical.id.getWithoutTracking(),
+            type: "Manifest",
+            key: "structures",
+          },
+          to: {
+            id: createdRange.id,
+            type: "Range",
+            key: "items",
+          },
+        })
+      );
+    });
   }, []);
 
   const deleteVirtualRanges = useCallback(() => {

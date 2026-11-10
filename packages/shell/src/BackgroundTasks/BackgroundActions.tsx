@@ -105,7 +105,7 @@ function useBackgroundActionSystemContext(): BackgroundActionSystemContext {
   const currentCanvas = useCurrentCanvasTarget();
   const vault = useVault();
   const tags = useMemo(() => createManifestEditorTagsApi(vault), [vault]);
-  const canvasProgress = useMemo(() => createManifestEditorCanvasProgressApi(vault), [vault]);
+  const canvasProgress = useMemo(() => createManifestEditorCanvasProgressApi(vault, { history: "ignore" }), [vault]);
   const plugins = usePluginRuntimeApi();
   const config = useConfig();
   const layoutState = useLayoutState();

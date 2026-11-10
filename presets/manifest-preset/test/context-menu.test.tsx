@@ -94,7 +94,9 @@ it("retranslates an actual retained preset menu and preserves bound IDs/actions 
     expect(retained!.onAction).toBe(action);
     retained!.onAction({ resource: { id: c, type: "Canvas" }, position: { x: 0, y: 0 } });
     expect(fixture.edit).toHaveBeenCalledWith({ id: c, type: "Canvas" });
-    expect(fixture.creator).toHaveBeenCalledWith("@manifest-editor/iiif-browser-creator");
+    expect(fixture.creator).toHaveBeenCalledWith("@manifest-editor/iiif-browser-creator", {
+      ensurePaintingPage: { canvasId: c, pageId: expect.stringContaining(`${c}/painting/`) },
+    });
     expect(vault.toPresentation3({ id: m, type: "Manifest" })).toEqual(original);
   } finally {
     await act(async () => root.unmount());

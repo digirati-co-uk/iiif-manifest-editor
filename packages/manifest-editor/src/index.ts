@@ -10,3 +10,5 @@ export type {
   PluginInput,
   PluginModule,
 } from "@manifest-editor/shell";
+
+export { createManifestEditorVault } from "@manifest-editor/shell";

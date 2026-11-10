@@ -1,3 +1,4 @@
+import { runVaultCommand } from "../history";
 import type { Vault } from "@iiif/helpers/vault";
 import type { CanvasNormalized, AnnotationNormalized } from "@iiif/presentation-3-normalized";
 import { EditorInstance } from "../EditorInstance";
@@ -102,62 +103,68 @@ export function targetPaintingImageRegion(vault: Vault, canvas: CanvasNormalized
   );
   return true;
 }
-export function switchToSingleImage(vault: Vault, canvas: CanvasNormalized) {
-  const annotations = getPaintingAnnotations(vault, canvas);
-  if (annotations.length !== 1) return false;
-  const image = annotations[0]!;
-  const size = getImageSize(vault, image);
-  if (!size) return false;
-  beginCanvasComposition(vault, canvas);
-  vault.batch(() => {
-    resizeCanvas(vault, canvas, { x: 0, y: 0, ...size });
-    new EditorInstance({ vault, reference: image }).annotation.target.removeSelector();
-    vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "state"], null);
+export function switchToSingleImage(sourceVault: Vault, canvas: CanvasNormalized) {
+  return runVaultCommand(sourceVault, "Switch To Single Image", (vault) => {
+    const annotations = getPaintingAnnotations(vault, canvas);
+    if (annotations.length !== 1) return false;
+    const image = annotations[0]!;
+    const size = getImageSize(vault, image);
+    if (!size) return false;
+    beginCanvasComposition(vault, canvas);
+    vault.batch(() => {
+      resizeCanvas(vault, canvas, { x: 0, y: 0, ...size });
+      new EditorInstance({ vault, reference: image }).annotation.target.removeSelector();
+      vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "state"], null);
+    });
+    return true;
   });
-  return true;
 }
-export function clearCanvasPlaceholders(vault: Vault, canvas: CanvasNormalized) {
-  const state = getCanvasLayout(vault, canvas.id);
-  if (!state) return;
-  beginCanvasComposition(vault, canvas);
-  const empty = new Set(getEmptyCanvasPlaceholders(vault, canvas).map((slot) => slot.id));
-  setCanvasLayout(vault, canvas.id, {
-    ...state,
-    customised: true,
-    slots: state.slots.filter((slot) => !empty.has(slot.id)),
+export function clearCanvasPlaceholders(sourceVault: Vault, canvas: CanvasNormalized) {
+  return runVaultCommand(sourceVault, "Clear Canvas Placeholders", (vault) => {
+    const state = getCanvasLayout(vault, canvas.id);
+    if (!state) return;
+    beginCanvasComposition(vault, canvas);
+    const empty = new Set(getEmptyCanvasPlaceholders(vault, canvas).map((slot) => slot.id));
+    setCanvasLayout(vault, canvas.id, {
+      ...state,
+      customised: true,
+      slots: state.slots.filter((slot) => !empty.has(slot.id)),
+    });
   });
 }
 /** Slot assignment and template paint order are independent of insertion order. */
-export function applyCanvasLayout(vault: Vault, canvas: CanvasNormalized, layout: CanvasLayout) {
-  const images = getPaintingImages(vault, canvas);
-  if (getPaintingAnnotations(vault, canvas).length !== images.length)
-    throw new Error("This composition contains unsupported media. Arrange it freely instead.");
-  if (layout.slots.length < images.length) throw new Error("This layout does not have enough image positions");
-  const previous = getCanvasLayout(vault, canvas.id);
-  const state = createCanvasLayoutState(layout);
-  const remaining = new Set(images.map((image) => image.id));
-  const overflow: string[] = [];
-  previous?.slots.forEach((slot, index) => {
-    for (const id of slot.annotationIds || []) {
-      if (!remaining.delete(id)) continue;
-      if (state.slots[index] && !state.slots[index]!.annotationIds?.length) state.slots[index]!.annotationIds = [id];
-      else overflow.push(id);
-    }
-  });
-  for (const id of [...overflow, ...remaining]) {
-    const empty = state.slots.find((slot) => !slot.annotationIds?.length)!;
-    empty.annotationIds = [id];
-  }
-  vault.batch(() => {
-    state.slots.forEach((slot) => {
-      const image = images.find((image) => image.id === slot.annotationIds?.[0]);
-      if (image)
-        new EditorInstance({ vault, reference: image }).annotation.target.setPosition(
-          fitWithinBounds(getImageSize(vault, image)!, layoutSlotToPixels(slot.bounds, canvas))
-        );
+export function applyCanvasLayout(sourceVault: Vault, canvas: CanvasNormalized, layout: CanvasLayout) {
+  return runVaultCommand(sourceVault, "Apply Canvas Layout", (vault) => {
+    const images = getPaintingImages(vault, canvas);
+    if (getPaintingAnnotations(vault, canvas).length !== images.length)
+      throw new Error("This composition contains unsupported media. Arrange it freely instead.");
+    if (layout.slots.length < images.length) throw new Error("This layout does not have enough image positions");
+    const previous = getCanvasLayout(vault, canvas.id);
+    const state = createCanvasLayoutState(layout);
+    const remaining = new Set(images.map((image) => image.id));
+    const overflow: string[] = [];
+    previous?.slots.forEach((slot, index) => {
+      for (const id of slot.annotationIds || []) {
+        if (!remaining.delete(id)) continue;
+        if (state.slots[index] && !state.slots[index]!.annotationIds?.length) state.slots[index]!.annotationIds = [id];
+        else overflow.push(id);
+      }
     });
-    setCanvasLayout(vault, canvas.id, state);
-    syncCanvasPaintOrder(vault, canvas, state);
+    for (const id of [...overflow, ...remaining]) {
+      const empty = state.slots.find((slot) => !slot.annotationIds?.length)!;
+      empty.annotationIds = [id];
+    }
+    vault.batch(() => {
+      state.slots.forEach((slot) => {
+        const image = images.find((image) => image.id === slot.annotationIds?.[0]);
+        if (image)
+          new EditorInstance({ vault, reference: image }).annotation.target.setPosition(
+            fitWithinBounds(getImageSize(vault, image)!, layoutSlotToPixels(slot.bounds, canvas))
+          );
+      });
+      setCanvasLayout(vault, canvas.id, state);
+      syncCanvasPaintOrder(vault, canvas, state);
+    });
   });
 }
 
@@ -206,41 +213,45 @@ export function syncCanvasPaintOrder(
     offset += count;
   }
 }
-export function removeCanvasImage(vault: Vault, canvas: CanvasNormalized, id: string) {
-  beginCanvasComposition(vault, canvas);
-  vault.batch(() => {
-    for (const page of canvas.items || [])
-      vault.modifyEntityField(
-        page,
-        "items",
-        vault.get(page).items.filter((ref: any) => ref.id !== id)
-      );
-    const state = getCanvasLayout(vault, canvas.id);
-    if (state)
-      setCanvasLayout(vault, canvas.id, {
-        ...state,
-        slots: state.slots.map((slot) => ({
-          ...slot,
-          annotationIds: slot.annotationIds?.filter((item) => item !== id),
-        })),
-      });
+export function removeCanvasImage(sourceVault: Vault, canvas: CanvasNormalized, id: string) {
+  return runVaultCommand(sourceVault, "Remove Canvas Image", (vault) => {
+    beginCanvasComposition(vault, canvas);
+    vault.batch(() => {
+      for (const page of canvas.items || [])
+        vault.modifyEntityField(
+          page,
+          "items",
+          vault.get(page).items.filter((ref: any) => ref.id !== id)
+        );
+      const state = getCanvasLayout(vault, canvas.id);
+      if (state)
+        setCanvasLayout(vault, canvas.id, {
+          ...state,
+          slots: state.slots.map((slot) => ({
+            ...slot,
+            annotationIds: slot.annotationIds?.filter((item) => item !== id),
+          })),
+        });
+    });
   });
 }
-export function swapCanvasPositions(vault: Vault, canvas: CanvasNormalized, from: number, to: number) {
-  if (!isTemplateManaged(vault, canvas)) return;
-  const state = structuredClone(getCanvasLayout(vault, canvas.id)!);
-  if (!state.slots[from] || !state.slots[to]) return;
-  beginCanvasComposition(vault, canvas);
-  [state.slots[from]!.annotationIds, state.slots[to]!.annotationIds] = [
-    state.slots[to]!.annotationIds,
-    state.slots[from]!.annotationIds,
-  ];
-  setCanvasLayout(vault, canvas.id, state);
-  applyCanvasLayout(
-    vault,
-    canvas,
-    canvasLayouts.find((layout) => layout.id === state.layoutId)!
-  );
+export function swapCanvasPositions(sourceVault: Vault, canvas: CanvasNormalized, from: number, to: number) {
+  return runVaultCommand(sourceVault, "Swap Canvas Positions", (vault) => {
+    if (!isTemplateManaged(vault, canvas)) return;
+    const state = structuredClone(getCanvasLayout(vault, canvas.id)!);
+    if (!state.slots[from] || !state.slots[to]) return;
+    beginCanvasComposition(vault, canvas);
+    [state.slots[from]!.annotationIds, state.slots[to]!.annotationIds] = [
+      state.slots[to]!.annotationIds,
+      state.slots[from]!.annotationIds,
+    ];
+    setCanvasLayout(vault, canvas.id, state);
+    applyCanvasLayout(
+      vault,
+      canvas,
+      canvasLayouts.find((layout) => layout.id === state.layoutId)!
+    );
+  });
 }
 /** A template can be (re)applied when it has positions for every image and nothing else is pinned to the canvas. */
 export function canReapplyCanvasLayout(vault: Vault, canvas: CanvasNormalized) {
@@ -260,17 +271,19 @@ export function canReapplyCanvasLayout(vault: Vault, canvas: CanvasNormalized) {
  * (images are returned to their template positions) and `reapply: false` keeps every position.
  */
 export function resizeCanvasLayout(
-  vault: Vault,
+  sourceVault: Vault,
   canvas: CanvasNormalized,
   bounds: Rectangle,
   options: { reapply?: boolean } = {}
 ) {
-  if (!validRectangle(bounds)) return;
-  beginCanvasComposition(vault, canvas);
-  const reflow = (options.reapply ?? isTemplateManaged(vault, canvas)) && canReapplyCanvasLayout(vault, canvas);
-  const layout = canvasLayouts.find((layout) => layout.id === getCanvasLayout(vault, canvas.id)?.layoutId);
-  resizeCanvas(vault, canvas, bounds);
-  if (reflow && layout) applyCanvasLayout(vault, vault.get(canvas), layout);
+  return runVaultCommand(sourceVault, "Resize Canvas Layout", (vault) => {
+    if (!validRectangle(bounds)) return;
+    beginCanvasComposition(vault, canvas);
+    const reflow = (options.reapply ?? isTemplateManaged(vault, canvas)) && canReapplyCanvasLayout(vault, canvas);
+    const layout = canvasLayouts.find((layout) => layout.id === getCanvasLayout(vault, canvas.id)?.layoutId);
+    resizeCanvas(vault, canvas, bounds);
+    if (reflow && layout) applyCanvasLayout(vault, vault.get(canvas), layout);
+  });
 }
 
 export function getEmptyCanvasPlaceholders(vault: Vault, canvas: CanvasNormalized) {
@@ -280,86 +293,98 @@ export function getEmptyCanvasPlaceholders(vault: Vault, canvas: CanvasNormalize
   );
 }
 /** Resize the surface, preserving resource dimensions. All positioned annotations move with the origin. */
-export function resizeCanvas(vault: Vault, canvas: CanvasNormalized, bounds: Rectangle) {
-  if (!validSize(bounds) || !Number.isFinite(bounds.x) || !Number.isFinite(bounds.y)) return;
-  const annotations = [
-    ...getPaintingAnnotations(vault, canvas),
-    ...(canvas.annotations || []).flatMap((page) => vault.get(page)?.items || []).map((ref) => vault.get(ref)),
-  ];
-  vault.batch(() => {
-    for (const annotation of annotations) {
-      const editor = new EditorInstance({ vault, reference: { id: annotation.id, type: "Annotation" } }).annotation
-        .target;
-      if (editor.getSourceId() !== canvas.id) continue;
-      const selector = editor.getParsedSelector();
-      const rect = getAnnotationRectangle(vault, annotation, canvas);
-      if (
-        rect &&
-        (!selector ||
-          ((selector.type === "BoxSelector" || selector.type === "TemporalBoxSelector") &&
-            selector.spatial.unit === "percent") ||
-          bounds.x ||
-          bounds.y)
-      )
-        editor.setPosition({ ...rect, x: rect.x - bounds.x, y: rect.y - bounds.y });
-      else if ((bounds.x || bounds.y) && (selector?.type === "SvgSelector" || selector?.type === "PointSelector")) {
-        editor.setSvgSelector(
-          {
-            points: (selector.points || []).map(([x, y]) => [x - bounds.x, y - bounds.y]),
-            open: selector.type === "PointSelector",
-          },
-          bounds
-        );
-      }
-    }
-    const state = getCanvasLayout(vault, canvas.id);
-    if (state)
-      setCanvasLayout(vault, canvas.id, {
-        ...state,
-        slots: state.slots.map((slot) => {
-          const rect = layoutSlotToPixels(slot.bounds, canvas);
-          return {
-            ...slot,
-            bounds: {
-              x: (rect.x - bounds.x) / bounds.width,
-              y: (rect.y - bounds.y) / bounds.height,
-              width: rect.width / bounds.width,
-              height: rect.height / bounds.height,
+export function resizeCanvas(sourceVault: Vault, canvas: CanvasNormalized, bounds: Rectangle) {
+  return runVaultCommand(sourceVault, "Resize Canvas", (vault) => {
+    if (!validSize(bounds) || !Number.isFinite(bounds.x) || !Number.isFinite(bounds.y)) return;
+    const annotations = [
+      ...getPaintingAnnotations(vault, canvas),
+      ...(canvas.annotations || []).flatMap((page) => vault.get(page)?.items || []).map((ref) => vault.get(ref)),
+    ];
+    vault.batch(() => {
+      for (const annotation of annotations) {
+        const editor = new EditorInstance({ vault, reference: { id: annotation.id, type: "Annotation" } }).annotation
+          .target;
+        if (editor.getSourceId() !== canvas.id) continue;
+        const selector = editor.getParsedSelector();
+        const rect = getAnnotationRectangle(vault, annotation, canvas);
+        if (
+          rect &&
+          (!selector ||
+            ((selector.type === "BoxSelector" || selector.type === "TemporalBoxSelector") &&
+              selector.spatial.unit === "percent") ||
+            bounds.x ||
+            bounds.y)
+        )
+          editor.setPosition({ ...rect, x: rect.x - bounds.x, y: rect.y - bounds.y });
+        else if ((bounds.x || bounds.y) && (selector?.type === "SvgSelector" || selector?.type === "PointSelector")) {
+          editor.setSvgSelector(
+            {
+              points: (selector.points || []).map(([x, y]) => [x - bounds.x, y - bounds.y]),
+              open: selector.type === "PointSelector",
             },
-          };
-        }),
-      });
-    if (bounds.x || bounds.y) {
-      const origin = getCanvasOrigin(vault, canvas.id);
-      vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "origin"], { x: origin.x - bounds.x, y: origin.y - bounds.y });
-    }
-    vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", Math.round(bounds.width));
-    vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", Math.round(bounds.height));
+            bounds
+          );
+        }
+      }
+      const state = getCanvasLayout(vault, canvas.id);
+      if (state)
+        setCanvasLayout(vault, canvas.id, {
+          ...state,
+          slots: state.slots.map((slot) => {
+            const rect = layoutSlotToPixels(slot.bounds, canvas);
+            return {
+              ...slot,
+              bounds: {
+                x: (rect.x - bounds.x) / bounds.width,
+                y: (rect.y - bounds.y) / bounds.height,
+                width: rect.width / bounds.width,
+                height: rect.height / bounds.height,
+              },
+            };
+          }),
+        });
+      if (bounds.x || bounds.y) {
+        const origin = getCanvasOrigin(vault, canvas.id);
+        vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "origin"], {
+          x: origin.x - bounds.x,
+          y: origin.y - bounds.y,
+        });
+      }
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "width", Math.round(bounds.width));
+      vault.modifyEntityField({ id: canvas.id, type: "Canvas" }, "height", Math.round(bounds.height));
+    });
   });
 }
-export function movePaintingImage(vault: Vault, canvas: CanvasNormalized, annotationId: string, position: Rectangle) {
-  if (!validRectangle(position)) return;
-  const previous = getAnnotationRectangle(vault, vault.get({ id: annotationId, type: "Annotation" }), canvas);
-  if (
-    previous &&
-    (["x", "y", "width", "height"] as const).every((axis) => Math.abs(previous[axis] - position[axis]) < 0.01)
-  )
-    return;
-  const bounds = expandedCanvasBounds(canvas, [position]);
-  beginCanvasComposition(vault, canvas);
-  if (!isCanvasCompositionMoved(vault, canvas.id)) {
-    // Discard should return to how the slide was before the first manual move, not before earlier housekeeping.
-    vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "editingSnapshot"], captureCanvasComposition(vault, canvas));
-    vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "moved"], true);
-  }
-  customiseCanvasLayout(vault, canvas);
-  vault.batch(() => {
-    if (bounds.x || bounds.y || bounds.width !== canvas.width || bounds.height !== canvas.height)
-      resizeCanvas(vault, canvas, bounds);
-    new EditorInstance({ vault, reference: { id: annotationId, type: "Annotation" } }).annotation.target.setPosition({
-      ...position,
-      x: position.x - bounds.x,
-      y: position.y - bounds.y,
+export function movePaintingImage(
+  sourceVault: Vault,
+  canvas: CanvasNormalized,
+  annotationId: string,
+  position: Rectangle
+) {
+  return runVaultCommand(sourceVault, "Move Painting Image", (vault) => {
+    if (!validRectangle(position)) return;
+    const previous = getAnnotationRectangle(vault, vault.get({ id: annotationId, type: "Annotation" }), canvas);
+    if (
+      previous &&
+      (["x", "y", "width", "height"] as const).every((axis) => Math.abs(previous[axis] - position[axis]) < 0.01)
+    )
+      return;
+    const bounds = expandedCanvasBounds(canvas, [position]);
+    beginCanvasComposition(vault, canvas);
+    if (!isCanvasCompositionMoved(vault, canvas.id)) {
+      // Discard should return to how the slide was before the first manual move, not before earlier housekeeping.
+      vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "editingSnapshot"], captureCanvasComposition(vault, canvas));
+      vault.setMetaValue([canvas.id, CANVAS_LAYOUT_META, "moved"], true);
+    }
+    customiseCanvasLayout(vault, canvas);
+    vault.batch(() => {
+      if (bounds.x || bounds.y || bounds.width !== canvas.width || bounds.height !== canvas.height)
+        resizeCanvas(vault, canvas, bounds);
+      new EditorInstance({ vault, reference: { id: annotationId, type: "Annotation" } }).annotation.target.setPosition({
+        ...position,
+        x: position.x - bounds.x,
+        y: position.y - bounds.y,
+      });
     });
   });
 }

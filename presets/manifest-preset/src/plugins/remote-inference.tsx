@@ -651,7 +651,8 @@ function writeRemoteInferenceAnnotations(
   }
 
   if (actions.length) {
-    ctx.vault.dispatch(batchActions({ actions }));
+    ctx.signal?.throwIfAborted();
+    ctx.vault.dispatch(batchActions({ actions }), { label: "Apply inference result" });
   }
 
   return totalWritten;

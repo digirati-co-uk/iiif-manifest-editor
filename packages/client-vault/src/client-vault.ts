@@ -8,13 +8,13 @@ export class ClientVault extends RemoteClientVault {
     super(options);
 
     this.ws = new WebSocket(url);
-    this.ws.onopen = this.handleOpen;
     this.ws.addEventListener("open", this.handleOpen);
+    this.ws.addEventListener("message", this.handleMessage);
+    this.ws.addEventListener("close", this.handleClose);
+    this.ws.addEventListener("error", this.handleClose);
   }
 
   handleOpen = () => {
-    this.ws.addEventListener("message", this.handleMessage);
-    this.ws.addEventListener("close", this.handleClose);
     this.requestInitialState();
   };
 

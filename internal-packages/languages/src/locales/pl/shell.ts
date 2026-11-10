@@ -1,5 +1,18 @@
 /** Generated translation draft; see translations/generated-languages.md before enabling. */
 export const catalog = {
+  history: {
+    title: "Historia edycji",
+    undo: "Cofnij",
+    redo: "Ponów",
+    redoOperation: "Ponów: {{label}}",
+    undoOperation: "Cofnij: {{label}}",
+    disabled: "Historia jest niedostępna dla tego dokumentu.",
+    empty: "Nie ma zmian do cofnięcia.",
+    open: "Zakończ bieżącą edycję przed cofnięciem.",
+    busy: "Oczekiwanie na zakończenie bieżącej zmiany.",
+    syncConflict: "Jednoczesna edycja uniemożliwiła zapisanie tej zmiany. Bieżący dokument został ponownie wczytany.",
+    conflict: "Tej zmiany nie można cofnąć, ponieważ powiązana treść została zmieniona.",
+  },
   project: {
     open: "Otwórz projekt",
     export: "Eksport",

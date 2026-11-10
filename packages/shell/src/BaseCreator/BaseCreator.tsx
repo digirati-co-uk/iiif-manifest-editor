@@ -62,6 +62,16 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const creator = useInlineCreator();
   const config = useConfig();
   const isCreatingRef = useRef(false);
+  const controller = useRef<AbortController | null>(null);
+  const lifetime = useRef(0);
+  useEffect(() => {
+    const generation = ++lifetime.current;
+    return () => {
+      queueMicrotask(() => {
+        if (lifetime.current === generation) controller.current?.abort();
+      });
+    };
+  }, []);
 
   const canvasSelector = props.resource.initialData?.selector;
   useTemporaryHighlight(canvasSelector);
@@ -69,6 +79,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
   const initialData = useInitialData<Record<string, unknown>>(props.creator.id);
 
   const options: CreatorOptions = {
+    ensurePaintingPage: props.resource.initialData?.ensurePaintingPage,
     targetType: props.resource.type,
     parent: props.resource.parent
       ? {
@@ -88,10 +99,11 @@ export const RenderCreator = memo(function RenderCreator(props: {
     setError(null);
     setIsCreating(true);
     isCreatingRef.current = true;
+    controller.current = new AbortController();
 
     try {
       await completeCreator({
-        create: () => creator.create(props.creator.id, payload, options),
+        create: () => creator.create(props.creator.id, payload, { ...options, signal: controller.current!.signal }),
         onCreate: props.onCreate,
         close: props.skipEditingOnCreate
           ? undefined
@@ -116,6 +128,7 @@ export const RenderCreator = memo(function RenderCreator(props: {
               },
       });
     } catch (err: any) {
+      if (controller.current?.signal.aborted) return;
       setError(
         props.creator.validationErrorMessage?.(err, { payload, vault }) ||
           err?.message || { message: { namespace: "shell", key: "creator.unknownError" } }

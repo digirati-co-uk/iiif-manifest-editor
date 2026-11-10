@@ -196,8 +196,8 @@ function RangeWorkbench() {
         topLevelRange,
         range,
         item,
-        (atIndex: number) =>
-          creator.create(
+        (atIndex, scoped) =>
+          creator.withVault(scoped).create(
             "@manifest-editor/range-with-items",
             {
               type: "Range",

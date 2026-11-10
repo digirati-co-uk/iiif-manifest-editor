@@ -253,6 +253,9 @@ importers:
       '@iiif/presentation-3-normalized':
         specifier: ^0.9.7
         version: 0.9.7
+      '@manifest-editor/client-vault':
+        specifier: workspace:*
+        version: link:../../packages/client-vault
       '@manifest-editor/collection-preset':
         specifier: workspace:*
         version: link:../../presets/collection-preset
@@ -425,6 +428,9 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.22.14(@tsdown/css@0.22.14)(oxc-resolver@11.21.2)(publint@0.3.23)(typescript@7.0.2)(unrun@0.2.9(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.10.1)(jsdom@26.1.0(supports-color@10.2.2))(vite@8.2.1(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(less@4.2.0)(sass@1.77.2)(stylus@0.62.0(supports-color@10.2.2))(terser@5.16.9)(yaml@2.9.0))
 
   packages/components:
     dependencies:
@@ -1212,6 +1218,9 @@ importers:
       '@iiif/presentation-3':
         specifier: ^2.2.3
         version: 2.2.3
+      '@manifest-editor/client-vault':
+        specifier: workspace:*
+        version: link:../client-vault
       uuid:
         specifier: ^9.0.1
         version: 9.0.1
@@ -1231,6 +1240,9 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.22.14(@tsdown/css@0.22.14)(oxc-resolver@11.21.2)(publint@0.3.23)(typescript@7.0.2)(unrun@0.2.9(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(jsdom@26.1.0(supports-color@10.2.2))(vite@8.2.1(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.6.1)(less@4.2.0)(sass@1.77.2)(stylus@0.62.0(supports-color@10.2.2))(terser@5.16.9)(yaml@2.9.0))
 
   packages/shell:
     dependencies:
