@@ -1,3 +1,5 @@
+import { isAudioCanvas } from "../audio-slide";
+import { AudioSlideThumbnail } from "./AudioSlideThumbnail";
 import { HTMLAnnotationBodyRender } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef, useState } from "react";
@@ -77,6 +79,8 @@ export function SlideshowSlidePreview({
   if (!canvas) {
     return null;
   }
+
+  if (isAudioCanvas(vault, canvas)) return <AudioSlideThumbnail className={className} />;
 
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
