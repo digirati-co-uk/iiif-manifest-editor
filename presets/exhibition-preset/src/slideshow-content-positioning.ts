@@ -163,11 +163,11 @@ export function supportsTourSteps(vault: any, canvas: any): boolean {
   if (!canvas) return false;
 
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
-  if (behavior.includes("info")) return false;
+  if (behavior.includes("info") || behavior.includes("audio")) return false;
 
   return !getPaintingAnnotations(vault, canvas).some((annotation: any) => {
     const body = getResolvedAnnotationBody(vault, annotation);
-    return Boolean(getVideoUrl(body) || getYouTubeId(body));
+    return Boolean(body?.type === "Sound" || getVideoUrl(body) || getYouTubeId(body));
   });
 }
 

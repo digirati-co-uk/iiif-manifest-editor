@@ -163,6 +163,7 @@ export const catalog = {
     rememberCanvas: "Canvas-ID onthouden",
     rememberPanel: "Linkerpaneel onthouden",
     grid: "Rasteropties voor manifesten",
+    verticalTabs: "Compacte tabbladkiezer",
     defaultPreview: "Standaardvoorbeeld",
     return: "Terug naar de manifesteditor",
     exhibition: "Naar de tentoonstellingeditor",

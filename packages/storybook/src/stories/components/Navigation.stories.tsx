@@ -24,10 +24,13 @@ function Navigation({
   mode = "tabs",
   width = 560,
   vertical = false,
+  compact = false,
 }: {
   mode?: "tabs" | "sidebar" | "panels";
   width?: number;
   vertical?: boolean;
+  /** SidebarTabs `verticalTabs`: a single "current tab" row that opens the full list. */
+  compact?: boolean;
 }) {
   const [selected, setSelected] = useState("description");
   const id = useId();
@@ -43,6 +46,7 @@ function Navigation({
             menuId={id}
             selectedKey={selected}
             onSelectionChange={setSelected}
+            verticalTabs={compact}
             menu={panels.map((p) => ({ ...p, renderComponent: () => <p className="p-4">{p.text}</p> }))}
           />
         ) : mode === "panels" ? (
@@ -101,4 +105,5 @@ export const TabsSelection: Story = {};
 export const VerticalTabs: Story = { args: { vertical: true } };
 export const SidebarTabSelection: Story = { args: { mode: "sidebar" } };
 export const SidebarOverflow: Story = { args: { mode: "sidebar", width: 240 } };
+export const SidebarCompactTabs: Story = { args: { mode: "sidebar", width: 240, compact: true } };
 export const PanelNavigation: Story = { args: { mode: "panels" } };

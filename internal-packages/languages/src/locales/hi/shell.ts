@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "कैनवास आईडी याद रखें",
     rememberPanel: "बायां पैनल याद रखें",
     grid: "प्रकट ग्रिड विकल्प",
+    verticalTabs: "संक्षिप्त टैब चयनकर्ता",
     defaultPreview: "डिफ़ॉल्ट पूर्वावलोकन",
     return: "Manifest Editor पर लौटें",
     exhibition: "Exhibition Editor पर जाएँ",

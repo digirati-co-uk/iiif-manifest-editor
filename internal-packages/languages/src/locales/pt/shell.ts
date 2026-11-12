@@ -161,6 +161,7 @@ export const catalog = {
     rememberCanvas: "Lembre-se do ID da tela",
     rememberPanel: "Lembre-se do painel esquerdo",
     grid: "Opções de grade de manifesto",
+    verticalTabs: "Seletor de guias compacto",
     defaultPreview: "Visualização padrão",
     return: "Voltar para Manifest Editor",
     exhibition: "Vá para Exhibition Editor",

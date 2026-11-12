@@ -1,10 +1,10 @@
+import { audioSlideCreator } from "../creators/audio-slide-creator";
+import { audioCanvasEditor } from "../canvas-editors/audio-canvas-editor";
+import { exhibitionAudioEditors } from "../right-panels/ExhibitionAudioEditor";
 import { exhibitionNotebookConfig } from "../notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
-import {
-  imageBrowserSlideCreator,
-  keepIIIFBrowserNested,
-} from "../creators/image-browser-slide-creator";
+import { imageBrowserSlideCreator, keepIIIFBrowserNested } from "../creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "../creators/image-service-slide-creator";
 import { imageSlideCreator } from "../creators/image-slide-creator";
 import { imageUrlSlideCreator } from "../creators/image-url-slide";
@@ -21,6 +21,8 @@ import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "../right-panels/ExhibitionWorkbenchEditor";
 import { infoBoxWorkbenchEditor } from "../right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "../right-panels/SlideBehaviours";
+import { STANDARD_METADATA_EDITOR_ID } from "../metadata/ExhibitionMetadataPanel";
+import { exhibitionManifestMetadataEditor } from "../right-panels/ExhibitionManifestMetadataEditor";
 
 export const exhibitionEditorScrollingPreset = extendApp(
   mapApp(ManifestPreset, (app) => ({
@@ -28,9 +30,7 @@ export const exhibitionEditorScrollingPreset = extendApp(
     layout: {
       ...app.layout,
       creators: app.layout.creators?.map((creator) =>
-        creator.id === "@manifest-editor/iiif-browser-creator"
-          ? keepIIIFBrowserNested(creator)
-          : creator,
+        creator.id === "@manifest-editor/iiif-browser-creator" ? keepIIIFBrowserNested(creator) : creator
       ),
     },
   })),
@@ -44,7 +44,11 @@ export const exhibitionEditorScrollingPreset = extendApp(
     preset: exhibitionPresetConfig,
     config: {
       notebook: exhibitionNotebookConfig,
-      editorConfig: {},
+      editorConfig: {
+        // The exhibition metadata tab replaces the stock metadata tab.
+        Manifest: { hideTabs: [STANDARD_METADATA_EDITOR_ID] },
+        Canvas: { hideTabs: [STANDARD_METADATA_EDITOR_ID] },
+      },
     },
     leftPanels: [
       //
@@ -63,9 +67,11 @@ export const exhibitionEditorScrollingPreset = extendApp(
       //
     ],
     canvasEditors: [
+      audioCanvasEditor,
       //
     ],
     editors: [
+      ...exhibitionAudioEditors,
       //
       infoBoxWorkbenchEditor,
       exhibitionWorkbenchEditor,
@@ -74,8 +80,10 @@ export const exhibitionEditorScrollingPreset = extendApp(
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
+      exhibitionManifestMetadataEditor,
     ],
     creators: [
+      audioSlideCreator,
       infoBoxCreator,
       youtubeSlideCreator,
       imageServiceSlideCreator,
@@ -84,5 +92,5 @@ export const exhibitionEditorScrollingPreset = extendApp(
       imageUrlSlideCreator,
       videoSlideCreator,
     ],
-  },
+  }
 );

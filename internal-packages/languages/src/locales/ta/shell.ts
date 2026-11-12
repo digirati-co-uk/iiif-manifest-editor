@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "கேன்வாஸ் ஐடியை நினைவில் கொள்க",
     rememberPanel: "இடது பேனலை நினைவில் கொள்க",
     grid: "மேனிஃபெஸ்ட் கிரிட் விருப்பங்கள்",
+    verticalTabs: "சுருக்கமான தாவல் தேர்வி",
     defaultPreview: "இயல்பு முன்னோட்டம்",
     return: "Manifest Editor க்குத் திரும்பு",
     exhibition: "Exhibition Editor க்குச் செல்லவும்",

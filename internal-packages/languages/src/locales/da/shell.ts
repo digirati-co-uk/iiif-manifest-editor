@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "Husk Canvas ID",
     rememberPanel: "Husk venstre panel",
     grid: "Manifesterede gittermuligheder",
+    verticalTabs: "Kompakt fanevælger",
     defaultPreview: "Standard forhåndsvisning",
     return: "Vend tilbage til Manifest Editor",
     exhibition: "Gå til Exhibition Editor",

@@ -23,6 +23,7 @@ import {
   normalizeSummaryForSave,
 } from "./summary-html";
 import { isOpeningSplashResource } from "./opening-splash";
+import { ExhibitionMetadataTab } from "../metadata/ExhibitionMetadataPanel";
 
 export const exhibitionSummaryEdtior: EditorDefinition = {
   id: "@exhibition/summary-editor",
@@ -66,7 +67,20 @@ export function ExhibitionSummaryContent() {
       <LanguageMapEditor dispatchType="label" />
       <ExhibitionHtmlSummaryEditor resource={canvas} />
       <ExhibitionRequiredStatementEditor />
+      <ExhibitionTextMetadata />
     </ResourceEditingProvider>
+  );
+}
+
+/** Descriptive metadata sits at the bottom of every slide's text content. Render inside a ResourceEditingProvider. */
+export function ExhibitionTextMetadata() {
+  return (
+    <section aria-labelledby="exhibition-text-metadata" className="mt-6">
+      <h3 id="exhibition-text-metadata" className="m-0 mb-3 text-sm font-semibold">
+        Metadata
+      </h3>
+      <ExhibitionMetadataTab embedded />
+    </section>
   );
 }
 

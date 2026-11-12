@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Tuval kimliğini hatırla",
     rememberPanel: "Sol paneli hatırla",
     grid: "Manifest ızgara seçenekleri",
+    verticalTabs: "Kompakt sekme seçici",
     export: "İhracat",
     iiif: "IIIF seçenekleri",
     exportManifests: "Sunum 2 bildirimlerini dışa aktar",

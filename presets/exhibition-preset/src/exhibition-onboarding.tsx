@@ -22,6 +22,7 @@ import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-compone
 import { useVault } from "react-iiif-vault";
 import { getExhibitionTemplatePreviews, useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionTemplates } from "./exhibition-templates";
+import { resolveExhibitionPreviewUrl } from "./helpers/exhibition-preview-url-helper";
 
 export { exhibitionTemplates } from "./exhibition-templates";
 
@@ -93,7 +94,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
 };
 
 function getTemplatePreviewUrl(previewUrl: string, manifestId: string) {
-  const url = new URL(previewUrl);
+  const url = resolveExhibitionPreviewUrl(previewUrl);
   url.searchParams.set("manifest", manifestId);
   return url.toString();
 }

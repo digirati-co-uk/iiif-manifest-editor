@@ -153,6 +153,7 @@ export const catalog = {
     rememberCanvas: "キャンバスIDを記憶する",
     rememberPanel: "左側のパネルを記憶",
     grid: "マニフェストグリッドのオプション",
+    verticalTabs: "コンパクトなタブセレクター",
     defaultPreview: "デフォルトのプレビュー",
     return: "Manifest Editor に戻る",
     exhibition: "Exhibition Editorに行く",

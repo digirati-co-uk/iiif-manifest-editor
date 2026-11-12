@@ -1,12 +1,8 @@
 import { Vault } from "@iiif/helpers/vault";
-import {
-  Creator,
-  type CreatorDefinition,
-  getCreatorConfigKey,
-} from "@manifest-editor/creator-api";
+import { Creator, type CreatorDefinition, getCreatorConfigKey } from "@manifest-editor/creator-api";
 import { describe, expect, test, vi } from "vitest";
 import { mergePartialConfig } from "./ConfigContext";
-import { getCreatorSettings } from "./CreatorSettings.helpers";
+import { formatStringListSetting, getCreatorSettings, parseStringListSetting } from "./CreatorSettings.helpers";
 
 const fields = {
   fields: [
@@ -21,9 +17,7 @@ const fields = {
 function creator(
   id: string,
   configKey?: string,
-  create = vi.fn((_payload, ctx) =>
-    ctx.embed({ id: `urn:test:${id}`, type: "Canvas" }),
-  ),
+  create = vi.fn((_payload, ctx) => ctx.embed({ id: `urn:test:${id}`, type: "Canvas" }))
 ): CreatorDefinition {
   return {
     id,
@@ -51,7 +45,7 @@ describe("creator configuration keys", () => {
         vi.fn((_payload, ctx) => {
           received[id] = ctx.config;
           return ctx.embed({ id: `urn:test:${id}`, type: "Canvas" });
-        }),
+        })
       );
     const creators = [capture("base"), capture("fork"), capture("other")];
     const runtime = new Creator(new Vault(), creators, undefined, {
@@ -80,11 +74,38 @@ describe("creator configuration keys", () => {
   test("merges fields only under the effective key", () => {
     const merged = mergePartialConfig(
       { creators: { base: { enabled: true, retained: "yes" } } },
-      { creators: { base: { enabled: false } } },
+      { creators: { base: { enabled: false } } }
     );
 
     expect(merged.creators).toEqual({
       base: { enabled: false, retained: "yes" },
     });
+  });
+});
+
+describe("string-list creator settings", () => {
+  test("parses one trimmed, de-duplicated value per line", () => {
+    expect(parseStringListSetting(" Attribution \r\n\nCredit\nAttribution\n")).toEqual(["Attribution", "Credit"]);
+  });
+
+  test("blank input becomes undefined so the creator uses its default", () => {
+    expect(parseStringListSetting("")).toBeUndefined();
+    expect(parseStringListSetting("  \n \n")).toBeUndefined();
+    expect(parseStringListSetting(null)).toBeUndefined();
+  });
+
+  test("clears a saved list when merged with undefined", () => {
+    const merged = mergePartialConfig(
+      { creators: { base: { manifestMetadataLabels: ["Credit"], other: true } } },
+      { creators: { base: { manifestMetadataLabels: undefined } } }
+    );
+    expect(merged.creators.base?.manifestMetadataLabels).toBeUndefined();
+    expect(merged.creators.base?.other).toBe(true);
+  });
+
+  test("formats saved values, falling back to the declared default", () => {
+    expect(formatStringListSetting(["A", "B"])).toBe("A\nB");
+    expect(formatStringListSetting(undefined, ["Default"])).toBe("Default");
+    expect(formatStringListSetting(undefined)).toBe("");
   });
 });

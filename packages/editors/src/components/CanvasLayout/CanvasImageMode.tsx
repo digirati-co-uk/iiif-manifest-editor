@@ -9,12 +9,14 @@ const focusRing = "focus-visible:outline focus-visible:outline-2 focus-visible:o
 
 export function CanvasImageMode({
   singleImage,
+  allowSwitchToMulti = true,
   canReturnToSingle,
   onSwitchToMulti,
   onSwitchToSingle,
   children,
 }: {
   singleImage: boolean;
+  allowSwitchToMulti?: boolean;
   canReturnToSingle: boolean;
   onSwitchToMulti: () => void;
   onSwitchToSingle: () => void;
@@ -36,9 +38,14 @@ export function CanvasImageMode({
   );
 
   if (singleImage) {
+    if (!allowSwitchToMulti) return null;
     return (
       <div className="my-3">
-        {modeButton(t("ui.switchToMultiimageLayout"), t("ui.shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas"), onSwitchToMulti)}
+        {modeButton(
+          t("ui.switchToMultiimageLayout"),
+          t("ui.shrinksAndCentresTheImageSoMoreImagesCanShareThisCanvas"),
+          onSwitchToMulti
+        )}
       </div>
     );
   }
@@ -47,7 +54,11 @@ export function CanvasImageMode({
     <div className="my-3 flex flex-col gap-4">
       {children}
       {canReturnToSingle
-        ? modeButton(t("ui.switchToSingleImage"), t("ui.fitsTheCanvasToTheImageAndClearsEmptyPlaceholders"), onSwitchToSingle)
+        ? modeButton(
+            t("ui.switchToSingleImage"),
+            t("ui.fitsTheCanvasToTheImageAndClearsEmptyPlaceholders"),
+            onSwitchToSingle
+          )
         : null}
     </div>
   );

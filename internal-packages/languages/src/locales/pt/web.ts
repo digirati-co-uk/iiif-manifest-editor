@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Lembre-se do ID da tela",
     rememberPanel: "Lembre-se do painel esquerdo",
     grid: "Opções de grade de manifesto",
+    verticalTabs: "Seletor de guias compacto",
     export: "Exportar",
     iiif: "Opções IIIF",
     exportManifests: "Exportar manifestos da Apresentação 2",

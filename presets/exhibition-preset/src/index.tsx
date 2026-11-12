@@ -1,3 +1,6 @@
+import { audioSlideCreator } from "./creators/audio-slide-creator";
+import { audioCanvasEditor } from "./canvas-editors/audio-canvas-editor";
+import { exhibitionAudioEditors } from "./right-panels/ExhibitionAudioEditor";
 import { exhibitionNotebookConfig } from "./notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
@@ -33,6 +36,8 @@ import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
 import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
+import { STANDARD_METADATA_EDITOR_ID } from "./metadata/ExhibitionMetadataPanel";
+import { exhibitionManifestMetadataEditor } from "./right-panels/ExhibitionManifestMetadataEditor";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
 export { imageServiceSlideCreator, type CreateImageServiceSlidePayload } from "./creators/image-service-slide-creator";
@@ -47,7 +52,9 @@ export const exhibitionEditorPreset = extendApp(
       ...app.layout,
       leftPanels: [
         exhibitionGridLeftPanel,
-        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest" || panel.id === NOTEBOOK_PANEL_ID),
+        ...app.layout.leftPanels.filter(
+          (panel) => panel.id === "left-panel-manifest" || panel.id === NOTEBOOK_PANEL_ID
+        ),
       ],
     },
   })),
@@ -62,6 +69,8 @@ export const exhibitionEditorPreset = extendApp(
     config: {
       notebook: exhibitionNotebookConfig,
       editorConfig: {
+        // The exhibition metadata tab replaces the stock metadata tab for the Manifest; slide metadata is in "Text content".
+        Manifest: { hideTabs: [STANDARD_METADATA_EDITOR_ID] },
         Canvas: {
           hideTabs: [
             "@manifest-editor/overview",
@@ -93,6 +102,7 @@ export const exhibitionEditorPreset = extendApp(
     leftPanelIds: ["canvas-listing", "left-panel-manifest", NOTEBOOK_PANEL_ID],
     background: [exhibitionBackgroundTask],
     canvasEditors: [
+      audioCanvasEditor,
       //
       youtubeMainEdtior,
       infoBlockEditor,
@@ -100,6 +110,7 @@ export const exhibitionEditorPreset = extendApp(
       imageBlockEditor,
     ],
     editors: [
+      ...exhibitionAudioEditors,
       //
       infoBoxWorkbenchEditor,
       exhibitionWorkbenchEditor,
@@ -109,8 +120,10 @@ export const exhibitionEditorPreset = extendApp(
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
+      exhibitionManifestMetadataEditor,
     ],
     creators: [
+      audioSlideCreator,
       infoBoxCreator,
       youtubeSlideCreator,
       imageServiceSlideCreator,

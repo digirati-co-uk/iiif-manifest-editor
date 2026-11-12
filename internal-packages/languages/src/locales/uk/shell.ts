@@ -165,6 +165,7 @@ export const catalog = {
     rememberCanvas: "Запам'ятати Canvas ID",
     rememberPanel: "Запам'ятайте ліву панель",
     grid: "Параметри сітки маніфесту",
+    verticalTabs: "Компактний вибір вкладок",
     defaultPreview: "Попередній перегляд за умовчанням",
     return: "Повернення до Manifest Editor",
     exhibition: "Перейти до Exhibition Editor",

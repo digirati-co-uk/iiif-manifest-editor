@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "キャンバスIDを記憶する",
     rememberPanel: "左側のパネルを覚えておいてください",
     grid: "マニフェスト グリッド オプション",
+    verticalTabs: "コンパクトなタブセレクター",
     export: "輸出",
     iiif: "IIIF オプション",
     exportManifests: "プレゼンテーション 2 マニフェストのエクスポート",
