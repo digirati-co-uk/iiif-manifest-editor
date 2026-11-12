@@ -63,6 +63,7 @@ export function BrowserSettingsPanel() {
         rememberCanvasId: formValues.get("rememberCanvasId") === "on",
         rememberLeftPanelId: formValues.get("rememberLeftPanelId") === "on",
         manifestGridOptions: formValues.get("manifestGridOptions") === "on",
+        verticalTabs: formValues.get("verticalTabs") === "on",
       };
     }
 
@@ -198,6 +199,11 @@ export function BrowserSettingsPanel() {
                   name="manifestGridOptions"
                   label={webT("settings.grid")}
                   checked={config.editorFeatureFlags?.manifestGridOptions || false}
+                />
+                <Checkbox
+                  name="verticalTabs"
+                  label={webT("settings.verticalTabs")}
+                  checked={config.editorFeatureFlags?.verticalTabs || false}
                 />
               </SettingsSection>
             ) : null}

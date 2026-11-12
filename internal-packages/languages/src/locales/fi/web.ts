@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Muista kanvas-tunnus",
     rememberPanel: "Muista vasen paneeli",
     grid: "Ilmoitetut ruudukkovaihtoehdot",
+    verticalTabs: "Kompakti välilehtivalitsin",
     export: "Viedä",
     iiif: "IIIF vaihtoehdot",
     exportManifests: "Vie esitys 2 -luettelot",

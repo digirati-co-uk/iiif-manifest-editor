@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "कैनवास आईडी याद रखें",
     rememberPanel: "बायां पैनल याद रखें",
     grid: "प्रकट ग्रिड विकल्प",
+    verticalTabs: "संक्षिप्त टैब चयनकर्ता",
     export: "निर्यात",
     iiif: "IIIF विकल्प",
     exportManifests: "निर्यात प्रस्तुति 2 मेनिफ़ेस्ट",

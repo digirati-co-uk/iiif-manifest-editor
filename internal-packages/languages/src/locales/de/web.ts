@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Merken Sie sich die Canvas-ID",
     rememberPanel: "Denken Sie an das linke Feld",
     grid: "Manifestieren Sie Rasteroptionen",
+    verticalTabs: "Kompakte Registerauswahl",
     export: "Export",
     iiif: "IIIF-Optionen",
     exportManifests: "Präsentation 2-Manifeste exportieren",

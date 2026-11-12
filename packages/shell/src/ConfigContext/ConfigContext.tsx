@@ -42,6 +42,8 @@ export interface Config {
     rememberLeftPanelId?: boolean;
     annotationPopups?: boolean;
     manifestGridOptions?: boolean;
+    /** Replace the scrolling editor tabs with a single "current tab" row that opens a list of all tabs. */
+    verticalTabs?: boolean;
   };
 
   // Internationalisation options
@@ -131,6 +133,7 @@ const DEFAULT_CONFIG: Config = {
     annotationPopups: false,
     rememberCanvasId: true,
     manifestGridOptions: true,
+    verticalTabs: false,
     rememberLeftPanelId: true,
   },
   uploadBackends: [],

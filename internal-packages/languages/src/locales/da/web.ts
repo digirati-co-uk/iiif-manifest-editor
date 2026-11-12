@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Husk lærreds-id",
     rememberPanel: "Husk venstre panel",
     grid: "Manifesterede gittermuligheder",
+    verticalTabs: "Kompakt fanevælger",
     export: "Eksportere",
     iiif: "IIIF muligheder",
     exportManifests: "Eksporter præsentation 2-manifester",

@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Recordar ID de lienzo",
     rememberPanel: "Recuerda el panel izquierdo",
     grid: "Opciones de cuadrícula de manifiesto",
+    verticalTabs: "Selector de pestañas compacto",
     export: "Exportar",
     iiif: "Opciones de IIIF",
     exportManifests: "Exportar manifiestos de presentación 2",

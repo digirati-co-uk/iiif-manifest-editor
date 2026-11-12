@@ -165,6 +165,7 @@ export const catalog = {
     rememberCanvas: "Zapamiętaj identyfikator Canvas",
     rememberPanel: "Pamiętaj lewy panel",
     grid: "Opcje siatki manifestu",
+    verticalTabs: "Kompaktowy wybór zakładek",
     defaultPreview: "Domyślny podgląd",
     return: "Wróć do Manifest Editor",
     exhibition: "Przejdź do Exhibition Editor",

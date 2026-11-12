@@ -44,6 +44,7 @@ export function ConfigEditor() {
         rememberLeftPanelId: formValues.get("rememberLeftPanelId") === "on",
         annotationPopups: formValues.get("annotationPopups") === "on",
         manifestGridOptions: formValues.get("manifestGridOptions") === "on",
+        verticalTabs: formValues.get("verticalTabs") === "on",
         enableMultiImageCanvases: formValues.get("enableMultiImageCanvases") === "on",
         enableMultiMediaCanvases: formValues.get("enableMultiMediaCanvases") === "on",
       },
@@ -129,6 +130,16 @@ export function ConfigEditor() {
               defaultChecked={config.editorFeatureFlags?.manifestGridOptions || false}
             />
             <Form.Label htmlFor="manifestGridOptions">{t("settings.grid")}</Form.Label>
+          </Form.InputContainer>
+
+          <Form.InputContainer horizontal className="my-3">
+            <Form.Input
+              type="checkbox"
+              name="verticalTabs"
+              id="verticalTabs"
+              defaultChecked={config.editorFeatureFlags?.verticalTabs || false}
+            />
+            <Form.Label htmlFor="verticalTabs">{t("settings.verticalTabs")}</Form.Label>
           </Form.InputContainer>
 
           <Form.InputContainer horizontal className="my-3">

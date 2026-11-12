@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "Kanvas Kimliğini Hatırla",
     rememberPanel: "Sol paneli hatırla",
     grid: "Manifest Izgara Seçenekleri",
+    verticalTabs: "Kompakt sekme seçici",
     defaultPreview: "Varsayılan önizleme",
     return: "Manifest Editor'ya dön",
     exhibition: "Exhibition Editor'ya git",
