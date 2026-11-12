@@ -7,10 +7,7 @@ import { slideshowCanvasEditor } from "../canvas-editors/slideshow-canvas-editor
 import { slideshowCenterPanel } from "../center-panels/SlideshowCenterPanel";
 import { imageBrowserSlideCreator } from "../creators/image-browser-slide-creator";
 import { imageServiceSlideCreator } from "../creators/image-service-slide-creator";
-import {
-  slideshowImageOnlyCreator,
-  slideshowImageTextCreator,
-} from "../creators/image-slide-creator";
+import { slideshowImageOnlyCreator, slideshowImageTextCreator } from "../creators/image-slide-creator";
 import { imageUrlSlideCreator } from "../creators/image-url-slide";
 import { slideshowLongEditorialCreator } from "../creators/info-box-creator";
 import { slideshowVideoCreator } from "../creators/video-slide-creator";
@@ -25,6 +22,8 @@ import { exhibitionTourSteps } from "../right-panels/ExhibitionTourSteps";
 import { slideshowWorkbenchEditor } from "../right-panels/ExhibitionWorkbenchEditor";
 import { infoBoxWorkbenchEditor } from "../right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "../right-panels/SlideBehaviours";
+import { STANDARD_METADATA_EDITOR_ID } from "../metadata/ExhibitionMetadataPanel";
+import { exhibitionManifestMetadataEditor } from "../right-panels/ExhibitionManifestMetadataEditor";
 
 export const exhibitionEditorSlideshowPreset = extendApp(
   mapApp(ManifestPreset),
@@ -39,6 +38,8 @@ export const exhibitionEditorSlideshowPreset = extendApp(
     config: {
       notebook: exhibitionNotebookConfig,
       editorConfig: {
+        // The exhibition metadata tab replaces the stock metadata tab (slide metadata is at the bottom of "Text content").
+        Manifest: { hideTabs: [STANDARD_METADATA_EDITOR_ID] },
         Canvas: {
           singleTab: "@exhibition/slideshow-workbench-editor",
           hideTabs: [
@@ -85,6 +86,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
+      exhibitionManifestMetadataEditor,
     ],
     creators: [
       imageBrowserSlideCreator,
@@ -96,5 +98,5 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       slideshowYoutubeCreator,
       slideshowLongEditorialCreator,
     ],
-  },
+  }
 );

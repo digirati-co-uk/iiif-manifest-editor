@@ -20,6 +20,7 @@ import {
   ExhibitionHtmlSummaryEditor,
   ExhibitionRequiredStatementEditor,
   ExhibitionSummaryContent,
+  ExhibitionTextMetadata,
 } from "./ExhibitionSummaryEditor";
 import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { InfoBoxPanel } from "./InfoBoxPanel";
@@ -329,6 +330,7 @@ function SimpleSummaryPanel() {
           </div>
         </div>
         <ExhibitionRequiredStatementEditor />
+        <ExhibitionTextMetadata />
       </div>
     </ResourceEditingProvider>
   );

@@ -33,6 +33,8 @@ import { exhibitionTourSteps } from "./right-panels/ExhibitionTourSteps";
 import { exhibitionWorkbenchEditor } from "./right-panels/ExhibitionWorkbenchEditor";
 import { infoBoxWorkbenchEditor } from "./right-panels/InfoBoxPanel";
 import { customBehaviourEditor } from "./right-panels/SlideBehaviours";
+import { STANDARD_METADATA_EDITOR_ID } from "./metadata/ExhibitionMetadataPanel";
+import { exhibitionManifestMetadataEditor } from "./right-panels/ExhibitionManifestMetadataEditor";
 
 export { default as PresetIcon } from "./icons/PresetIcon";
 export { imageServiceSlideCreator, type CreateImageServiceSlidePayload } from "./creators/image-service-slide-creator";
@@ -47,7 +49,9 @@ export const exhibitionEditorPreset = extendApp(
       ...app.layout,
       leftPanels: [
         exhibitionGridLeftPanel,
-        ...app.layout.leftPanels.filter((panel) => panel.id === "left-panel-manifest" || panel.id === NOTEBOOK_PANEL_ID),
+        ...app.layout.leftPanels.filter(
+          (panel) => panel.id === "left-panel-manifest" || panel.id === NOTEBOOK_PANEL_ID
+        ),
       ],
     },
   })),
@@ -62,6 +66,8 @@ export const exhibitionEditorPreset = extendApp(
     config: {
       notebook: exhibitionNotebookConfig,
       editorConfig: {
+        // The exhibition metadata tab replaces the stock metadata tab for the Manifest; slide metadata is in "Text content".
+        Manifest: { hideTabs: [STANDARD_METADATA_EDITOR_ID] },
         Canvas: {
           hideTabs: [
             "@manifest-editor/overview",
@@ -109,6 +115,7 @@ export const exhibitionEditorPreset = extendApp(
       customBehaviourEditor,
       exhibitionSummaryEdtior,
       exhibitionTourSteps,
+      exhibitionManifestMetadataEditor,
     ],
     creators: [
       infoBoxCreator,
