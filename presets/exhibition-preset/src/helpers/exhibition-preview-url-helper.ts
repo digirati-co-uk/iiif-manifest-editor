@@ -58,11 +58,11 @@ export type ScrollPresetUrlSearchParamsOptions = SharedPresetUrlSearchParamsOpti
 
 export function createPresetUrlSearchParams<T extends PresetUrlSearchParamsPreset>(
   preset: T,
-  options: PresetUrlSearchParamsOptions<T>,
+  options: PresetUrlSearchParamsOptions<T>
 ): URLSearchParams;
 export function createPresetUrlSearchParams(
   preset: PresetUrlSearchParamsPreset,
-  options: PresetUrlSearchParamsOptions,
+  options: PresetUrlSearchParamsOptions
 ): URLSearchParams {
   const params = new URLSearchParams();
 
@@ -133,25 +133,54 @@ export function createPresetUrlSearchParams(
 export function createScrollingPreviewUrl<T extends PresetUrlSearchParamsPreset>(
   preset: T,
   options?: Partial<PresetUrlSearchParamsOptions<T>>,
-  previewUrl?: string,
+  previewUrl?: string
 ): URL;
 export function createScrollingPreviewUrl(
   preset: PresetUrlSearchParamsPreset,
   options?: Partial<PresetUrlSearchParamsOptions>,
-  previewUrl?: string,
+  previewUrl?: string
 ): URL {
   const searchParams = createPresetUrlSearchParams(preset, (options || {}) as any);
-  const url = new URL(previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
+  const url = resolveExhibitionPreviewUrl(previewUrl || `https://preview.exhibitionviewer.org/preview/${preset}`);
 
-  if (!previewUrl && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port === "3000") {
-    url.protocol = "http:";
-    url.host = "localhost:5174";
-  }
-
-  searchParams.forEach((value, key) => { url.searchParams.set(key, value) });
+  searchParams.forEach((value, key) => {
+    url.searchParams.set(key, value);
+  });
 
   url.searchParams.set("manifest-editor-preview", "true");
   url.searchParams.set("manifest-editor-preview-origin", window.location.origin);
+
+  return url;
+}
+
+/** Preserve template routes and custom hosts when selecting the local viewer. */
+export function resolveExhibitionPreviewUrl(previewUrl: string): URL {
+  const url = new URL(previewUrl);
+
+  // Built-in templates supply their own preview URL, including the Leeds paths.
+  // Keep those paths but use the local viewer while developing the editor.
+  const isBuiltInPreview = url.hostname === "preview.exhibitionviewer.org";
+  if (
+    isBuiltInPreview &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
+    window.location.port === "3000"
+  ) {
+    url.protocol = "http:";
+    url.host = "localhost:5174";
+    // A second local project may already occupy the default viewer port.
+    try {
+      const override = window.localStorage?.getItem("exhibition-viewer-local-origin");
+      if (override) {
+        const local = new URL(override);
+        if (["localhost", "127.0.0.1", "[::1]"].includes(local.hostname) && ["http:", "https:"].includes(local.protocol)) {
+          url.protocol = local.protocol;
+          url.host = local.host;
+        }
+      }
+    } catch {
+      // Storage may be unavailable in private or embedded contexts.
+    }
+  }
 
   return url;
 }
