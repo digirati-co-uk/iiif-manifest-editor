@@ -29,6 +29,12 @@ export const iiifBrowserCreator = defineCreator({
   configuration: {
     fields: [
       {
+        id: "manifestMetadataLabels",
+        type: "string-list",
+        label: "Metadata labels to import",
+        summary: "One label per line. Leave blank to import all source Manifest metadata.",
+      },
+      {
         id: "addManifestMetadataToCanvas",
         type: "checkbox",
         label: "Add manifest metadata to imported canvases",

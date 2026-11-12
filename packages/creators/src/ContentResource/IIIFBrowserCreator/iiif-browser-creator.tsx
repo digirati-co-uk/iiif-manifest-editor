@@ -4,6 +4,7 @@ import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
 import invariant from "tiny-invariant";
+import { importManifestMetadata, type ManifestMetadataConfig } from "./manifest-metadata";
 import { browserImageApiSelector, browserTransformDimensions, type IIIFBrowserOutputItem } from "./iiif-browser-output";
 
 export function croppedRegion(
@@ -27,6 +28,8 @@ export interface IIIFBrowserCreatorPayload {
   // We could have gone with "IIIF Content State" here and may do in the future, but this
   // will simplify parsing and importing resources.
   output: IIIFBrowserOutputItem[];
+  /** Observe the selected full canvas, including timed media and accompanying content. */
+  trackCanvas?: (canvas: Canvas) => void;
   trackSize?: (dimensions: { width: number; height: number }) => void;
   trackManifest?: (manifest: { requiredStatement: any; rights: any; metadata?: any[]; partOf: any[] }) => void;
 }
@@ -109,10 +112,11 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         invariant(manifest, "Manifest not found");
 
         const addManifestMetadataToCanvas = ctx.config.addManifestMetadataToCanvas !== false;
+        const imported = importManifestMetadata(manifest, ctx.config as ManifestMetadataConfig);
         data.trackManifest?.({
-          requiredStatement: manifest.requiredStatement,
+          requiredStatement: imported.requiredStatement,
           rights: manifest.rights,
-          ...(addManifestMetadataToCanvas ? { metadata: manifest.metadata || [] } : {}),
+          ...(addManifestMetadataToCanvas ? { metadata: imported.metadata } : {}),
           partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
         });
         const addManifestTracking = (resource: any): any => {
@@ -122,15 +126,35 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
               source: addManifestTracking(resource.source),
             };
           }
-          const metadata =
-            resource.type === "Canvas" && !addManifestMetadataToCanvas ? {} : { metadata: manifest.metadata || [] };
+          const hasStatement = Object.values(resource.requiredStatement?.value || {}).some((values: any) =>
+            values.some((value: string) => value.trim().length > 0)
+          );
+          const resourceImport = hasStatement
+            ? importManifestMetadata(
+                { ...manifest, requiredStatement: resource.requiredStatement },
+                ctx.config as ManifestMetadataConfig
+              )
+            : imported;
+          const sourceMetadata = resource.metadata || [];
+          const copyMetadata = resource.type !== "Canvas" || addManifestMetadataToCanvas;
+          const metadata = copyMetadata
+            ? [
+                ...sourceMetadata,
+                ...resourceImport.metadata.filter(
+                  (item) => !sourceMetadata.some((existing: any) => JSON.stringify(existing) === JSON.stringify(item))
+                ),
+              ]
+            : sourceMetadata;
 
           return {
-            requiredStatement: manifest.requiredStatement,
             rights: manifest.rights,
-            ...metadata,
             ...resource,
-            partOf: [{ id: manifestId, type: "Manifest", label: manifest.label }],
+            requiredStatement: hasStatement ? resource.requiredStatement : imported.requiredStatement,
+            ...(copyMetadata ? { metadata } : {}),
+            partOf: [
+              ...(resource.partOf || []).filter((item: any) => item.id !== manifestId),
+              { id: manifestId, type: "Manifest", label: manifest.label },
+            ],
           };
         };
 
@@ -139,6 +163,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         invariant(canvasRef, "Canvas not found");
 
         const canvas = previewVault.get(canvasRef);
+        // Track the same effective metadata as a whole-canvas import, including Canvas-specific credits.
+        data.trackCanvas?.(addManifestTracking(previewVault.toPresentation3<Canvas>(canvas)!));
 
         const imageApiSelector = browserImageApiSelector(selector, rotation);
 

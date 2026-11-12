@@ -116,3 +116,52 @@ As you work on your IIIF Manifest, you can preview how your changes will be disp
 - Floating tour (generic, lightly themed exhibition slideshow, presenting the tour step(s) (annotations) as a floating modal that can have it's position configured) 
 
 
+
+## Metadata import and editing
+
+Slide metadata is edited at the bottom of **Text content** in the exhibition presets. Manifest metadata remains in its metadata panel. Suggested fields can be added from templates. In both the exhibition and manifest presets, **Original source metadata** loads the Manifest referenced by `partOf` and offers removed values to add back, even when automatic metadata copying was disabled during import. Loading the source does not change your exhibition until you choose **Add**.
+
+In creator settings, **Metadata labels to import** controls which Manifest metadata rows the IIIF Browser copies. Enter one label per line; a blank field imports all labels. Labels match exactly, ignoring case and surrounding whitespace, across all label languages. Canvas metadata is retained.
+
+Embedding applications can configure imports through the existing `creators` configuration:
+
+```ts
+{
+  creators: {
+    '@manifest-editor/iiif-browser-creator': {
+      addManifestMetadataToCanvas: true,
+      // Omit to import all labels; [] imports no Manifest metadata rows.
+      manifestMetadataLabels: ['Title', 'Creator', 'Date'],
+      // Code-only automatic extraction, useful for Leeds source Manifests.
+      requiredStatementMetadataLabels: ['Restrictions on use'],
+    },
+  },
+}
+```
+
+Automatic extraction runs before the import filter. It moves the first matching source row into the required statement when there is no existing nonempty statement. It preserves the full language maps and leaves the source Manifest unchanged.
+
+Metadata templates and inline required statement hints use the existing `editorConfig` for `All`, `Manifest`, or `Canvas`:
+
+```ts
+{
+  editorConfig: {
+    Manifest: {
+      metadataTemplates: [
+        { label: { en: ['Curator'] }, value: { en: [''] } },
+      ],
+    },
+    Canvas: {
+      metadataTemplates: [
+        { label: { en: ['Creator'] }, value: { en: [''] } },
+      ],
+      metadataRequiredStatement: {
+        enabled: true,
+        keywords: ['Restrictions on use', 'Copyright', 'Attribution'],
+      },
+    },
+  },
+}
+```
+
+Templates suggest missing fields without overwriting existing rows. Inline conversion appears for matching labels with nonempty values; set `enabled: false` to disable it, or `keywords: []` to offer no matches. Automatic import extraction is configured separately in code.

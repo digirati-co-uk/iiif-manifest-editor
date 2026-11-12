@@ -5,7 +5,7 @@ import type { FormEvent } from "react";
 import { useMemo } from "react";
 import { useApp } from "../AppContext/AppContext";
 import { type Config, useConfig, useSaveConfig } from "./ConfigContext";
-import { getCreatorSettings } from "./CreatorSettings.helpers";
+import { formatStringListSetting, getCreatorSettings, parseStringListSetting } from "./CreatorSettings.helpers";
 
 export function CreatorSettings() {
   const { resolveMessage } = useEditorI18n();
@@ -27,6 +27,9 @@ export function CreatorSettings() {
     for (const field of creator.configuration?.fields || []) {
       if (field.type === "checkbox") {
         nextSettings[field.id] = formValues.get(field.id) === "on";
+      } else if (field.type === "string-list") {
+        // Blank => undefined so the creator falls back to its default (e.g. import everything).
+        nextSettings[field.id] = parseStringListSetting(formValues.get(field.id) as string | null);
       }
     }
 
@@ -78,6 +81,27 @@ export function CreatorSettings() {
                       <p className="text-sm text-gray-500">{resolveMessage(field?.summaryMessage, field.summary)}</p>
                     ) : null}
                   </div>
+                </Form.InputContainer>
+              );
+            }
+
+            if (field.type === "string-list") {
+              const summary = resolveMessage(field?.summaryMessage, field.summary);
+              return (
+                <Form.InputContainer key={field.id} className="my-1">
+                  <Form.Label htmlFor={fieldId}>{resolveMessage(field?.labelMessage, field.label)}</Form.Label>
+                  <Form.TextArea
+                    name={field.id}
+                    id={fieldId}
+                    rows={4}
+                    defaultValue={formatStringListSetting(value, field.defaultValue)}
+                    aria-describedby={summary ? `${fieldId}-summary` : undefined}
+                  />
+                  {summary ? (
+                    <p id={`${fieldId}-summary`} className="text-sm text-gray-500">
+                      {summary}
+                    </p>
+                  ) : null}
                 </Form.InputContainer>
               );
             }
