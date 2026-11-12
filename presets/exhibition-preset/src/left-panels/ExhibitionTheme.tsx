@@ -28,7 +28,7 @@ import {
 } from "../theme/theme-service";
 import { useExhibitionTemplate } from "../helpers/exhibition-template";
 import { PreviewIcon } from "../icons/PreviewIcon";
-import { getTemplateConfigurationValue, setTemplateConfigurationValue } from "../exhibition-templates";
+import { getTemplateConfigurationValue, setTemplateConfigurationValue, resolveTemplateConfiguration } from "../exhibition-templates";
 
 export const exhibitionThemeLeftPanel: LayoutPanel = {
   id: "@exhibitions/theme-panel",
@@ -51,15 +51,7 @@ function ExhibitionPreviewPanel() {
   const details = getThemeServiceDetails(serviceList) || getThemeServiceDetails(servicesList);
   const configuration = template?.configuration || [];
   const values = (details?.service?.theme || {}) as Record<string, any>;
-  const configuredValues = configuration.reduce(
-    (result, field) =>
-      setTemplateConfigurationValue(
-        result,
-        field.id,
-        getTemplateConfigurationValue(values, field.id) ?? field.defaultValue ?? defaultFieldValue(field),
-      ),
-    {} as Record<string, any>,
-  );
+  const configuredValues = resolveTemplateConfiguration(configuration, values);
 
   if (!manifest || !template) return null;
 
@@ -147,7 +139,7 @@ function TemplateConfigurationField({
       <ThemeSelectField
         label={field.label}
         value={String(value)}
-        onChange={onChange}
+        onChange={(value) => onChange(field.options?.find((option) => String(option.value) === value)?.value ?? value)}
         options={(field.options || []).map((option) => ({ label: option.label, value: String(option.value) }))}
       />
     );
@@ -745,7 +737,15 @@ function ExhibitionThemeOptions() {
               value={resolvedTheme.shared.fontMono}
               onChange={(value) => updatePath(["shared", "fontMono"], value)}
             />
-            {themeTarget !== "scroll" ? (
+            {themeTarget === "scroll" ? (
+              <ThemeToggle
+                label="Metadata popup"
+                checked={resolvedTheme.scroll.options.metadataPopup !== false}
+                onChange={(value) => updatePath(["scroll", "options", "metadataPopup"], value)}
+                />
+          ) : null}
+
+          {themeTarget !== "scroll" ? (
               <ThemeSelectField<TitleTransform>
                 label="Title capitalisation"
                 value={resolvedTheme.shared.titleTransform}
@@ -1063,6 +1063,22 @@ function ExhibitionThemeOptions() {
                     }
                   />
                   <ThemeToggle
+                  label="Metadata popup"
+                  checked={
+                    (themeTarget === "slideshow"
+                      ? resolvedTheme.delft.slideshow.metadataPopup
+                      : resolvedTheme.delft.exhibition.metadataPopup) !== false
+                  }
+                  onChange={(value) =>
+                    updatePath(
+                      themeTarget === "slideshow"
+                        ? ["delft", "slideshow", "metadataPopup"]
+                        : ["delft", "exhibition", "metadataPopup"],
+                      value
+                    )
+                  }
+                  />
+                  <ThemeToggle
                     label="Fill image area"
                     checked={coverImages}
                     onChange={setCoverImages}
@@ -1369,6 +1385,11 @@ function ExhibitionThemeOptions() {
                         value,
                       )
                     }
+                  />
+                  <ThemeToggle
+                  label="Metadata popup"
+                  checked={resolvedTheme.delft.presentation.metadataPopup !== false}
+                  onChange={(value) => updatePath(["delft", "presentation", "metadataPopup"], value)}
                   />
                 </ThemeSection>
               </>

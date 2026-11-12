@@ -240,3 +240,177 @@ function unwrap(value: any): any {
   if (!value || typeof value !== "object") return value;
   return Object.fromEntries(Object.entries(value).map(([key, nested]) => [key, unwrap(nested)]));
 }
+
+test("imports a timed audio canvas with accompanying artwork and configured metadata", async () => {
+  const source = {
+    id: "https://example.org/source-canvas",
+    type: "Canvas",
+    duration: 42,
+    label: { en: ["Interview"] },
+    summary: { en: ["A recorded conversation"] },
+    accompanyingCanvas: { id: "https://example.org/artwork", type: "Canvas", width: 600, height: 400, items: [] },
+    metadata: [{ label: { en: ["Speaker"] }, value: { en: ["Jane"] } }],
+    items: [
+      {
+        id: "https://example.org/source-page",
+        type: "AnnotationPage",
+        items: [
+          {
+            id: "https://example.org/source-annotation",
+            type: "Annotation",
+            motivation: "painting",
+            target: "https://example.org/source-canvas",
+            body: { id: "https://example.org/audio.mp3", type: "Sound", duration: 42 },
+          },
+        ],
+      },
+    ],
+  };
+  const ctx: any = {
+    config: {},
+    options: { initialData: { audioSlideBehavior: ["no-audio-waveform", "image-cover"] } },
+    generateId: (type: string) => `https://example.org/new/${type}`,
+    embed: (resource: any) => ({ get: () => resource }),
+    create: vi.fn(async (_creator, data) => {
+      data.trackManifest({
+        metadata: [{ label: { en: ["Credit"] }, value: { en: ["Archive"] } }],
+        partOf: [{ id: "https://example.org/source", type: "Manifest" }],
+      });
+      data.trackCanvas(source);
+      return [];
+    }),
+  };
+  const result = await imageBrowserSlideCreator.create({ output: [] }, ctx);
+  expect(result.get()).toMatchObject({
+    id: "https://example.org/new/canvas",
+    duration: 42,
+    label: source.label,
+    summary: source.summary,
+    accompanyingCanvas: source.accompanyingCanvas,
+    behavior: ["no-audio-waveform", "image-cover", "audio", "w-12", "h-8"],
+    metadata: [...source.metadata, { label: { en: ["Credit"] }, value: { en: ["Archive"] } }],
+    items: [{ items: [{ target: "https://example.org/new/canvas", body: { type: "Sound" } }] }],
+  });
+});
+
+test("creates a separate slide for every selected audio canvas", async () => {
+  let sequence = 0;
+  const makeCanvas = (index: number) => ({
+    id: `https://example.org/audio/${index}`,
+    type: "Canvas",
+    duration: index * 10,
+    items: [
+      {
+        id: `https://example.org/page/${index}`,
+        type: "AnnotationPage",
+        items: [
+          {
+            id: `https://example.org/annotation/${index}`,
+            type: "Annotation",
+            motivation: "painting",
+            target: `https://example.org/audio/${index}`,
+            body: { id: `https://example.org/${index}.mp3`, type: "Sound" },
+          },
+        ],
+      },
+    ],
+  });
+  const ctx: any = {
+    config: {},
+    options: { initialData: {} },
+    generateId: (type: string) => `https://example.org/new/${type}/${++sequence}`,
+    embed: (resource: any) => ({ get: () => resource }),
+    create: vi.fn(async (_creator, data) => {
+      data.trackManifest({ partOf: [{ id: "https://example.org/manifest/1", type: "Manifest" }] });
+      data.trackCanvas(makeCanvas(1));
+      data.trackManifest({ partOf: [{ id: "https://example.org/manifest/2", type: "Manifest" }] });
+      data.trackCanvas(makeCanvas(2));
+      return [];
+    }),
+  };
+  const result: any = await imageBrowserSlideCreator.create({ output: [] }, ctx);
+  expect(result).toHaveLength(2);
+  expect(result[0].get()).toMatchObject({ duration: 10, partOf: [{ id: "https://example.org/manifest/1" }] });
+  expect(result[1].get()).toMatchObject({ duration: 20, partOf: [{ id: "https://example.org/manifest/2" }] });
+  expect(result[0].get().id).not.toBe(result[1].get().id);
+  for (const slide of result) expect(slide.get().items[0].items[0].target).toBe(slide.get().id);
+});
+
+test.each([false, true])(
+  "real audio import preserves credits with an existing or empty canvas statement (%s)",
+  async (empty) => {
+    const { createFromIIIFBrowserOutput } =
+      await import("../../../../packages/creators/src/ContentResource/IIIFBrowserCreator/iiif-browser-creator");
+    const manifestId = `https://example.org/audio-import-${empty}`;
+    const canvasId = manifestId + "/canvas";
+    const credit = { label: { en: ["Restrictions on use"] }, value: { en: ["Archive credit"] } };
+    const statement = { label: { en: ["Credit"] }, value: { en: empty ? [] : ["Canvas credit"] } };
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            id: manifestId,
+            type: "Manifest",
+            metadata: [credit],
+            items: [
+              {
+                id: canvasId,
+                type: "Canvas",
+                duration: 10,
+                requiredStatement: statement,
+                items: [
+                  {
+                    id: canvasId + "/p",
+                    type: "AnnotationPage",
+                    items: [
+                      {
+                        id: canvasId + "/a",
+                        type: "Annotation",
+                        motivation: "painting",
+                        target: canvasId,
+                        body: { id: manifestId + "/file.mp3", type: "Sound", duration: 10 },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          }),
+          { headers: { "Content-Type": "application/json" } }
+        )
+    ) as typeof fetch;
+    try {
+      const vault = new Vault();
+      const ctx: any = {
+        vault,
+        getTarget: () => ({ id: "https://example.org/imported", type: "Canvas" }),
+        config: { requiredStatementMetadataLabels: ["Restrictions on use"] },
+        options: { targetType: "Canvas", initialData: {} },
+        generateId: (type: string) => `https://example.org/imported-${empty}/${type}`,
+        embed: (resource: any) => ({ get: () => resource }),
+        create: async (_creator: string, payload: any) =>
+          createFromIIIFBrowserOutput(payload, {
+            ...ctx,
+            options: { targetType: "Annotation", target: { id: "https://example.org/imported", type: "Canvas" } },
+          }),
+      };
+      const result = await imageBrowserSlideCreator.create(
+        {
+          output: [
+            {
+              resource: { id: canvasId, type: "Canvas" },
+              parent: { id: manifestId, type: "Manifest" },
+            },
+          ],
+        } as any,
+        ctx
+      );
+      const slide = result.get();
+      expect(slide.requiredStatement).toEqual(empty ? credit : statement);
+      expect(slide.metadata).toEqual(empty ? [] : [credit]);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  }
+);
