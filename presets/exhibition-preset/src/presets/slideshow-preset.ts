@@ -1,3 +1,6 @@
+import { audioSlideCreator } from "../creators/audio-slide-creator";
+import { audioCanvasEditor } from "../canvas-editors/audio-canvas-editor";
+import { exhibitionAudioEditors } from "../right-panels/ExhibitionAudioEditor";
 import { exhibitionNotebookConfig } from "../notebook-config";
 import * as ManifestPreset from "@manifest-editor/manifest-preset";
 import { extendApp, mapApp, NOTEBOOK_PANEL_ID } from "@manifest-editor/shell";
@@ -75,10 +78,12 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       exhibitionBackgroundTask,
     ],
     canvasEditors: [
+      audioCanvasEditor,
       //
       slideshowCanvasEditor,
     ],
     editors: [
+      ...exhibitionAudioEditors,
       //
       slideshowWorkbenchEditor,
       infoBoxWorkbenchEditor,
@@ -89,6 +94,7 @@ export const exhibitionEditorSlideshowPreset = extendApp(
       exhibitionManifestMetadataEditor,
     ],
     creators: [
+      audioSlideCreator,
       imageBrowserSlideCreator,
       imageServiceSlideCreator,
       imageUrlSlideCreator,

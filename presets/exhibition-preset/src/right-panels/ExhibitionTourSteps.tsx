@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
@@ -30,7 +31,7 @@ export const exhibitionTourSteps: EditorDefinition = {
     properties: ["annotations", "behavior"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault) || isAudioEditingResource(vault, resource)) return false;
       const canvas = vault.get(resource as any) as any;
       // Tour steps are supported for image canvases only.
       return (

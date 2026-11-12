@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import { LazyThumbnail, Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   BehaviorEditor,
@@ -161,7 +162,7 @@ export const customBehaviourEditor: EditorDefinition = {
     resourceTypes: ["Canvas"],
     properties: ["behavior"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault) || isAudioEditingResource(vault, resource)) return false;
       // The standalone layout panel is not shown for textual-content (info box) canvases;
       // they get their own layout section inside the workbench editor.
       return !isInfoBoxCanvas(resource as any, vault);

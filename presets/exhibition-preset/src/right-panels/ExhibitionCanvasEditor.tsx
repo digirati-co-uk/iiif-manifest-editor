@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import { ArrowRightIcon, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { InputContainer, LanguageMapEditor } from "@manifest-editor/editors";
 import {
@@ -37,7 +38,7 @@ export const exhibitionCanvasEditor: EditorDefinition = {
     properties: ["label", "summary"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault) || isAudioEditingResource(vault, resource)) return false;
       // Hide the Exhibition tab for textual-content (info box) canvases.
       return !isInfoBoxCanvas(resource as any, vault);
     },
@@ -163,7 +164,7 @@ function ManifestSplashFields({ manifestEditor }: { manifestEditor: ReturnType<t
   );
 }
 
-function ReadonlyExhibitionSummary({ canvas }: { canvas: any }) {
+export function ReadonlyExhibitionSummary({ canvas, onEdit }: { canvas: any; onEdit?: () => void }) {
   const { edit } = useLayoutActions();
   const summaryRef = useRef<HTMLDivElement | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -182,6 +183,7 @@ function ReadonlyExhibitionSummary({ canvas }: { canvas: any }) {
   }, [summary, expanded]);
 
   const openSummaryTab = () => {
+    if (onEdit) { onEdit(); return; }
     edit({ id: canvas.id, type: "Canvas" }, undefined, {
       selectedTab: "@exhibition/summary-editor",
       forceOpen: true,

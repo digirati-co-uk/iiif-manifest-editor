@@ -1,4 +1,6 @@
 import { addMappings, importEntities } from "@iiif/helpers/vault/actions";
+import { isAudioCanvas } from "../audio-slide";
+import { AudioCanvasWorkspace } from "../canvas-editors/audio-canvas-editor";
 import { ActionButton, SidebarContent } from "@manifest-editor/components";
 import { useInStack } from "@manifest-editor/editors";
 import {
@@ -290,6 +292,13 @@ function TourStepNavigation({
 }
 
 function SelectedSlidePreview() {
+  const canvas = useCanvas();
+  const vault = useVault();
+  if (isAudioCanvas(vault, canvas)) return <AudioCanvasWorkspace />;
+  return <SelectedImageSlidePreview />;
+}
+
+function SelectedImageSlidePreview() {
   const canvas = useCanvas();
   const manifest = useManifest();
   const vault = useVault();
