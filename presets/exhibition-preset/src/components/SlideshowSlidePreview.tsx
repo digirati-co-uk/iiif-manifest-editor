@@ -5,7 +5,7 @@ import { useInStack } from "@manifest-editor/editors";
 import { type PointerEvent as ReactPointerEvent, type RefObject, useEffect, useRef, useState } from "react";
 import { AnnotationContext, LocaleString, useCanvas, useVault, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
-import { getFloatingBehavior, hasFloatingBehavior } from "../right-panels/SlideBehaviours";
+import { floatingPositionClasses, getFloatingBehavior, hasFloatingBehavior } from "./FloatingPositionPicker";
 import {
   getAnnotationTargetBox,
   getSlideContentLayers,
@@ -308,7 +308,7 @@ function TourStepTarget({
       <span
         className={twMerge(
           "absolute rounded px-1.5 py-0.5 text-xs font-semibold text-white",
-          getTourStepBadgePosition(floating),
+          floatingPositionClasses[floating || "float-top-left"],
           !selected && "bg-me-primary-500",
         )}
         style={selected ? { backgroundColor: selectedColour } : undefined}
@@ -371,27 +371,6 @@ function NonLinearTourStepPanel({ annotation, onExit }: { annotation: any; onExi
       </div>
     </>
   );
-}
-
-function getTourStepBadgePosition(floating: ReturnType<typeof getFloatingBehavior> | null) {
-  switch (floating) {
-    case "float-top":
-      return "left-1/2 top-1 -translate-x-1/2";
-    case "float-top-right":
-      return "right-1 top-1";
-    case "float-left":
-      return "left-1 top-1/2 -translate-y-1/2";
-    case "float-right":
-      return "right-1 top-1/2 -translate-y-1/2";
-    case "float-bottom-left":
-      return "bottom-1 left-1";
-    case "float-bottom":
-      return "bottom-1 left-1/2 -translate-x-1/2";
-    case "float-bottom-right":
-      return "bottom-1 right-1";
-    default:
-      return "left-1 top-1";
-  }
 }
 
 function SlideTextPanel({

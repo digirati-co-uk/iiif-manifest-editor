@@ -148,18 +148,28 @@ export function shouldUseComplexCanvasThumbnail(
 }
 
 export function imageUrlWithTransform(id: string, region: string | null, rotation: string | null) {
-  const parts = id.split("/");
-  if (parts.length < 4) return id;
-
-  if (region) {
-    parts[parts.length - 4] = region;
+  let url: URL;
+  try {
+    url = new URL(id);
+  } catch {
+    return id;
   }
+
+  const parts = url.pathname.split("/");
+  if (parts.length < 6) return id;
+  const [currentRegion = "", size = "", currentRotation = "", quality = ""] = parts.slice(-4);
+  const isImageApiRequest =
+    /^(full|square|(?:pct:)?[\d.,]+)$/.test(currentRegion) &&
+    /^\^?(?:full|max|pct:[\d.]+|!?[\d.]*,[\d.]*)$/.test(size) &&
+    /^!?\d+(?:\.\d+)?$/.test(currentRotation) &&
+    /^(?:default|color|gray|bitonal|native)\.[a-z]+$/i.test(quality);
+  if (!isImageApiRequest) return id;
+
+  parts[parts.length - 4] = region || currentRegion;
   parts[parts.length - 3] = "256,";
-  if (rotation) {
-    parts[parts.length - 2] = rotation;
-  }
-
-  return parts.join("/");
+  parts[parts.length - 2] = rotation || currentRotation;
+  url.pathname = parts.join("/");
+  return url.href;
 }
 
 export function imageUrlWithRegion(id: string, region: string | null) {

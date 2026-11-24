@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getFloatingBehavior, hasFloatingBehavior } from "./components/FloatingPositionPicker";
 
 export interface SlideContentBox {
   x: number;
@@ -313,6 +314,27 @@ export function getSlideLayoutRegions(canvas: any): {
   const height = Number(canvas?.height) || 1080;
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
   const customTextRegion = getCustomTextRegion(behavior);
+
+  if (hasFloatingBehavior(behavior) && !behavior.includes("info")) {
+    const position = getFloatingBehavior(behavior);
+    const panelWidth = Math.round(width / 3);
+    const panelHeight = Math.round(height / 3);
+    const insetX = Math.round(width * 0.02);
+    const insetY = Math.round(height * 0.02);
+    return {
+      content: { x: 0, y: 0, width, height },
+      text: {
+        x: position.endsWith("left")
+          ? insetX
+          : position.endsWith("right") ? width - panelWidth - insetX : Math.round((width - panelWidth) / 2),
+        y: position.startsWith("float-top")
+          ? insetY
+          : position.startsWith("float-bottom") ? height - panelHeight - insetY : Math.round((height - panelHeight) / 2),
+        width: panelWidth,
+        height: panelHeight,
+      },
+    };
+  }
 
   if (behavior.includes("right")) {
     return {

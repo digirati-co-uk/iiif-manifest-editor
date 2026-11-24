@@ -1,8 +1,8 @@
 import { useEditorI18n, useTranslations } from "@manifest-editor/i18n";
 import { ActionButton, Modal } from "@manifest-editor/components";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useManifest, useVault } from "react-iiif-vault";
-import { useApp, useAppState, usePresetTemplateSelection } from "../AppContext/AppContext";
+import { useApp, usePresetTemplateSelection } from "../AppContext/AppContext";
 import { useAppResource } from "../AppResourceProvider/AppResourceProvider";
 import { PreviewButton } from "../PreviewButton/PreviewButton";
 import {
@@ -12,6 +12,8 @@ import {
 } from "./preset-template-selection";
 
 const reopenEvent = "manifest-editor:preset-onboarding:open";
+type OpenOnboardingEvent = CustomEvent<{ dismissalKey: string | null; automatic: boolean }>;
+const previewHintEvent = "manifest-editor:preset-onboarding:preview-hint";
 
 function isDismissed(key: string) {
   return typeof window !== "undefined" && window.localStorage.getItem(key) === "true";
@@ -34,13 +36,15 @@ export function getPresetOnboardingDismissalKey(
   return `preset-onboarding/${onboarding.id}/${resource.type}/${resource.id}`;
 }
 
-export function useOpenPresetOnboarding() {
+export function useOpenPresetOnboarding({ automatic = false } = {}) {
   const app = useApp();
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
   const dismissalKey = onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null;
 
-  return () => window.dispatchEvent(new CustomEvent(reopenEvent, { detail: dismissalKey }));
+  return useCallback(() => {
+    window.dispatchEvent(new CustomEvent(reopenEvent, { detail: { dismissalKey, automatic } }));
+  }, [dismissalKey, automatic]);
 }
 
 export function PresetOnboardingButton({ className }: { className?: string }) {
@@ -65,11 +69,19 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
   const { resolveMessage } = useEditorI18n();
   const app = useApp();
   const resource = useAppResource();
-  const { state, setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
+  const [hintKey, setHintKey] = useState<string | null>(null);
   const onboarding = app.preset?.onboarding;
   const custom = app.preset?.onboarding?.renderPreviewButton;
   const dismissalKey = onboarding ? getPresetOnboardingDismissalKey(onboarding, resource) : null;
-  const showOnboardingPreviewHint = !!dismissalKey && state?.presetOnboardingPreviewHintKey === dismissalKey;
+  const showOnboardingPreviewHint = !!dismissalKey && hintKey === dismissalKey;
+
+  useEffect(() => {
+    function showHint(event: Event) {
+      if ((event as CustomEvent<string>).detail === dismissalKey) setHintKey(dismissalKey);
+    }
+    window.addEventListener(previewHintEvent, showHint);
+    return () => window.removeEventListener(previewHintEvent, showHint);
+  }, [dismissalKey]);
 
   if (custom) {
     return custom({
@@ -79,7 +91,7 @@ export function PresetPreviewButton(props: { downloadEnabled?: boolean; fileName
       showOnboardingPreviewHint,
       onOnboardingPreviewHintClose: () => {
         if (showOnboardingPreviewHint) {
-          setState({ presetOnboardingPreviewHintKey: null });
+          setHintKey(null);
         }
       },
     });
@@ -96,7 +108,6 @@ export function PresetOnboarding() {
   const app = useApp();
   const resource = useAppResource();
   const onboarding = app.preset?.onboarding;
-  const { setState } = useAppState<{ presetOnboardingPreviewHintKey?: string | null }>();
   const templateSelection = usePresetTemplateSelection();
   const manifest = useManifest();
   const vault = useVault();
@@ -118,22 +129,22 @@ export function PresetOnboarding() {
 
   useEffect(() => {
     if (!dismissalKey) return;
-    const shouldOpen = !configuredTemplate && !isDismissed(dismissalKey);
+    const shouldOpen = onboarding?.autoOpen !== false && !configuredTemplate && !isDismissed(dismissalKey);
     setOpen(shouldOpen);
     setAutoOpened(shouldOpen);
-  }, [configuredTemplate, dismissalKey]);
+  }, [configuredTemplate, dismissalKey, onboarding?.autoOpen]);
 
   useEffect(() => {
     const reopen = (event: Event) => {
-      if ((event as CustomEvent<string | null>).detail === dismissalKey) {
-        setState({ presetOnboardingPreviewHintKey: null });
+      const detail = (event as OpenOnboardingEvent).detail;
+      if (detail?.dismissalKey === dismissalKey) {
         setOpen(!!onboarding);
-        setAutoOpened(false);
+        setAutoOpened(detail.automatic);
       }
     };
     window.addEventListener(reopenEvent, reopen);
     return () => window.removeEventListener(reopenEvent, reopen);
-  }, [dismissalKey, onboarding, setState]);
+  }, [dismissalKey, onboarding]);
 
   if (!onboarding || !dismissalKey) return null;
 
@@ -143,7 +154,7 @@ export function PresetOnboarding() {
     );
     setDismissed(dismissalKey);
     if (autoOpened) {
-      setState({ presetOnboardingPreviewHintKey: dismissalKey });
+      window.dispatchEvent(new CustomEvent(previewHintEvent, { detail: dismissalKey }));
     }
     setOpen(false);
     setAutoOpened(false);

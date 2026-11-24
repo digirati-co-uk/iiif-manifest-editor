@@ -21,7 +21,6 @@ import { ExhibitionTourStepsContent } from "./ExhibitionTourSteps";
 import { InfoBoxPanel } from "./InfoBoxPanel";
 import { SlideBehavioursContent } from "./SlideBehaviours";
 import { SlideshowContentPanel } from "./SlideshowContentPanel";
-import { SlideshowDurationField } from "./SlideshowDurationField";
 
 type EditingMode = "simple" | "advanced";
 type WorkbenchPreset = "default" | "slideshow";
@@ -203,7 +202,6 @@ function ExhibitionWorkbenchRightPanel({ preset = "default" }: { preset?: Workbe
           {selectedTab === "layout" ? (
             <>
               <RescaleSingleImagePrompt />
-              <SlideshowDurationField />
               <SlideBehavioursContent mode={mode} layoutContext={preset === "slideshow" ? "slideshow" : "default"} />
             </>
           ) : null}

@@ -15,6 +15,8 @@ import {
   createBlankManifest,
   createManifestFromJson,
 } from "./browser-state";
+import { queueExhibitionFormatChooser } from "./exhibition-creation";
+
 const CreateFromUrlModal = lazy(() =>
   import("./CreateFromUrlModal").then((module) => ({ default: module.CreateFromUrlModal }))
 );
@@ -63,6 +65,7 @@ export default function GettingStarted() {
     onSuccess: (data) => {
       if (data) {
         posthog.capture("blank-exhibition-created", {});
+        queueExhibitionFormatChooser(data.id);
         router.push(`/editor/${data.id}/exhibition`);
       }
     },

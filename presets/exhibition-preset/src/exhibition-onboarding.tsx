@@ -37,6 +37,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
   onboarding: {
     id: "exhibition-template-selection",
     mode: "per-resource",
+    autoOpen: false,
     title: "Choose exhibition format",
     summary: "Pick a starting point for this exhibition.",
     openLabel: "Exhibition formats",
@@ -252,20 +253,22 @@ function ExhibitionPresetPreviewButton({
           </Popover>
         </MenuTrigger>
       </ButtonContainer>
-      <OnboardingTour
-        id="exhibition-preview-preset-menu"
-        forceStart={showOnboardingPreviewHint}
-        onClose={onOnboardingPreviewHintClose}
-        lastButtonLabel="Dismiss"
-        steps={[
-          {
-            target: ".exhibition-preview-preset-menu",
-            placement: "bottom",
-            disableBeacon: true,
-            content: "You can change the exhibition format again from this preview menu.",
-          },
-        ]}
-      />
+      {showOnboardingPreviewHint ? (
+        <OnboardingTour
+          id="exhibition-preview-preset-menu"
+          forceStart={showOnboardingPreviewHint}
+          onClose={onOnboardingPreviewHintClose}
+          lastButtonLabel="Dismiss"
+          steps={[
+            {
+              target: ".exhibition-preview-preset-menu",
+              placement: "bottom",
+              disableBeacon: true,
+              content: "You can change the exhibition format again from this preview menu.",
+            },
+          ]}
+        />
+      ) : null}
     </>
   );
 }
