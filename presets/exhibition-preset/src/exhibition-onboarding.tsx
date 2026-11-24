@@ -22,6 +22,7 @@ import { Button, Menu, MenuItem, MenuTrigger, Popover } from "react-aria-compone
 import { useVault } from "react-iiif-vault";
 import { getExhibitionTemplatePreviews, useExhibitionTemplate } from "./helpers/exhibition-template";
 import { exhibitionTemplates } from "./exhibition-templates";
+import { resolveExhibitionPreviewUrl } from "./helpers/exhibition-preview-url-helper";
 
 export { exhibitionTemplates } from "./exhibition-templates";
 
@@ -36,6 +37,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
   onboarding: {
     id: "exhibition-template-selection",
     mode: "per-resource",
+    autoOpen: false,
     title: "Choose exhibition format",
     summary: "Pick a starting point for this exhibition.",
     openLabel: "Exhibition formats",
@@ -93,7 +95,7 @@ export const exhibitionPresetConfig: PresetDefinition = {
 };
 
 function getTemplatePreviewUrl(previewUrl: string, manifestId: string) {
-  const url = new URL(previewUrl);
+  const url = resolveExhibitionPreviewUrl(previewUrl);
   url.searchParams.set("manifest", manifestId);
   return url.toString();
 }
@@ -251,20 +253,22 @@ function ExhibitionPresetPreviewButton({
           </Popover>
         </MenuTrigger>
       </ButtonContainer>
-      <OnboardingTour
-        id="exhibition-preview-preset-menu"
-        forceStart={showOnboardingPreviewHint}
-        onClose={onOnboardingPreviewHintClose}
-        lastButtonLabel="Dismiss"
-        steps={[
-          {
-            target: ".exhibition-preview-preset-menu",
-            placement: "bottom",
-            disableBeacon: true,
-            content: "You can change the exhibition format again from this preview menu.",
-          },
-        ]}
-      />
+      {showOnboardingPreviewHint ? (
+        <OnboardingTour
+          id="exhibition-preview-preset-menu"
+          forceStart={showOnboardingPreviewHint}
+          onClose={onOnboardingPreviewHintClose}
+          lastButtonLabel="Dismiss"
+          steps={[
+            {
+              target: ".exhibition-preview-preset-menu",
+              placement: "bottom",
+              disableBeacon: true,
+              content: "You can change the exhibition format again from this preview menu.",
+            },
+          ]}
+        />
+      ) : null}
     </>
   );
 }

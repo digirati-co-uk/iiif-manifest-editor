@@ -18,3 +18,11 @@ describe("getAnnotationTargetBox", () => {
     ).toEqual({ x: 0, y: 0, width: 900, height: 600 });
   });
 });
+
+import { supportsTourSteps } from "./slideshow-content-positioning";
+
+test("audio slides do not offer image tour steps", () => {
+  expect(supportsTourSteps({ get: (value: any) => value }, { behavior: ["audio"] })).toBe(false);
+  const canvas = { items: [{ items: [{ motivation: ["painting"], body: [{ type: "Sound", id: "https://example.org/audio.mp3" }] }] }] };
+  expect(supportsTourSteps({ get: (value: any) => value }, canvas)).toBe(false);
+});

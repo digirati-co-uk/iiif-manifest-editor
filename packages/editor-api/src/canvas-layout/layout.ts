@@ -1,5 +1,6 @@
 import type { Vault } from "@iiif/helpers/vault";
 import type { CanvasNormalized, AnnotationNormalized } from "@iiif/presentation-3-normalized";
+import { getImageApiSelectorSize } from "../AnnotationBodyEditor";
 import { EditorInstance } from "../EditorInstance";
 import {
   canvasLayouts,
@@ -50,13 +51,8 @@ export function getImageSize(vault: Vault, annotation: AnnotationNormalized): Si
   const image = body && vault.get<any>(body);
   if (image?.type !== "Image") return null;
   const service = image.service?.find((s: any) => s.width && s.height) as Size | undefined;
-  let size = { width: service?.width || image.width, height: service?.height || image.height };
-  const selector = (body as any)?.selector;
-  if ((selector?.type === "ImageApiSelector" || selector?.type === "iiif:ImageApiSelector") && selector.region) {
-    const values = selector.region.split(",").map(Number);
-    if (values.length === 4 && validSize({ width: values[2], height: values[3] }))
-      size = { width: values[2], height: values[3] };
-  }
+  const fullSize = { width: service?.width || image.width, height: service?.height || image.height };
+  const size = getImageApiSelectorSize((body as any)?.selector, fullSize) ?? fullSize;
   return validSize(size) ? size : null;
 }
 export function getPaintingImages(vault: Vault, canvas: CanvasNormalized) {

@@ -1,10 +1,12 @@
+import { isAudioCanvas } from "../audio-slide";
+import { AudioSlideThumbnail } from "./AudioSlideThumbnail";
 import { LazyThumbnail, useCanvasRenderingStrategy } from "@manifest-editor/components";
 import {
   getInternationalStringText,
   useInStack,
 } from "@manifest-editor/editors";
 import { forwardRef } from "react";
-import { LocaleString, useCanvas } from "react-iiif-vault";
+import { LocaleString, useCanvas, useVault } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getClassName, getGridStats } from "../helpers";
 import { SlideshowSlidePreview } from "./SlideshowSlidePreview";
@@ -22,6 +24,7 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
     ref,
   ) {
     const canvas = useCanvas();
+    const vault = useVault();
     const strategy = useCanvasRenderingStrategy();
     const behavior = canvas?.behavior || [];
     const currentCanvas = useInStack("Canvas");
@@ -36,7 +39,9 @@ export const ExhibitionItem = forwardRef<HTMLDivElement, ExhibitionItemProps>(
       behavior.includes("w-12") && behavior.includes("h-8");
 
     let children = null;
-    if (isSlideshowItem) {
+    if (isAudioCanvas(vault, canvas)) {
+      children = <AudioSlideThumbnail />;
+    } else if (isSlideshowItem) {
       children = (
         <SlideshowSlidePreview
           className="pointer-events-none h-full w-full"

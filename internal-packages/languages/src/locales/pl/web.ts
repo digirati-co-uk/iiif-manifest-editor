@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Zapamiętaj identyfikator płótna",
     rememberPanel: "Pamiętaj o lewym panelu",
     grid: "Manifestuj opcje siatki",
+    verticalTabs: "Kompaktowy wybór zakładek",
     export: "Eksport",
     iiif: "Opcje IIIF",
     exportManifests: "Eksportuj manifesty prezentacji 2",

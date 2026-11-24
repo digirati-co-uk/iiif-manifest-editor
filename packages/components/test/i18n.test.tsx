@@ -293,19 +293,65 @@ it("translates a queued toast in its portal while retaining caller content and d
   expect(document.querySelector('[role="alertdialog"]')).toBeNull();
 });
 
-it("remeasures translated overflow tabs even when they were already hidden", async () => {
-  const original = HTMLElement.prototype.getBoundingClientRect;
-  const measurement = vi
-    .spyOn(HTMLElement.prototype, "getBoundingClientRect")
-    .mockImplementation(function (this: HTMLElement) {
-      const rect = original.call(this);
-      if (this.getAttribute("role") === "tablist") return { ...rect, width: 180 };
-      if (this.getAttribute("role") === "tab") {
-        const hidden = this.classList.contains("hidden") && this.style.display !== "block";
-        return { ...rect, width: hidden ? 0 : this.textContent === "Inhoud toevoegen" ? 200 : 100 };
-      }
-      return rect;
-    });
+/** jsdom has no layout. Give the scroller, tab list and tabs the sizes the overflow logic reads. */
+function mockTabLayout({ viewport, tabWidth }: { viewport: number; tabWidth: (label: string) => number }) {
+  const widthOf = (el: HTMLElement) => {
+    if (el.getAttribute("role") === "tab") return tabWidth(el.textContent || "");
+    if (el.getAttribute("role") === "tablist") {
+      return Array.from(el.querySelectorAll<HTMLElement>('[role="tab"]')).reduce((n, t) => n + tabWidth(t.textContent || ""), 0);
+    }
+    return 0;
+  };
+  const defs: Array<[string, PropertyDescriptor]> = [
+    ["offsetWidth", { configurable: true, get(this: HTMLElement) { return widthOf(this); } }],
+    [
+      "offsetLeft",
+      {
+        configurable: true,
+        get(this: HTMLElement) {
+          if (this.getAttribute("role") !== "tab") return 0;
+          let left = 0;
+          for (let el = this.previousElementSibling as HTMLElement | null; el; el = el.previousElementSibling as any) {
+            left += widthOf(el);
+          }
+          return left;
+        },
+      },
+    ],
+    ["clientWidth", { configurable: true, get(this: HTMLElement) { return this.classList.contains("me-tabs-scroll") ? viewport : 0; } }],
+    [
+      "scrollWidth",
+      {
+        configurable: true,
+        get(this: HTMLElement) {
+          const list = this.querySelector<HTMLElement>('[role="tablist"]');
+          return this.classList.contains("me-tabs-scroll") && list ? Math.max(viewport, widthOf(list) + 64) : 0;
+        },
+      },
+    ],
+  ];
+  for (const [key, def] of defs) Object.defineProperty(HTMLElement.prototype, key, def);
+  return () => {
+    for (const [key] of defs) delete (HTMLElement.prototype as any)[key];
+  };
+}
+
+it("keeps overflowing tabs in the DOM, remeasures translated labels, and enables the more menu", async () => {
+  const observers: Array<() => void> = [];
+  const OriginalObserver = globalThis.ResizeObserver;
+  // Only capture the observers the tab row registers; React Aria's own expect real entries.
+  globalThis.ResizeObserver = class {
+    constructor(private cb: () => void) {}
+    observe(el: Element) {
+      if (el.classList.contains("me-tabs-scroll")) observers.push(this.cb);
+    }
+    unobserve() {}
+    disconnect() {}
+  } as any;
+  const restoreLayout = mockTabLayout({
+    viewport: 180,
+    tabWidth: (label) => (label === "Inhoud toevoegen" ? 200 : 100),
+  });
   try {
     const i18n = runtime();
     const container = await mount(
@@ -322,22 +368,85 @@ it("remeasures translated overflow tabs even when they were already hidden", asy
         />
       </EditorI18nProvider>
     );
-    // React Aria commits collection item refs after the parent layout effect.
-    // Allow the existing 500ms resize observer interval to measure the initial collection.
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 550));
-    });
-    expect(container.querySelectorAll('[role="tab"].hidden')).toHaveLength(2);
+    // React Aria commits collection items after the parent layout effect; the observer reports that.
+    await act(async () => observers.forEach((cb) => cb()));
+
+    // Nothing is removed from the DOM or display:none'd; overflow is handled by scrolling.
+    expect(container.querySelectorAll('[role="tab"]')).toHaveLength(3);
+    expect(container.querySelectorAll('[role="tab"].hidden')).toHaveLength(0);
+    const more = container.querySelector('button[aria-label="More tabs"]') as HTMLButtonElement;
+    expect(more).not.toBeNull();
+    expect(more.disabled).toBe(false);
+    expect(container.querySelector(".me-tabs-scroll")).not.toBeNull();
+
     await act(async () => {
       await i18n.setLocale("nl");
     });
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 550));
-    });
-    expect(container.querySelectorAll('[role="tab"].hidden')).toHaveLength(3);
+    await act(async () => observers.forEach((cb) => cb()));
+    expect(container.querySelectorAll('[role="tab"]')).toHaveLength(3);
     expect(container.querySelector('[aria-label="Meer tabbladen"]')).not.toBeNull();
+    expect((container.querySelector('[aria-label="Meer tabbladen"]') as HTMLButtonElement).disabled).toBe(false);
     expect(container.querySelector('[role="tabpanel"]')?.textContent).toBe("Caller panel");
   } finally {
-    measurement.mockRestore();
+    restoreLayout();
+    globalThis.ResizeObserver = OriginalObserver;
   }
+});
+
+it("disables the more button when every tab fits", async () => {
+  const observers: Array<() => void> = [];
+  const OriginalObserver = globalThis.ResizeObserver;
+  // Only capture the observers the tab row registers; React Aria's own expect real entries.
+  globalThis.ResizeObserver = class {
+    constructor(private cb: () => void) {}
+    observe(el: Element) {
+      if (el.classList.contains("me-tabs-scroll")) observers.push(this.cb);
+    }
+    unobserve() {}
+    disconnect() {}
+  } as any;
+  const restoreLayout = mockTabLayout({ viewport: 400, tabWidth: () => 100 });
+  try {
+    const container = await mount(
+      <SidebarTabs
+        menuId="fits"
+        selectedKey="a"
+        menu={["a", "b"].map((id) => ({ id, label: id.toUpperCase(), renderComponent: () => <span>{id}</span> }))}
+      />
+    );
+    await act(async () => observers.forEach((cb) => cb()));
+    expect((container.querySelector('button[aria-label="More tabs"]') as HTMLButtonElement).disabled).toBe(true);
+  } finally {
+    restoreLayout();
+    globalThis.ResizeObserver = OriginalObserver;
+  }
+});
+
+it("collapses to a single selector row when verticalTabs is enabled", async () => {
+  const onSelectionChange = vi.fn();
+  const container = await mount(
+    <SidebarTabs
+      menuId="compact"
+      verticalTabs
+      selectedKey="b"
+      onSelectionChange={onSelectionChange}
+      menu={[
+        { id: "a", label: "Alpha", renderComponent: () => <span>Panel A</span> },
+        { id: "b", label: "Beta", renderComponent: () => <span>Panel B</span> },
+        { id: "c", label: "Gamma", renderComponent: () => <span>Panel C</span> },
+      ]}
+    />
+  );
+  // No tab row at all: just the current tab as a button, and only its panel is mounted.
+  expect(container.querySelector('[role="tab"]')).toBeNull();
+  const trigger = container.querySelector("button[aria-haspopup]") as HTMLButtonElement;
+  expect(trigger.textContent).toContain("Beta");
+  expect(container.textContent).toContain("Panel B");
+  expect(container.textContent).not.toContain("Panel A");
+
+  await act(async () => trigger.click());
+  const options = Array.from(document.querySelectorAll('[role="option"]'));
+  expect(options.map((o) => o.textContent)).toEqual(["Alpha", "Beta", "Gamma"]);
+  await act(async () => (options[2] as HTMLElement).click());
+  expect(onSelectionChange).toHaveBeenCalledWith("c");
 });

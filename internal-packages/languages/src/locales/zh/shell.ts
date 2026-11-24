@@ -153,6 +153,7 @@ export const catalog = {
     rememberCanvas: "记住画布 ID",
     rememberPanel: "记住左面板",
     grid: "清单网格选项",
+    verticalTabs: "紧凑标签选择器",
     defaultPreview: "默认预览",
     return: "返回Manifest Editor",
     exhibition: "前往Exhibition Editor",

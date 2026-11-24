@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "Remember Canvas ID",
     rememberPanel: "Remember Left panel",
     grid: "Manifest Grid Options",
+    verticalTabs: "Compact tab selector",
     defaultPreview: "Default preview",
     return: "Return to Manifest Editor",
     exhibition: "Go to Exhibition Editor",

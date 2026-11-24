@@ -6,9 +6,9 @@ async function openExhibition(page: Page, format = "Leeds exhibition") {
   await page.getByRole("button", { name: "Create Exhibition", exact: true }).click();
   const formats = page.getByRole("dialog", { name: "Choose exhibition format", exact: true });
   await formats.getByRole("button", { name: `Use ${format} format`, exact: true }).click();
-  await formats.getByRole("button", { name: "Start building", exact: true }).click();
+  await expect(formats).toBeHidden();
   const tip = page.getByRole("alertdialog");
-  if (await tip.isVisible()) await tip.getByRole("button", { name: "Dismiss", exact: true }).click();
+  await tip.getByRole("button", { name: "Dismiss", exact: true }).click();
   await page
     .getByRole("button", { name: format.endsWith("scroll") ? "Create new section" : "Create new slide", exact: true })
     .click();

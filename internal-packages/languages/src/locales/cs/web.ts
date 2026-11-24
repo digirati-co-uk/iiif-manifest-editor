@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Zapamatujte si ID plátna",
     rememberPanel: "Pamatujte na levý panel",
     grid: "Projevte možnosti mřížky",
+    verticalTabs: "Kompaktní výběr karet",
     export: "Vývozní",
     iiif: "Možnosti IIIF",
     exportManifests: "Exportovat manifesty Prezentace 2",

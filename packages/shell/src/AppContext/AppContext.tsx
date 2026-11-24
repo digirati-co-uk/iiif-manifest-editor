@@ -104,6 +104,8 @@ export type PresetPreviewButtonRenderContext = {
 export type PresetOnboardingDefinition = {
   id: string;
   mode: "global" | "per-resource";
+  /** Let the host explicitly open the guide instead of opening it on first visit. */
+  autoOpen?: boolean;
   title: string;
   titleMessage?: import("@manifest-editor/i18n/core").MessageReference;
   summary?: string;

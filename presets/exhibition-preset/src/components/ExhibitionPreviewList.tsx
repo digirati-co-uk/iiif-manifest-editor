@@ -1,8 +1,10 @@
+import { isAudioCanvas } from "../audio-slide";
+import { AudioSlideThumbnail } from "./AudioSlideThumbnail";
 import { LazyThumbnail } from "@manifest-editor/components";
 import { getInternationalStringText, useInStack } from "@manifest-editor/editors";
 import { useCreator, useLayoutActions, useManifestEditor } from "@manifest-editor/shell";
 import { useId, useState } from "react";
-import { CanvasContext, LocaleString, useCanvas, useManifest, useVaultSelector } from "react-iiif-vault";
+import { CanvasContext, LocaleString, useCanvas, useVault, useManifest, useVaultSelector } from "react-iiif-vault";
 import { twMerge } from "tailwind-merge";
 import { getGridStats } from "../helpers";
 import {
@@ -144,6 +146,7 @@ export function ExhibitionPreviewCard({ mode, onClick }: { mode: PreviewMode; on
 
 function ScrollPreview() {
   const canvas = useCanvas();
+  const vault = useVault();
   const behavior = canvas?.behavior || [];
   const { isInfo } = getGridStats(behavior);
 
@@ -152,6 +155,8 @@ function ScrollPreview() {
   const canvasWidth = Number(canvas.width) || 1920;
   const canvasHeight = Number(canvas.height) || 1080;
   const height = Math.max(80, Math.round((scrollPreviewWidth / canvasWidth) * canvasHeight));
+
+  if (isAudioCanvas(vault, canvas)) return <div style={{ height }}><AudioSlideThumbnail /></div>;
 
   if (isInfo) {
     return <InfoBoxPreview />;

@@ -1,5 +1,4 @@
-export const EXHIBITION_THEME_SERVICE_PROFILE =
-  "https://exhibitionviewer.org/iiif/theme-service";
+export const EXHIBITION_THEME_SERVICE_PROFILE = "https://exhibitionviewer.org/iiif/theme-service";
 export const EXHIBITION_THEME_SERVICE_LABEL = {
   en: ["Exhibition viewer theme"],
 };
@@ -71,6 +70,8 @@ export interface DelftExhibitionThemeOptions {
   alternativeImageMode: boolean;
   transitionScale: boolean;
   imageInfoIcon: boolean;
+  /** Slide metadata popup (info button). Enabled unless explicitly `false`. */
+  metadataPopup: boolean;
   coverImages: boolean;
   ignoreCanvasBackgrounds: boolean;
 }
@@ -81,12 +82,14 @@ export interface DelftPresentationThemeOptions {
   floatingPosition: FloatingPosition;
   labelOnlyFloating: boolean;
   ignoreCanvasBackgrounds: boolean;
+  metadataPopup: boolean;
 }
 
 export interface DelftSlideshowThemeOptions {
   alternativeImageMode: boolean;
   transitionScale: boolean;
   imageInfoIcon: boolean;
+  metadataPopup: boolean;
   coverImages: boolean;
   ignoreCanvasBackgrounds: boolean;
 }
@@ -100,12 +103,28 @@ export interface ScrollThemeConfigOptions {
   showScrollToTop: boolean;
   showNavigationControls: boolean;
   ignoreCanvasBackgrounds: boolean;
+  metadataPopup: boolean;
   titleBlock: {
     fullHeight: boolean;
   };
 }
 
+export interface AudioThemeOptions {
+  showWaveform: boolean;
+  imageFit: "contain" | "cover";
+  autoplay: boolean;
+  waveformOpacity: number;
+  progressColor: string | null;
+  trackColor: string | null;
+}
+
+export const DEFAULT_AUDIO_THEME_OPTIONS: AudioThemeOptions = {
+  showWaveform: true, imageFit: "contain", autoplay: false,
+  waveformOpacity: 0.55, progressColor: null, trackColor: null,
+};
+
 export interface ExhibitionThemeConfig {
+  audio: AudioThemeOptions;
   version: 1;
   preset: ExhibitionThemePreset;
   shared: SharedThemeConfig;
@@ -122,11 +141,7 @@ export interface ExhibitionThemeConfig {
 }
 
 export type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends Array<infer U>
-    ? U[]
-    : T[K] extends object
-      ? DeepPartial<T[K]>
-      : T[K];
+  [K in keyof T]?: T[K] extends Array<infer U> ? U[] : T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 
 const DEFAULT_SHARED: SharedThemeConfig = {
@@ -204,6 +219,7 @@ const DEFAULT_EXHIBITION_OPTIONS: DelftExhibitionThemeOptions = {
   alternativeImageMode: true,
   transitionScale: false,
   imageInfoIcon: false,
+  metadataPopup: true,
   coverImages: false,
   ignoreCanvasBackgrounds: false,
 };
@@ -214,12 +230,14 @@ const DEFAULT_PRESENTATION_OPTIONS: DelftPresentationThemeOptions = {
   floatingPosition: "bottom-left",
   labelOnlyFloating: true,
   ignoreCanvasBackgrounds: false,
+  metadataPopup: true,
 };
 
 const DEFAULT_SLIDESHOW_OPTIONS: DelftSlideshowThemeOptions = {
   alternativeImageMode: true,
   transitionScale: false,
   imageInfoIcon: false,
+  metadataPopup: true,
   coverImages: false,
   ignoreCanvasBackgrounds: false,
 };
@@ -233,12 +251,14 @@ const DEFAULT_SCROLL_OPTIONS: ScrollThemeConfigOptions = {
   showScrollToTop: true,
   showNavigationControls: true,
   ignoreCanvasBackgrounds: false,
+  metadataPopup: true,
   titleBlock: {
     fullHeight: true,
   },
 };
 
 const DEFAULT_DELFT_THEME: ExhibitionThemeConfig = {
+  audio: DEFAULT_AUDIO_THEME_OPTIONS,
   version: 1,
   preset: "delft",
   shared: DEFAULT_SHARED,
@@ -268,6 +288,7 @@ const MINIMAL_THEME: ExhibitionThemeConfig = {
 };
 
 const GALLERY_THEME: ExhibitionThemeConfig = {
+  audio: DEFAULT_AUDIO_THEME_OPTIONS,
   version: 1,
   preset: "gallery",
   shared: {
@@ -386,15 +407,11 @@ function isThemePreset(value: unknown): value is ExhibitionThemePreset {
   return typeof value === "string" && value in PRESET_THEMES;
 }
 
-export function getThemePreset(
-  preset: ExhibitionThemePreset = "delft",
-): ExhibitionThemeConfig {
+export function getThemePreset(preset: ExhibitionThemePreset = "delft"): ExhibitionThemeConfig {
   return clone(PRESET_THEMES[preset] || DEFAULT_DELFT_THEME);
 }
 
-export function resolveThemeConfig(
-  theme?: DeepPartial<ExhibitionThemeConfig> | null,
-): ExhibitionThemeConfig {
+export function resolveThemeConfig(theme?: DeepPartial<ExhibitionThemeConfig> | null): ExhibitionThemeConfig {
   const preset = isThemePreset(theme?.preset) ? theme.preset : "delft";
   const base = getThemePreset(preset);
   const merged = mergeDeep(base, theme || {});
@@ -407,10 +424,7 @@ export function getThemeServiceId(manifestId: string) {
   return `${manifestId}#exhibition-viewer-theme`;
 }
 
-export function createThemeService(
-  manifestId: string,
-  theme?: DeepPartial<ExhibitionThemeConfig>,
-) {
+export function createThemeService(manifestId: string, theme?: DeepPartial<ExhibitionThemeConfig>) {
   return {
     id: getThemeServiceId(manifestId),
     type: "Service",
@@ -426,9 +440,7 @@ export function getThemeServiceDetails(services?: Array<any>) {
   }
 
   const index = services.findIndex((service) => {
-    return (
-      service?.profile === EXHIBITION_THEME_SERVICE_PROFILE || service?.theme
-    );
+    return service?.profile === EXHIBITION_THEME_SERVICE_PROFILE || service?.theme;
   });
 
   if (index === -1) {
@@ -442,14 +454,12 @@ export function getThemeServiceDetails(services?: Array<any>) {
 }
 
 export function getThemeConfigFromServices(services?: Array<any>) {
-  return getThemeServiceDetails(services)?.service?.theme as
-    | DeepPartial<ExhibitionThemeConfig>
-    | undefined;
+  return getThemeServiceDetails(services)?.service?.theme as DeepPartial<ExhibitionThemeConfig> | undefined;
 }
 
 export function replaceThemeService(
   services: Array<any> | undefined,
-  nextThemeService: ReturnType<typeof createThemeService> | null,
+  nextThemeService: ReturnType<typeof createThemeService> | null
 ) {
   const nextServices = [...(services || [])];
   const existing = getThemeServiceDetails(nextServices);
@@ -497,13 +507,11 @@ export function getThemeCssVariables(theme: ExhibitionThemeConfig) {
     "--delft-viewer-background": theme.delft.tokens.viewerBackground,
     "--exv-scroll-title-background": theme.scroll.tokens.titleBackground,
     "--exv-scroll-title-color": theme.scroll.tokens.titleColor,
-    "--exv-scroll-annotation-background":
-      theme.scroll.tokens.annotationBackground,
+    "--exv-scroll-annotation-background": theme.scroll.tokens.annotationBackground,
     "--exv-scroll-annotation-color": theme.scroll.tokens.annotationColor,
     "--exv-scroll-annotation-radius": theme.scroll.tokens.annotationRadius,
     "--exv-scroll-annotation-max-width": theme.scroll.tokens.annotationMaxWidth,
-    "--exv-scroll-info-block-background":
-      theme.scroll.tokens.infoBlockBackground,
+    "--exv-scroll-info-block-background": theme.scroll.tokens.infoBlockBackground,
     "--exv-scroll-info-block-color": theme.scroll.tokens.infoBlockColor,
   };
 }

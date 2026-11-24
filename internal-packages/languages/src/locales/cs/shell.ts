@@ -165,6 +165,7 @@ export const catalog = {
     rememberCanvas: "Pamatujte si Canvas ID",
     rememberPanel: "Pamatujte na levý panel",
     grid: "Projevte možnosti mřížky",
+    verticalTabs: "Kompaktní výběr karet",
     defaultPreview: "Výchozí náhled",
     return: "Návrat na Manifest Editor",
     exhibition: "Přejděte na Exhibition Editor",

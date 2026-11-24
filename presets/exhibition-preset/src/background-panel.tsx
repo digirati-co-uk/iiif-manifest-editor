@@ -35,7 +35,7 @@ function ExhibitionBackgroundPanel() {
   const vault = useVault();
   const manifestId = manifest?.id;
   useEffect(() => {
-    if (!manifestId) return;
+    if (!manifestId || metadata.id === "exhibition-scrolling-editor") return;
     let previous = vault.getState().iiif.entities.Canvas;
     return vault.subscribe(() => {
       const next = vault.getState().iiif.entities.Canvas;
@@ -59,7 +59,7 @@ function ExhibitionBackgroundPanel() {
           vault.modifyEntityField(reference, "behavior", behavior);
       }
     });
-  }, [vault, manifestId]);
+  }, [vault, manifestId, metadata.id]);
   const { leftPanel, rightPanel } = useLayoutState();
   const { edit, centerPanel: centerPanelActions, rightPanel: rightPanelActions } = useLayoutActions();
   const [wasRightPanelClosedAutomatically, setWasRightPanelClosedAutomatically] = useState(false);

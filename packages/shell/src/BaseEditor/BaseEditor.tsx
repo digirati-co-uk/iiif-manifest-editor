@@ -140,7 +140,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
   const vault = useVault();
   const { change } = useLayoutActions();
   const set = useSetCustomTitle();
-  const { editorConfig } = useConfig();
+  const { editorConfig, editorFeatureFlags } = useConfig();
   const resourceId = resource?.resource.source?.id;
   let resourceType = resource?.resource.source?.type;
   // Could use this is for later.
@@ -259,6 +259,7 @@ export function BaseEditor({ currentTab = undefined }: { currentTab?: string }) 
       key={resource.resource.source?.id}
       menuId={resource.resource.source.id}
       menu={sidebarMenu}
+      verticalTabs={!!editorFeatureFlags?.verticalTabs}
       selectedKey={currentTab}
       onSelectionChange={(p: any) => {
         change("@manifest-editor/editor", { currentTab: p });

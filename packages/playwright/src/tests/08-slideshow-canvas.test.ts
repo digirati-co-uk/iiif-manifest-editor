@@ -15,12 +15,40 @@ async function openExhibitionFormats(page: Page) {
 async function openSlideshow(page: Page, fromOverview: boolean) {
   const formats = await openExhibitionFormats(page);
   await formats.getByRole("button", { name: "Skip for now", exact: true }).click();
-  const path = new URL(page.url()).pathname;
-  await page.goto(`${path}/slideshow`);
   const tip = page.getByRole("alertdialog");
   await tip.getByRole("button", { name: "Dismiss", exact: true }).click();
+  const path = new URL(page.url()).pathname;
+  await page.goto(`${path}/slideshow`);
   if (!fromOverview) await page.getByRole("button", { name: "Slideshow", exact: true }).click();
 }
+
+test("opens the format chooser once at creation and allows opening it from the menu", async ({ page }) => {
+  const formats = await openExhibitionFormats(page);
+
+  // Reload before choosing or dismissing. Opening the modal already consumed the creation prompt.
+  await page.reload();
+  const previewMenu = page.getByRole("button", { name: "Choose preview", exact: true });
+  await expect(previewMenu).toBeVisible();
+  await expect(formats).toBeHidden();
+
+  await previewMenu.click();
+  await page.getByRole("menuitem", { name: "Change exhibition format", exact: true }).click();
+  await expect(formats).toBeVisible();
+  await formats.getByRole("button", { name: "Skip for now", exact: true }).click();
+  await expect(page.getByRole("alertdialog")).toBeHidden();
+  await page.reload();
+  await expect(previewMenu).toBeVisible();
+  await expect(formats).toBeHidden();
+
+  await openExhibitionFormats(page);
+  await formats.getByRole("button", { name: "Skip for now", exact: true }).click();
+  const previewTip = page.getByRole("alertdialog", { name: /change the exhibition format/ });
+  await expect(previewTip).toBeVisible();
+  await page.reload();
+  await expect(previewMenu).toBeVisible();
+  await expect(formats).toBeHidden();
+  await expect(previewTip).toBeHidden();
+});
 
 for (const [creator, fromOverview] of [
   ["Multiple images", false],
@@ -112,7 +140,6 @@ test("Slideshow format in the Exhibition editor opens an empty slide in the prev
 }, testInfo) => {
   const formats = await openExhibitionFormats(page);
   await formats.getByRole("button", { name: "Use Leeds exhibition slideshow format", exact: true }).click();
-  await formats.getByRole("button", { name: "Start building", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Dismiss", exact: true }).click();
   await expect(page).toHaveURL(/\/editor\/[^/]+\/exhibition(?:\?.*)?$/);
   await page.getByRole("button", { name: "Create new slide", exact: true }).click();
@@ -198,13 +225,14 @@ for (const editor of ["slideshow route", "Slideshow format"] as const) {
     await page.waitForURL(/\/editor\/[^/]+$/);
     await page.goto(`${new URL(page.url()).pathname}/exhibition${editor === "slideshow route" ? "/slideshow" : ""}`);
     const formats = page.getByRole("dialog", { name: "Choose exhibition format", exact: true });
+    const previewMenu = page.getByRole("button", { name: "Choose preview", exact: true });
+    await expect(previewMenu).toBeVisible();
+    await expect(formats).toBeHidden();
     if (editor === "Slideshow format") {
+      await previewMenu.click();
+      await page.getByRole("menuitem", { name: "Change exhibition format", exact: true }).click();
       await formats.getByRole("button", { name: "Use Leeds exhibition slideshow format", exact: true }).click();
-      await formats.getByRole("button", { name: "Start building", exact: true }).click();
-    } else {
-      await formats.getByRole("button", { name: "Skip for now", exact: true }).click();
     }
-    await page.getByRole("alertdialog").getByRole("button", { name: "Dismiss", exact: true }).click();
     if (editor === "Slideshow format") {
       await page.getByRole("article").filter({ hasText: "Image without behavior" }).getByRole("button").first().click();
       const toolbar = page.locator(".exhibition-slideshow-current-toolbar");

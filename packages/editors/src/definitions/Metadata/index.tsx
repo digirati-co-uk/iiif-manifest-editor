@@ -1,6 +1,6 @@
 import type { MessageReference } from "@manifest-editor/i18n";
 import { EditorDefinition } from "@manifest-editor/shell";
-import { Metadata } from "./Metadata";
+import { ResourceMetadataContent } from "./ResourceMetadata";
 
 export const metadata: EditorDefinition & { labelMessage?: MessageReference; summaryMessage?: MessageReference } = {
   id: "@manifest-editor/metadata",
@@ -19,5 +19,5 @@ export const metadata: EditorDefinition & { labelMessage?: MessageReference; sum
       "AnnotationCollection",
     ],
   },
-  component: () => <Metadata />,
+  component: () => <ResourceMetadataContent />,
 };

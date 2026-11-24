@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Remember canvas ID",
     rememberPanel: "Remember left panel",
     grid: "Manifest grid options",
+    verticalTabs: "Compact tab selector",
     export: "Export",
     iiif: "IIIF options",
     exportManifests: "Export Presentation 2 manifests",

@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Запам'ятайте ідентифікатор полотна",
     rememberPanel: "Запам'ятайте ліву панель",
     grid: "Параметри маніфестної сітки",
+    verticalTabs: "Компактний вибір вкладок",
     export: "Експорт",
     iiif: "Опції IIIF",
     exportManifests: "Експортувати маніфести презентації 2",

@@ -37,11 +37,30 @@ import { ResetIcon } from "@manifest-editor/ui/icons/ResetIcon";
 import { ResizeHandleIcon } from "@manifest-editor/ui/icons/ResizeHandleIcon";
 import { TickIcon } from "@manifest-editor/ui/icons/TickIcon";
 import DOMPurify from "dompurify";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppDropdown, type AppDropdownItem } from "../../components/AppDropdown/AppDropdown";
 import { LanguageFieldEditor } from "../../components/LanguageFieldEditor/LanguageFieldEditor";
 
 type SortableMetadataItem = { id: string } & MetadataItem;
+
+export interface MetadataItemActionContext {
+  index: number;
+  item: SortableMetadataItem;
+  /** Removes this item from the resource's metadata. */
+  remove: () => void;
+}
+
+export interface MetadataProps {
+  /** Extra inline controls rendered under each metadata row (e.g. "convert to…" actions). */
+  renderItemActions?: (context: MetadataItemActionContext) => ReactNode;
+  /** Extra content rendered below the list and add button (templates, recovery UI). */
+  children?: ReactNode;
+  /**
+   * Renders without the sidebar container padding, for use inside a parent that already provides
+   * horizontal padding (e.g. embedded under other fields). Standalone usage keeps the padding.
+   */
+  embedded?: boolean;
+}
 
 const emptyLanguageMap = { none: [] };
 
@@ -129,7 +148,9 @@ function MetadataRow({
   onMoveToStart,
   onSaveLabel,
   onSaveValue,
+  itemActions,
 }: {
+  itemActions?: ReactNode;
   index: number;
   isEditing: boolean;
   item: SortableMetadataItem;
@@ -224,6 +245,7 @@ function MetadataRow({
           onMoveToStart={onMoveToStart}
         />
       </div>
+      {itemActions ? <div className="flex flex-wrap gap-1 px-2 pb-2">{itemActions}</div> : null}
       {isEditing ? (
         <div className="border-t border-gray-200 px-2 pb-2 pt-3">
           <LanguageFieldEditor
@@ -249,12 +271,12 @@ function MetadataRow({
   );
 }
 
-export function Metadata() {
+export function Metadata({ renderItemActions, children, embedded }: MetadataProps = {}) {
   const t = useTranslations("editors");
   const { descriptive } = useEditor();
   const [editingId, setEditingId] = useState<string>();
   const [pendingNewItemCount, setPendingNewItemCount] = useState<number>();
-  const editingIndexRef = useRef<number>();
+  const editingIndexRef = useRef<number | undefined>(undefined);
   const items = descriptive.metadata.getSortable() as SortableMetadataItem[];
   const itemCount = items.length;
   const accessibility = useReorderAccessibility(items);
@@ -378,7 +400,7 @@ export function Metadata() {
   );
 
   return (
-    <PaddedSidebarContainer>
+    <PaddedSidebarContainer className={embedded ? "p-0" : undefined}>
       <DndContext
         accessibility={accessibility}
         collisionDetection={closestCenter}
@@ -408,6 +430,7 @@ export function Metadata() {
               onMoveToStart={() => moveToStart(item.id)}
               onSaveLabel={(label) => saveLabel(item.id, label)}
               onSaveValue={(value) => saveValue(item.id, value)}
+              itemActions={renderItemActions?.({ index, item, remove: () => deleteItem(item.id) })}
             />
           ))}
         </SortableContext>
@@ -420,7 +443,7 @@ export function Metadata() {
       )}
 
       <ActionButton
-        className="sticky bottom-0 mt-2"
+        className="mt-2"
         onPress={() => {
           setPendingNewItemCount(itemCount);
           descriptive.metadata.add({ en: [""] }, { en: [""] });
@@ -429,6 +452,8 @@ export function Metadata() {
         <AddIcon />
         {t("ui.addMetadataItem")}
       </ActionButton>
+
+      {children}
     </PaddedSidebarContainer>
   );
 }

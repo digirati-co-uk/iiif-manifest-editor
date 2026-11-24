@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import { CanvasBackgroundColorField } from "../components/CanvasBackgroundColorField";
 import { Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
@@ -30,7 +31,9 @@ export const exhibitionImagesEditor: EditorDefinition = {
     resourceTypes: ["Canvas"],
     properties: ["items", "width", "height"],
     custom: ({ resource }, vault) =>
-      isEditableExhibitionCanvas(resource as any, vault) && !isInfoBoxCanvas(resource as any, vault),
+      isEditableExhibitionCanvas(resource as any, vault) &&
+      !isInfoBoxCanvas(resource as any, vault) &&
+      !isAudioEditingResource(vault, resource),
   },
   component: () => (
     <Sidebar>
@@ -41,7 +44,10 @@ export const exhibitionImagesEditor: EditorDefinition = {
   ),
 };
 
-export function ExhibitionImagesContent() {
+export function ExhibitionImagesContent({
+  showSlideProportions = true,
+  allowSwitchToMulti = true,
+}: { showSlideProportions?: boolean; allowSwitchToMulti?: boolean } = {}) {
   const canvas = useCanvas();
   const vault = useVault();
   const add = useAddCanvasImage();
@@ -67,6 +73,7 @@ export function ExhibitionImagesContent() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
       <CanvasImageMode
+        allowSwitchToMulti={allowSwitchToMulti}
         singleImage={singleImage}
         canReturnToSingle={images.length === 1}
         onSwitchToMulti={() => {
@@ -83,7 +90,7 @@ export function ExhibitionImagesContent() {
         <CanvasLayoutSection />
         <SmartCanvasSize templateAware>
           {({ resize }) =>
-            mismatch ? (
+            showSlideProportions && mismatch ? (
               <p
                 style={{
                   margin: 0,

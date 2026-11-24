@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { getFloatingBehavior, hasFloatingBehavior } from "./components/FloatingPositionPicker";
+import { positionBehaviors } from "./right-panels/slide-behavior-transforms";
 
 export interface SlideContentBox {
   x: number;
@@ -163,11 +165,11 @@ export function supportsTourSteps(vault: any, canvas: any): boolean {
   if (!canvas) return false;
 
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
-  if (behavior.includes("info")) return false;
+  if (behavior.includes("info") || behavior.includes("audio")) return false;
 
   return !getPaintingAnnotations(vault, canvas).some((annotation: any) => {
     const body = getResolvedAnnotationBody(vault, annotation);
-    return Boolean(getVideoUrl(body) || getYouTubeId(body));
+    return Boolean(body?.type === "Sound" || getVideoUrl(body) || getYouTubeId(body));
   });
 }
 
@@ -314,6 +316,27 @@ export function getSlideLayoutRegions(canvas: any): {
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
   const customTextRegion = getCustomTextRegion(behavior);
 
+  if (hasFloatingBehavior(behavior) && behavior.some((flag: string) => positionBehaviors.has(flag))) {
+    const position = getFloatingBehavior(behavior);
+    const panelWidth = Math.round(width / 3);
+    const panelHeight = Math.round(height / 3);
+    const insetX = Math.round(width * 0.02);
+    const insetY = Math.round(height * 0.02);
+    return {
+      content: { x: 0, y: 0, width, height },
+      text: {
+        x: position.endsWith("left")
+          ? insetX
+          : position.endsWith("right") ? width - panelWidth - insetX : Math.round((width - panelWidth) / 2),
+        y: position.startsWith("float-top")
+          ? insetY
+          : position.startsWith("float-bottom") ? height - panelHeight - insetY : Math.round((height - panelHeight) / 2),
+        width: panelWidth,
+        height: panelHeight,
+      },
+    };
+  }
+
   if (behavior.includes("right")) {
     return {
       content: { x: 0, y: 0, width: Math.round((width * 2) / 3), height },
@@ -382,7 +405,7 @@ export function getSlideLayoutRegions(canvas: any): {
   if (behavior.includes("image")) {
     return {
       content: { x: 0, y: 0, width, height },
-      text: customTextRegion,
+      text: null,
     };
   }
 

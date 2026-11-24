@@ -112,11 +112,9 @@ export interface CreatorValidationContext<Payload = any> {
 
 export type CreatorConfigField = CreatorDisplayMessages & {
   id: string;
-  type: "checkbox";
   label: string;
   summary?: string;
-  defaultValue?: boolean;
-};
+} & ({ type: "checkbox"; defaultValue?: boolean } | { type: "string-list"; defaultValue?: string[] });
 
 export interface CreatorConfiguration {
   fields: CreatorConfigField[];

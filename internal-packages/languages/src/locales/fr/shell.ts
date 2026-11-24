@@ -161,6 +161,7 @@ export const catalog = {
     rememberCanvas: "Mémoriser l'identifiant du canevas",
     rememberPanel: "N'oubliez pas le panneau de gauche",
     grid: "Options de grille de manifeste",
+    verticalTabs: "Sélecteur d'onglets compact",
     defaultPreview: "Aperçu par défaut",
     return: "Retour à Manifest Editor",
     exhibition: "Aller à Exhibition Editor",

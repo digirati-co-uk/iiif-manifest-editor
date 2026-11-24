@@ -161,6 +161,7 @@ export const catalog = {
     rememberCanvas: "Ricorda l'ID tela",
     rememberPanel: "Ricorda Pannello sinistro",
     grid: "Opzioni della griglia manifest",
+    verticalTabs: "Selettore di schede compatto",
     defaultPreview: "Anteprima predefinita",
     return: "Ritorno a Manifest Editor",
     exhibition: "Vai a Exhibition Editor",

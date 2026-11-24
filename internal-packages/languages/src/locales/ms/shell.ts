@@ -153,6 +153,7 @@ export const catalog = {
     rememberCanvas: "Ingat ID Kanvas",
     rememberPanel: "Ingat panel Kiri",
     grid: "Pilihan Grid Manifes",
+    verticalTabs: "Pemilih tab padat",
     defaultPreview: "Pratonton lalai",
     return: "Kembali ke Manifest Editor",
     exhibition: "Pergi ke Exhibition Editor",

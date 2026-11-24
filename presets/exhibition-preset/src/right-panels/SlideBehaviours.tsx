@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import { LazyThumbnail, Sidebar, SidebarContent } from "@manifest-editor/components";
 import {
   BehaviorEditor,
@@ -15,6 +16,10 @@ import { twMerge } from "tailwind-merge";
 import {
   FloatingPositionPicker,
   floatingBehaviorOptions,
+  floatingBehaviors,
+  floatingPositionClasses,
+  getFloatingBehavior,
+  hasFloatingBehavior,
   type FloatingBehavior,
 } from "../components/FloatingPositionPicker";
 import { isEditableExhibitionCanvas, isInfoBoxCanvas } from "../helpers";
@@ -26,6 +31,7 @@ import {
   useSlideshowWorkbenchState,
 } from "../slideshow-content-positioning";
 import { ExhibitionThumbnailEditor } from "./ExhibitionThumbnailEditor";
+import { SlideshowDurationField } from "./SlideshowDurationField";
 import {
   coverBehaviors,
   layoutBehaviors,
@@ -81,7 +87,7 @@ const displayWidthOptions: Array<{
   { value: 6, label: "Half width" },
   { value: 4, label: "1/3 width" },
 ];
-const floatingBehaviors = new Set<FloatingBehavior>(floatingBehaviorOptions.map((option) => option.value));
+export { getFloatingBehavior, hasFloatingBehavior } from "../components/FloatingPositionPicker";
 export {
   FloatingPositionIcon,
   FloatingPositionPicker,
@@ -161,7 +167,7 @@ export const customBehaviourEditor: EditorDefinition = {
     resourceTypes: ["Canvas"],
     properties: ["behavior"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault) || isAudioEditingResource(vault, resource)) return false;
       // The standalone layout panel is not shown for textual-content (info box) canvases;
       // they get their own layout section inside the workbench editor.
       return !isInfoBoxCanvas(resource as any, vault);
@@ -526,6 +532,7 @@ export function SlideBehavioursContent({
   if (mode === "simple") {
     return (
       <>
+        <SlideshowDurationField />
         <SimpleSlideLayoutEditor
           behavior={editor.technical.behavior.get() || []}
           controls={controls}
@@ -541,10 +548,14 @@ export function SlideBehavioursContent({
 
   return (
     <>
+      <SlideshowDurationField />
       <BehaviorEditor
         behavior={editor.technical.behavior.get() || []}
         onChange={(v) => {
-          editor.technical.behavior.set(v);
+          const changedOverlay = getFloatingBehavior(v) !== getFloatingBehavior(behavior) || !hasFloatingBehavior(behavior);
+          const needsTextPlacement = controls.isSlideshow && changedOverlay && hasFloatingBehavior(v) && getLayoutPreset(v) === "image";
+          editor.technical.behavior.set(needsTextPlacement ? replaceLayoutBehavior(v, "right") : v);
+          if (needsTextPlacement && currentCanvas) injectTextPlaceholders(vault, currentCanvas, "right");
         }}
         configs={getAdvancedExhibitionConfigs(templateType, behavior, isCoverCanvas, hasTourSteps, isImageSlide)}
       />
@@ -613,7 +624,11 @@ function SimpleSlideLayoutEditor({
     invert?: boolean;
     backdrop?: BackdropBehavior;
   }) => {
-    const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : undefined;
+    const nextLayoutPreset = controls.layoutOptions.length
+      ? controls.isSlideshow && next.floating && layoutPreset === "image"
+        ? "right"
+        : (next.layoutPreset ?? layoutPreset)
+      : undefined;
     const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
     const nextFloating = next.floating ?? floating;
     const nextFloatingBehavior = next.floatingBehavior ?? floatingBehavior;
@@ -656,7 +671,7 @@ function SimpleSlideLayoutEditor({
       <SimpleLayoutPreview
         layoutPreset={layoutPreset}
         cover={cover}
-        floating={floating}
+        floatingPosition={floating && (!controls.isSlideshow || layoutPreset !== "image") ? floatingBehavior : undefined}
         width={selectedWidth}
         height={previewHeight}
         showGridSizing={controls.showGridSizing}
@@ -730,7 +745,7 @@ function SimpleSlideLayoutEditor({
             onChange={(checked) => applySettings({ floating: checked })}
           />
         ) : null}
-        {controls.isSlideshow && floating ? (
+        {controls.showFloating && floating ? (
           <SimpleField>
             <SimpleFieldLabel>Text overlay position</SimpleFieldLabel>
             <div className="mt-3">
@@ -806,7 +821,7 @@ function SimpleSlideLayoutEditor({
 function SimpleLayoutPreview({
   layoutPreset,
   cover,
-  floating,
+  floatingPosition,
   width,
   height,
   showGridSizing,
@@ -814,13 +829,14 @@ function SimpleLayoutPreview({
 }: {
   layoutPreset: LayoutPreset;
   cover: boolean;
-  floating: boolean;
+  floatingPosition?: FloatingBehavior;
   width: DisplayWidth;
   height: number;
   showGridSizing: boolean;
   onTextClick: () => void;
 }) {
   const isBottom = layoutPreset === "bottom";
+  const isTop = layoutPreset === "top";
   const isImage = layoutPreset === "image";
   const isLeft = layoutPreset === "left";
 
@@ -837,7 +853,7 @@ function SimpleLayoutPreview({
         <div
           className={twMerge(
             "flex h-full w-full min-h-0",
-            isLeft ? "flex-row-reverse" : isBottom ? "flex-col" : "flex-row"
+            isLeft ? "flex-row-reverse" : isTop ? "flex-col-reverse" : isBottom ? "flex-col" : "flex-row"
           )}
         >
           <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
@@ -845,13 +861,15 @@ function SimpleLayoutPreview({
               <LazyThumbnail cover={cover} fade={false} />
             </div>
           </div>
-          {isImage ? null : (
+          {isImage && !floatingPosition ? null : (
             <button
               type="button"
               aria-label="Edit slide text"
               className={twMerge(
                 "flex-shrink-0 border-0 bg-[#25211f] p-3 text-left text-white transition-colors hover:bg-[#332f2c] focus:outline-none focus:ring-2 focus:ring-me-primary-500 focus:ring-offset-2",
-                isBottom ? "h-1/3 w-full" : "h-full w-1/3"
+                floatingPosition
+                  ? twMerge("absolute z-10 w-1/3 rounded-md shadow", floatingPositionClasses[floatingPosition])
+                  : isBottom || isTop ? "h-1/3 w-full" : "h-full w-1/3"
               )}
               onClick={onTextClick}
             >
@@ -859,9 +877,6 @@ function SimpleLayoutPreview({
             </button>
           )}
         </div>
-        {floating ? (
-          <div className="absolute right-2 top-2 h-7 w-10 rounded bg-white/90 shadow ring-1 ring-black/10" />
-        ) : null}
       </div>
       {showGridSizing ? (
         <div className="mt-2 text-center text-xs" style={{ color: simpleLayoutColours.muted }}>
@@ -1101,17 +1116,6 @@ function getDisplayWidth(behavior: string[]): DisplayWidth {
   if (width <= 6) return 6;
   if (width <= 8) return 8;
   return 12;
-}
-
-export function hasFloatingBehavior(behavior: string[]) {
-  return behavior.includes("floating") || behavior.some((item) => floatingBehaviors.has(item as FloatingBehavior));
-}
-
-export function getFloatingBehavior(behavior: string[]): FloatingBehavior {
-  return (
-    behavior.find((item): item is FloatingBehavior => floatingBehaviors.has(item as FloatingBehavior)) ||
-    "float-top-right"
-  );
 }
 
 export function updateFloatingBehavior(behavior: string[], position: "" | FloatingBehavior) {

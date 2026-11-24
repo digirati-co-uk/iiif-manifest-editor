@@ -20,3 +20,5 @@ export { ActionPill } from "./components/CanvasLayout/ui";
 
 export { CanvasImageMode, CanvasShapePicker } from "./components/CanvasLayout/CanvasImageMode";
 export { useAddCanvasImage } from "./components/CanvasLayout/useAddCanvasImage";
+
+export { ResourceMetadataContent, ResourceMetadataTab } from "./definitions/Metadata/ResourceMetadata";

@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "கேன்வாஸ் ஐடியை நினைவில் கொள்க",
     rememberPanel: "இடது பேனலை நினைவில் கொள்க",
     grid: "மேனிஃபெஸ்ட் கிரிட் விருப்பங்கள்",
+    verticalTabs: "சுருக்கமான தாவல் தேர்வி",
     export: "ஏற்றுமதி",
     iiif: "IIIF விருப்பங்கள்",
     exportManifests: "ஏற்றுமதி விளக்கக்காட்சி 2 வெளிப்படுகிறது",

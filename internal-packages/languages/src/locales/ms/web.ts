@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "Ingat ID kanvas",
     rememberPanel: "Ingat panel kiri",
     grid: "Pilihan grid manifes",
+    verticalTabs: "Pemilih tab padat",
     export: "Eksport",
     iiif: "Pilihan IIIF",
     exportManifests: "Eksport Persembahan 2 manifes",

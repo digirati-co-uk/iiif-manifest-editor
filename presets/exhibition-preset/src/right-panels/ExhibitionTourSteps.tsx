@@ -1,3 +1,4 @@
+import { isAudioEditingResource } from "../audio-slide";
 import type { InternationalString } from "@iiif/presentation-3";
 import { ActionButton, Sidebar, SidebarContent } from "@manifest-editor/components";
 import { PromptToAddPaintingAnnotations } from "@manifest-editor/editors";
@@ -30,7 +31,7 @@ export const exhibitionTourSteps: EditorDefinition = {
     properties: ["annotations", "behavior"],
     resourceTypes: ["Canvas"],
     custom: ({ resource }, vault) => {
-      if (!isEditableExhibitionCanvas(resource as any, vault)) return false;
+      if (!isEditableExhibitionCanvas(resource as any, vault) || isAudioEditingResource(vault, resource)) return false;
       const canvas = vault.get(resource as any) as any;
       // Tour steps are supported for image canvases only.
       return (
@@ -87,7 +88,7 @@ function PromptCreationOfTourSteps() {
             type: "Canvas",
           },
         },
-      },
+      }
     );
   };
 
@@ -219,40 +220,39 @@ export function ExhibitionTourStepsContent({
       ) : null}
 
       <ResourceEditingProvider resource={canvas}>
-        <AnnotationPageContext annotationPage={firstAnnotationPage.id}>
-          <div className="flex flex-col gap-4">
-            <div className="text-sm font-semibold text-gray-700">{nonLinear ? "Map points" : "Linear step list"}</div>
-            <TourAnnotationPageEditor
-              reorderable={mode === "advanced" && !nonLinear ? reorderable : false}
-              tourStyle={tourStyle}
-              editAlignment={canEditAlignment && editAlignment}
-              useSlideshowWorkbench={useSlideshowWorkbench}
-            />
-
-            {!busy ? (
-              isPending ? (
-                <PendingTourStepAnnotation />
-              ) : (
-                <Button
-                  onPress={requestTourStep}
-                  className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
-                >
-                  {nonLinear ? "+ Add map point" : "+ Add new step"}
-                </Button>
-              )
-            ) : null}
-          </div>
-          {showPaintingAnnotations && itemsAnnotationPage ? (
-            <>
-              <PromptToAddPaintingAnnotations
-                title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
-                painting={itemsAnnotationPage}
-                page={firstAnnotationPage}
-                canvasId={canvas.id}
+        <div className="flex flex-col gap-4">
+          <div className="text-sm font-semibold text-gray-700">{nonLinear ? "Map points" : "Linear step list"}</div>
+          {canvas.annotations.map((page) => (
+            <AnnotationPageContext key={page.id} annotationPage={page.id}>
+              <TourAnnotationPageEditor
+                reorderable={mode === "advanced" && !nonLinear ? reorderable : false}
+                tourStyle={tourStyle}
+                editAlignment={canEditAlignment && editAlignment}
+                useSlideshowWorkbench={useSlideshowWorkbench}
               />
-            </>
+            </AnnotationPageContext>
+          ))}
+          {!busy ? (
+            isPending ? (
+              <PendingTourStepAnnotation />
+            ) : (
+              <Button
+                onPress={requestTourStep}
+                className="border disabled:opacity-50 border-gray-300 hover:border-me-500 hover:bg-me-50 cursor-pointer shadow-sm rounded p-4 bg-white relative text-[#6a625c] hover:text-me-500"
+              >
+                {nonLinear ? "+ Add map point" : "+ Add new step"}
+              </Button>
+            )
           ) : null}
-        </AnnotationPageContext>
+        </div>
+        {showPaintingAnnotations && itemsAnnotationPage ? (
+          <PromptToAddPaintingAnnotations
+            title={<h3 className="text-md border-b pt-4 pb-2 mb-2">Available tour steps from images</h3>}
+            painting={itemsAnnotationPage}
+            page={canvas.annotations.at(-1) || firstAnnotationPage}
+            canvasId={canvas.id}
+          />
+        ) : null}
       </ResourceEditingProvider>
     </>
   );
@@ -282,13 +282,13 @@ function MarkerStyleButton({
 
 export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequest?: () => void } = {}) {
   const canvas = useCanvas();
-  const firstAnnotationPage = canvas?.annotations?.[0];
+  const lastAnnotationPage = canvas?.annotations?.at(-1);
   const creator = useInlineCreator();
   const { requestAnnotation, isPending, busy } = useRequestAnnotation({
     onSuccess: (resp) => {
       const bodyValue = resp.metadata.bodyValue ?? DEFAULT_TOUR_STEP_HTML;
 
-      if (!resp.cancelled && resp.target && canvas && firstAnnotationPage) {
+      if (!resp.cancelled && resp.target && canvas && lastAnnotationPage) {
         const selector = normaliseTourStepAnnotationResponse(resp, canvas);
         creator.create(
           "@manifest-editor/html-annotation",
@@ -314,14 +314,14 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
             parent: {
               property: "items",
               resource: {
-                id: firstAnnotationPage.id,
+                id: lastAnnotationPage.id,
                 type: "AnnotationPage",
               },
             },
             initialData: {
               selector,
             },
-          },
+          }
         );
       }
     },
@@ -338,6 +338,6 @@ export function useTourStepAnnotationRequest({ onBeforeRequest }: { onBeforeRequ
     requestTourStep,
     isPending,
     busy,
-    canRequestTourStep: Boolean(canvas && firstAnnotationPage),
+    canRequestTourStep: Boolean(canvas && lastAnnotationPage),
   };
 }

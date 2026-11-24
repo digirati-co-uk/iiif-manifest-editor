@@ -19,6 +19,29 @@ export const floatingBehaviorOptions: Array<{ value: FloatingBehavior; label: st
   { value: "float-bottom-right", label: "Bottom right" },
 ];
 
+export const floatingBehaviors = new Set<string>(floatingBehaviorOptions.map((option) => option.value));
+
+export function hasFloatingBehavior(behavior: string[]) {
+  return behavior.includes("floating") || behavior.some((item) => floatingBehaviors.has(item));
+}
+
+export function getFloatingBehavior(behavior: string[]): FloatingBehavior {
+  return (
+    [...behavior].reverse().find((item): item is FloatingBehavior => floatingBehaviors.has(item)) || "float-top-right"
+  );
+}
+
+export const floatingPositionClasses: Record<FloatingBehavior, string> = {
+  "float-top-left": "left-1 top-1",
+  "float-top": "left-1/2 top-1 -translate-x-1/2",
+  "float-top-right": "right-1 top-1",
+  "float-left": "left-1 top-1/2 -translate-y-1/2",
+  "float-right": "right-1 top-1/2 -translate-y-1/2",
+  "float-bottom-left": "bottom-1 left-1",
+  "float-bottom": "bottom-1 left-1/2 -translate-x-1/2",
+  "float-bottom-right": "bottom-1 right-1",
+};
+
 const iconPositions: Record<FloatingBehavior, { x: number; y: number }> = {
   "float-top-left": { x: 2, y: 2 },
   "float-top": { x: 8.5, y: 2 },

@@ -88,16 +88,11 @@ export class MetadataEditor<T> extends BasePropertyEditor<T, MetadataItem[]> {
     value: InternationalString,
     beforeIndex?: number,
   ) {
-    const ref = this.ref();
-    this.config.vault.dispatch(
-      entityActions.addMetadata({
-        id: ref.id,
-        label,
-        value,
-        type: ref.type as any,
-        beforeIndex,
-      }),
-    );
+    // The helpers ADD_METADATA reducer copies the label into the value. Set the
+    // complete list instead so imported values survive and insertion stays atomic.
+    const metadata = [...(this.getWithoutTracking() || [])];
+    metadata.splice(beforeIndex ?? metadata.length, 0, { label, value });
+    this.set(metadata);
   }
 
   update(

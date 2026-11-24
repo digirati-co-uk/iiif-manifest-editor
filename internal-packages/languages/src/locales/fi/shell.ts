@@ -157,6 +157,7 @@ export const catalog = {
     rememberCanvas: "Muista Canvas ID",
     rememberPanel: "Muista vasen paneeli",
     grid: "Ilmoitetut ruudukkovaihtoehdot",
+    verticalTabs: "Kompakti välilehtivalitsin",
     defaultPreview: "Oletusesikatselu",
     return: "Palaa kohtaan Manifest Editor",
     exhibition: "Siirry kohtaan Exhibition Editor",

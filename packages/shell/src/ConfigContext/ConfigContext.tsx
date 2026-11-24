@@ -1,6 +1,6 @@
 import { mergeUiI18n, type ShellUiI18nConfig } from "../i18n/types";
 import type { ProjectNotebookConfig } from "../Notebook/notebook";
-import type { Collection } from "@iiif/presentation-3";
+import type { Collection, MetadataItem } from "@iiif/presentation-3";
 import type { CreatorConfig } from "@manifest-editor/creator-api";
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import type { PreviewConfiguration } from "../PreviewContext/PreviewContext.types";
@@ -42,6 +42,8 @@ export interface Config {
     rememberLeftPanelId?: boolean;
     annotationPopups?: boolean;
     manifestGridOptions?: boolean;
+    /** Replace the scrolling editor tabs with a single "current tab" row that opens a list of all tabs. */
+    verticalTabs?: boolean;
   };
 
   // Internationalisation options
@@ -75,6 +77,13 @@ export interface Config {
 }
 
 export interface EditorConfig {
+  /** Suggested metadata rows, offered without overwriting existing metadata. */
+  metadataTemplates?: MetadataItem[];
+  /** Code configuration for the inline metadata-to-required-statement hint. */
+  metadataRequiredStatement?: {
+    enabled?: boolean;
+    keywords?: string[];
+  };
   singleTab?: string;
   fields?: string[];
   hideTabs?: string[];
@@ -124,6 +133,7 @@ const DEFAULT_CONFIG: Config = {
     annotationPopups: false,
     rememberCanvasId: true,
     manifestGridOptions: true,
+    verticalTabs: false,
     rememberLeftPanelId: true,
   },
   uploadBackends: [],

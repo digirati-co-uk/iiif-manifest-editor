@@ -44,6 +44,7 @@ import {
   useEditingResource,
   useLayoutActions,
   useLayoutState,
+  useOpenPresetOnboarding,
   usePreviewContext,
   useSaveVault,
 } from "@manifest-editor/shell";
@@ -57,6 +58,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useManifest, VaultProvider } from "react-iiif-vault";
 import { useBrowserGlobalPluginConfig, useBrowserProject } from "./browser-state";
 
+import { takeExhibitionFormatChooser } from "./exhibition-creation";
 import { BrowserSettingsPanel } from "./BrowserSettingsPanel";
 import { MaybeExhibitionPrompt } from "./MaybeExhibitionPrompt";
 
@@ -526,6 +528,7 @@ export default function BrowserEditor({
                   layoutMode={layoutMode}
                   className={isFocusedExhibition ? "exhibition-focused" : undefined}
                 />
+                {isExhibitionPreset ? <ShowNewExhibitionFormatChooser projectId={id} /> : null}
                 <SelectInitialExhibitionCanvas enabled={isExhibitionPreset && !selectedCanvasId && !editing} />
                 <FromQueryString editing={editing} selectedTab={selectedTab} canvasId={selectedCanvasId} />
               </ShellProvider>
@@ -535,6 +538,17 @@ export default function BrowserEditor({
       </VaultProvider>
     </div>
   );
+}
+
+function ShowNewExhibitionFormatChooser({ projectId }: { projectId: string }) {
+  const manifest = useManifest();
+  const open = useOpenPresetOnboarding({ automatic: true });
+
+  useEffect(() => {
+    if (manifest && takeExhibitionFormatChooser(projectId)) open();
+  }, [manifest, projectId, open]);
+
+  return null;
 }
 
 function SelectInitialExhibitionCanvas({ enabled }: { enabled: boolean }) {

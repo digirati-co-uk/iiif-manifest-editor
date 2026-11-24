@@ -32,10 +32,8 @@ function ExhibitionRemotePreviewPanel() {
   let presetOptions: Partial<PresetUrlSearchParamsOptions>;
 
   if (previewPreset === "scroll") {
-    presetOptions = {
-      ignoreCanvasBackgrounds: resolvedTheme.scroll.options.ignoreCanvasBackgrounds,
-      tableOfContentsPlacement: resolvedTheme.scroll.options.tableOfContentsPlacement,
-    };
+    // The scroll viewer reads the live theme from the manifest in the preview vault.
+    presetOptions = {};
   } else if (previewPreset === "slideshow") {
     presetOptions = {
       ignoreCanvasBackgrounds: resolvedTheme.delft.slideshow.ignoreCanvasBackgrounds,

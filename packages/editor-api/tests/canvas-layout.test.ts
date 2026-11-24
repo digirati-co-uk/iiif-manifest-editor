@@ -331,6 +331,28 @@ describe("canvas layout operations", () => {
 });
 
 describe("image canvas modes and colours", () => {
+  test("keeps a rotated crop portrait when targeting a region or resizing to a single image", async () => {
+    const { vault, canvas } = await fixture(1, true);
+    const painting = getPaintingImages(vault, canvas)[0]!;
+    const body = [
+      {
+        type: "SpecificResource" as const,
+        source: painting.body[0]!,
+        selector: { type: "ImageApiSelector", region: "100,200,300,200", rotation: "90" },
+      },
+    ];
+    vault.modifyEntityField(painting, "body", body as typeof painting.body);
+
+    expect(targetPaintingImageRegion(vault, canvas, painting.id)).toBe(true);
+    expect(getAnnotationRectangle(vault, vault.get(painting), canvas)).toMatchObject({
+      width: 320,
+      height: 480,
+    });
+    expect(switchToSingleImage(vault, vault.get(canvas))).toBe(true);
+    expect(vault.get(canvas)).toMatchObject({ width: 200, height: 300 });
+    expect(vault.get(painting).body).toEqual(body);
+  });
+
   test("a single image can make the round trip without changing its source", async () => {
     const { vault, canvas } = await fixture(1, true);
     const image = getPaintingImages(vault, canvas)[0]!;

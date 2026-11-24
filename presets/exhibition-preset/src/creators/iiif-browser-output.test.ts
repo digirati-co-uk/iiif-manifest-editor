@@ -40,6 +40,29 @@ describe("IIIF Browser output transforms", () => {
     });
   });
 
+  test("retains the selected painting and its source-pixel crop and final rotation", () => {
+    const selected = {
+      id: "https://example.org/canvas",
+      type: "Canvas",
+      selector: crop,
+      imageSelector: { type: "BoxSelector" as const, spatial: { x: 60, y: 120, width: 240, height: 240 } },
+      selectedPainting: {
+        id: "https://example.org/image",
+        type: "Image" as const,
+        annotationId: "https://example.org/painting",
+      },
+      rotation: 270,
+      imageRotation: 0,
+    };
+    expect(formatIIIFBrowserOutput(selected, null, { get: () => undefined } as any)[0]).toMatchObject({
+      selector: crop,
+      imageSelector: selected.imageSelector,
+      selectedPainting: selected.selectedPainting,
+      rotation: 270,
+      imageRotation: 0,
+    });
+  });
+
   test("serialises a crop without a default rotation", () => {
     expect(browserImageApiSelector(crop, 0)).toEqual({
       type: "ImageApiSelector",

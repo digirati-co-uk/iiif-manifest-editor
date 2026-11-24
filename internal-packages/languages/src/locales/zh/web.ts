@@ -50,6 +50,7 @@ export const catalog = {
     rememberCanvas: "记住画布 ID",
     rememberPanel: "记住左侧面板",
     grid: "清单网格选项",
+    verticalTabs: "紧凑标签选择器",
     export: "出口",
     iiif: "IIIF选项",
     exportManifests: "导出演示 2 清单",

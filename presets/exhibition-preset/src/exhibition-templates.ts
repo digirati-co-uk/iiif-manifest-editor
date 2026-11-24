@@ -1,4 +1,4 @@
-import type { PresetTemplateDefinition } from "@manifest-editor/shell";
+import type { PresetTemplateDefinition, PresetTemplateConfigurationField } from "@manifest-editor/shell";
 
 const boolean = (id: string, label: string, defaultValue: boolean) => ({
   id,
@@ -6,6 +6,35 @@ const boolean = (id: string, label: string, defaultValue: boolean) => ({
   type: "boolean" as const,
   defaultValue,
 });
+
+export const audioTemplateConfiguration: PresetTemplateConfigurationField[] = [
+  boolean("audio.showWaveform", "Show audio waveforms by default", true),
+  {
+    id: "audio.imageFit",
+    label: "Audio artwork fit",
+    type: "select",
+    defaultValue: "contain",
+    options: [
+      { label: "Contain (whole image)", value: "contain" },
+      { label: "Cover (fill player)", value: "cover" },
+    ],
+  },
+  boolean("audio.autoplay", "Request audio autoplay by default", false),
+  {
+    id: "audio.waveformOpacity",
+    label: "Audio waveform opacity",
+    type: "select",
+    defaultValue: 0.55,
+    options: [
+      { label: "25%", value: 0.25 },
+      { label: "40%", value: 0.4 },
+      { label: "55%", value: 0.55 },
+      { label: "70%", value: 0.7 },
+      { label: "85%", value: 0.85 },
+      { label: "100%", value: 1 },
+    ],
+  },
+];
 
 export const exhibitionTemplates: PresetTemplateDefinition[] = [
   {
@@ -103,8 +132,11 @@ export const exhibitionTemplates: PresetTemplateDefinition[] = [
     previewUrl: "https://preview.exhibitionviewer.org/preview/leeds/scroll",
     thumbnailUrl: "https://manifest-editor-docs.netlify.app/exhibition-scroll-leeds.png",
     configuration: [],
-  }
-];
+  },
+].map((template) => ({
+  ...template,
+  configuration: [...(template.configuration || []), ...audioTemplateConfiguration],
+})) as PresetTemplateDefinition[];
 
 export function getTemplateConfigurationValue(values: Record<string, any>, path: string): any {
   let current: any = values;
@@ -119,4 +151,22 @@ export function setTemplateConfigurationValue(values: Record<string, any>, path:
   for (const part of parts.slice(0, -1)) current = current[part] ||= {};
   current[parts.at(-1)!] = value;
   return next;
+}
+
+/** Fill fields exposed by the selected preview without dropping theme extension values. */
+export function resolveTemplateConfiguration(
+  configuration: PresetTemplateConfigurationField[],
+  values: Record<string, any>
+) {
+  return configuration.reduce(
+    (result, field) =>
+      setTemplateConfigurationValue(
+        result,
+        field.id,
+        getTemplateConfigurationValue(values, field.id) ??
+          field.defaultValue ??
+          (field.type === "boolean" ? false : field.type === "number" ? 0 : "")
+      ),
+    structuredClone(values)
+  );
 }

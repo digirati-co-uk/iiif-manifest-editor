@@ -133,9 +133,13 @@ it("resolves every shipped definition and configuration reference in real Dutch 
       expect(i18n.resolveMessage(ref)).not.toBe(ref?.key);
     }
     for (const field of creator.configuration?.fields ?? []) {
-      expect(i18n.resolveMessage(field.labelMessage)).toBe(
-        "Metadata van het manifest aan geïmporteerde canvassen toevoegen"
-      );
+      const label = i18n.resolveMessage(field.labelMessage, field.label);
+      expect(label, `${creator.id}.${field.id}`).not.toBe("");
+      if (field.id === "addManifestMetadataToCanvas") {
+        expect(label).toBe("Metadata van het manifest aan geïmporteerde canvassen toevoegen");
+      } else {
+        expect(label).toBe("Metadata labels to import");
+      }
     }
   }
   const blank = allCreators.find((c) => c.id === "@manifest-editor/empty-canvas")!;
