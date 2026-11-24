@@ -39,6 +39,140 @@ test("renders the cover and the image, text, tour and media sections", async ({ 
   await expect(page.locator("#s9").getByRole("complementary")).toHaveCount(0);
 });
 
+async function setUpImageLoadFixture(page: Page, canvasCount: number) {
+  const manifest = `${viewer}${fixtures}/image-load-ahead.json`;
+  const image = (index: number) => `${viewer}/slideshow-qa/landscape.png?load-ahead=${index}`;
+  await page.route(manifest, (route) =>
+    route.fulfill({
+      json: {
+        "@context": "http://iiif.io/api/presentation/3/context.json",
+        id: manifest,
+        type: "Manifest",
+        label: { en: ["Image load ahead"] },
+        items: Array.from({ length: canvasCount }, (_, index) => {
+          const id = `${manifest}/canvas/${index}`;
+          return {
+            id,
+            type: "Canvas",
+            label: { en: [`Image ${index + 1}`] },
+            behavior: ["page-scroll"],
+            width: 800,
+            height: 450,
+            items: [
+              {
+                id: `${id}/page`,
+                type: "AnnotationPage",
+                items: [
+                  {
+                    id: `${id}/painting`,
+                    type: "Annotation",
+                    motivation: "painting",
+                    target: id,
+                    body: { id: image(index), type: "Image", format: "image/png", width: 800, height: 450 },
+                  },
+                ],
+              },
+            ],
+          };
+        }),
+      },
+    })
+  );
+
+  const requests: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().includes("?load-ahead=")) requests.push(request.url());
+  });
+
+  return { image, requests };
+}
+
+test("loads the next scroll image while it is still below the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const { image, requests } = await setUpImageLoadFixture(page, 4);
+  await openScroll(page, "image-load-ahead.json", { params: { "show-title-block": "false" } });
+  const next = page.locator("#s1");
+  const nextImage = next.locator("canvas");
+  await expect(next).not.toBeInViewport();
+  await expect(nextImage).toBeAttached();
+  // Check that the offscreen image has actually painted before scrolling begins.
+  await expect
+    .poll(() =>
+      nextImage.evaluate((canvas) => {
+        const ctx = canvas.getContext("2d");
+        return ctx?.getImageData(canvas.width / 2, canvas.height / 2, 1, 1).data[3] ?? 0;
+      })
+    )
+    .toBeGreaterThan(0);
+  expect(requests).toContain(image(1));
+  expect(requests).not.toContain(image(2));
+  expect(requests).not.toContain(image(3));
+
+  await next.evaluate((section) => section.scrollIntoView({ behavior: "instant" }));
+  await expect(next).toBeInViewport();
+  await expect(page.locator("#s2")).not.toBeInViewport();
+  await expect.poll(() => requests.includes(image(2))).toBe(true);
+  expect(requests).not.toContain(image(3));
+});
+
+for (const { mode, route, params } of [
+  {
+    mode: "scroll header",
+    route: "leeds/scroll",
+    params: { "show-title-block": "false" },
+  },
+  {
+    mode: "scroll footer",
+    route: "delft/scroll",
+    params: { "show-title-block": "false", "toc-placement": "footer" },
+  },
+  {
+    mode: "full-page footer",
+    route: "delft/full-page",
+    params: { "toc-placement": "footer" },
+  },
+  {
+    mode: "scroll title",
+    route: "scroll",
+    params: { "show-table-of-contents": "true", "show-progress-table-of-contents": "false" },
+  },
+]) {
+  test(`${mode} contents jumps past intermediate images`, async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    const { image, requests } = await setUpImageLoadFixture(page, 8);
+    const query = new URLSearchParams({ manifest: `${fixtures}/image-load-ahead.json`, ...params });
+    await page.goto(`${viewer}/preview/${route}?${query}`);
+    await expect(page.locator("#s0 canvas")).toBeVisible();
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+
+    if (mode === "scroll header") {
+      await page.locator(".exv-scroll-progress").getByRole("button").click();
+    } else if (mode !== "scroll title") {
+      await page.getByRole("button", { name: "Show table of contents" }).first().click();
+    }
+    const contents =
+      mode === "scroll title"
+        ? page.locator(".exv-scroll-table-of-contents")
+        : page.getByRole("dialog", { name: "Table of contents" });
+    const entry = contents.getByRole("link", { name: "Image 7", exact: true });
+    await expect(entry).toHaveAttribute("href", "#s6");
+    if (mode === "scroll header") await entry.press("Enter");
+    else await entry.click();
+
+    await expect(page).toHaveURL(/#s6$/);
+    if (mode !== "scroll title") await expect(contents).toBeHidden();
+    await expect(page.locator("#s6")).toBeInViewport({ ratio: 0.75 });
+    await expect.poll(() => requests.includes(image(6))).toBe(true);
+    for (const skipped of [2, 3, 4]) expect(requests).not.toContain(image(skipped));
+    await expect(page.locator("html")).toHaveCSS("scroll-behavior", "smooth");
+
+    if (mode === "scroll header") {
+      await page.goBack();
+      await expect(page).not.toHaveURL(/#s6$/);
+    }
+  });
+}
+
 test("steps through image details across painting pages", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 610 });
   await openScroll(page, kitchen, {

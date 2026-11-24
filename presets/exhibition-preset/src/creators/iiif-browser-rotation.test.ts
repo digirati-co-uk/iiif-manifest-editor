@@ -9,6 +9,7 @@ const fixture = vi.hoisted(() => ({
   canvas: {} as any,
   page: {} as any,
   annotation: {} as any,
+  alternatePainting: {} as any,
 }));
 
 vi.mock("@iiif/helpers", async (importOriginal) => {
@@ -18,8 +19,8 @@ vi.mock("@iiif/helpers", async (importOriginal) => {
     ...actual,
     Vault: class {
       get(reference: { id: string }) {
-        return [fixture.manifest, fixture.canvas, fixture.page, fixture.annotation].find(
-          (resource) => resource.id === reference.id,
+        return [fixture.manifest, fixture.canvas, fixture.page, fixture.annotation, fixture.alternatePainting].find(
+          (resource) => resource.id === reference.id
         );
       }
 
@@ -106,6 +107,26 @@ describe("createFromIIIFBrowserOutput transforms", () => {
       expectedSize: { width: 300, height: 400 },
     },
     {
+      name: "a translated crop with the painting's inherited rotation",
+      transform: {
+        selector: {
+          type: "BoxSelector",
+          spatial: { x: 20, y: 30, width: 80, height: 60 },
+        },
+        imageSelector: {
+          type: "BoxSelector",
+          spatial: { x: 130, y: 300, width: 60, height: 80 },
+        },
+        imageRotation: 90,
+      },
+      expectedBody: {
+        type: "SpecificResource",
+        selector: { type: "ImageApiSelector", region: "130,300,60,80", rotation: "90" },
+        source: { id: "https://example.org/image/130,300,60,80/max/90/default.jpg" },
+      },
+      expectedSize: { width: 80, height: 60 },
+    },
+    {
       name: "crop and rotation",
       transform: {
         selector: {
@@ -142,7 +163,7 @@ describe("createFromIIIFBrowserOutput transforms", () => {
         ],
         trackSize,
       } as IIIFBrowserCreatorPayload,
-      creatorContext(),
+      creatorContext()
     );
 
     expect(output[0]).toMatchObject({
@@ -151,6 +172,41 @@ describe("createFromIIIFBrowserOutput transforms", () => {
       body: expectedBody,
     });
     expect(trackSize).toHaveBeenLastCalledWith(expectedSize);
+  });
+
+  test("applies the crop to the selected painting when a canvas has multiple images", async () => {
+    const image = "https://example.org/alternate";
+    fixture.alternatePainting = {
+      ...fixture.annotation,
+      id: "https://example.org/alternate-painting",
+      body: {
+        ...fixture.annotation.body,
+        id: `${image}/full/max/0/default.jpg`,
+        service: [{ id: image, type: "ImageService3", profile: "level2" }],
+      },
+    };
+    fixture.page.items.push({ id: fixture.alternatePainting.id, type: "Annotation" });
+    const crop = { type: "BoxSelector" as const, spatial: { x: 200, y: 100, width: 300, height: 150 } };
+    const result = await createFromIIIFBrowserOutput(
+      {
+        output: [
+          {
+            resource: fixture.canvas,
+            parent: { id: fixture.manifest.id, type: "Manifest" },
+            selector: crop,
+            imageSelector: crop,
+            rotation: 90,
+            selectedPainting: {
+              id: fixture.alternatePainting.body.id,
+              type: "Image",
+              annotationId: fixture.alternatePainting.id,
+            },
+          },
+        ],
+      },
+      creatorContext()
+    );
+    expect(result[0].body.source.id).toBe(`${image}/200,100,300,150/max/90/default.jpg`);
   });
 });
 

@@ -1,5 +1,5 @@
 import { type ContentState, normaliseContentState, parseContentState, Vault } from "@iiif/helpers";
-import { canonicalServiceUrl, getImageServices, isImageService } from "@iiif/parser/image-3";
+import { canonicalServiceUrl, getImageServices, isImageService, parseImageServiceRequest } from "@iiif/parser/image-3";
 import type { Canvas } from "@iiif/presentation-3";
 import type { CreatorFunctionContext } from "@manifest-editor/creator-api";
 import { lazy } from "react";
@@ -40,7 +40,22 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
 
   const returnResources: any[] = [];
 
-  for (const { resource, selector, parent, rotation } of resources) {
+  for (const item of resources) {
+    const { resource, parent, selectedPainting } = item;
+    const imageCrop = item.imageSelector?.spatial;
+    // Match Browser's Image API rounding when it supplies original-image pixels.
+    const selector = imageCrop
+      ? {
+          type: "BoxSelector" as const,
+          spatial: {
+            x: Math.round(imageCrop.x),
+            y: Math.round(imageCrop.y),
+            width: Math.max(1, Math.round(imageCrop.width)),
+            height: Math.max(1, Math.round(imageCrop.height)),
+          },
+        }
+      : item.selector;
+    const rotation = item.imageRotation ?? item.rotation;
     const type = resource.type;
     const previewVault = new Vault();
 
@@ -166,9 +181,11 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
         // Track the same effective metadata as a whole-canvas import, including Canvas-specific credits.
         data.trackCanvas?.(addManifestTracking(previewVault.toPresentation3<Canvas>(canvas)!));
 
-        const imageApiSelector = browserImageApiSelector(selector, rotation);
+        // A whole-canvas import keeps the original painting and its transforms.
+        const transformSelection = Boolean(item.selector || item.rotation);
+        const imageApiSelector = transformSelection ? browserImageApiSelector(selector, rotation) : undefined;
 
-        if (targetType === "Canvas" && !imageApiSelector) {
+        if (targetType === "Canvas" && !transformSelection) {
           const fullCanvas = previewVault.toPresentation3<Canvas>(canvas)!;
           if (!fullCanvas.label) {
             fullCanvas.label = { en: ["Untitled canvas"] };
@@ -181,54 +198,77 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
           continue;
         }
 
-        const annotationPage = previewVault.get(canvas.items[0]!);
-        const annotation = previewVault.get(annotationPage.items[0]!);
+        if (item.selector && selectedPainting && !imageCrop) {
+          throw new Error("The crop does not overlap the selected image");
+        }
+        const paintingRefs = canvas.items.flatMap((page) => previewVault.get(page)?.items || []);
+        const selectedAnnotation =
+          transformSelection && selectedPainting
+            ? paintingRefs.find((ref) => ref.id === selectedPainting.annotationId)
+            : undefined;
+        if (transformSelection && selectedPainting && !selectedAnnotation) {
+          throw new Error("The selected painting was not found on this canvas");
+        }
+        const annotation = previewVault.get(selectedAnnotation || paintingRefs[0]!);
+        if (!annotation) continue;
         if (targetType === "Annotation" || targetType === "Canvas" || targetType === "ContentResource") {
           const fullAnnotation = previewVault.toPresentation3<any>(annotation);
           fullAnnotation.id = ctx.generateId("Annotation");
-
-          let service = null;
-
-          const dimensions = { width: 0, height: 0 };
-
-          if (fullAnnotation?.body?.service) {
-            const width = fullAnnotation?.body.width;
-            const height = fullAnnotation?.body.height;
-            service = getImageServices(fullAnnotation?.body)[0];
-
-            if (service && (!service.width || !service.height)) {
-              service.width = width;
-              service.height = height;
-            }
-
-            dimensions.width = width;
-            dimensions.height = height;
-            if (data.trackSize) {
-              data.trackSize(dimensions);
+          if (transformSelection) {
+            const originalBody =
+              fullAnnotation.body?.type === "SpecificResource" ? fullAnnotation.body.source : fullAnnotation.body;
+            if (selectedAnnotation && selectedPainting && originalBody?.id !== selectedPainting.id) {
+              const image = previewVault.toPresentation3<any>({ id: selectedPainting.id, type: "ContentResource" });
+              invariant(image?.type === "Image", "The selected image was not found on this canvas");
+              fullAnnotation.body = image;
+            } else {
+              fullAnnotation.body = originalBody;
             }
           }
 
+          const service = fullAnnotation.body?.service ? getImageServices(fullAnnotation.body)[0] : undefined;
+          const dimensions = {
+            width: fullAnnotation.body?.width || canvas.width,
+            height: fullAnnotation.body?.height || canvas.height,
+          };
+          if (service && !transformSelection) data.trackSize?.(dimensions);
+
           // Check for selector on state.
-          if (imageApiSelector) {
-            // Preserve the existing cropped request URL when a region exists.
+          if (transformSelection) {
             const newBody = { ...fullAnnotation.body };
             let thumbnailId = "";
-            // Cropped id.
-            if (service && selector?.type === "BoxSelector") {
+            let thumbnailScale = 1;
+            if (service) {
               const id = service.id || service["@id"] || "";
+              const size = service.type === "ImageService3" || service["@type"] === "ImageService3" ? "max" : "full";
               if (id) {
-                newBody.id = croppedRegion(id, selector.spatial, "max", rotation);
-                thumbnailId = croppedRegion(id, selector.spatial, "512,", rotation);
+                if (selector?.type === "BoxSelector") {
+                  const thumbnailWidth = Math.max(1, Math.min(512, Math.floor(selector.spatial.width)));
+                  newBody.id = croppedRegion(id, selector.spatial, size, rotation);
+                  thumbnailId = croppedRegion(id, selector.spatial, `${thumbnailWidth},`, rotation);
+                  thumbnailScale = thumbnailWidth / Math.max(1, Math.floor(selector.spatial.width));
+                } else if (item.imageRotation !== undefined) {
+                  // A full-image request can already have a rotation baked into its URL.
+                  const request = newBody.id.startsWith(`${id}/`) ? parseImageServiceRequest(newBody.id) : undefined;
+                  const originalSize = browserTransformDimensions(
+                    dimensions,
+                    request?.type === "image" ? request.rotation.angle : undefined
+                  );
+                  newBody.id = `${id}/full/${size}/0/default.jpg`;
+                  dimensions.width = newBody.width = service.width || originalSize.width;
+                  dimensions.height = newBody.height = service.height || originalSize.height;
+                }
               }
             }
-            // Generate cropped image URL.
 
-            fullAnnotation.body = {
-              id: ctx.generateId("SpecificResource", annotation),
-              type: "SpecificResource",
-              source: newBody,
-              selector: imageApiSelector,
-            };
+            fullAnnotation.body = imageApiSelector
+              ? {
+                  id: ctx.generateId("SpecificResource", annotation),
+                  type: "SpecificResource",
+                  source: newBody,
+                  selector: imageApiSelector,
+                }
+              : newBody;
 
             const transformedDimensions = browserTransformDimensions(
               selector?.type === "BoxSelector"
@@ -276,8 +316,8 @@ export async function createFromIIIFBrowserOutput(data: IIIFBrowserCreatorPayloa
                             id: thumbnailId,
                             type: "Image",
                             format: "image/jpeg",
-                            width: 512,
-                            height: Math.round((height / width) * 512),
+                            width: Math.round(width * thumbnailScale),
+                            height: Math.round(height * thumbnailScale),
                           }),
                         ]
                       : undefined,

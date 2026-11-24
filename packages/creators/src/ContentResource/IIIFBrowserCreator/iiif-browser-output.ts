@@ -10,6 +10,9 @@ export interface IIIFBrowserOutputItem {
   parent: IIIFBrowserSelectedItem["parent"];
   selector: IIIFBrowserSelectedItem["selector"];
   rotation: IIIFBrowserSelectedItem["rotation"];
+  imageSelector?: IIIFBrowserSelectedItem["imageSelector"];
+  imageRotation?: number;
+  selectedPainting?: IIIFBrowserSelectedItem["selectedPainting"];
 }
 
 export function formatIIIFBrowserOutput(
@@ -21,11 +24,14 @@ export function formatIIIFBrowserOutput(
     ? resource
     : [{ ...resource, parent: resource.parent ?? parent ?? undefined }];
 
-  return selectedItems.map((item) => ({
+  return selectedItems.map((item: IIIFBrowserSelectedItem & { imageRotation?: number }) => ({
     resource: vault.get(item.id) ?? item,
     parent: item.parent,
     selector: item.selector,
     rotation: item.rotation,
+    ...(item.imageSelector ? { imageSelector: item.imageSelector } : {}),
+    ...(item.imageRotation !== undefined ? { imageRotation: item.imageRotation } : {}),
+    ...(item.selectedPainting ? { selectedPainting: item.selectedPainting } : {}),
   }));
 }
 
