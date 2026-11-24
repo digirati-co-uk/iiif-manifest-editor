@@ -79,6 +79,33 @@ test("navigates the mixed-media slideshow and makes only the active slide intera
   await expect(activeSlide(page)).toContainText("Generated slideshow QA material");
 });
 
+test("keeps Image only slides free of editorial text, including the default floating title", async ({ page }) => {
+  await openViewer(page, kitchenSink, { canvas: "gallery" });
+  const slide = activeSlide(page);
+  await expect(slide.locator("canvas").first()).toBeVisible();
+  await expect(slide.getByText("Image choices", { exact: true })).toBeHidden();
+
+  await openViewer(page, edgeCases, { canvas: "plain" });
+  await expect(slide.locator("canvas").first()).toBeVisible();
+  await expect(slide.getByText("Image without layout behavior", { exact: true })).toBeHidden();
+
+  await page.route(`**${fixturePath}/${kitchenSink}`, async (route) => {
+    const manifest = await (await route.fetch()).json();
+    const canvas = manifest.items.find((item: { id: string }) => item.id.endsWith("/gallery"));
+    canvas.behavior.push("float-top-left");
+    canvas.summary = { en: ["Previously saved overlay"] };
+    await route.fulfill({ json: manifest });
+  });
+  await openViewer(page, kitchenSink, { canvas: "gallery" });
+  await expect(slide.locator("canvas").first()).toBeVisible();
+  await expect(slide.getByText("Previously saved overlay", { exact: true })).toBeHidden();
+
+  await openViewer(page, edgeCases, { canvas: "titles" });
+  await expect(
+    slide.getByText("Title without an editorial summary", { exact: true }).filter({ visible: true })
+  ).toBeVisible();
+});
+
 test("honors a direct canvas link and routes reordered contents to the correct manifest canvas", async ({ page }) => {
   await openViewer(page, edgeCases, { hash: "#s1" });
   await expect(currentTitle(page)).toHaveText("Image without layout behavior");
@@ -296,6 +323,9 @@ test("moves editorial overlay in the layout diagram, thumbnail and live viewer",
   await page.getByRole("button", { name: "No overlay", exact: true }).click();
   await page.getByRole("button", { name: "Image only", exact: true }).click();
   await expect(liveOverlay).toBeHidden();
+  await expect(
+    frame.contentFrame().locator(".delft-slide:not([inert])").getByText("Floating editorial", { exact: true })
+  ).toBeHidden();
   await page.getByRole("checkbox", { name: "Overlay text on the image" }).check();
   await page.getByRole("button", { name: "Bottom right", exact: true }).click();
   await expect(liveOverlay).toBeVisible();
@@ -306,17 +336,16 @@ test("moves editorial overlay in the layout diagram, thumbnail and live viewer",
   const path = testInfo.outputPath("moved-overlay.json");
   await (await downloading).saveAs(path);
   const exported = JSON.parse(await readFile(path, "utf8"));
-  expect(
-    exported.items
-      .find((canvas: { id: string }) => canvas.id.endsWith("/floating"))
-      .behavior.filter((flag: string) => flag.startsWith("float-"))
-  ).toEqual(["float-bottom-right"]);
+  const exportedBehavior = exported.items.find((canvas: { id: string }) => canvas.id.endsWith("/floating")).behavior;
+  expect(exportedBehavior).toContain("right");
+  expect(exportedBehavior.filter((flag: string) => flag.startsWith("float-"))).toEqual(["float-bottom-right"]);
 });
 
 test("zooms into tour pins and back without replacing the image viewer", async ({ page }) => {
   await openViewer(page, kitchenSink, { canvas: "pin" });
   const stage = activeSlide(page);
   const first = stage.getByRole("button", { name: /^(Open|Close) tour stop 1$/ });
+  await expect(stage.getByRole("heading", { name: "Non-linear pin tour" })).toBeHidden();
   const canvas = await stage.locator("canvas").first().elementHandle();
   const overviewX = await first.evaluate((element) => {
     const box = element.getBoundingClientRect();

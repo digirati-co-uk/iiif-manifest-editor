@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { getFloatingBehavior, hasFloatingBehavior } from "./components/FloatingPositionPicker";
+import { positionBehaviors } from "./right-panels/slide-behavior-transforms";
 
 export interface SlideContentBox {
   x: number;
@@ -315,7 +316,7 @@ export function getSlideLayoutRegions(canvas: any): {
   const behavior = Array.isArray(canvas?.behavior) ? canvas.behavior : [];
   const customTextRegion = getCustomTextRegion(behavior);
 
-  if (hasFloatingBehavior(behavior) && !behavior.includes("info")) {
+  if (hasFloatingBehavior(behavior) && behavior.some((flag: string) => positionBehaviors.has(flag))) {
     const position = getFloatingBehavior(behavior);
     const panelWidth = Math.round(width / 3);
     const panelHeight = Math.round(height / 3);
@@ -404,7 +405,7 @@ export function getSlideLayoutRegions(canvas: any): {
   if (behavior.includes("image")) {
     return {
       content: { x: 0, y: 0, width, height },
-      text: customTextRegion,
+      text: null,
     };
   }
 

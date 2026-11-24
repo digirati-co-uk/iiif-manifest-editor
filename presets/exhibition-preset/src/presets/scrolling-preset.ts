@@ -1,3 +1,5 @@
+import { exhibitionRemotePreviewPanel } from "../center-panels/ExhibitionRemotePreviewPanel";
+import { exhibitionBackgroundTask } from "../background-panel";
 import { audioSlideCreator } from "../creators/audio-slide-creator";
 import { audioCanvasEditor } from "../canvas-editors/audio-canvas-editor";
 import { exhibitionAudioEditors } from "../right-panels/ExhibitionAudioEditor";
@@ -56,16 +58,12 @@ export const exhibitionEditorScrollingPreset = extendApp(
       exhibitionThemeLeftPanel,
     ],
     leftPanelIds: ["left-panel-manifest", NOTEBOOK_PANEL_ID],
-    centerPanels: [
-      //
-    ],
+    centerPanels: [exhibitionRemotePreviewPanel],
     annotations: [
       //
     ],
     // leftPanelIds: ["left-panel-manifest"],
-    background: [
-      //
-    ],
+    background: [exhibitionBackgroundTask],
     canvasEditors: [
       audioCanvasEditor,
       //

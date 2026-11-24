@@ -552,7 +552,10 @@ export function SlideBehavioursContent({
       <BehaviorEditor
         behavior={editor.technical.behavior.get() || []}
         onChange={(v) => {
-          editor.technical.behavior.set(v);
+          const changedOverlay = getFloatingBehavior(v) !== getFloatingBehavior(behavior) || !hasFloatingBehavior(behavior);
+          const needsTextPlacement = controls.isSlideshow && changedOverlay && hasFloatingBehavior(v) && getLayoutPreset(v) === "image";
+          editor.technical.behavior.set(needsTextPlacement ? replaceLayoutBehavior(v, "right") : v);
+          if (needsTextPlacement && currentCanvas) injectTextPlaceholders(vault, currentCanvas, "right");
         }}
         configs={getAdvancedExhibitionConfigs(templateType, behavior, isCoverCanvas, hasTourSteps, isImageSlide)}
       />
@@ -621,7 +624,11 @@ function SimpleSlideLayoutEditor({
     invert?: boolean;
     backdrop?: BackdropBehavior;
   }) => {
-    const nextLayoutPreset = controls.layoutOptions.length ? (next.layoutPreset ?? layoutPreset) : undefined;
+    const nextLayoutPreset = controls.layoutOptions.length
+      ? controls.isSlideshow && next.floating && layoutPreset === "image"
+        ? "right"
+        : (next.layoutPreset ?? layoutPreset)
+      : undefined;
     const nextDisplayWidth = controls.showGridSizing ? (next.displayWidth ?? displayWidth) : 12;
     const nextFloating = next.floating ?? floating;
     const nextFloatingBehavior = next.floatingBehavior ?? floatingBehavior;
@@ -664,7 +671,7 @@ function SimpleSlideLayoutEditor({
       <SimpleLayoutPreview
         layoutPreset={layoutPreset}
         cover={cover}
-        floatingPosition={floating ? floatingBehavior : undefined}
+        floatingPosition={floating && (!controls.isSlideshow || layoutPreset !== "image") ? floatingBehavior : undefined}
         width={selectedWidth}
         height={previewHeight}
         showGridSizing={controls.showGridSizing}
@@ -738,7 +745,7 @@ function SimpleSlideLayoutEditor({
             onChange={(checked) => applySettings({ floating: checked })}
           />
         ) : null}
-        {controls.isSlideshow && floating ? (
+        {controls.showFloating && floating ? (
           <SimpleField>
             <SimpleFieldLabel>Text overlay position</SimpleFieldLabel>
             <div className="mt-3">
